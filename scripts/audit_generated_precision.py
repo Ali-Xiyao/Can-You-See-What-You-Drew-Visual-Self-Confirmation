@@ -28,6 +28,23 @@ def _read_json(path: Path) -> dict:
     return value
 
 
+def _assert_unique_candidate_artifacts(rows: list[dict]) -> dict[str, int]:
+    """Reject filename/identity collisions even when deterministic RGB bytes match."""
+
+    candidate_ids = {str(row["candidate_id"]) for row in rows}
+    image_paths = {str(Path(row["image_path"]).resolve()) for row in rows}
+    if len(candidate_ids) != len(rows) or len(image_paths) != len(rows):
+        raise RuntimeError(
+            "A3 candidate identity collision: "
+            f"{len(rows)} rows, {len(candidate_ids)} IDs, {len(image_paths)} image paths"
+        )
+    return {
+        "unique_candidate_ids": len(candidate_ids),
+        "unique_image_paths": len(image_paths),
+        "unique_rgb_sha256": len({str(row["rgb_sha256"]) for row in rows}),
+    }
+
+
 def _generate(args: argparse.Namespace) -> dict:
     backbone = yaml.safe_load(args.backbone_config.read_text(encoding="utf-8"))
     readiness = yaml.safe_load(args.readiness_config.read_text(encoding="utf-8"))
@@ -55,6 +72,7 @@ def _generate(args: argparse.Namespace) -> dict:
     if len(seeds) != int(readiness["sampling"]["k_oracle"]):
         raise RuntimeError("Configured fixed seeds do not match K-oracle")
     rows = []
+    image_root = args.output.parent / f"{args.output.stem}-images"
     started = perf_counter()
     for record in records:
         scene = record["scene"]
@@ -66,8 +84,8 @@ def _generate(args: argparse.Namespace) -> dict:
             candidate = adapter.generate_images(
                 [str(scene["prompt"])],
                 [seed],
-                args.output.parent / "a3-images",
-                "gate-minus-2c",
+                image_root,
+                f"gate-minus-2c-{scene['scene_id']}",
             )[0]
             result = verify_generated_image(candidate.image_path, (atom,))
             answer = result.answers[atom.atom_id]
@@ -92,6 +110,7 @@ def _generate(args: argparse.Namespace) -> dict:
                     "parse_errors": list(result.parse_errors),
                 }
             )
+    artifact_counts = _assert_unique_candidate_artifacts(rows)
     rows_path = args.output.with_name(args.output.stem + "-rows.jsonl")
     atomic_write_jsonl(rows_path, rows)
     summary = summarize_generated_rows(
@@ -126,6 +145,8 @@ def _generate(args: argparse.Namespace) -> dict:
         "retained_families_from_a2": list(retained),
         "rows": str(rows_path),
         "rows_sha256": sha256_file(rows_path),
+        "image_root": str(image_root),
+        **artifact_counts,
         "elapsed_seconds": perf_counter() - started,
         **summary,
         "checks": checks,

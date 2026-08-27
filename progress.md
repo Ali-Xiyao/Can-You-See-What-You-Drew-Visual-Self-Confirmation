@@ -323,7 +323,7 @@
   adapter. Gradient batches now preserve each backbone's actual objective: flow-matching
   `Showo2GenerationBatch` for Show-o2 and masked discrete `ShowoSFTBatch` for Show-o v1.
 - Added non-finite/out-of-range observer-evidence rejection and adapter-contract tests. Full Ruff
-  and all 72 tests pass; the only warnings are Pillow's already-known future PDF palette-mode
+  and all 73 tests pass; the only warnings are Pillow's already-known future PDF palette-mode
   deprecation notices from publication-figure tests.
 - Added explicit local/A800 Show-o2 experiment profiles while preserving the frozen Show-o v1
   profiles. They lock 432x432/50-step Show-o2 generation, audited-target-only LoRA, GPU0/GPU1 local
@@ -338,3 +338,15 @@
   load adapters with the saved joint training-contract digest. The GDA evaluator now passes the
   adapter explicitly to the backbone-specific gradient-batch dispatcher; this fixes a runtime-only
   omission that static imports and the prior v1-only suite could not exercise.
+- A3-r1 completed 210 prompt-question rows in 2693.77 seconds but is not admissible Gate evidence.
+  Its automatic result was red (70% overall coverage; retained-family spatial coverage 40%;
+  Oracle@4 84% overall but 60% for count/spatial; 16pt fixed-seed swing). The report SHA-256 is
+  `a8aa9f1bd3ba65368804ad8efa6756c385b3349721ca1074dd1fb09cb96cc660`; rows SHA-256 is
+  `07e3cf63eceaf8b87f16e90f9aae32800ea7bc16206fa4742a428154cdcc0807`.
+- Post-run artifact audit found only 186 unique candidate IDs/image paths for 210 rows. The A3
+  manifest intentionally contains some same-drawing-prompt/different-question cases, while the
+  adapter's filename identity used only prompt hash plus seed. Twenty-four paths were therefore
+  overwritten even though deterministic RGB bytes were reproducible. A3 now namespaces checkpoint
+  IDs by scene ID, writes to an output-specific image root, and rejects any row/ID/path cardinality
+  mismatch before writing a report. Collision-safe r2 is running under the unchanged manifest,
+  fixed seeds, model revision, and verifier.

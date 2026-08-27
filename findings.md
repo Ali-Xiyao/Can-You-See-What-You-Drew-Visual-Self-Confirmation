@@ -363,3 +363,9 @@
   outcome/probe families before stratified sampling and reconstruct the same objective-specific
   gradient batches; filtering only reported metrics after generating images would spend samples on
   ineligible claims and change the effective denominators.
+- Scene identity cannot be reconstructed from prompt text alone. A3 deliberately includes cases
+  where the same drawing instruction is paired with different atomic questions (for example a
+  positive and negative existence query). Candidate filenames based only on prompt hash and seed
+  therefore collide across scientifically distinct cases. The checkpoint/case namespace must
+  include `scene_id`, and Gate evidence must assert one candidate ID and one image path per row even
+  when repeated prompts legitimately produce byte-identical RGBs.

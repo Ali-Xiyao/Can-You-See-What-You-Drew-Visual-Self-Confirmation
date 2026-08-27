@@ -113,7 +113,8 @@ families means the scientific claim is unsupported for that backbone and stops p
 - [x] Download only base 1.5B and its locked dependencies to H: with size/hash verification.
 - [x] Run A1 (six samples) at official 432x432; log GPU assignment, peak memory, time, outputs, and hashes.
 - [ ] If A1 passes, run A2 and A3 K=1. Run K=4 only for the A2-retained families (A2 complete;
-  A3 generation in progress for five retained families).
+  A3-r1 completed red but failed candidate-identity integrity; collision-safe A3-r2 is running with
+  the same manifest/seeds and five retained families).
 - [ ] Run A4 LoRA backward only if A2/A3 leave a plausible path to four joint families.
 - **Status:** in_progress
 

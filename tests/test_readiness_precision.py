@@ -2,8 +2,10 @@ import csv
 import json
 from pathlib import Path
 
+import pytest
 from PIL import Image
 
+from scripts.audit_generated_precision import _assert_unique_candidate_artifacts
 from selfsight.data.questions import build_primary_atom, build_question
 from selfsight.data.readiness import build_minimal_scenes
 from selfsight.data.readiness_precision import (
@@ -120,3 +122,20 @@ def test_generated_precision_incomplete_annotations_fail(tmp_path: Path) -> None
     assert not report["passed"]
     assert report["complete_annotations"] == 0
     assert report["family_precision"]["count"] == 0.0
+
+
+def test_generated_precision_rejects_candidate_path_collisions(tmp_path: Path) -> None:
+    rows = [
+        {
+            "candidate_id": "duplicate",
+            "image_path": str(tmp_path / "same.png"),
+            "rgb_sha256": "0" * 64,
+        },
+        {
+            "candidate_id": "duplicate",
+            "image_path": str(tmp_path / "same.png"),
+            "rgb_sha256": "0" * 64,
+        },
+    ]
+    with pytest.raises(RuntimeError, match="candidate identity collision"):
+        _assert_unique_candidate_artifacts(rows)
