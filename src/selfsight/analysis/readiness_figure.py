@@ -35,6 +35,7 @@ METRICS = ("observation", "coverage", "precision", "oracle_at_4")
 METRIC_LABELS = ("Observe", "Coverage", "Precision", "Oracle@4")
 PASS_BLUE = "#0072B2"
 FAIL_ORANGE = "#E69F00"
+NOT_TESTED_GRAY = "#BDBDBD"
 
 
 def _short_name(model_id: str) -> str:
@@ -65,9 +66,16 @@ def load_readiness_decisions(
         seen_ranks.add(rank)
         model_id = str(report["model_id"])
         checks = report["checks"]
+        upstream_stop = report.get("decision_mode") == "upstream_stop_before_human_and_a4"
+        unmeasured_gates = (
+            {"minus_2a_unified_functionality", "minus_2d_joint_families"}
+            if upstream_stop
+            else set()
+        )
         for gate in GATE_COLUMNS[:-1]:
             if gate not in checks:
                 raise RuntimeError(f"Decision is missing {gate}: {path}")
+            measured = gate not in unmeasured_gates
             gate_rows.append(
                 {
                     "order": order,
@@ -75,7 +83,8 @@ def load_readiness_decisions(
                     "model_id": model_id,
                     "model_label": _short_name(model_id),
                     "gate": gate,
-                    "passed": bool(checks[gate]),
+                    "passed": measured and bool(checks[gate]),
+                    "measured": measured,
                     "source_decision": str(path),
                 }
             )
@@ -87,6 +96,7 @@ def load_readiness_decisions(
                 "model_label": _short_name(model_id),
                 "gate": "passed",
                 "passed": bool(report["passed"]),
+                "measured": True,
                 "source_decision": str(path),
             }
         )
@@ -106,9 +116,27 @@ def load_readiness_decisions(
         eligible = {str(item) for item in report["selected_eligible_families"]}
         for family in FAMILY_ORDER:
             for metric in METRICS:
-                value = float(metric_values[metric][family])
-                if not 0.0 <= value <= 1.0:
-                    raise ValueError(f"Out-of-range {metric}/{family} value in {path}: {value}")
+                values = metric_values[metric]
+                measured = values is not None
+                if not measured:
+                    skipped = report.get("skipped_by_stop_rule", [])
+                    if not (
+                        upstream_stop
+                        and metric == "precision"
+                        and "blind_human_precision" in skipped
+                    ):
+                        raise RuntimeError(
+                            f"Missing {metric}/{family} without a registered stop rule: {path}"
+                        )
+                    value = np.nan
+                else:
+                    if not isinstance(values, dict) or family not in values:
+                        raise RuntimeError(f"Missing {metric}/{family} value in {path}")
+                    value = float(values[family])
+                    if not 0.0 <= value <= 1.0:
+                        raise ValueError(
+                            f"Out-of-range {metric}/{family} value in {path}: {value}"
+                        )
                 threshold = metric_thresholds[metric]
                 family_rows.append(
                     {
@@ -120,7 +148,8 @@ def load_readiness_decisions(
                         "metric": metric,
                         "value": value,
                         "threshold": threshold,
-                        "metric_pass": value >= threshold,
+                        "measured": measured,
+                        "metric_pass": measured and value >= threshold,
                         "joint_eligible": family in eligible,
                         "source_decision": str(path),
                     }
@@ -143,10 +172,17 @@ def load_readiness_decisions(
         "candidate_count": len(sources),
         "gate_rows": len(gate_frame),
         "family_metric_rows": len(family_frame),
-        "missing_values": int(gate_frame.isna().sum().sum() + family_frame.isna().sum().sum()),
+        "missing_values": int(
+            gate_frame.isna().sum().sum()
+            + family_frame.drop(columns=["value"]).isna().sum().sum()
+        ),
+        "not_tested_cells": int((~family_frame["measured"]).sum()),
         "family_count": int(family_frame["family"].nunique()),
         "metric_count": int(family_frame["metric"].nunique()),
-        "value_range": [float(family_frame["value"].min()), float(family_frame["value"].max())],
+        "value_range": [
+            float(family_frame["value"].min()),
+            float(family_frame["value"].max()),
+        ],
         "duplicate_gate_cells": int(gate_frame.duplicated(["candidate_rank", "gate"]).sum()),
         "duplicate_family_metric_cells": int(
             family_frame.duplicated(["candidate_rank", "family", "metric"]).sum()
@@ -207,22 +243,29 @@ def _gate_panel(ax: Any, gate_frame: pd.DataFrame) -> None:
     ax.tick_params(length=0)
     for row in range(matrix.shape[0]):
         for column in range(matrix.shape[1]):
+            record = gate_frame.loc[
+                (gate_frame["candidate_rank"] == candidates.iloc[row]["candidate_rank"])
+                & (gate_frame["gate"] == GATE_COLUMNS[column])
+            ].iloc[0]
+            measured = bool(record["measured"])
             passed = bool(matrix[row, column])
             ax.add_patch(
                 patches.Rectangle(
                     (column - 0.49, row - 0.49),
                     0.98,
                     0.98,
-                    facecolor=PASS_BLUE if passed else FAIL_ORANGE,
+                    facecolor=(
+                        PASS_BLUE if passed else FAIL_ORANGE if measured else NOT_TESTED_GRAY
+                    ),
                     edgecolor="black",
                     linewidth=0.65,
-                    hatch=None if passed else "////",
+                    hatch=None if passed else "////" if measured else "..",
                 )
             )
             ax.text(
                 column,
                 row,
-                "PASS" if passed else "FAIL",
+                "PASS" if passed else "FAIL" if measured else "N/T",
                 ha="center",
                 va="center",
                 color="white" if passed else "black",
@@ -248,42 +291,50 @@ def _family_panel(ax: Any, family_frame: pd.DataFrame) -> None:
         joint = bool(family_values["joint_eligible"].iloc[0])
         for column, metric in enumerate(METRICS):
             record = family_values.loc[family_values["metric"] == metric].iloc[0]
+            measured = bool(record["measured"])
             passed = bool(record["metric_pass"])
             rectangle = patches.Rectangle(
                 (column - 0.44, row - 0.39),
                 0.88,
                 0.78,
-                facecolor="#F7F7F7",
-                edgecolor=PASS_BLUE if passed else FAIL_ORANGE,
+                facecolor="#F7F7F7" if measured else NOT_TESTED_GRAY,
+                edgecolor=PASS_BLUE if passed else FAIL_ORANGE if measured else "#666666",
                 linewidth=1.45 if passed else 1.0,
-                hatch=None if passed else "////",
+                hatch=None if passed else "////" if measured else "..",
             )
             ax.add_patch(rectangle)
             ax.text(
                 column,
                 row,
-                f"{float(record['value']):.0%}",
+                f"{float(record['value']):.0%}" if measured else "N/T",
                 ha="center",
                 va="center",
                 fontsize=7,
                 fontweight="bold" if passed else "normal",
             )
         joint_column = len(METRICS)
+        joint_measured = bool(family_values["measured"].all())
         ax.add_patch(
             patches.Rectangle(
                 (joint_column - 0.44, row - 0.39),
                 0.88,
                 0.78,
-                facecolor=PASS_BLUE if joint else FAIL_ORANGE,
-                edgecolor="black",
+                facecolor=(
+                    NOT_TESTED_GRAY
+                    if not joint_measured
+                    else PASS_BLUE
+                    if joint
+                    else FAIL_ORANGE
+                ),
+                edgecolor="#666666" if not joint_measured else "black",
                 linewidth=0.7,
-                hatch=None if joint else "////",
+                hatch=None if joint else "////" if joint_measured else "..",
             )
         )
         ax.text(
             joint_column,
             row,
-            "YES" if joint else "NO",
+            "YES" if joint else "NO" if joint_measured else "N/T",
             ha="center",
             va="center",
             fontsize=7,
@@ -304,7 +355,7 @@ def _family_panel(ax: Any, family_frame: pd.DataFrame) -> None:
         1.0,
         -0.06,
         "Thresholds: observe 80%; coverage 70%; precision 95%; Oracle@4 70%.\n"
-        "Blue bold border = pass; orange hatch = fail.",
+        "Blue bold border = pass; orange hatch = fail; gray dots = not tested.",
         transform=ax.transAxes,
         ha="right",
         va="top",
@@ -394,6 +445,7 @@ def render_readiness_matrix(
         "redundant_encoding": {
             "pass": "blue + bold text/border",
             "fail": "orange + hatch + FAIL/NO text",
+            "not_tested": "gray + dotted hatch + N/T text",
         },
         "outputs": {
             **paths,

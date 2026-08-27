@@ -383,3 +383,7 @@
   Continuing into those stages after an automatic red wastes compute and risks representing absent
   measurements as negative results. A valid fail-fast decision must therefore preserve `null`
   evidence plus an explicit skip reason, while remaining permanently ineligible for E1/E2.
+- Missing measurements require a third visual state. Encoding them with the failure color/hatch
+  would silently turn a preregistered stop into apparent negative evidence. The readiness matrix
+  therefore uses explicit `measured` metadata and redundant gray + dotted + `N/T` encoding; orange
+  + diagonal hatch is reserved for checks that were actually evaluated and failed.

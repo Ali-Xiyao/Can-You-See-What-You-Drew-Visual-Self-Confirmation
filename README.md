@@ -57,6 +57,11 @@ $root = "H:\selfsight-runs\readiness\showo2-1p5b"
   --stop-before-human-a4 `
   --output "$root\decision-red.json"
 
+& $core .\scripts\render_readiness_matrix.py `
+  --decision "$root\decision-red.json" `
+  --evidence-status "local one-seed upstream stop" `
+  --output "$root\figure-readiness-red"
+
 # Continue below only if A3's automatic checks are green. The packet shows only RGB plus an
 # atomic question. Fill review_blinded.csv before score.
 & $showo2 .\scripts\audit_generated_precision.py export `
@@ -108,7 +113,8 @@ A red decision stops E1/E2 and names only the preregistered next candidate. An a
 stops before human review and A4 because neither can repair failed coverage, Oracle@4, or seed
 stability; the decision explicitly stores those evidence fields as absent. HQ/7B configs and download
 groups exist for that route, but cannot be used without `--predecessor` pointing to the immediately
-preceding immutable red decision. Full rules are in
+preceding immutable red decision. Readiness figures encode absent measurements as gray dotted `N/T`
+cells, never as orange failures. Full rules are in
 [`docs/PROPOSAL_V2.2_AMENDMENT.md`](docs/PROPOSAL_V2.2_AMENDMENT.md).
 
 ## Storage and processes
