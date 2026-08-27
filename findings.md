@@ -387,3 +387,8 @@
   would silently turn a preregistered stop into apparent negative evidence. The readiness matrix
   therefore uses explicit `measured` metadata and redundant gray + dotted + `N/T` encoding; orange
   + diagonal hatch is reserved for checks that were actually evaluated and failed.
+- A documented candidate ladder is not an execution control. If the downloader accepts a fallback
+  group or direct model ID without validating the predecessor, an accidental command can consume
+  storage and destroy the preregistered audit order before finalization has a chance to reject it.
+  Authorization therefore belongs at the first mutating boundary—the download itself—and its
+  predecessor SHA must be carried into the model registry.

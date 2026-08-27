@@ -366,10 +366,15 @@
   candidate ID and image path per A3 row, refuses to run when the automatic A3 checks are green,
   and emits an immutable red decision with blind-human/A4 explicitly skipped. Seven focused joint
   readiness tests pass.
-- Full repository verification after readiness-figure integration passes: Ruff clean and 80/80
+- Full repository verification after fallback-download integration passes: Ruff clean and 84/84
   tests green. The only
   warnings are the already-known future Pillow PDF palette-mode deprecations in figure-export tests.
 - Extended the publication readiness matrix for upstream-stop decisions. Registered but unmeasured
   Gate/family cells now use gray dotted `N/T`, while measured failures remain orange hatched
   `FAIL/NO`; the CSV carries an explicit `measured` field and the QA profile counts six untested
   precision cells. The focused renderer tests, vector/grayscale exports, and manual PNG review pass.
+- Closed the fallback-download authorization gap. `readiness_fallback_hq` and
+  `readiness_fallback_7b` now require `--predecessor-decision` for actual downloads (plans remain
+  read-only), reject rank/model ladder skips, green or inconsistent decisions, incomplete/tampered
+  evidence, and bind the predecessor decision hash into every downloaded model registry. Direct
+  `--model-id` selection cannot bypass the group check.

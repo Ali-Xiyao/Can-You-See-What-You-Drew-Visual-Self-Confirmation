@@ -112,10 +112,19 @@ the exact shared-transformer module names and binds them to the A1/tree hashes:
 A red decision stops E1/E2 and names only the preregistered next candidate. An automatic A3 failure
 stops before human review and A4 because neither can repair failed coverage, Oracle@4, or seed
 stability; the decision explicitly stores those evidence fields as absent. HQ/7B configs and download
-groups exist for that route, but cannot be used without `--predecessor` pointing to the immediately
-preceding immutable red decision. Readiness figures encode absent measurements as gray dotted `N/T`
+groups exist for that route, but fallback downloads require `--predecessor-decision` pointing to the
+immediately preceding immutable red decision (fallback finalization later uses `--predecessor`).
+Readiness figures encode absent measurements as gray dotted `N/T`
 cells, never as orange failures. Full rules are in
 [`docs/PROPOSAL_V2.2_AMENDMENT.md`](docs/PROPOSAL_V2.2_AMENDMENT.md).
+
+For example, after rank 1 has produced `decision-red.json`, rank 2 is the only authorized download:
+
+```powershell
+& $core .\scripts\download_models.py --group readiness_fallback_hq --plan
+& $core .\scripts\download_models.py --group readiness_fallback_hq `
+  --predecessor-decision "$root\decision-red.json"
+```
 
 ## Storage and processes
 
