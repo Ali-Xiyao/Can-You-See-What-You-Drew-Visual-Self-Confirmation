@@ -20,10 +20,13 @@ official_profile:
   language_base_id: Qwen/Qwen2.5-1.5B-Instruct
   max_sequence_length: 1280
   t2i_image_tokens_with_time: 1025
-  mmu_image_tokens_with_time: 1025
+  mmu_image_tokens_with_time: 730
   image_latent_dim: 16
   latent_height: 32
   latent_width: 32
+  mmu_resolution: 432
+  mmu_latent_height: 27
+  mmu_latent_width: 27
   patch_size: 2
 hardware:
   generator_device: cuda:0

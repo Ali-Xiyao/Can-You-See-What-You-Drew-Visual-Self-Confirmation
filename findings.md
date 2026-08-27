@@ -401,3 +401,8 @@
   summary -> rows hash -> unique candidate IDs/paths -> decoded RGB hashes. File-byte hashes are not
   interchangeable with decoded-RGB hashes because PNG encoding metadata may change without changing
   the pixels seen by the verifier.
+- Show-o2 HQ is not a single-resolution checkpoint contract. Its Hugging Face config stores the
+  native 27x27/729 position grid used for MMU, while the official 512 demo requests a 32x32/1024 T2I
+  grid. Loading with `from_pretrained` does not rewrite `image_position_ids`, so a naive 512 adapter
+  takes the fixed-grid branch and fails on 1024 versus 729 tokens. Correct use requires a 1024 T2I
+  position-ID buffer to trigger interpolation and a separate 432/729 path for image understanding.

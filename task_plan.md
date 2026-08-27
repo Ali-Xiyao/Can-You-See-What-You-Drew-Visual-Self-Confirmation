@@ -128,7 +128,7 @@ families means the scientific claim is unsupported for that backbone and stops p
 - [ ] If base generation fails but reference observation passes, allow the registered short generation
   warm-up; otherwise move directly to HQ.
 - [ ] Download/audit HQ only after a recorded base decision; 7B only after both 1.5B decisions. The
-  immutable base red decision is complete and the authorized HQ download is in progress.
+  immutable base red decision, authorized HQ download, HQ A1, and HQ A2 are complete; HQ A3 is next.
 - [x] Enforce the candidate ladder inside the downloader: fallback downloads require the immediately
   prior red Gate -2 decision, exact rank/model/fallback identity, and valid evidence SHA-256 records.
 - [ ] If Gate -2 is green with at least four families, run family-restricted E1, Gate -1b, and paired local E2.

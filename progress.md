@@ -366,7 +366,7 @@
   candidate ID and image path per A3 row, refuses to run when the automatic A3 checks are green,
   and emits an immutable red decision with blind-human/A4 explicitly skipped. Seven focused joint
   readiness tests pass.
-- Full repository verification after recursive download authorization passes: Ruff clean and 87/87
+- Full repository verification after HQ dual-geometry integration passes: Ruff clean and 88/88
   tests green. The only
   warnings are the already-known future Pillow PDF palette-mode deprecations in figure-export tests.
 - Extended the publication readiness matrix for upstream-stop decisions. Registered but unmeasured
@@ -397,4 +397,11 @@
   PNG/PDF/SVG/grayscale/CSV exports under `figure-readiness-rank1-red`.
 - Extended fallback-download authorization through the predecessor's nested A3 rows and RGB graph.
   The exact 5,661,868,606-byte HQ plan resolved with 66,893,271,040 free bytes; the authorized,
-  resumable HQ download is now running and binds the rank-1 decision SHA into its registry.
+  resumable HQ download completed and binds the rank-1 decision SHA into its registry.
+- Corrected the HQ checkpoint's dual-resolution contract after a fail-fast A1 diagnostic. Official
+  512 T2I uses 1024 latent tokens with interpolated native 729-position embeddings, while MMU
+  remains 432/729 tokens. The adapter now separates generation-target encoding from MMU encoding,
+  validates both geometries, and uses native MMU position IDs without mutating the generation route.
+- HQ A1 passed 6/6 at 512x512 in 45.71s with 8.67GB peak GPU memory. HQ A2 passed on 120
+  references in 87.61s: macro 90.83%, no yes-bias, 100% repeat agreement, zero abstention, and the
+  same five retained families as rank 1; absolute size remains excluded at 60%.

@@ -84,6 +84,7 @@ class Showo2Adapter(ModelAdapter):
             )
         profile = raw["official_profile"]
         self.native_resolution = int(profile["resolution"])
+        self.mmu_resolution = int(profile.get("mmu_resolution", self.native_resolution))
         self.generation_steps = int(profile["generation_steps"])
         self.guidance_scale = float(profile["guidance_scale"])
         self.device_spec = str(device or raw["hardware"]["generator_device"])
@@ -181,6 +182,16 @@ class Showo2Adapter(ModelAdapter):
 
         showo_path = snapshot_path(self.model_id, lock_path=self.lock_path)
         profile = self.backbone_config["official_profile"]
+        t2i_tokens = int(profile["t2i_image_tokens_with_time"])
+        mmu_tokens = int(profile["mmu_image_tokens_with_time"])
+        latent_height = int(profile["latent_height"])
+        latent_width = int(profile["latent_width"])
+        mmu_latent_height = int(profile.get("mmu_latent_height", latent_height))
+        mmu_latent_width = int(profile.get("mmu_latent_width", latent_width))
+        if t2i_tokens - 1 != latent_height * latent_width:
+            raise RuntimeError("Show-o2 T2I token/latent geometry mismatch")
+        if mmu_tokens - 1 != mmu_latent_height * mmu_latent_width:
+            raise RuntimeError("Show-o2 MMU token/latent geometry mismatch")
         language_base_id = str(profile["language_base_id"])
         qwen_path = snapshot_path(language_base_id, lock_path=self.lock_path)
         siglip_path = snapshot_path(
@@ -215,6 +226,16 @@ class Showo2Adapter(ModelAdapter):
                 use_safetensors=False,
                 local_files_only=True,
             )
+        native_position_tokens = int(model.position_embedding.weight.shape[0])
+        if native_position_tokens != mmu_tokens - 1:
+            raise RuntimeError(
+                "Show-o2 checkpoint position embedding is incompatible with MMU geometry: "
+                f"{native_position_tokens} != {mmu_tokens - 1}"
+            )
+        if int(model.image_position_ids.shape[-1]) != t2i_tokens - 1:
+            model.image_position_ids = torch.arange(t2i_tokens - 1).expand((1, -1))
+        model.config.image_latent_height = latent_height
+        model.config.image_latent_width = latent_width
         self._assert_materialized(model, "Show-o2")
         model = model.to(self.device, dtype=self.dtype)
         model.requires_grad_(False).eval()
@@ -225,14 +246,14 @@ class Showo2Adapter(ModelAdapter):
         self.vae_model = vae_model
         self.tokenizer = tokenizer
         self.token_ids = {key: int(value) for key, value in token_ids.items()}
-        self.num_t2i_image_tokens = int(profile["t2i_image_tokens_with_time"])
-        self.num_mmu_image_tokens = int(profile["mmu_image_tokens_with_time"])
+        self.num_t2i_image_tokens = t2i_tokens
+        self.num_mmu_image_tokens = mmu_tokens
         self.max_seq_len = int(profile["max_sequence_length"])
         self.max_text_len = self.max_seq_len - self.num_t2i_image_tokens - 4
         self.image_latent_dim = int(profile["image_latent_dim"])
         self.patch_size = int(profile["patch_size"])
-        self.latent_height = int(profile["latent_height"])
-        self.latent_width = int(profile["latent_width"])
+        self.latent_height = latent_height
+        self.latent_width = latent_width
         transport = create_transport(
             path_type="Linear",
             prediction="velocity",
@@ -369,7 +390,9 @@ class Showo2Adapter(ModelAdapter):
             self.model.train(was_training)
         return records
 
-    def _image_tensor(self, image_or_path: Image.Image | str | Path):
+    def _image_tensor(
+        self, image_or_path: Image.Image | str | Path, *, resolution: int | None = None
+    ):
         self._load()
         from torchvision import transforms
 
@@ -378,24 +401,33 @@ class Showo2Adapter(ModelAdapter):
         else:
             with Image.open(image_or_path) as opened:
                 image = opened.convert("RGB")
+        target_resolution = int(resolution or self.native_resolution)
         transform = transforms.Compose(
             (
                 transforms.Resize(
-                    self.native_resolution,
+                    target_resolution,
                     interpolation=transforms.InterpolationMode.BICUBIC,
                 ),
-                transforms.CenterCrop((self.native_resolution, self.native_resolution)),
+                transforms.CenterCrop((target_resolution, target_resolution)),
                 transforms.ToTensor(),
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
             )
         )
         return transform(image)
 
-    def _encode_images(self, images: Sequence[Image.Image | str | Path], *, seed: int):
+    def _encode_images(
+        self,
+        images: Sequence[Image.Image | str | Path],
+        *,
+        seed: int,
+        resolution: int | None = None,
+    ):
         self._load()
         import torch
 
-        pixels = torch.stack([self._image_tensor(image) for image in images]).to(
+        pixels = torch.stack(
+            [self._image_tensor(image, resolution=resolution) for image in images]
+        ).to(
             self.device, dtype=self.dtype
         )
         with torch.random.fork_rng(devices=self._fork_devices()):
@@ -410,11 +442,14 @@ class Showo2Adapter(ModelAdapter):
     def _image_embeddings(self, image: Image.Image, *, seed: int):
         import torch
 
-        latent = self._encode_images((image,), seed=seed)
+        latent = self._encode_images((image,), seed=seed, resolution=self.mmu_resolution)
         with torch.inference_mode():
             semantic = self.model.image_embedder_und(latent)
             generation = self.model.image_embedder_gen(latent)
-            semantic = semantic + self.model.position_embedding(self.model.image_position_ids)
+            position_ids = torch.arange(semantic.shape[1], device=self.device).expand((1, -1))
+            if int(semantic.shape[1]) != int(self.model.position_embedding.weight.shape[0]):
+                raise RuntimeError("Show-o2 MMU image tokens do not match position embedding")
+            semantic = semantic + self.model.position_embedding(position_ids)
             semantic = self.model.und_trans(semantic)["last_hidden_state"]
             return self.model.fusion_proj(torch.cat([semantic, generation], dim=-1))
 

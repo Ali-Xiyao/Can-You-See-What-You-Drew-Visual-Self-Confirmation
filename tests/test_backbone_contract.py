@@ -62,3 +62,16 @@ def test_showo2_materialization_audit_rejects_meta_tensors() -> None:
     meta = torch.nn.Linear(2, 2, device="meta")
     with pytest.raises(RuntimeError, match="retained meta tensors"):
         Showo2Adapter._assert_materialized(meta, "test")
+
+
+def test_showo2_hq_uses_separate_generation_and_observation_geometry() -> None:
+    adapter = Showo2Adapter(
+        backbone_config="configs/backbones/showo2_1p5b_hq.yaml", lazy=True
+    )
+    profile = adapter.backbone_config["official_profile"]
+    assert adapter.native_resolution == 512
+    assert adapter.mmu_resolution == 432
+    assert profile["t2i_image_tokens_with_time"] == 1025
+    assert profile["mmu_image_tokens_with_time"] == 730
+    assert profile["latent_height"] * profile["latent_width"] == 1024
+    assert profile["mmu_latent_height"] * profile["mmu_latent_width"] == 729
