@@ -323,7 +323,7 @@
   adapter. Gradient batches now preserve each backbone's actual objective: flow-matching
   `Showo2GenerationBatch` for Show-o2 and masked discrete `ShowoSFTBatch` for Show-o v1.
 - Added non-finite/out-of-range observer-evidence rejection and adapter-contract tests. Full Ruff
-  and all 71 tests pass; the only warnings are Pillow's already-known future PDF palette-mode
+  and all 72 tests pass; the only warnings are Pillow's already-known future PDF palette-mode
   deprecation notices from publication-figure tests.
 - Added explicit local/A800 Show-o2 experiment profiles while preserving the frozen Show-o v1
   profiles. They lock 432x432/50-step Show-o2 generation, audited-target-only LoRA, GPU0/GPU1 local
@@ -333,3 +333,8 @@
   trainable arm dispatches flow-matching generation and atomic-QA replay batches, filters the prompt
   pool to Gate -2 families, and refuses checkpoint resume unless the base config, Gate hash,
   backbone hash, and exact LoRA module list all match.
+- Reworked checkpoint evaluation to reconstruct Show-o2 with the same audited targets, validate the
+  completed run's model identity, filter outcome/probe manifests before deterministic sampling, and
+  load adapters with the saved joint training-contract digest. The GDA evaluator now passes the
+  adapter explicitly to the backbone-specific gradient-batch dispatcher; this fixes a runtime-only
+  omission that static imports and the prior v1-only suite could not exercise.

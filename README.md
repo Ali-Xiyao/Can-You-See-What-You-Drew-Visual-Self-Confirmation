@@ -308,11 +308,28 @@ $observerAudit = "H:\selfsight-runs\gate-minus-1\qwen2vl-local120.json"
   --gradient-gate-report H:\selfsight-runs\gate-minus-1b\showo2-1p5b\gate_minus_1b.json `
   --frozen-observer-python $showo2 `
   --output H:\selfsight-runs\local-pilot\showo2-1p5b --resume
+
+& $showo2 .\scripts\evaluate_pilot.py `
+  --config configs\local_3090_showo2.yaml `
+  --run-root H:\selfsight-runs\local-pilot\showo2-1p5b `
+  --outcome-manifest H:\selfsight-data\selfsight-v1\manifests\tier_a_outcome.jsonl `
+  --probe-manifest H:\selfsight-data\selfsight-v1\manifests\tier_a_probe.jsonl `
+  --joint-readiness-decision "$root\decision.json" `
+  --backbone-config configs\backbones\showo2_1p5b.yaml `
+  --observer-config configs\observers\qwen2vl_2b.yaml `
+  --lora-target-config "$root\a4-lora-targets.json" `
+  --detector-audit-report $observerAudit `
+  --detector-python $observer --detector-backend qwen2vl `
+  --detector-model-id Qwen/Qwen2-VL-2B-Instruct `
+  --detector-revision 895c3a49bc3fa70a340399125c650a463535e71c `
+  --device cuda:1
 ```
 
 These commands must not be run while Gate -2 is red or incomplete. E2 filters the training pool to
 the same eligible-family set, launches a frozen step-0 Show-o2 observer on GPU1 through the blind
 JSONL boundary, and binds checkpoint resume to the Gate, backbone, and exact LoRA target digest.
+The evaluator repeats those bindings, excludes non-eligible outcome/probe families before stable
+sampling, and loads every adapter with the training contract digest rather than the base YAML alone.
 
 The following commands are retained only to reproduce the frozen v2.1 Show-o experiment. Its
 current `decision.json` is red, so they also remain blocked unless supplied a distinct, immutable

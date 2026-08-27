@@ -102,9 +102,9 @@ families means the scientific claim is unsupported for that backbone and stops p
 - [x] Make E1 automatically read the v2.2 decision and reject ineligible families/backbones.
 - [x] Bind Gate -1b to the same decision, public-observer audit, eligible families, and A4-selected
   Show-o2 LoRA module hash.
-- [x] Bind the paired local E2 loop to the same decision, eligible families, frozen step-0 Show-o2,
-  objective-specific training batches, and checkpoint contract.
-- [ ] Bind the formal A800 E2 orchestrator and checkpoint evaluator to the same v2.2 contracts.
+- [x] Bind the paired local E2 loop and checkpoint evaluator to the same decision, eligible
+  families, frozen step-0 Show-o2, objective-specific training batches, and checkpoint contract.
+- [ ] Bind the formal A800 E2 orchestrator to the same v2.2 contracts.
 - **Status:** local_path_complete_formal_wiring_pending
 
 ### Phase 5 — First Show-o2 candidate on local 3090s

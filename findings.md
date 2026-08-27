@@ -359,3 +359,7 @@
   list is selected only after A1's real module-tree audit. The checkpoint contract must also hash
   the green Gate -2 decision, backbone config, and expanded target-module list; otherwise two runs
   with the same YAML but different audited targets could load each other's adapters.
+- Checkpoint evaluation is part of the same scientific contract as training. It must filter
+  outcome/probe families before stratified sampling and reconstruct the same objective-specific
+  gradient batches; filtering only reported metrics after generating images would spend samples on
+  ineligible claims and change the effective denominators.

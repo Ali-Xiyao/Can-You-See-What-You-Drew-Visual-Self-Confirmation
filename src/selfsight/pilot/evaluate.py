@@ -7,6 +7,7 @@ import math
 import os
 import random
 from collections import Counter
+from collections.abc import Sequence
 from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
@@ -18,6 +19,7 @@ from scipy.stats import spearmanr
 from selfsight.analysis.breakpoints import estimate_d_g, estimate_d_star, estimate_lead
 from selfsight.analysis.figure1 import render_figure1_from_csv
 from selfsight.analysis.gradient_gate import _batches, _gold_observation, _selected_map
+from selfsight.backbones.showo2 import Showo2Adapter
 from selfsight.config import load_config
 from selfsight.data.candidates import CandidateManifest
 from selfsight.data.questions import build_primary_atom, build_question
@@ -34,9 +36,24 @@ from selfsight.training.gradients import compare_gradients, noise_interval
 from selfsight.utils.jsonl import atomic_write_json, atomic_write_jsonl, read_jsonl
 
 
-def _records(path: str | Path, limit: int, seed: int) -> list[dict[str, Any]]:
+def _records(
+    path: str | Path,
+    limit: int,
+    seed: int,
+    eligible_families: Sequence[str] = (),
+) -> list[dict[str, Any]]:
+    records = list(read_jsonl(path))
+    eligible = {str(item) for item in eligible_families}
+    if eligible:
+        records = [
+            record for record in records if str(record["scene"]["family"]) in eligible
+        ]
+    if len(records) < limit:
+        raise RuntimeError(
+            f"Evaluation manifest has only {len(records)} eligible records; {limit} required"
+        )
     return stable_stratified_sample(
-        list(read_jsonl(path)),
+        records,
         limit,
         stratum=lambda record: str(record["atom"]["family"]),
         item_id=lambda record: str(record["scene"]["scene_id"]),
@@ -55,7 +72,7 @@ def _entropy(values: list[str | None]) -> float:
 
 def _evaluate_outcomes(
     *,
-    adapter: ShowoAdapter,
+    adapter: Any,
     detector: ObserverServiceClient,
     records: list[dict[str, Any]],
     output: Path,
@@ -160,7 +177,7 @@ def _evaluate_outcomes(
 
 def _evaluate_gda(
     *,
-    adapter: ShowoAdapter,
+    adapter: Any,
     detector: ObserverServiceClient,
     records: list[dict[str, Any]],
     output: Path,
@@ -246,6 +263,7 @@ def _evaluate_gda(
                 common,
                 selected[criterion],
                 scenes,
+                adapter=adapter,
                 micro_size=micro_size,
                 seed=int(config.values["seed"]),
             ),
@@ -269,6 +287,7 @@ def _evaluate_gda(
                         half,
                         selected["naive"],
                         scenes,
+                        adapter=adapter,
                         micro_size=micro_size,
                         seed=_stable_seed(config.values["seed"], checkpoint_id, split_index, half_index),
                     ),
@@ -308,6 +327,9 @@ def evaluate_paired_run(
     probe_manifest: str | Path,
     detector_audit_report: str | Path,
     detector_command: list[str],
+    backbone_config: str | Path | None = None,
+    lora_target_modules: Sequence[str] | None = None,
+    eligible_families: Sequence[str] = (),
 ) -> dict[str, Any]:
     config = load_config(config_path)
     run_root = Path(run_root).resolve()
@@ -320,32 +342,71 @@ def evaluate_paired_run(
         for family, accuracy in detector_audit["family_open_accuracy"].items()
         if float(accuracy) >= 0.80
     }
+    if eligible_families:
+        competent_families.intersection_update(str(item) for item in eligible_families)
     outcome_key = (
         "tier_a_outcome"
         if str(config.values["profile"]).startswith("a800_80g")
         else "local_outcome"
     )
     subset_seed = int(config.values["seed"])
-    outcomes = _records(outcome_manifest, int(config.values["data"][outcome_key]), subset_seed)
-    probes = _records(probe_manifest, int(config.values["gradient_probe"]["size"]), subset_seed)
-    adapter = ShowoAdapter(
-        device=str(config.values["hardware"]["generator_device"]),
-        trainable=True,
-        generation_timesteps=int(config.values["model"]["generation_timesteps"]),
-        guidance_scale=float(config.values["model"]["guidance_scale"]),
-        temperature=float(config.values["model"]["temperature"]),
+    outcomes = _records(
+        outcome_manifest,
+        int(config.values["data"][outcome_key]),
+        subset_seed,
+        eligible_families,
     )
+    probes = _records(
+        probe_manifest,
+        int(config.values["gradient_probe"]["size"]),
+        subset_seed,
+        eligible_families,
+    )
+    if backbone_config is not None:
+        if not lora_target_modules:
+            raise ValueError("Show-o2 evaluation requires audited LoRA targets")
+        adapter = Showo2Adapter(
+            backbone_config=backbone_config,
+            device=str(config.values["hardware"]["generator_device"]),
+            lazy=False,
+        )
+    else:
+        adapter = ShowoAdapter(
+            device=str(config.values["hardware"]["generator_device"]),
+            trainable=True,
+            generation_timesteps=int(config.values["model"]["generation_timesteps"]),
+            guidance_scale=float(config.values["model"]["guidance_scale"]),
+            temperature=float(config.values["model"]["temperature"]),
+        )
+    if (
+        training_report.get("model_id") is not None
+        and (
+            training_report.get("model_id") != adapter.model_id
+            or training_report.get("revision") != adapter.revision
+        )
+    ):
+        raise RuntimeError("Evaluation backbone does not match the completed training run")
     lora = config.values["training"]["lora"]
     adapter.attach_lora(
         rank=int(lora["rank"]),
         alpha=int(lora["alpha"]),
         dropout=float(lora["dropout"]),
-        target_modules=tuple(lora["target_modules"]),
+        target_modules=tuple(lora_target_modules or lora["target_modules"]),
         gradient_checkpointing=bool(config.values["training"]["gradient_checkpointing"]),
     )
     optimizer, scheduler = _optimizer_and_scheduler(adapter, config)
     evaluations = run_root / "evaluations"
     evaluations.mkdir(exist_ok=True)
+    training_contract_path = run_root / "training_contract.json"
+    checkpoint_config_digest = (
+        str(
+            json.loads(training_contract_path.read_text(encoding="utf-8"))[
+                "checkpoint_config_digest"
+            ]
+        )
+        if training_contract_path.is_file()
+        else config.digest
+    )
     command = [*detector_command, "--ready-report", str(evaluations / "detector_ready.json")]
     with ObserverServiceClient(command, evaluations / "detector_wire.jsonl") as detector:
         for arm, round_index, checkpoint in _target_checkpoints(
@@ -365,7 +426,7 @@ def evaluate_paired_run(
                 model=adapter.model,
                 optimizer=optimizer,
                 scheduler=scheduler,
-                expected_config_digest=config.digest,
+                expected_config_digest=checkpoint_config_digest,
             )
             outcome_metrics, candidates = _evaluate_outcomes(
                 adapter=adapter,
@@ -413,6 +474,7 @@ def evaluate_paired_run(
                     "predicted_yes_rate": detector_audit["predicted_yes_rate"],
                     "competent_families": sorted(competent_families),
                 },
+                "eligible_families": list(eligible_families),
             }
             atomic_write_json(temporary / "checkpoint_metrics.json", report)
             atomic_write_json(temporary / "DONE.json", {"status": "complete", **report})
