@@ -197,6 +197,8 @@
 | 2026-08-27 | Partial Conda clone required an unavailable VC runtime mirror | 1 | Move the failed clone recoverably to `H:\selfsight-tmp\failed-janus-clone-20260827T2052`; use a clean H-drive venv |
 | 2026-08-27 | Pure-discrete Show-o returned a query/attention-bias dtype mismatch in BF16 | 1 | Restore the official inference-only FP32 path; r2 canary and the full audit completed |
 | 2026-08-27 | First Qwen2.5 canary shell omitted `SELFSIGHT_MODEL_ROOT` | 1 | Keep the failed output, source `set_h_env.ps1`, and rerun in an immutable `-r2` directory; the service failed before loading and did not write to C: |
+| 2026-08-28 | A1 peak-memory reset rejected an uninitialized `torch.device` on Windows | 1 | Normalize the index, initialize the selected CUDA context, test the real API, and rerun as r2 |
+| 2026-08-28 | A1 treated the official `WanVAE` wrapper as an `nn.Module` | 2 | Freeze/audit its internal `.model`, add residual-meta checks, and rerun as r3 |
 
 ## 5-Question Reboot Check
 | Question | Answer |
@@ -285,3 +287,22 @@
 - A full-suite rerun exposed a Windows-only Matplotlib test-order failure when Tk was selected in a
   headless process. All three publication-figure modules now select `Agg` before importing pyplot;
   Ruff and all 53 tests pass again, followed by a fresh Show-o2 CUDA import canary.
+- Downloaded only the registered rank-1 group (12,775,937,051 expected bytes): Show-o2-1.5B, the
+  single Wan2.1 VAE file, SigLIP SO400M, and Qwen2.5-1.5B. Independent local SHA-256 checks match
+  every generated registry entry; HQ and 7B remain absent. H: had 62.35GB free after completion.
+- A1 attempts r1/r2 failed before producing evidence: r1 exposed a Torch 2.5/Windows peak-memory
+  API requirement for an initialized integer-indexed CUDA context; r2 exposed that official
+  `WanVAE` is a wrapper rather than an `nn.Module`. Added a shared CUDA initialization helper,
+  updated all affected canaries, froze/audited `WanVAE.model`, and added a fail-closed meta-tensor
+  materialization audit.
+- A1-r3 passed all four engineering checks for six native 432x432 samples in 84.32 seconds. Peak
+  allocated GPU memory was 8,107,403,776 bytes; the loaded checkpoint reports 3,063,740,640 total
+  and zero trainable parameters. Report SHA-256 is
+  `a815b4d53c2c3f4dd12c01dde70e447ace3579501a0b098e1467bb0566f4d6ba`; rows and LoRA-tree
+  hashes are `2bb81e7d7b6d8551485212b160f4b30e4d751afa7164285a42b61fce5bf5c8e7` and
+  `4eccd45f86dbf04a91e4a1577901f93badf3442ac360bf05d92c65b5511f7ab2`.
+- All six A1 reference and generated-image atomic answers repeated exactly and matched the expected
+  canary answer. Direct RGB review nevertheless found a possibly over-counted/cropped count image
+  and touching spatial/binding shapes; these are not promoted to correctness evidence and remain
+  for A3 verifier plus blind-human adjudication.
+- Full Ruff and all 60 tests pass after the CUDA-context, WanVAE, and materialization-audit fixes.

@@ -53,3 +53,12 @@ def test_showo2_config_revision_mismatch_fails_before_model_load(tmp_path: Path)
     with pytest.raises(ValueError, match="config/lock revision mismatch"):
         Showo2Adapter(backbone_config=path, lazy=True)
 
+
+def test_showo2_materialization_audit_rejects_meta_tensors() -> None:
+    import torch
+
+    materialized = torch.nn.Linear(2, 2)
+    Showo2Adapter._assert_materialized(materialized, "test")
+    meta = torch.nn.Linear(2, 2, device="meta")
+    with pytest.raises(RuntimeError, match="retained meta tensors"):
+        Showo2Adapter._assert_materialized(meta, "test")

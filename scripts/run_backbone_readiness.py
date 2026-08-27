@@ -14,6 +14,7 @@ from PIL import Image
 from selfsight.analysis.readiness_audit import summarize_reference_rows
 from selfsight.backbones.showo2 import Showo2Adapter
 from selfsight.schemas import AtomicQuestion
+from selfsight.utils.cuda import cuda_device_index, reset_cuda_peak_memory_stats
 from selfsight.utils.evidence import capture_host_manifest
 from selfsight.utils.hashing import sha256_file
 from selfsight.utils.jsonl import atomic_write_json, atomic_write_jsonl, read_jsonl
@@ -26,11 +27,9 @@ def _configs(args: argparse.Namespace) -> tuple[dict, dict]:
 
 
 def _adapter(args: argparse.Namespace) -> Showo2Adapter:
-    import torch
-
     backbone, _ = _configs(args)
     device = str(backbone["hardware"]["generator_device"])
-    torch.cuda.reset_peak_memory_stats(torch.device(device))
+    reset_cuda_peak_memory_stats(device)
     return Showo2Adapter(
         backbone_config=args.backbone_config,
         device=device,
@@ -110,7 +109,9 @@ def _run_canary(args: argparse.Namespace) -> dict:
         "lora_module_tree_sha256": sha256_file(module_tree_path),
         "samples": len(rows),
         "elapsed_seconds": elapsed,
-        "peak_gpu_bytes": int(torch.cuda.max_memory_allocated(adapter.device)),
+        "peak_gpu_bytes": int(
+            torch.cuda.max_memory_allocated(cuda_device_index(adapter.device))
+        ),
         "resource_report": asdict(adapter.resource_report()),
         "checks": engineering_checks,
         "passed": all(engineering_checks.values()),
@@ -163,7 +164,9 @@ def _run_reference(args: argparse.Namespace) -> dict:
         "rows": str(rows_path),
         "rows_sha256": sha256_file(rows_path),
         "elapsed_seconds": elapsed,
-        "peak_gpu_bytes": int(torch.cuda.max_memory_allocated(adapter.device)),
+        "peak_gpu_bytes": int(
+            torch.cuda.max_memory_allocated(cuda_device_index(adapter.device))
+        ),
         **summary,
     }
 

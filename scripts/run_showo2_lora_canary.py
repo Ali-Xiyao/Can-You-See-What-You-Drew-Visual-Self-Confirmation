@@ -21,6 +21,7 @@ from selfsight.backbones.showo2 import (
 )
 from selfsight.schemas import AtomicQuestion
 from selfsight.training.checkpoint import lora_state_dict
+from selfsight.utils.cuda import cuda_device_index, reset_cuda_peak_memory_stats
 from selfsight.utils.hashing import sha256_file, sha256_json
 from selfsight.utils.jsonl import atomic_write_json, read_jsonl
 
@@ -133,7 +134,7 @@ def _run(args: argparse.Namespace) -> dict:
     record = records[0]
     question = AtomicQuestion.from_dict(record["questions"][0])
     lora_config = readiness["lora_canary"]
-    torch.cuda.reset_peak_memory_stats(torch.device(backbone["hardware"]["generator_device"]))
+    reset_cuda_peak_memory_stats(backbone["hardware"]["generator_device"])
     adapter = Showo2Adapter(
         backbone_config=args.backbone_config,
         device=str(backbone["hardware"]["generator_device"]),
@@ -252,7 +253,9 @@ def _run(args: argparse.Namespace) -> dict:
         "checkpoint_step_2_manifest_sha256": sha256_file(checkpoint_two / "manifest.json"),
         "frozen_step0_supported": frozen_step0_supported,
         "elapsed_seconds": perf_counter() - started,
-        "peak_gpu_bytes": int(torch.cuda.max_memory_allocated(adapter.device)),
+        "peak_gpu_bytes": int(
+            torch.cuda.max_memory_allocated(cuda_device_index(adapter.device))
+        ),
         "checks": checks,
         "passed": all(checks.values()) and frozen_step0_supported,
     }

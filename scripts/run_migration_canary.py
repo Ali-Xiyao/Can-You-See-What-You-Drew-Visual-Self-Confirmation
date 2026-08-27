@@ -15,6 +15,7 @@ from selfsight.data.verifier import verify_image
 from selfsight.pilot.real_loop import _stable_seed
 from selfsight.schemas import SceneSpec
 from selfsight.showo_adapter import ShowoAdapter
+from selfsight.utils.cuda import cuda_device_index, reset_cuda_peak_memory_stats
 from selfsight.utils.evidence import write_host_manifest
 from selfsight.utils.jsonl import atomic_write_json, atomic_write_jsonl, read_jsonl
 
@@ -39,7 +40,7 @@ def main() -> None:
         guidance_scale=float(config.values["model"]["guidance_scale"]),
         temperature=float(config.values["model"]["temperature"]),
     )
-    torch.cuda.reset_peak_memory_stats(adapter.device)
+    reset_cuda_peak_memory_stats(adapter.device)
     rows = []
     started = perf_counter()
     records = stable_stratified_sample(
@@ -91,7 +92,9 @@ def main() -> None:
         "verifier_coverage": sum(row["verifier_answer"] is not None for row in rows) / len(rows),
         "elapsed_seconds": elapsed,
         "images_per_second": len(rows) / elapsed,
-        "peak_gpu_bytes": int(torch.cuda.max_memory_allocated(adapter.device)),
+        "peak_gpu_bytes": int(
+            torch.cuda.max_memory_allocated(cuda_device_index(adapter.device))
+        ),
     }
     atomic_write_jsonl(output / "canary_rows.jsonl", rows)
     atomic_write_json(output / "canary_summary.json", summary)

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+import warnings
 from collections import Counter
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
@@ -33,6 +34,7 @@ from selfsight.schemas import (
 )
 from selfsight.training.checkpoint import load_checkpoint, save_checkpoint
 from selfsight.training.gradients import collect_lora_gradient
+from selfsight.utils.cuda import cuda_device_index
 from selfsight.utils.hashing import rgb_sha256, sha256_json
 
 
@@ -133,6 +135,22 @@ class Showo2Adapter(ModelAdapter):
                 "Run Show-o2 in its dedicated environment/process."
             )
 
+    @staticmethod
+    def _assert_materialized(module: Any, label: str) -> None:
+        meta = [
+            f"parameter:{name}"
+            for name, value in module.named_parameters()
+            if bool(getattr(value, "is_meta", False))
+        ]
+        meta.extend(
+            f"buffer:{name}"
+            for name, value in module.named_buffers()
+            if bool(getattr(value, "is_meta", False))
+        )
+        if meta:
+            preview = ", ".join(meta[:8])
+            raise RuntimeError(f"{label} retained meta tensors after weight loading: {preview}")
+
     def _load(self) -> None:
         if self._loaded:
             return
@@ -183,17 +201,25 @@ class Showo2Adapter(ModelAdapter):
             return_showo_token_ids=True,
             llm_name="qwen2_5",
         )
-        model = Showo2Qwen2_5.from_pretrained(
-            str(showo_path),
-            llm_model_path=str(qwen_path),
-            clip_pretrained_model_path=str(siglip_path),
-            use_safetensors=False,
-            local_files_only=True,
-        )
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore",
+                message=r"for .*: copying from a non-meta parameter.*",
+                category=UserWarning,
+                module=r"torch\.nn\.modules\.module",
+            )
+            model = Showo2Qwen2_5.from_pretrained(
+                str(showo_path),
+                llm_model_path=str(qwen_path),
+                clip_pretrained_model_path=str(siglip_path),
+                use_safetensors=False,
+                local_files_only=True,
+            )
+        self._assert_materialized(model, "Show-o2")
         model = model.to(self.device, dtype=self.dtype)
         model.requires_grad_(False).eval()
         vae_model = WanVAE(vae_pth=str(vae_path), dtype=self.dtype, device=self.device)
-        vae_model.requires_grad_(False).eval()
+        self._assert_materialized(vae_model.model, "WanVAE")
 
         self.model = model
         self.vae_model = vae_model
@@ -771,7 +797,9 @@ class Showo2Adapter(ModelAdapter):
             total_parameters=total,
             trainable_parameters=trainable,
             allocated_gpu_bytes=int(torch.cuda.memory_allocated(self.device)),
-            reserved_gpu_bytes=int(torch.cuda.memory_reserved(self.device)),
+            reserved_gpu_bytes=int(
+                torch.cuda.memory_reserved(cuda_device_index(self.device))
+            ),
         )
 
     def dependency_revisions(self) -> dict[str, str]:

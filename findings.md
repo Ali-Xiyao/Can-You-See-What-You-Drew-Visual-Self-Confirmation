@@ -324,3 +324,15 @@
   `pyplot` on native Windows. Relying on ambient backend selection makes the suite order-dependent:
   Tk may initialize successfully in earlier tests and then fail later with an invalid Tcl library
   command even though no figure needs a window.
+- On Torch 2.5.1+cu121 for native Windows, `reset_peak_memory_stats` fails with `Invalid device
+  argument` before the target CUDA context exists, even with integer device 0. Selecting the GPU
+  and materializing an empty CUDA tensor first makes the same integer-indexed call deterministic;
+  the shared helper now applies this to readiness, LoRA, and migration runners.
+- Official Show-o2's `WanVAE` is a lightweight wrapper whose internal `.model` is already evaluated,
+  frozen, assigned from meta, and moved to CUDA in its constructor. Treating the wrapper as an
+  `nn.Module` is incorrect. Auditing both the unified model and `WanVAE.model` for residual meta
+  parameters/buffers gives a stronger post-load invariant than accepting the constructor warnings.
+- A green A1 can coexist with an apparently incorrect rendered count: the model produced a scene
+  that visually may contain four green quadrilaterals while answering the registered count as
+  three twice. A1 therefore remains strictly an engineering/functionality gate; A3 deterministic
+  coverage and blinded verifier precision are necessary to distinguish seeing from expectation.
