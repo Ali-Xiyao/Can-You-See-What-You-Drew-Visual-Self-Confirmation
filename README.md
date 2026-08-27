@@ -74,6 +74,13 @@ $root = "H:\selfsight-runs\readiness\showo2-1p5b"
   --output "$root\a3-human.json"
 ```
 
+Blind-review rules are fail-closed. Review the contact sheets without opening `answer_key.json` or
+searching for the generating prompt. Every CSV row requires: (1) `human_answer`, containing only the
+answer visible in the pixels; (2) `parseable_yes_no=yes` when the image supports a definite atomic
+answer, otherwise `no` and a non-empty placeholder such as `abstain` in `human_answer`; and (3) a
+non-empty pseudonymous `reviewer_id`. `notes` is optional. All rows must be completed by a human;
+model-generated annotations are not admissible evidence.
+
 A1 writes `a1-canary-lora-module-tree.json`. Inspect it before selecting suffixes; there is
 intentionally no default copied from Show-o v1. The `select` command expands explicit suffixes to
 the exact shared-transformer module names and binds them to the A1/tree hashes:

@@ -405,3 +405,14 @@
 - HQ A1 passed 6/6 at 512x512 in 45.71s with 8.67GB peak GPU memory. HQ A2 passed on 120
   references in 87.61s: macro 90.83%, no yes-bias, 100% repeat agreement, zero abstention, and the
   same five retained families as rank 1; absolute size remains excluded at 60%.
+- HQ A3 completed 210 collision-free candidates in 1360.71s. Independent rows/RGB validation
+  passed. Automatic Gate -2C is green: 81.67% overall coverage, 90% overall Oracle@4, 10pt
+  fixed-seed swing, and retained-family coverage above threshold. Count family Oracle@4 is only
+  50%, so it cannot become joint-eligible even if human precision passes. Report SHA-256 is
+  `c19a7193bde03a30f65231491087fee1b354753a1caae09943bb6cd0382a86ac`; rows SHA-256 is
+  `ea8e601a776fc5672a6a3102e645f40ddffde0d5fde7a199e91c696ca156b98e`.
+- Exported a 49-item blind-human packet (13 contact sheets) with prompt, intended answer, verifier
+  answer, scene graph, and seed excluded. The packet awaits complete human annotations; A4 and final
+  HQ Gate -2 remain correctly blocked. Preselected 196 audited shared-transformer LoRA modules
+  across q/k/v/o and gated MLP projections; selection digest is
+  `033751f817684cdfb2e9fef1eb99e6e6c8bd74615eca049288ea021bf6abe80c`.
