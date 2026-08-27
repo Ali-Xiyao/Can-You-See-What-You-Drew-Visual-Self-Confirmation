@@ -206,3 +206,57 @@
 | What's the goal? | A reproducible local one-seed research loop plus formal A800 package |
 | What have I learned? | See `findings.md` |
 | What have I done? | Implemented and tested the full code path; completed core downloads, balanced mock closure, generated-domain diagnostics, the six-backbone ability ladder, and fail-closed real experiment entry points |
+
+## 2026-08-28 — v2.2 Joint Readiness revision
+
+- The user approved a material backbone/design revision after the frozen Show-o v1 Gate -1 red
+  result. The new scientific claim is conditional on a unified model passing joint generation and
+  observation readiness for a registered subset of families.
+- Pushed annotated tag `v2.1-showo-gate-red` at
+  `5e5543853aaf0d6bf8428e9c9e30e049b01d6a9d` and created local branch
+  `experiment/v2.2-joint-readiness`.
+- Verified official Show-o2 source commit
+  `45a5a2de01d1ebd10cd5864d29310a76476cdf23` and current immutable Hub revisions for base 1.5B,
+  1.5B-HQ, and 7B. Confirmed base uses the official 432x432 path while HQ supplies the 512x512
+  configuration.
+- Replaced the active task plan with v2.2 phases and fail-closed Gate -2 sequencing. The v2.1 plan
+  remains recoverable exactly from the pushed tag and Git history.
+- Tooling note: `apply_patch` rejected a single patch containing delete-and-recreate operations for
+  `task_plan.md`; splitting it into two atomic patches completed successfully without losing the
+  tagged v2.1 version.
+- Source note: the first sparse-checkout command outlived the command window and retained its Git
+  locks while downloading. The live process was verified and allowed to finish; `show-o2/` is now
+  present at the same locked HEAD, and no lock file was removed.
+- API note: direct anonymous PowerShell calls to the public Hugging Face JSON API returned an
+  authentication error in this host's proxy path. The installed `huggingface_hub` client resolved
+  the same public repositories and immutable file metadata successfully without printing or
+  modifying credentials.
+- Added the v2.2 proposal amendment, frozen v2.1 evidence index, exact readiness thresholds, locked
+  Qwen observer config, first Show-o2 candidate config, and gate-ordered model groups. Inspecting the
+  immutable Hub config (which overrides the demo YAML at load time) confirmed the official path uses
+  `load_from_showo=false`; the four-snapshot plan therefore retains Qwen weights and totals
+  12,775,937,051 bytes.
+- Implemented the isolated family-minimal v2.2 benchmark and build script. Targeted tests pass 5/5;
+  Ruff found one local import-order issue, which was corrected with `apply_patch` before continuing.
+- Added the unified-backbone protocol, a backwards-compatible Show-o v1 negative-control wrapper,
+  and a lazy local-only Show-o2 adapter implementing official 432 generation, deterministic RGB
+  observation, latent targets, audited explicit-target LoRA attachment, generation/replay loss,
+  gradients, adapter-only checkpointing, and resource reporting. Package-origin collisions fail
+  closed so v1/v2 cannot contaminate one process.
+- Added the Gate -2 finalizer and prerequisite validator. Thirteen focused data/backbone/decision
+  tests pass, including evidence-tamper and gate-ordered fallback cases; targeted Ruff is clean.
+- Implemented A1/A2 runtime audits and pure summary tests, including repeated open answers,
+  forced-choice order reversal, abstention, yes-bias, native-resolution RGB evidence, peak GPU
+  memory, and the actual shared-transformer module tree needed before any LoRA target is selected.
+- Implemented A3 as a precision-first three-command workflow: generated K=1 coverage for all 60
+  prompts, K=4 only for A2-retained families, equal-denominator fixed-seed stability, a blinded
+  all-answered-K1 human packet, and fail-closed scoring with per-family precision. The audit packet
+  excludes prompt, scene graph, intended answer, verifier answer, and generation seed.
+- Implemented an A1-hash-bound LoRA target selection artifact and A4 backward/resume canary. A4
+  cannot start until A1, A2, A3 generated measurability, and the completed blind precision audit are
+  green; it checks generation and replay losses, LoRA-only trainability, optimizer step, intentional
+  corruption, exact adapter restoration, resumed optimizer step, and adapter-only checkpoints.
+- Added exact base/HQ/7B candidate profiles and gate-ordered language dependencies. The generic
+  adapter now derives latent geometry, sequence/token counts, inference steps, language-base path,
+  and dependency locks from the selected candidate rather than assuming the 432px 1.5B profile.
+  Nineteen focused v2.2 tests pass and targeted Ruff is clean.

@@ -1,0 +1,46 @@
+schema_version: 2
+data_namespace: selfsight-v2.2
+audit_seed: 20260828
+main_families:
+  - existence
+  - count
+  - color
+  - size
+  - spatial
+  - binding
+appendix_families:
+  - relative_size
+sampling:
+  canary_per_family: 1
+  reference_per_family: 20
+  generated_prompts_per_family: 10
+  k_first_pass: 1
+  k_oracle: 4
+  fixed_candidate_seeds:
+    - 20260828
+    - 20260829
+    - 20260830
+    - 20260831
+thresholds:
+  reference:
+    family_open_accuracy_min: 0.80
+    families_passing_min: 4
+    yes_bias_points_max: 10.0
+    repeat_agreement_min: 0.90
+    abstain_rate_max: 0.20
+  generated:
+    verifier_precision_min: 0.95
+    overall_coverage_min: 0.80
+    family_coverage_min: 0.70
+    oracle_at_4_min: 0.70
+    fixed_seed_coverage_swing_points_max: 10.0
+  joint:
+    families_passing_min: 4
+lora_canary:
+  rank: 16
+  alpha: 32
+  dropout: 0.05
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  understanding_replay_ratio: 0.25

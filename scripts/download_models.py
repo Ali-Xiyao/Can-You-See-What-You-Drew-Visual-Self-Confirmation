@@ -86,7 +86,20 @@ def _filter_inventory(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--lock", type=Path, default=Path("configs/models.lock.yaml"))
-    parser.add_argument("--group", action="append", choices=("core", "observers", "audit", "late_eval"))
+    parser.add_argument(
+        "--group",
+        action="append",
+        choices=(
+            "core",
+            "observers",
+            "audit",
+            "late_eval",
+            "readiness_candidate_1",
+            "readiness_optional",
+            "readiness_fallback_hq",
+            "readiness_fallback_7b",
+        ),
+    )
     parser.add_argument("--model-id", action="append")
     parser.add_argument("--plan", action="store_true", help="Resolve sizes and revisions without downloading")
     parser.add_argument("--force-low-space", action="store_true")

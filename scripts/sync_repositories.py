@@ -14,7 +14,7 @@ URLS = {
     "deepseek-ai/Janus": "https://github.com/deepseek-ai/Janus.git",
 }
 SPARSE_PATHS = {
-    "showlab/Show-o": ("configs", "models", "training", "llava", "parquet"),
+    "showlab/Show-o": ("configs", "models", "training", "llava", "parquet", "show-o2"),
     "deepseek-ai/Janus": ("janus",),
 }
 

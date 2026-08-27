@@ -1,0 +1,33 @@
+schema_version: 1
+candidate_rank: 1
+backbone_id: showlab/show-o2-1.5B
+revision: 07ec16589d4fc5422a74dddbbc4b2cd11e551039
+source:
+  repository_id: showlab/Show-o
+  revision: 45a5a2de01d1ebd10cd5864d29310a76476cdf23
+  subtree: show-o2
+dependencies:
+  showlab/show-o2-1.5B: 07ec16589d4fc5422a74dddbbc4b2cd11e551039
+  Wan-AI/Wan2.1-T2V-14B: a064a6c71f5be440641209c07bf2a5ce7a2ff5e4
+  google/siglip-so400m-patch14-384: 9fdffc58afc957d1a03a25b10dba0329ab15c2a3
+  Qwen/Qwen2.5-1.5B-Instruct: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+official_profile:
+  config: show-o2/configs/showo2_1.5b_demo_432x432.yaml
+  resolution: 432
+  weight_dtype: bfloat16
+  generation_steps: 50
+  guidance_scale: 5.0
+  language_base_id: Qwen/Qwen2.5-1.5B-Instruct
+  max_sequence_length: 1024
+  t2i_image_tokens_with_time: 730
+  mmu_image_tokens_with_time: 730
+  image_latent_dim: 16
+  latent_height: 27
+  latent_width: 27
+  patch_size: 2
+hardware:
+  generator_device: cuda:0
+  observer_device: cuda:0
+fallback:
+  on_failure: showlab/show-o2-1.5B-HQ
+  require_hashed_predecessor_decision: true

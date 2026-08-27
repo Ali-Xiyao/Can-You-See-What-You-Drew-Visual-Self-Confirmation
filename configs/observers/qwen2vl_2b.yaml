@@ -1,0 +1,20 @@
+schema_version: 1
+observer_id: Qwen/Qwen2-VL-2B-Instruct
+revision: 895c3a49bc3fa70a340399125c650a463535e71c
+role:
+  - public_observer
+  - g_rfo_detector
+  - capability_upper_bound
+trainable: false
+service:
+  protocol: blind-jsonl-v1
+  device: cuda:1
+  temperature: 0.0
+  max_new_tokens: 32
+  context_allowlist:
+    - rgb_image
+    - atomic_question
+capability_audit:
+  report: H:\selfsight-runs\gate-minus-1\qwen2vl-2b-local\capability_report.json
+  frozen_under_v2_1: true
+

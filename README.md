@@ -4,6 +4,95 @@ Research implementation for **Can You See What You Drew? Visual Self-Confirmatio
 
 The repository is gate-first: exact controlled scenes and measurement audits precede every phenomenon claim. Local dual-RTX-3090 runs are one-seed engineering evidence only; formal inference requires the locked single-A800 80GB, three-seed configuration.
 
+The active `experiment/v2.2-joint-readiness` branch implements the approved conditional design.
+The frozen Show-o v1 red result is preserved at tag `v2.1-showo-gate-red`; none of its manifests,
+reports, or figures are recalculated by v2.2.
+
+## v2.2 Joint Readiness quick start
+
+Candidate order is fixed: Show-o2-1.5B, then 1.5B-HQ only after a hashed rank-1 failure, then 7B
+only after both smaller candidates fail. The commands below therefore download and run rank 1 only.
+
+```powershell
+. .\scripts\set_h_env.ps1
+$core = "H:\selfsight-envs\core\python.exe"
+$showo2 = "H:\selfsight-envs\showo2\python.exe"
+$root = "H:\selfsight-runs\readiness\showo2-1p5b"
+
+# Dedicated native-Windows environment; omits FlashAttention/DeepSpeed/xFormers/TF/ONNX/W&B.
+.\scripts\bootstrap_showo2_windows.ps1
+
+# Inspect the exact 12.78 GB candidate-1 plan, then download only that group.
+& $core .\scripts\download_models.py --group readiness_candidate_1 --plan
+& $core .\scripts\download_models.py --group readiness_candidate_1
+
+# Isolated v2.2 namespace: 6 canary + 120 reference + 60 generated-domain records.
+& $core .\scripts\build_readiness_data.py
+
+# A1 and A2 use the same locked checkpoint for generation and RGB atomic QA.
+& $showo2 .\scripts\run_backbone_readiness.py canary `
+  --backbone-config configs\backbones\showo2_1p5b.yaml `
+  --manifest H:\selfsight-data\selfsight-v2.2\manifests\canary.jsonl `
+  --output "$root\a1-canary.json"
+
+& $showo2 .\scripts\run_backbone_readiness.py reference `
+  --backbone-config configs\backbones\showo2_1p5b.yaml `
+  --manifest H:\selfsight-data\selfsight-v2.2\manifests\reference.jsonl `
+  --output "$root\a2-reference.json"
+
+# A3 runs K=1 for all families and K=4 only for A2-retained families.
+& $showo2 .\scripts\audit_generated_precision.py generate `
+  --backbone-config configs\backbones\showo2_1p5b.yaml `
+  --reference-report "$root\a2-reference.json" `
+  --manifest H:\selfsight-data\selfsight-v2.2\manifests\generated.jsonl `
+  --output "$root\a3-generated.json"
+
+# The packet shows only RGB plus an atomic question. Fill review_blinded.csv before score.
+& $showo2 .\scripts\audit_generated_precision.py export `
+  --generated-report "$root\a3-generated.json" `
+  --output "$root\a3-blind-packet"
+
+& $showo2 .\scripts\audit_generated_precision.py score `
+  --review-csv "$root\a3-blind-packet\review_blinded.csv" `
+  --answer-key "$root\a3-blind-packet\answer_key.json" `
+  --output "$root\a3-human.json"
+```
+
+A1 writes `a1-canary-lora-module-tree.json`. Inspect it before selecting suffixes; there is
+intentionally no default copied from Show-o v1. The `select` command expands explicit suffixes to
+the exact shared-transformer module names and binds them to the A1/tree hashes:
+
+```powershell
+& $showo2 .\scripts\run_showo2_lora_canary.py select `
+  --canary-report "$root\a1-canary.json" `
+  --suffix SELECT_AFTER_TREE_AUDIT `
+  --output "$root\a4-lora-targets.json"
+
+& $showo2 .\scripts\run_showo2_lora_canary.py run `
+  --backbone-config configs\backbones\showo2_1p5b.yaml `
+  --canary-report "$root\a1-canary.json" `
+  --reference-report "$root\a2-reference.json" `
+  --generated-report "$root\a3-generated.json" `
+  --human-report "$root\a3-human.json" `
+  --target-config "$root\a4-lora-targets.json" `
+  --manifest H:\selfsight-data\selfsight-v2.2\manifests\reference.jsonl `
+  --output "$root\a4-lora.json"
+
+& $showo2 .\scripts\finalize_joint_readiness.py `
+  --backbone-config configs\backbones\showo2_1p5b.yaml `
+  --canary-report "$root\a1-canary.json" `
+  --reference-report "$root\a2-reference.json" `
+  --generated-report "$root\a3-generated.json" `
+  --human-report "$root\a3-human.json" `
+  --lora-report "$root\a4-lora.json" `
+  --output "$root\decision.json"
+```
+
+A red decision stops E1/E2 and names only the preregistered next candidate. HQ/7B configs and
+download groups exist for that route, but cannot be used without `--predecessor` pointing to the
+immediately preceding immutable red decision. Full rules are in
+[`docs/PROPOSAL_V2.2_AMENDMENT.md`](docs/PROPOSAL_V2.2_AMENDMENT.md).
+
 ## Storage and processes
 
 All large state is outside this checkout and under short H-drive paths:

@@ -149,3 +149,154 @@
   correct first answers and 100% agreement across 12 deterministic requests. This establishes that
   the 7B inference ceiling fits one local 3090, but it is not a new Gate candidate after the decision
   freeze and receives no post-hoc 120-image audit.
+
+## 2026-08-28 — v2.2 backbone revision facts
+
+- The official Show Lab repository now contains the `show-o2/` implementation and lists
+  `showlab/show-o2-1.5B`, `showlab/show-o2-1.5B-HQ`, and `showlab/show-o2-7B`. The local sparse
+  checkout is already pinned to the current official `main` commit
+  `45a5a2de01d1ebd10cd5864d29310a76476cdf23`, but its sparse specification does not yet include
+  `show-o2/`; expanding the sparse checkout is sufficient and does not require following a new
+  mutable source revision.
+- The official 1.5B Hub repository is approximately 5.66 GB and exposes a Diffusers loading path.
+  A historical full revision `2fef922658dacf15ec1a962faf4a3ab19aa21643` is visible, but the
+  currently displayed Hub head must be resolved through the Hub API before it is locked in code.
+- Show-o2 is structurally different from Show-o v1: the official 1.5B training config uses a
+  Qwen2.5-1.5B language base, continuous image latents, and a Wan 2.1 VAE. The v1 MAGVIT adapter
+  cannot be relabeled as a Show-o2 adapter; generation, observation, and LoRA target discovery need
+  separate implementation and readiness evidence.
+- H: currently has about 86.3 GB free. That is enough for the first 1.5B candidate, source and a
+  dedicated environment, but not enough to download every fallback model at once. Downloads must
+  remain gate-ordered: 1.5B first, HQ only after failure, 7B only after both 1.5B checkpoints fail.
+- Immutable Hub heads resolved on 2026-08-28 are: base 1.5B
+  `07ec16589d4fc5422a74dddbbc4b2cd11e551039`, 1.5B-HQ
+  `d3a220ec55feaacbdfcb053847edee14edd4e69a`, and 7B
+  `3012b1d6aee8b57829b23d02cba9190ef5cc3361`. These are candidates for the model lock; only the
+  base 1.5B is authorized for the first download/readiness attempt.
+- The official inference code needs an additional Wan2.1 VAE checkpoint plus
+  `google/siglip-so400m-patch14-384`, the Qwen2.5 tokenizer/base configuration, flow-transport
+  utilities, and PyTorch flex-attention. The top-level Hub checkpoint alone is not a self-contained
+  two-method Diffusers pipeline despite the generic Hub widget shown on the model page.
+- The official base 1.5B demo is native 432x432, while the released 512x512 configuration points to
+  `showlab/show-o2-1.5B-HQ`. Gate -2 must therefore record native resolution per checkpoint and must
+  not silently evaluate base and HQ under mismatched latent geometry. The first base audit should
+  use the official 432x432 config; 512x512 remains the HQ fallback and eventual paper setting if it
+  passes joint readiness.
+- The v1 schema currently puts `larger_than` inside the `spatial` family while `size` means a unary
+  small/large attribute question. v2.2 must not mutate those old manifests in place. A versioned
+  readiness-family layer should map predicates to `horizontal_spatial` and `larger_than` while
+  retaining the original six-family schema for frozen v1 evidence and backwards-compatible tests.
+- The existing `ModelAdapter` already exposes the four scientific operations needed by v2.2, but
+  it has no declared capability/resource metadata or LoRA target discovery. A new backbone contract
+  can extend rather than replace it, allowing `ShowoV1Adapter` to wrap the proven implementation and
+  `Showo2Adapter` to provide independent loading/generation/observation logic.
+- Existing evidence stamps hash artifact files but do not bind an ordered set of input reports,
+  model/source/dependency revisions, native resolution, or eligible families. Gate -2 needs a
+  dedicated decision schema with those fields and fail-closed validation before E1/E2.
+- The user-approved amendment is stricter than a one-family exploratory gate. Gate -2B requires at
+  least four families with open accuracy >=80%, yes-bias <=10pt, repeat agreement >=90%, and
+  abstention <=20%. Gate -2C is precision-first: blind-manual verifier precision >=95%, overall
+  primary-answer coverage >=80%, per-retained-family coverage >=70%, Oracle@K=4 >=70%, and fixed-seed
+  coverage swing <=10pt. Gate -2D requires at least four families in the B/C intersection before E1
+  or E2; the active plan and code must enforce this exact minimum.
+- The v2.2 benchmark keeps six main families (existence, color, absolute size, horizontal/vertical
+  spatial, count, and two-object binding). `larger_than` is removed from main spatial and relegated
+  to an independent/appendix relative-size family, rather than replacing absolute size as a main
+  family.
+- Frozen v2.1 evidence hashes recorded for the new index include Gate -1 decision
+  `968aa3c315bb039238bd6e101414ac755e9541fe5e39c0c69b338e2a825d988b` and decisive generated-domain
+  report `cda066e699e71e31ef738016002a6d8b62944b5724000223adb0b539c964fd92`.
+- The Show-o2 sparse subtree finished materializing at the locked source commit after the initial
+  fetch outlived the command window. No stale lock was removed; the original live Git process
+  completed and added `show-o2` while leaving the v1 sparse paths intact.
+- The official environment script is an 8-GPU research environment, not a suitable Windows runtime
+  lock: it includes flash-attn, DeepSpeed, TensorFlow, ONNX, video packages, and online W&B. The
+  image-only inference path uses naive masks/SDPA in the relevant sections, but imports PyTorch
+  flex-attention types unconditionally. Native Windows feasibility therefore depends first on
+  import/load tests under Torch 2.5.1; the project should omit flash-attn/DeepSpeed and keep W&B
+  disabled for the local canary.
+- Exact dependency heads resolved for the first candidate are Wan2.1-T2V-14B
+  `a064a6c71f5be440641209c07bf2a5ce7a2ff5e4`, SigLIP SO400M
+  `9fdffc58afc957d1a03a25b10dba0329ab15c2a3`, Qwen2.5-1.5B-Instruct
+  `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`, and the optional official safety checker
+  `cb41f3a270d63d454d385fc2e4f571c487c253c5`.
+- The official base 432x432 config uses 50 flow-matching inference steps (not 20), guidance 5.0,
+  729 image tokens, and BF16. The candidate configuration must mirror those values for readiness;
+  any later 20-step speed ablation is a separate registered condition.
+- The official first-candidate plan is 12,775,937,051 bytes before the optional 1.22 GB safety
+  checker: Show-o2 5.66 GB, Wan VAE 0.51 GB, SigLIP 3.51 GB, and Qwen2.5-1.5B weights/config/tokenizer.
+  The Wan repository itself contains tens of gigabytes of unrelated T2V shards, so its
+  lock must allow only `Wan2.1_VAE.pth` (SHA-256
+  `38071ab59bd94681c686fa51d75a1968f64e470262043be31f7a094e442fd981`).
+- Although the demo YAML says `load_from_showo: true`, the immutable Hub `config.json` embedded in
+  the base 1.5B snapshot says `load_from_showo: false`, and the official demo calls
+  `from_pretrained()` without overriding it. The reproduced official path therefore **does** load
+  the standalone 3.09 GB Qwen weights before applying the unified state. Candidate 1 keeps those
+  weights rather than introducing an unvalidated constructor optimization. SigLIP also loads its
+  3.51 GB vision weight (SHA-256
+  `ea2abad2b7f8a9c1aa5e49a244d5d57ffa71c56f720c94bc5d240ef4d6e1d94a`).
+- The existing downloader rejects unregistered group names and the repository sync script's sparse
+  set omitted `show-o2`. Both control surfaces must be extended before a reproducible fresh-host run;
+  otherwise the manually expanded local checkout would work while the documented bootstrap would
+  silently recreate only v1 source paths.
+- HQ is the same 5.66 GB checkpoint footprint as base 1.5B, whereas Show-o2-7B is about 17.86 GB in
+  two `.bin` shards before its Qwen2.5-7B construction dependency. These remain locked but excluded
+  from the candidate-1 download group.
+- The official T2I path uses the dense `omni_attn_mask_naive` path despite importing flex-attention,
+  so an SDPA-first Windows adapter can reproduce the actual 432 demo without invoking the compiled
+  flex kernel. MMU constructs image latents with the same Wan VAE, fuses semantic and generation
+  embeddings, and autoregressively answers from RGB; the adapter can lift this logic without W&B or
+  the safety checker for the benign geometric benchmark.
+- The tokenizer adds only a pad token, `<image>`, `<|vid_start|>`, and `<|vid_end|>` on top of the
+  Qwen tokenizer; all image boundary/pad tokens already exist in Qwen2.5. The 432 profile increases
+  both image-token counts by one time token, yielding 730 T2I/MMU tokens and `max_text_len=290` in a
+  1024-token sequence.
+- Show-o v1 and Show-o2 both publish a top-level Python package named `models`. They cannot be safely
+  imported into the same interpreter after either package is cached in `sys.modules`. The v2.2
+  adapter must fail closed on a package-origin collision and readiness runs must use a dedicated
+  Show-o2 process/environment; cross-backbone comparisons happen through artifact/JSONL boundaries.
+- Gate -2 can be finalized without weakening v1 prerequisites: a separate decision schema validates
+  A1-A4 identities, exact registered thresholds, per-family intersection, candidate rank, and every
+  input SHA-256. Synthetic green/red/tamper/fallback tests confirm that four eligible families pass,
+  three fail, modified evidence is rejected, and HQ cannot run without a failed predecessor that
+  explicitly authorizes its model ID.
+- The current v1 scene dataclasses and observer-audit wire format can safely carry v2.2 main-family
+  records if new manifests retain the six existing `QuestionFamily` values. The minimal generator
+  should therefore reuse `SceneSpec`, `Atom`, and the blind JSONL protocol while adding
+  `schema_version: 2`, `benchmark_version: 2.2`, and a separate relative-size appendix manifest.
+  This avoids a schema migration that could change frozen v1 parsing.
+- Existing reference manifest rows already contain open plus both forced-choice orders, file/RGB
+  hashes, and exact scene/atom data. A versioned readiness manifest builder can reuse that structure,
+  and the existing observer auditor can consume it unchanged; Gate -2 aggregation must add the
+  stricter repeatability/abstention checks because Gate -1 currently only gates capability and bias.
+- A v2.2 generator must construct minimal scenes directly rather than calling the v1 `_make_objects`:
+  v1 always creates two objects (three for count/binding), decorates every object with size/color/
+  position, and still samples `larger_than` inside spatial. Reusing it would preserve precisely the
+  compound-prompt confound that v2.2 is intended to remove.
+- The isolated minimal generator can reuse the proven renderer/verifier without changing their v1
+  semantics: all 186 A1/A2/A3 program references (6 + 120 + 60) verify exactly in the new tests,
+  all six families are balanced, and semantic signatures are disjoint across canary/reference/
+  generated splits. Materialization refuses any root not ending in `selfsight-v2.2` and fails closed
+  if an existing RGB, manifest, or registry differs.
+- A3 must not compute fixed-seed swing across the full K=1 set plus a smaller K=4 subset: those seed
+  columns would have unequal family/prompt denominators. The implemented summary keeps overall and
+  per-family coverage on all first candidates, while Oracle@4 and seed swing use only the A2-retained
+  prompts that have all four registered candidates. It validates equal denominators before emitting
+  the metrics.
+- Verifier precision is conditional on cases where the deterministic verifier answered. With only
+  60 first candidates, sampling a smaller audit would add avoidable selection variance, so the v2.2
+  blind packet exports every answered K=1 case. The visible packet contains only an audit ID, RGB,
+  atomic question, and empty human fields; all intended content and verifier output remain in the
+  separate hash-bound key.
+- PEFT receives the inner Qwen module namespace after `self.model.showo` is wrapped. The A1 audit,
+  however, discovers names from the outer unified model (`showo.model.layers...`). The adapter must
+  validate those full names against the audited outer tree and strip only the leading `showo.` when
+  passing exact targets into PEFT; passing the outer names unchanged would select no modules.
+- The HQ official profile is not a 50-step 432 configuration: it is 512px, uses a 32x32 latent grid,
+  a 1,280-token sequence, and 20 Euler steps. Its same-resolution RGB observation path carries 1,024
+  spatial image tokens plus the time token. Candidate profiles now record these values explicitly so
+  base/HQ comparisons cannot silently reuse base geometry.
+- Show-o2-7B construction depends on the separate `Qwen/Qwen2.5-7B-Instruct` snapshot when the Hub
+  config follows the same official constructor path. Its current immutable revision is
+  `a09a35458c702b33eeacc393d103063234e8bc28`, with four model shards totaling about 15.23 GB. It is
+  locked in the rank-3 fallback group but remains excluded from the candidate-1 download.

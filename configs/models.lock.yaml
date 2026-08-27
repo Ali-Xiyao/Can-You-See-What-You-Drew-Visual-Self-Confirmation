@@ -1,4 +1,4 @@
-schema_version: 1
+schema_version: 2
 captured_at: "2026-08-27"
 models:
   - id: microsoft/phi-1_5
@@ -67,6 +67,86 @@ models:
     group: audit
     role: pure_discrete_audit
     license: apache-2.0
+  - id: showlab/show-o2-1.5B
+    revision: 07ec16589d4fc5422a74dddbbc4b2cd11e551039
+    group: readiness_candidate_1
+    role: joint_readiness_backbone_432
+    license: apache-2.0
+    allow_patterns:
+      - README.md
+      - config.json
+      - pytorch_model.bin
+  - id: Wan-AI/Wan2.1-T2V-14B
+    revision: a064a6c71f5be440641209c07bf2a5ce7a2ff5e4
+    group: readiness_candidate_1
+    role: showo2_causal_vae_only
+    license: apache-2.0
+    allow_patterns:
+      - Wan2.1_VAE.pth
+  - id: google/siglip-so400m-patch14-384
+    revision: 9fdffc58afc957d1a03a25b10dba0329ab15c2a3
+    group: readiness_candidate_1
+    role: showo2_understanding_vision_tower
+    license: apache-2.0
+    allow_patterns:
+      - config.json
+      - model.safetensors
+      - preprocessor_config.json
+  - id: Qwen/Qwen2.5-1.5B-Instruct
+    revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+    group: readiness_candidate_1
+    role: showo2_language_base_and_tokenizer
+    license: apache-2.0
+    allow_patterns:
+      - config.json
+      - generation_config.json
+      - model.safetensors
+      - tokenizer.json
+      - tokenizer_config.json
+  - id: CompVis/stable-diffusion-safety-checker
+    revision: cb41f3a270d63d454d385fc2e4f571c487c253c5
+    group: readiness_optional
+    role: official_showo2_safety_checker
+    license: unknown
+    allow_patterns:
+      - config.json
+      - preprocessor_config.json
+      - pytorch_model.bin
+  - id: showlab/show-o2-1.5B-HQ
+    revision: d3a220ec55feaacbdfcb053847edee14edd4e69a
+    group: readiness_fallback_hq
+    role: joint_readiness_backbone_512_fallback
+    license: apache-2.0
+    allow_patterns:
+      - README.md
+      - config.json
+      - pytorch_model.bin
+  - id: showlab/show-o2-7B
+    revision: 3012b1d6aee8b57829b23d02cba9190ef5cc3361
+    group: readiness_fallback_7b
+    role: joint_readiness_backbone_7b_fallback
+    license: apache-2.0
+    allow_patterns:
+      - README.md
+      - config.json
+      - pytorch_model-00001-of-00002.bin
+      - pytorch_model-00002-of-00002.bin
+      - pytorch_model.bin.index.json
+  - id: Qwen/Qwen2.5-7B-Instruct
+    revision: a09a35458c702b33eeacc393d103063234e8bc28
+    group: readiness_fallback_7b
+    role: showo2_7b_language_base_and_tokenizer
+    license: apache-2.0
+    allow_patterns:
+      - config.json
+      - generation_config.json
+      - model-00001-of-00004.safetensors
+      - model-00002-of-00004.safetensors
+      - model-00003-of-00004.safetensors
+      - model-00004-of-00004.safetensors
+      - model.safetensors.index.json
+      - tokenizer.json
+      - tokenizer_config.json
   - id: zhiqiulin/clip-flant5-xl
     revision: 3b4a6b1b3e43634a47fd4c4a9007fa703bc74769
     group: late_eval
