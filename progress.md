@@ -366,7 +366,7 @@
   candidate ID and image path per A3 row, refuses to run when the automatic A3 checks are green,
   and emits an immutable red decision with blind-human/A4 explicitly skipped. Seven focused joint
   readiness tests pass.
-- Full repository verification after fallback-download integration passes: Ruff clean and 84/84
+- Full repository verification after fallback-chain integration passes: Ruff clean and 85/85
   tests green. The only
   warnings are the already-known future Pillow PDF palette-mode deprecations in figure-export tests.
 - Extended the publication readiness matrix for upstream-stop decisions. Registered but unmeasured
@@ -378,3 +378,6 @@
   read-only), reject rank/model ladder skips, green or inconsistent decisions, incomplete/tampered
   evidence, and bind the predecessor decision hash into every downloaded model registry. Direct
   `--model-id` selection cannot bypass the group check.
+- Applied the same immutable-chain validation at fallback Gate finalization: a rank-2/rank-3
+  decision now rejects a non-adjacent predecessor, inconsistent red status, missing evidence set,
+  invalid upstream-stop contract, unavailable evidence path, or any evidence SHA-256 mismatch.

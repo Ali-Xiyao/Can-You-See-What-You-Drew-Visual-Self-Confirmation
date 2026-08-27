@@ -7,6 +7,7 @@ import pytest
 import yaml
 
 from selfsight.analysis.readiness import (
+    _validate_predecessor,
     finalize_joint_readiness,
     finalize_joint_readiness_stop,
     require_joint_readiness,
@@ -236,3 +237,26 @@ def test_fallback_requires_failed_predecessor_authorization(tmp_path: Path):
     )
     assert decision["passed"]
     assert decision["evidence"]["predecessor"]["sha256"]
+
+
+def test_fallback_finalizer_rejects_tampered_predecessor_evidence(tmp_path: Path):
+    evidence = _evidence(tmp_path / "first", weak_families=3)
+    predecessor_path = tmp_path / "first" / "decision.json"
+    predecessor_path.parent.mkdir(parents=True, exist_ok=True)
+    finalize_joint_readiness(
+        backbone_config_path="configs/backbones/showo2_1p5b.yaml",
+        readiness_config_path="configs/readiness_v2.2.yaml",
+        canary_report_path=evidence["canary"],
+        reference_report_path=evidence["reference"],
+        generated_report_path=evidence["generated"],
+        human_report_path=evidence["human"],
+        lora_report_path=evidence["lora"],
+        output_path=predecessor_path,
+    )
+    with evidence["generated"].open("a", encoding="utf-8") as handle:
+        handle.write(" ")
+    hq = yaml.safe_load(
+        Path("configs/backbones/showo2_1p5b_hq.yaml").read_text(encoding="utf-8")
+    )
+    with pytest.raises(RuntimeError, match="Predecessor evidence SHA-256 mismatch"):
+        _validate_predecessor(hq, predecessor_path)

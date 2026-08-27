@@ -392,3 +392,7 @@
   storage and destroy the preregistered audit order before finalization has a chance to reject it.
   Authorization therefore belongs at the first mutating boundary—the download itself—and its
   predecessor SHA must be carried into the model registry.
+- Authorization must also be revalidated at the final scientific decision boundary. A correct
+  download registry does not prove that the predecessor evidence remained unchanged during the
+  next audit, so fallback finalization independently checks every predecessor evidence hash and the
+  adjacent candidate rank before binding the red decision SHA.

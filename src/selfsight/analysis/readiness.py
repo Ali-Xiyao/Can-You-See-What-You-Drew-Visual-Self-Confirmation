@@ -105,11 +105,50 @@ def _validate_predecessor(
         raise RuntimeError("Fallback predecessor is not a Gate -2 decision")
     if bool(predecessor.get("passed")):
         raise RuntimeError("A passed predecessor does not authorize a fallback candidate")
+    checks = _mapping(predecessor, "checks", "predecessor decision")
+    if not checks or all(bool(value) for value in checks.values()):
+        raise RuntimeError("Fallback predecessor red status is internally inconsistent")
+    if int(predecessor.get("candidate_rank", -1)) != rank - 1:
+        raise RuntimeError("Fallback predecessor candidate rank is not immediately prior")
     expected = _mapping(predecessor, "fallback", "predecessor decision").get("next_model_id")
     if expected != backbone["backbone_id"]:
         raise RuntimeError(
             f"Predecessor authorizes {expected!r}, not {backbone['backbone_id']!r}"
         )
+    evidence = _mapping(predecessor, "evidence", "predecessor decision")
+    required_evidence = {
+        "backbone_config",
+        "readiness_config",
+        "canary",
+        "reference",
+        "generated",
+        "human",
+        "lora",
+        "predecessor",
+    }
+    if set(evidence) != required_evidence:
+        raise RuntimeError("Fallback predecessor evidence set is incomplete")
+    for label, record in evidence.items():
+        if record is None:
+            if label not in {"human", "lora", "predecessor"}:
+                raise RuntimeError(f"Unexpected missing predecessor evidence: {label}")
+            continue
+        if not isinstance(record, Mapping):
+            raise TypeError(f"Malformed predecessor evidence: {label}")
+        evidence_path = Path(str(record.get("path", ""))).resolve()
+        evidence_hash = record.get("sha256")
+        if not evidence_path.is_file() or not isinstance(evidence_hash, str):
+            raise RuntimeError(f"Unavailable predecessor evidence: {label}")
+        if sha256_file(evidence_path) != evidence_hash:
+            raise RuntimeError(f"Predecessor evidence SHA-256 mismatch: {label}")
+    if predecessor.get("decision_mode") == "upstream_stop_before_human_and_a4":
+        skipped = set(predecessor.get("skipped_by_stop_rule", ()))
+        if skipped != {"blind_human_precision", "a4_lora_backward_resume"}:
+            raise RuntimeError("Upstream-stop predecessor has an invalid skipped-evidence contract")
+        if evidence.get("human") is not None or evidence.get("lora") is not None:
+            raise RuntimeError("Upstream-stop predecessor must not contain human/A4 evidence")
+    elif evidence.get("human") is None or evidence.get("lora") is None:
+        raise RuntimeError("Completed predecessor is missing human/A4 evidence")
     return {**_evidence(path, "predecessor"), "model_id": predecessor.get("model_id")}
 
 
