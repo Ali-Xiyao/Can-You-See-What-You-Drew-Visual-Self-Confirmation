@@ -8,6 +8,10 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
+import matplotlib as mpl
+
+mpl.use("Agg", force=True)
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd

@@ -18,8 +18,8 @@ two independent RTX 3090 cards; formal three-seed experiments remain single-A800
 ## Current Phase
 
 Phase 5: first local Show-o2 candidate. The v2.1 red result is immutable/tagged, the v2.2 code and
-data path are implemented and pushed, and the dedicated H-drive Windows environment is being
-materialized before the gate-ordered candidate-1 download and A1 GPU canary.
+data path are implemented and pushed, and the dedicated H-drive Windows environment is locked and
+CUDA-verified. The next operation is the gate-ordered candidate-1 download, followed by A1.
 
 ## Registered Backbone Ladder
 
@@ -104,7 +104,7 @@ families means the scientific claim is unsupported for that backbone and stops p
 
 ### Phase 5 — First Show-o2 candidate on local 3090s
 
-- [ ] Create an isolated native-Windows Show-o2 environment on H: and capture an exact lock (in progress).
+- [x] Create an isolated native-Windows Show-o2 environment on H: and capture an exact lock.
 - [ ] Download only base 1.5B and its locked dependencies to H: with size/hash verification.
 - [ ] Run A1 (six samples) at official 432x432; log GPU assignment, peak memory, time, outputs, and hashes.
 - [ ] If A1 passes, run A2 and A3 K=1. Run K=4 only for the A2-retained families.
@@ -147,7 +147,7 @@ families means the scientific claim is unsupported for that backbone and stops p
 
 ## Verification Checklist
 
-- [x] Unit/integration suite and Ruff pass (52 tests at commit `8fb06b0`; figure additions pending next commit).
+- [x] Unit/integration suite and Ruff pass (53 tests at commit `6345629`).
 - [x] Every decision binds model/source/dependency revisions and all input SHA-256 values.
 - [x] Checkpoint code restores adapter, optimizer, scheduler, RNG, and full config; GPU A4 still pending.
 - [ ] Observer subprocess receives only RGB path/bytes plus atomic question.

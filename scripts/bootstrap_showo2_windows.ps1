@@ -43,6 +43,17 @@ if (-not $showo2Python) {
 if (-not $showo2Python) { throw "No Python executable is available under $showo2Env" }
 
 if (-not $SkipInstall) {
+    & $showo2Python -m pip --version
+    if ($LASTEXITCODE -ne 0) {
+        $repairPython = Find-EnvironmentPython (Join-Path $env:SELFSIGHT_ENV_ROOT "core")
+        if (-not $repairPython) {
+            throw "Cloned pip is broken and the H-drive core environment is unavailable for repair"
+        }
+        $repairVersion = & $repairPython -c "import pip; print(pip.__version__)"
+        & $repairPython -m pip install --no-deps --upgrade --force-reinstall `
+            --target (Join-Path $showo2Env "Lib\site-packages") "pip==$repairVersion"
+        if ($LASTEXITCODE -ne 0) { throw "Failed to repair pip in the cloned Show-o2 environment" }
+    }
     & $showo2Python -m pip install --upgrade pip setuptools wheel
     if ($LASTEXITCODE -ne 0) { throw "Failed to update Show-o2 packaging tools" }
     & $showo2Python -m pip install -e "${repoRoot}[showo2]"

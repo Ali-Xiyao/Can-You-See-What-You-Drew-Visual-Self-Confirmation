@@ -273,3 +273,15 @@
   and a 600-DPI grayscale preview. Programmatic layout QA, direct color/grayscale review, PNG strict
   compliance, and SVG compliance pass; the PDF checker emits only a conservative Type-0 font
   embedding warning and no Type-3/FAIL.
+- Materialized `H:\selfsight-envs\showo2` by cloning the working H-drive CUDA environment, then
+  installed the minimal v2.2 dependency extra and captured
+  `H:\selfsight-envs\locks\windows-showo2.json`. An independent canary confirms Python 3.10.19,
+  Torch 2.5.1+cu121, both RTX 3090 cards, Transformers 4.47.0, Diffusers 0.31.0, PEFT 0.11.1,
+  Timm 1.0.12, Torchdiffeq 0.2.5, OpenCV 4.10.0, and the locked Show-o2 source origin.
+- The cloned environment inherited inconsistent pip code/metadata and initially raised
+  `ImportError: cannot import name BuildDependencyInstallError`. Reinstalled the exact working
+  core-environment pip into the clone and added the same self-repair check to the bootstrap script;
+  the rerun completed without recreating the environment.
+- A full-suite rerun exposed a Windows-only Matplotlib test-order failure when Tk was selected in a
+  headless process. All three publication-figure modules now select `Agg` before importing pyplot;
+  Ruff and all 53 tests pass again, followed by a fresh Show-o2 CUDA import canary.

@@ -312,3 +312,15 @@
   unembedded and warns even when Matplotlib uses `pdf.fonttype=42`; it does not recurse into the
   descendant CID font. This is a conservative WARN, not a Type-3 FAIL. SVG and 600-DPI PNG checks
   pass, and the PDF remains generated with TrueType/fonttype-42 settings.
+- Cloning a known-good Windows Conda CUDA environment can preserve a broken combination of pip
+  package files and distribution metadata even when `python -m pip --version` worked in the source
+  environment. `ensurepip --upgrade` is insufficient when the stale metadata already advertises a
+  newer version; a force reinstall from the known-good environment into the clone's site-packages
+  repairs the clone deterministically before dependency installation.
+- The minimal native-Windows Show-o2 import path is viable with Torch 2.5.1+cu121 and the official
+  source commit: `models`, `transport`, and flex-attention types import successfully, CUDA sees both
+  3090s, and no Triton, DeepSpeed, flash-attn, or xFormers package was needed for the import canary.
+- Publication renderers must select Matplotlib's non-interactive `Agg` backend before importing
+  `pyplot` on native Windows. Relying on ambient backend selection makes the suite order-dependent:
+  Tk may initialize successfully in earlier tests and then fail later with an invalid Tcl library
+  command even though no figure needs a window.
