@@ -33,7 +33,7 @@ from selfsight.schemas import (
     ObservationResult,
 )
 from selfsight.training.checkpoint import load_checkpoint, save_checkpoint
-from selfsight.training.gradients import collect_lora_gradient
+from selfsight.training.gradients import collect_lora_gradient, collect_lora_gradient_accumulated
 from selfsight.utils.cuda import cuda_device_index
 from selfsight.utils.hashing import rgb_sha256, sha256_json
 
@@ -735,6 +735,27 @@ class Showo2Adapter(ModelAdapter):
 
     def collect_gradient(self, batch: Showo2GenerationBatch, criterion: str) -> GradientResult:
         return self.compute_lora_gradient(batch, criterion)
+
+    def compute_lora_gradient_accumulated(
+        self,
+        batches: Sequence[Showo2GenerationBatch],
+        criterion: str,
+    ) -> GradientResult:
+        """Collect the mean LoRA gradient over deterministic Show-o2 microbatches."""
+
+        snapshot = collect_lora_gradient_accumulated(
+            self.model,
+            [lambda batch=batch: self.generation_loss(batch) for batch in batches],
+            criterion=criterion,
+            sample_ids=(sample_id for batch in batches for sample_id in batch.sample_ids),
+        )
+        return GradientResult(
+            criterion=criterion,
+            vector=snapshot.vector,
+            per_block=snapshot.per_block,
+            loss=snapshot.loss,
+            sample_ids=snapshot.sample_ids,
+        )
 
     def save_adapter(self, destination: str | Path, **state: Any) -> Path:
         required = {

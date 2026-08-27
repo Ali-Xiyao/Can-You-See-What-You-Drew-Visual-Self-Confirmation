@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping
+from math import isfinite
 from pathlib import Path
 from typing import Any
 
@@ -98,6 +99,62 @@ def require_selected_detector_audit(
     actual = sha256_file(Path(audit_path).resolve())
     if actual != records[0]["sha256"]:
         raise RuntimeError("Selected detector audit SHA-256 does not match Gate -1 evidence")
+    return audit
+
+
+def require_public_observer_audit(
+    audit_path: str | Path,
+    *,
+    model_id: str,
+    revision: str,
+    eligible_families: tuple[str, ...],
+    family_accuracy_min: float = 0.80,
+    yes_bias_max: float = 0.10,
+    abstain_rate_max: float = 0.20,
+) -> dict[str, Any]:
+    """Bind v2.2's frozen public observer to eligible-family capability evidence."""
+
+    if not 0.0 <= family_accuracy_min <= 1.0:
+        raise ValueError("Public-observer family floor must be within [0, 1]")
+    if not 0.0 <= yes_bias_max <= 1.0 or not 0.0 <= abstain_rate_max <= 1.0:
+        raise ValueError("Public-observer bias and abstention limits must be within [0, 1]")
+    if len(set(eligible_families)) < 4:
+        raise RuntimeError("The public observer audit requires at least four eligible families")
+    audit = read_report(audit_path, label="public observer audit")
+    if audit.get("observer_id") != model_id or audit.get("observer_revision") != revision:
+        raise RuntimeError("Public observer audit identity does not match the requested observer")
+    family = audit.get("family_open_accuracy")
+    if not isinstance(family, Mapping):
+        raise TypeError("Public observer audit has no family accuracy mapping")
+    missing = sorted(set(eligible_families).difference(family))
+    if missing:
+        raise RuntimeError(f"Public observer audit is missing eligible families: {missing}")
+    try:
+        family_values = {name: float(family[name]) for name in eligible_families}
+        bias = float(audit.get("absolute_yes_bias", float("inf")))
+        abstain = float(audit.get("abstain_rate", float("inf")))
+    except (TypeError, ValueError) as error:
+        raise RuntimeError("Public observer audit contains non-numeric metrics") from error
+    invalid = {
+        name: value
+        for name, value in family_values.items()
+        if not isfinite(value) or not 0.0 <= value <= 1.0
+    }
+    if invalid:
+        raise RuntimeError(f"Public observer audit contains invalid family accuracy: {invalid}")
+    if not isfinite(bias) or not 0.0 <= bias <= 1.0:
+        raise RuntimeError(f"Public observer audit contains invalid yes-bias: {bias}")
+    if not isfinite(abstain) or not 0.0 <= abstain <= 1.0:
+        raise RuntimeError(f"Public observer audit contains invalid abstention: {abstain}")
+    below = {
+        name: value for name, value in family_values.items() if value < family_accuracy_min
+    }
+    if below:
+        raise RuntimeError(f"Public observer is below the eligible-family floor: {below}")
+    if bias > yes_bias_max:
+        raise RuntimeError(f"Public observer yes-bias exceeds the limit: {bias:.3f}")
+    if abstain > abstain_rate_max:
+        raise RuntimeError(f"Public observer abstention exceeds the limit: {abstain:.3f}")
     return audit
 
 

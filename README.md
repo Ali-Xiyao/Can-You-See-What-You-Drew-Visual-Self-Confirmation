@@ -263,10 +263,60 @@ the independent reference-image observer ladder is audited.
 
 ## 4. E1, Gate -1b, and local one-seed loop
 
-The current `decision.json` is red and contains no selected detector, so the commands below must not
-be run now. After an explicitly approved design revision produces a new green decision, copy the
-detector identity and exact audit path from that decision; never substitute the strongest model by
-hand:
+The active v2.2 E1 entry point accepts only a complete green Gate -2 decision. It restricts Tier B
+to `selected_eligible_families`, verifies every Gate -2 evidence hash, binds the exact Show-o2
+checkpoint and frozen public-observer revision, and rechecks the observer's per-family accuracy,
+yes-bias, and abstention floors before loading either model:
+
+```powershell
+. .\scripts\set_h_env.ps1
+$showo2 = "H:\selfsight-envs\showo2\python.exe"
+$observer = "H:\selfsight-envs\observer\python.exe"
+$root = "H:\selfsight-runs\readiness\showo2-1p5b"
+$observerAudit = "H:\selfsight-runs\gate-minus-1\qwen2vl-local120.json"
+
+& $showo2 .\scripts\run_e1.py --config configs\local_3090_showo2.yaml `
+  --manifest H:\selfsight-data\selfsight-v1\manifests\tier_b.jsonl `
+  --joint-readiness-decision "$root\decision.json" `
+  --backbone-config configs\backbones\showo2_1p5b.yaml `
+  --observer-config configs\observers\qwen2vl_2b.yaml `
+  --detector-audit-report $observerAudit `
+  --detector-python $observer --detector-backend qwen2vl `
+  --detector-model-id Qwen/Qwen2-VL-2B-Instruct `
+  --detector-revision 895c3a49bc3fa70a340399125c650a463535e71c `
+  --output H:\selfsight-runs\e1\showo2-1p5b
+
+& $showo2 .\scripts\run_gradient_gate.py `
+  --config configs\local_3090_showo2.yaml `
+  --probe-manifest H:\selfsight-data\selfsight-v1\manifests\tier_a_probe.jsonl `
+  --joint-readiness-decision "$root\decision.json" `
+  --backbone-config configs\backbones\showo2_1p5b.yaml `
+  --observer-config configs\observers\qwen2vl_2b.yaml `
+  --lora-target-config "$root\a4-lora-targets.json" `
+  --detector-audit-report $observerAudit `
+  --detector-python $observer --detector-backend qwen2vl `
+  --detector-model-id Qwen/Qwen2-VL-2B-Instruct `
+  --detector-revision 895c3a49bc3fa70a340399125c650a463535e71c `
+  --device cuda:1 --output H:\selfsight-runs\gate-minus-1b\showo2-1p5b
+
+& $showo2 .\scripts\run_local_pilot.py `
+  --config configs\local_3090_showo2.yaml `
+  --train-manifest H:\selfsight-data\selfsight-v1\manifests\train.jsonl `
+  --joint-readiness-decision "$root\decision.json" `
+  --backbone-config configs\backbones\showo2_1p5b.yaml `
+  --lora-target-config "$root\a4-lora-targets.json" `
+  --gradient-gate-report H:\selfsight-runs\gate-minus-1b\showo2-1p5b\gate_minus_1b.json `
+  --frozen-observer-python $showo2 `
+  --output H:\selfsight-runs\local-pilot\showo2-1p5b --resume
+```
+
+These commands must not be run while Gate -2 is red or incomplete. E2 filters the training pool to
+the same eligible-family set, launches a frozen step-0 Show-o2 observer on GPU1 through the blind
+JSONL boundary, and binds checkpoint resume to the Gate, backbone, and exact LoRA target digest.
+
+The following commands are retained only to reproduce the frozen v2.1 Show-o experiment. Its
+current `decision.json` is red, so they also remain blocked unless supplied a distinct, immutable
+green v2.1 decision; they are not a route around Gate -2:
 
 ```powershell
 $gate = "H:\selfsight-runs\gate-minus-1\NEW-GREEN-decision.json"
@@ -300,10 +350,10 @@ $detectorRevision = "SELECTED_REVISION"
   --frozen-observer-python $core --output H:\selfsight-runs\local-pilot --resume
 ```
 
-All entry points validate the locked Gate identity, the selected detector model/revision, the exact
-SHA-256 of its capability audit, internal consistency, sample basis, and 95% coverage threshold
-before creating an output directory or loading a model. A red, mismatched, or malformed report
-therefore fails closed rather than becoming an accidental training override.
+The legacy entry points validate the locked Gate identity, selected detector model/revision, exact
+SHA-256 of its capability audit, internal consistency, sample basis, and 95% coverage threshold.
+A red, mismatched, or malformed report fails closed rather than becoming an accidental training
+override.
 
 If Gate -1b fails, E2 remains allowed but GDA reporting is disabled and the preregistered entropy/public-view fallback is activated. Checkpoints are adapter-only and each round is atomically committed, so rerunning with `--resume` is safe.
 

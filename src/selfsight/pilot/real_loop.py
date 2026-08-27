@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Mapping, Sequence
 from dataclasses import replace
 from datetime import datetime, timezone
 from fractions import Fraction
@@ -11,6 +12,12 @@ from pathlib import Path
 from typing import Any
 
 from selfsight.analysis.prerequisites import require_gate_minus_one, require_generated_domain
+from selfsight.analysis.readiness import require_joint_readiness
+from selfsight.backbones.showo2 import (
+    Showo2Adapter,
+    Showo2GenerationBatch,
+    Showo2ReplayBatch,
+)
 from selfsight.config import load_config, write_config_snapshot
 from selfsight.data.candidates import CandidateManifest
 from selfsight.data.questions import build_primary_atom, build_question
@@ -37,7 +44,7 @@ def _read_json(path: str | Path) -> dict[str, Any]:
 
 
 def _assert_prerequisites(
-    gate_report: str | Path,
+    gate_report: str | Path | None,
     gradient_gate_report: str | Path,
     generated_domain_report: str | Path,
     *,
@@ -51,6 +58,33 @@ def _assert_prerequisites(
         generated_domain_report, configured_coverage_min=generated_coverage_min
     )
     return bool(gradient.get("passed"))
+
+
+def _assert_joint_prerequisites(
+    decision_path: str | Path,
+    gradient_gate_report: str | Path,
+) -> tuple[bool, tuple[str, ...]]:
+    """Bind E2 to one green Gate -2 and its exact Gate -1b derivative."""
+
+    decision_path = Path(decision_path).resolve()
+    decision = require_joint_readiness(decision_path)
+    gradient_path = Path(gradient_gate_report).resolve()
+    gradient = _read_json(gradient_path)
+    if gradient.get("gate") != "minus_1b":
+        raise RuntimeError("The supplied gradient report is not a completed Gate -1b audit")
+    if (
+        gradient.get("model_id") != decision.get("model_id")
+        or gradient.get("revision") != decision.get("revision")
+    ):
+        raise RuntimeError("Gate -1b backbone identity does not match Gate -2")
+    eligible = tuple(str(item) for item in decision["selected_eligible_families"])
+    if tuple(str(item) for item in gradient.get("eligible_families", ())) != eligible:
+        raise RuntimeError("Gate -1b eligible families do not match Gate -2")
+    bindings = gradient.get("evidence_bindings")
+    joint = bindings.get("joint_readiness_decision") if isinstance(bindings, Mapping) else None
+    if not isinstance(joint, Mapping) or joint.get("sha256") != sha256_file(decision_path):
+        raise RuntimeError("Gate -1b is not hash-bound to the supplied Gate -2 decision")
+    return bool(gradient.get("passed")), eligible
 
 
 def _training_records(manifest_path: str | Path) -> tuple[dict[str, Any], list[str]]:
@@ -71,7 +105,7 @@ def _stable_seed(*parts: object) -> int:
     return int(sha256_json(list(parts))[:8], 16) & 0x7FFF_FFFF
 
 
-def _optimizer_and_scheduler(adapter: ShowoAdapter, config: Any):
+def _optimizer_and_scheduler(adapter: Any, config: Any):
     import torch
 
     training = config.values["training"]
@@ -112,10 +146,12 @@ def _abandon_incomplete(path: Path) -> None:
 
 def _initialize_round_zero(
     run_root: Path,
-    adapter: ShowoAdapter,
+    adapter: Any,
     optimizer: Any,
     scheduler: Any,
     config: Any,
+    checkpoint_config_digest: str,
+    checkpoint_config_values: dict[str, Any],
 ) -> None:
     final = run_root / "rounds" / "round-00"
     if (final / "DONE.json").is_file():
@@ -129,8 +165,8 @@ def _initialize_round_zero(
             model=adapter.model,
             optimizer=optimizer,
             scheduler=scheduler,
-            config_digest=config.digest,
-            config_values=config.values,
+            config_digest=checkpoint_config_digest,
+            config_values=checkpoint_config_values,
             step=0,
             round_index=0,
             metadata={"arm": arm, "kind": "base", "evidence_status": "local_exploratory"},
@@ -145,7 +181,7 @@ def _initialize_round_zero(
 
 def _load_arm(
     checkpoint: Path,
-    adapter: ShowoAdapter,
+    adapter: Any,
     optimizer: Any,
     scheduler: Any,
     config_digest: str,
@@ -162,7 +198,7 @@ def _load_arm(
 def _generate_and_select(
     *,
     arm: str,
-    adapter: ShowoAdapter,
+    adapter: Any,
     frozen_observer: ObserverServiceClient,
     entries: list[PromptScheduleEntry],
     records: dict[str, Any],
@@ -193,6 +229,7 @@ def _generate_and_select(
                     make_blind_request(candidate.image_path, (question,), candidate.candidate_id)
                 )
             observations[candidate.candidate_id] = observation
+        first_observation = next(iter(observations.values()))
         decisions.append(
             select_candidate(
                 prompt_id=scene.scene_id,
@@ -200,8 +237,8 @@ def _generate_and_select(
                 candidates=candidates,
                 observations=observations,
                 questions=(question,),
-                selector_id=(adapter.model_id if arm == "naive" else "frozen-step0-showo-rfo"),
-                observer_revision=(adapter.revision if arm == "naive" else next(iter(observations.values())).observer_revision),
+                selector_id=first_observation.observer_id,
+                observer_revision=first_observation.observer_revision,
             )
         )
         candidates_all.extend(candidates)
@@ -226,7 +263,7 @@ def _paired_order(
 def _train_arm(
     *,
     arm: str,
-    adapter: ShowoAdapter,
+    adapter: Any,
     optimizer: Any,
     scheduler: Any,
     decisions: list[SelectionDecision],
@@ -260,24 +297,49 @@ def _train_arm(
             if use_replay:
                 ids = [replay_ids[(replay_cursor + index) % len(replay_ids)] for index in range(micro_size)]
                 replay_cursor += micro_size
-                batch = ShowoReplayBatch(
-                    images=tuple(records[prompt_id]["reference_image"] for prompt_id in ids),
-                    questions=tuple(records[prompt_id]["question"].text for prompt_id in ids),
-                    answers=tuple(records[prompt_id]["question"].expected_answer for prompt_id in ids),
-                    sample_ids=tuple(ids),
-                )
-                loss = adapter.mmu_replay_loss(batch)
+                common = {
+                    "images": tuple(
+                        records[prompt_id]["reference_image"] for prompt_id in ids
+                    ),
+                    "questions": tuple(
+                        records[prompt_id]["question"].text for prompt_id in ids
+                    ),
+                    "answers": tuple(
+                        records[prompt_id]["question"].expected_answer for prompt_id in ids
+                    ),
+                    "sample_ids": tuple(ids),
+                }
+                if isinstance(adapter, Showo2Adapter):
+                    batch = Showo2ReplayBatch(
+                        **common,
+                        latent_seed=_stable_seed(
+                            config.values["seed"], round_index, optimizer_step, micro_step, "replay"
+                        ),
+                    )
+                    loss = adapter.understanding_replay_loss(batch)
+                else:
+                    batch = ShowoReplayBatch(**common)
+                    loss = adapter.mmu_replay_loss(batch)
                 replay_losses.append(float(loss.detach().cpu()))
             else:
                 examples = [selected[(t2i_cursor + index) % len(selected)] for index in range(micro_size)]
                 t2i_cursor += micro_size
-                batch = ShowoSFTBatch(
-                    prompts=tuple(records[item.prompt_id]["scene"].prompt for item in examples),
-                    images=tuple(item.image_path for item in examples),
-                    sample_ids=tuple(item.prompt_id for item in examples),
-                    mask_seed=_stable_seed(config.values["seed"], round_index, optimizer_step, micro_step),
+                common = {
+                    "prompts": tuple(
+                        records[item.prompt_id]["scene"].prompt for item in examples
+                    ),
+                    "images": tuple(item.image_path for item in examples),
+                    "sample_ids": tuple(item.prompt_id for item in examples),
+                }
+                batch_seed = _stable_seed(
+                    config.values["seed"], round_index, optimizer_step, micro_step
                 )
-                loss = adapter.sft_loss(batch)
+                if isinstance(adapter, Showo2Adapter):
+                    batch = Showo2GenerationBatch(**common, latent_seed=batch_seed)
+                    loss = adapter.generation_loss(batch)
+                else:
+                    batch = ShowoSFTBatch(**common, mask_seed=batch_seed)
+                    loss = adapter.sft_loss(batch)
                 t2i_losses.append(float(loss.detach().cpu()))
             if not torch.isfinite(loss):
                 raise FloatingPointError(f"Non-finite {arm} loss at round {round_index}")
@@ -308,18 +370,57 @@ def run_real_paired_pilot(
     train_manifest: str | Path,
     gate_report: str | Path,
     gradient_gate_report: str | Path,
-    generated_domain_report: str | Path,
+    generated_domain_report: str | Path | None,
     frozen_observer_python: str | Path,
     output_dir: str | Path,
     resume: bool = False,
+    joint_readiness_decision: str | Path | None = None,
+    backbone_config: str | Path | None = None,
+    lora_target_modules: Sequence[str] | None = None,
 ) -> dict[str, Any]:
     config = load_config(config_path)
-    gda_enabled = _assert_prerequisites(
-        gate_report,
-        gradient_gate_report,
-        generated_domain_report,
-        generated_coverage_min=float(config.values["gates"]["verifier_coverage_min"]),
-    )
+    eligible_families: tuple[str, ...] = ()
+    if joint_readiness_decision is not None:
+        if generated_domain_report is not None:
+            raise ValueError("v2.2 E2 must not mix the legacy generated-domain Gate")
+        gda_enabled, eligible_families = _assert_joint_prerequisites(
+            joint_readiness_decision,
+            gradient_gate_report,
+        )
+        if backbone_config is None or not lora_target_modules:
+            raise ValueError("v2.2 E2 requires a backbone config and audited LoRA targets")
+    else:
+        if gate_report is None or generated_domain_report is None:
+            raise ValueError("Legacy E2 requires Gate -1 and generated-domain reports")
+        gda_enabled = _assert_prerequisites(
+            gate_report,
+            gradient_gate_report,
+            generated_domain_report,
+            generated_coverage_min=float(config.values["gates"]["verifier_coverage_min"]),
+        )
+    if joint_readiness_decision is not None:
+        joint_path = Path(joint_readiness_decision).resolve()
+        target_modules = tuple(str(item) for item in lora_target_modules or ())
+        checkpoint_contract = {
+            "schema_version": 2,
+            "base_config_digest": config.digest,
+            "joint_readiness_sha256": sha256_file(joint_path),
+            "backbone_config_sha256": sha256_file(Path(str(backbone_config)).resolve()),
+            "lora_target_modules": list(target_modules),
+        }
+        checkpoint_config_digest = sha256_json(checkpoint_contract)
+        checkpoint_config_values = {
+            "base_experiment_config": config.values,
+            "joint_training_contract": checkpoint_contract,
+        }
+    else:
+        checkpoint_contract = {
+            "schema_version": 1,
+            "base_config_digest": config.digest,
+            "legacy_gate_minus_1_sha256": sha256_file(Path(str(gate_report)).resolve()),
+        }
+        checkpoint_config_digest = config.digest
+        checkpoint_config_values = config.values
     run_root = Path(output_dir).resolve()
     if run_root.exists() and any(run_root.iterdir()) and not resume:
         raise FileExistsError(f"Refusing to overwrite non-empty run: {run_root}")
@@ -331,11 +432,18 @@ def run_real_paired_pilot(
     else:
         write_config_snapshot(config, existing_config)
         write_host_manifest(run_root / "host_manifest.json")
-        prerequisite_paths = {
-            "gate_minus_1": Path(gate_report).resolve(),
-            "gate_minus_1b": Path(gradient_gate_report).resolve(),
-            "generated_domain": Path(generated_domain_report).resolve(),
-        }
+        if joint_readiness_decision is not None:
+            prerequisite_paths = {
+                "gate_minus_2": Path(joint_readiness_decision).resolve(),
+                "gate_minus_1b": Path(gradient_gate_report).resolve(),
+                "backbone_config": Path(str(backbone_config)).resolve(),
+            }
+        else:
+            prerequisite_paths = {
+                "gate_minus_1": Path(gate_report).resolve(),
+                "gate_minus_1b": Path(gradient_gate_report).resolve(),
+                "generated_domain": Path(str(generated_domain_report)).resolve(),
+            }
         atomic_write_json(
             run_root / "prerequisite_reports.json",
             {
@@ -356,7 +464,27 @@ def run_real_paired_pilot(
                 "usable_for_formal_claims": False,
             },
         )
+    contract_path = run_root / "training_contract.json"
+    if contract_path.exists():
+        if _read_json(contract_path).get("checkpoint_config_digest") != checkpoint_config_digest:
+            raise ValueError("Resume training contract does not match the existing run")
+    else:
+        atomic_write_json(
+            contract_path,
+            {
+                **checkpoint_contract,
+                "checkpoint_config_digest": checkpoint_config_digest,
+            },
+        )
     records, record_order = _training_records(train_manifest)
+    if eligible_families:
+        eligible_set = set(eligible_families)
+        record_order = [
+            scene_id
+            for scene_id in record_order
+            if records[scene_id]["scene"].family.value in eligible_set
+        ]
+        records = {scene_id: records[scene_id] for scene_id in record_order}
     training = config.values["training"]
     train_count_key = (
         "full_train_prompts"
@@ -382,23 +510,38 @@ def run_real_paired_pilot(
     if not schedule_path.exists():
         atomic_write_jsonl(schedule_path, (as_serializable(entry) for entry in schedule))
 
-    adapter = ShowoAdapter(
-        device=str(config.values["hardware"]["generator_device"]),
-        trainable=True,
-        generation_timesteps=int(config.values["model"]["generation_timesteps"]),
-        guidance_scale=float(config.values["model"]["guidance_scale"]),
-        temperature=float(config.values["model"]["temperature"]),
-    )
+    if joint_readiness_decision is not None:
+        adapter = Showo2Adapter(
+            backbone_config=Path(str(backbone_config)).resolve(),
+            device=str(config.values["hardware"]["generator_device"]),
+            lazy=False,
+        )
+    else:
+        adapter = ShowoAdapter(
+            device=str(config.values["hardware"]["generator_device"]),
+            trainable=True,
+            generation_timesteps=int(config.values["model"]["generation_timesteps"]),
+            guidance_scale=float(config.values["model"]["guidance_scale"]),
+            temperature=float(config.values["model"]["temperature"]),
+        )
     lora = training["lora"]
     lora_summary = adapter.attach_lora(
         rank=int(lora["rank"]),
         alpha=int(lora["alpha"]),
         dropout=float(lora["dropout"]),
-        target_modules=tuple(lora["target_modules"]),
+        target_modules=tuple(lora_target_modules or lora["target_modules"]),
         gradient_checkpointing=bool(training["gradient_checkpointing"]),
     )
     optimizer, scheduler = _optimizer_and_scheduler(adapter, config)
-    _initialize_round_zero(run_root, adapter, optimizer, scheduler, config)
+    _initialize_round_zero(
+        run_root,
+        adapter,
+        optimizer,
+        scheduler,
+        config,
+        checkpoint_config_digest,
+        checkpoint_config_values,
+    )
     completed = _completed_rounds(run_root)
     start_round = max(completed)
     if start_round >= int(training["rounds"]):
@@ -413,7 +556,7 @@ def run_real_paired_pilot(
         "-m",
         "selfsight.observers.service",
         "--backend",
-        "showo",
+        "showo2" if joint_readiness_decision is not None else "showo",
         "--model-id",
         adapter.model_id,
         "--revision",
@@ -423,6 +566,8 @@ def run_real_paired_pilot(
         "--ready-report",
         str(run_root / "frozen_observer_ready.json"),
     ]
+    if joint_readiness_decision is not None:
+        command.extend(["--backbone-config", str(Path(str(backbone_config)).resolve())])
     with ObserverServiceClient(command, run_root / "frozen_observer_wire.jsonl") as frozen_observer:
         for round_index in range(start_round, int(training["rounds"])):
             next_index = round_index + 1
@@ -437,7 +582,13 @@ def run_real_paired_pilot(
             arm_decisions: dict[str, list[SelectionDecision]] = {}
             previous = run_root / "rounds" / f"round-{round_index:02d}" / "arms"
             for arm in ARMS:
-                _load_arm(previous / arm, adapter, optimizer, scheduler, config.digest)
+                _load_arm(
+                    previous / arm,
+                    adapter,
+                    optimizer,
+                    scheduler,
+                    checkpoint_config_digest,
+                )
                 candidates, decisions = _generate_and_select(
                     arm=arm,
                     adapter=adapter,
@@ -452,7 +603,13 @@ def run_real_paired_pilot(
             paired = _paired_order(entries, arm_decisions["naive"], arm_decisions["rfo_self"])
             training_reports = {}
             for arm in ARMS:
-                _load_arm(previous / arm, adapter, optimizer, scheduler, config.digest)
+                _load_arm(
+                    previous / arm,
+                    adapter,
+                    optimizer,
+                    scheduler,
+                    checkpoint_config_digest,
+                )
                 training_reports[arm] = _train_arm(
                     arm=arm,
                     adapter=adapter,
@@ -470,8 +627,8 @@ def run_real_paired_pilot(
                     model=adapter.model,
                     optimizer=optimizer,
                     scheduler=scheduler,
-                    config_digest=config.digest,
-                    config_values=config.values,
+                    config_digest=checkpoint_config_digest,
+                    config_values=checkpoint_config_values,
                     step=next_index * int(training["optimizer_steps_per_round"]),
                     round_index=next_index,
                     metadata={
@@ -520,7 +677,14 @@ def run_real_paired_pilot(
         "run_root": str(run_root),
         "rounds": int(training["rounds"]),
         "final_step": int(training["rounds"]) * int(training["optimizer_steps_per_round"]),
-        "lora_trainable_parameters": lora_summary.trainable_parameters,
+        "lora_trainable_parameters": int(
+            lora_summary["trainable_parameters"]
+            if isinstance(lora_summary, Mapping)
+            else lora_summary.trainable_parameters
+        ),
+        "model_id": adapter.model_id,
+        "revision": adapter.revision,
+        "eligible_families": list(eligible_families),
         "formal_claims_allowed": False,
         "run_tier": (
             "formal_single_seed_pre_gate"

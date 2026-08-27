@@ -336,3 +336,26 @@
   that visually may contain four green quadrilaterals while answering the registered count as
   three twice. A1 therefore remains strictly an engineering/functionality gate; A3 deterministic
   coverage and blinded verifier precision are necessary to distinguish seeing from expectation.
+- Show-o2-1.5B clears the registered reference observation floor for five of six families with
+  perfect repeatability and no response/bias pathology. Absolute size is the isolated failure:
+  every small reference is read correctly but 9/10 large references collapse to small. Count's only
+  failures are 2/10 four-object references collapsing to three. This supports family-conditioned
+  retention rather than weakening the common 80% threshold.
+- Gate -1b cannot safely reuse Show-o v1's `ShowoSFTBatch` for Show-o2. The latter's registered
+  generation gradient is velocity/flow-matching over Wan latents, so the shared orchestration must
+  dispatch `Showo2GenerationBatch` while preserving identical prompt IDs, candidate pools, and
+  microbatch boundaries. Treating only the adapter surface as common avoids silently changing the
+  training objective.
+- Public-observer prerequisite checks must reject NaN explicitly: ordinary comparisons such as
+  `nan < 0.8` and `nan > 0.1` are both false and would otherwise let malformed accuracy/bias fields
+  bypass a threshold. All family, yes-bias, and abstention values are now finite fractions in
+  `[0, 1]` before any Gate comparison.
+- The RFO-Self selector cannot reuse the existing `showo` observer service after the backbone
+  revision: that backend reconstructs Show-o v1. A distinct `showo2` service backend is required so
+  the frozen observer is the exact step-0 member of the same unified model family. Keeping it behind
+  the blind JSONL protocol preserves RGB/question-only isolation even though it uses a different
+  Python environment and GPU.
+- A base experiment-config digest is insufficient for Show-o2 resume because the exact LoRA target
+  list is selected only after A1's real module-tree audit. The checkpoint contract must also hash
+  the green Gate -2 decision, backbone config, and expanded target-module list; otherwise two runs
+  with the same YAML but different audited targets could load each other's adapters.

@@ -32,6 +32,37 @@ class ShowoBlindObserver(BaseObserver):
         return [self.adapter._observe_one(image, question.text) for question in questions]
 
 
+class Showo2BlindObserver(BaseObserver):
+    """Frozen step-0 Show-o2 copy behind the same blind JSONL boundary."""
+
+    def __init__(
+        self,
+        model_id: str,
+        revision: str,
+        device: str,
+        backbone_config: str | Path,
+    ) -> None:
+        from selfsight.backbones.showo2 import Showo2Adapter
+
+        adapter = Showo2Adapter(
+            backbone_config=backbone_config,
+            device=device,
+            lazy=False,
+        )
+        if adapter.model_id != model_id or adapter.revision != revision:
+            raise ValueError(
+                "Show-o2 observer identity does not match its locked backbone config: "
+                f"{model_id}@{revision}"
+            )
+        self.observer_id = model_id
+        self.revision = revision
+        self.adapter = adapter
+
+    def answer(self, image_path: str | Path, questions: Sequence[AtomicQuestion]) -> list[str]:
+        result = self.adapter.observe_atoms(image_path, questions)
+        return [answer.raw_answer for answer in result.answers]
+
+
 class DiscreteShowoBlindObserver(BaseObserver):
     """Pinned pure-discrete Show-o MMU path; inference audit only."""
 

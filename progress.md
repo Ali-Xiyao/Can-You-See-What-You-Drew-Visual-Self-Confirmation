@@ -306,3 +306,30 @@
   and touching spatial/binding shapes; these are not promoted to correctness evidence and remain
   for A3 verifier plus blind-human adjudication.
 - Full Ruff and all 60 tests pass after the CUDA-context, WanVAE, and materialization-audit fixes.
+- A2-r1 passed in 90.53 seconds over all 120 balanced program renders. Open accuracy is 100% for
+  existence/color/spatial/binding, 90% for count, and 55% for size, so the registered retained set
+  for A3 is `{existence, count, color, spatial, binding}`. Macro accuracy is 90.83%, repeat
+  agreement 100%, abstention 0%, and absolute yes-bias 0 points. Report SHA-256 is
+  `c21d19c4623ea18b30bcb2306c8d8c8f1c3fe21c1024707cb885f56ea29a92e5`; rows SHA-256 is
+  `7dd7654e5663a8376f11b1a4ba7d8c0a37f40fed6a85aee8646cca9f9746dcfe`.
+- A2's 11 errors are structured rather than diffuse: two count-4 images were answered as 3, and
+  nine large objects were answered as small. Size is therefore excluded before A3 K=4 and cannot
+  re-enter the main eligible-family set through generated-domain performance.
+- Reworked E1 against the public `ModelAdapter.observe_atoms` contract and added a fail-closed
+  v2.2 entry path. It validates every Gate -2 evidence hash, exact Show-o2/Qwen identities, the
+  frozen public-observer per-family floor, and filters Tier B to the decision's eligible families.
+- Added v2.2 Gate -1b wiring without changing the frozen v2.1 route. The runner validates the A4
+  report's exact target-config hash and selection digest before constructing an audited Show-o2
+  adapter. Gradient batches now preserve each backbone's actual objective: flow-matching
+  `Showo2GenerationBatch` for Show-o2 and masked discrete `ShowoSFTBatch` for Show-o v1.
+- Added non-finite/out-of-range observer-evidence rejection and adapter-contract tests. Full Ruff
+  and all 71 tests pass; the only warnings are Pillow's already-known future PDF palette-mode
+  deprecation notices from publication-figure tests.
+- Added explicit local/A800 Show-o2 experiment profiles while preserving the frozen Show-o v1
+  profiles. They lock 432x432/50-step Show-o2 generation, audited-target-only LoRA, GPU0/GPU1 local
+  separation, and single-GPU A800 placement.
+- Reworked the paired local E2 loop for the v2.2 backbone contract. Its blind JSONL subprocess now
+  has an explicit `showo2` backend that loads an independent frozen step-0 checkpoint on GPU1. The
+  trainable arm dispatches flow-matching generation and atomic-QA replay batches, filters the prompt
+  pool to Gate -2 families, and refuses checkpoint resume unless the base config, Gate hash,
+  backbone hash, and exact LoRA module list all match.

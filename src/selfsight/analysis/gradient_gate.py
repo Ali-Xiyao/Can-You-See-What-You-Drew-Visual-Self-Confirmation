@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import random
+from collections.abc import Mapping, Sequence
 from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 
+from selfsight.backbones.showo2 import Showo2Adapter, Showo2GenerationBatch
 from selfsight.config import load_config, write_config_snapshot
 from selfsight.data.candidates import CandidateManifest
 from selfsight.data.questions import build_primary_atom, build_question
@@ -27,6 +29,7 @@ from selfsight.schemas import (
 )
 from selfsight.showo_adapter import ShowoAdapter, ShowoSFTBatch
 from selfsight.training.gradients import compare_gradients, noise_interval
+from selfsight.utils.cuda import cuda_device_index
 from selfsight.utils.evidence import write_host_manifest
 from selfsight.utils.hashing import sha256_json
 from selfsight.utils.jsonl import atomic_write_json, atomic_write_jsonl, read_jsonl
@@ -59,20 +62,33 @@ def _batches(
     selected: dict[str, CandidateRecord],
     scenes: dict[str, SceneSpec],
     *,
+    adapter: Any,
     micro_size: int,
     seed: int,
-) -> list[ShowoSFTBatch]:
+) -> list[Any]:
     output = []
     for start in range(0, len(prompt_ids), micro_size):
         ids = prompt_ids[start : start + micro_size]
-        output.append(
-            ShowoSFTBatch(
-                prompts=tuple(scenes[prompt_id].prompt for prompt_id in ids),
-                images=tuple(selected[prompt_id].image_path for prompt_id in ids),
-                sample_ids=tuple(ids),
-                mask_seed=_stable_seed(seed, tuple(ids)),
+        common = {
+            "prompts": tuple(scenes[prompt_id].prompt for prompt_id in ids),
+            "images": tuple(selected[prompt_id].image_path for prompt_id in ids),
+            "sample_ids": tuple(ids),
+        }
+        batch_seed = _stable_seed(seed, tuple(ids))
+        if isinstance(adapter, Showo2Adapter):
+            output.append(
+                Showo2GenerationBatch(
+                    **common,
+                    latent_seed=batch_seed,
+                )
             )
-        )
+        else:
+            output.append(
+                ShowoSFTBatch(
+                    **common,
+                    mask_seed=batch_seed,
+                )
+            )
     return output
 
 
@@ -93,39 +109,58 @@ def run_gradient_gate(
     probe_manifest: str | Path,
     detector_command: list[str],
     output_dir: str | Path,
+    adapter: Any | None = None,
+    lora_target_modules: Sequence[str] | None = None,
+    eligible_families: Sequence[str] | None = None,
+    evidence_bindings: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     import torch
 
     config = load_config(config_path)
-    output = Path(output_dir).resolve()
-    output.mkdir(parents=True, exist_ok=False)
-    write_config_snapshot(config, output / "resolved_config.json")
-    write_host_manifest(output / "host_manifest.json")
-    adapter = ShowoAdapter(
-        device=str(config.values["hardware"]["generator_device"]),
-        trainable=True,
-        generation_timesteps=int(config.values["model"]["generation_timesteps"]),
-        guidance_scale=float(config.values["model"]["guidance_scale"]),
-        temperature=float(config.values["model"]["temperature"]),
-    )
-    lora = config.values["training"]["lora"]
-    lora_summary = adapter.attach_lora(
-        rank=int(lora["rank"]),
-        alpha=int(lora["alpha"]),
-        dropout=float(lora["dropout"]),
-        target_modules=tuple(lora["target_modules"]),
-        gradient_checkpointing=bool(config.values["training"]["gradient_checkpointing"]),
-    )
     probe_size = int(config.values["gradient_probe"]["size"])
-    k = int(config.values["training"]["candidate_k"])
-    scenes: dict[str, SceneSpec] = {}
+    source_records = list(read_jsonl(probe_manifest))
+    family_filter = tuple(dict.fromkeys(str(item) for item in eligible_families or ()))
+    family_set = set(family_filter)
+    if family_set:
+        source_records = [
+            record
+            for record in source_records
+            if str(record["scene"]["family"]) in family_set
+        ]
+    if len(source_records) < probe_size:
+        raise RuntimeError(
+            f"Gradient probe has only {len(source_records)} eligible records; {probe_size} required"
+        )
     records = stable_stratified_sample(
-        list(read_jsonl(probe_manifest)),
+        source_records,
         probe_size,
         stratum=lambda record: str(record["atom"]["family"]),
         item_id=lambda record: str(record["scene"]["scene_id"]),
         seed=int(config.values["seed"]),
     )
+    output = Path(output_dir).resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    write_config_snapshot(config, output / "resolved_config.json")
+    write_host_manifest(output / "host_manifest.json")
+    if adapter is None:
+        adapter = ShowoAdapter(
+            device=str(config.values["hardware"]["generator_device"]),
+            trainable=True,
+            generation_timesteps=int(config.values["model"]["generation_timesteps"]),
+            guidance_scale=float(config.values["model"]["guidance_scale"]),
+            temperature=float(config.values["model"]["temperature"]),
+        )
+    lora = config.values["training"]["lora"]
+    targets = tuple(lora_target_modules or lora["target_modules"])
+    lora_summary = adapter.attach_lora(
+        rank=int(lora["rank"]),
+        alpha=int(lora["alpha"]),
+        dropout=float(lora["dropout"]),
+        target_modules=targets,
+        gradient_checkpointing=bool(config.values["training"]["gradient_checkpointing"]),
+    )
+    k = int(config.values["training"]["candidate_k"])
+    scenes: dict[str, SceneSpec] = {}
     for record in records:
         scene = SceneSpec.from_dict(record["scene"])
         scenes[scene.scene_id] = scene
@@ -199,10 +234,14 @@ def run_gradient_gate(
         report = {
             "schema_version": 1,
             "gate": "minus_1b",
+            "model_id": adapter.model_id,
+            "revision": adapter.revision,
             "passed": False,
             "reason": "Fewer than 8 probe prompts had non-abstaining selections under all criteria",
             "common_samples": len(common),
             "availability": availability,
+            "eligible_families": list(family_filter),
+            "evidence_bindings": dict(evidence_bindings or {}),
             "fallback": "Do not report GDA; continue E2 with entropy/public-view baselines only.",
         }
         atomic_write_json(output / "gate_minus_1b.json", report)
@@ -216,6 +255,7 @@ def run_gradient_gate(
                 common,
                 selected[criterion],
                 scenes,
+                adapter=adapter,
                 micro_size=micro_size,
                 seed=int(config.values["seed"]),
             ),
@@ -226,6 +266,7 @@ def run_gradient_gate(
             common,
             selected["naive"],
             scenes,
+            adapter=adapter,
             micro_size=micro_size,
             seed=int(config.values["seed"]),
         ),
@@ -250,6 +291,7 @@ def run_gradient_gate(
                         half,
                         selected["naive"],
                         scenes,
+                        adapter=adapter,
                         micro_size=micro_size,
                         seed=_stable_seed(config.values["seed"], split_index, half_index),
                     ),
@@ -273,11 +315,20 @@ def run_gradient_gate(
     report = {
         "schema_version": 1,
         "gate": "minus_1b",
+        "model_id": adapter.model_id,
+        "revision": adapter.revision,
         "passed": all(conditions.values()),
         "conditions": conditions,
         "common_samples": len(common),
         "availability": availability,
-        "lora_trainable_parameters": lora_summary.trainable_parameters,
+        "lora_trainable_parameters": int(
+            lora_summary["trainable_parameters"]
+            if isinstance(lora_summary, Mapping)
+            else lora_summary.trainable_parameters
+        ),
+        "lora_target_modules": list(targets),
+        "eligible_families": list(family_filter),
+        "evidence_bindings": dict(evidence_bindings or {}),
         "gda_free": as_serializable(free),
         "gda_gold": as_serializable(gold),
         "identical_control": as_serializable(identical_comparison),
@@ -289,7 +340,9 @@ def run_gradient_gate(
             "g_rfo_detector_revision": detector_identity[1] if detector_identity else None,
             "same_object": False,
         },
-        "peak_gpu_bytes": int(torch.cuda.max_memory_allocated(adapter.device)),
+        "peak_gpu_bytes": int(
+            torch.cuda.max_memory_allocated(cuda_device_index(adapter.device))
+        ),
         "fallback": (
             None
             if all(conditions.values())

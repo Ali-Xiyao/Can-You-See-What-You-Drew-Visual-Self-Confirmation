@@ -37,6 +37,19 @@ def test_local_and_a800_configs_preserve_experiment_definition():
     assert a800.values["hardware"]["distributed"] is False
 
 
+def test_showo2_local_and_a800_configs_preserve_joint_backbone_definition():
+    local = load_config(Path("configs/local_3090_showo2.yaml"))
+    a800 = load_config(Path("configs/a800_80g_showo2.yaml"))
+    assert local.values["model"] == a800.values["model"]
+    assert local.values["model"]["trainable_id"] == "showlab/show-o2-1.5B"
+    assert local.values["model"]["image_resolution"] == 432
+    assert local.values["model"]["generation_timesteps"] == 50
+    assert local.values["training"]["lora"] == a800.values["training"]["lora"]
+    assert local.values["training"]["lora"]["target_selection_required"] is True
+    assert local.values["hardware"]["observer_device"] == "cuda:1"
+    assert a800.values["hardware"]["observer_device"] == "cuda:0"
+
+
 def test_paired_schedule_is_deterministic(registered_splits):
     prompt_ids = [scene.scene_id for scene in registered_splits["train"]]
     left = build_paired_schedule(prompt_ids, rounds=10, prompts_per_round=64, candidate_k=2, seed=7)

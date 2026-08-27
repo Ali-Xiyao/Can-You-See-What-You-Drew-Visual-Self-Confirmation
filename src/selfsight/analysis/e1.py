@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -14,13 +15,40 @@ from selfsight.observers.client import ObserverServiceClient
 from selfsight.rfo.isolation import hard_render, make_blind_request
 from selfsight.rfo.metrics import ContextTrial, compute_e1_metrics
 from selfsight.schemas import SceneSpec
+from selfsight.utils.hashing import sha256_json
 from selfsight.utils.jsonl import atomic_write_json, read_jsonl
 
 
-def _model_answer(adapter: Any, image: Image.Image, text: str, question: Any) -> str | None:
-    from selfsight.data.questions import normalize_answer
+def _model_answer(adapter: Any, image_path: str | Path, text: str, question: Any) -> str | None:
+    contextualized = replace(
+        question,
+        question_id=f"{question.question_id}-{sha256_json(text)[:12]}",
+        text=text,
+    )
+    result = adapter.observe_atoms(image_path, (contextualized,))
+    if len(result.answers) != 1:
+        raise RuntimeError("E1 adapter must return exactly one answer per context")
+    return result.answers[0].normalized_answer
 
-    return normalize_answer(adapter._observe_one(image, text), question)
+
+def _filter_eligible_records(
+    records: list[dict[str, Any]], eligible_families: tuple[str, ...] | None
+) -> tuple[list[dict[str, Any]], list[str]]:
+    if eligible_families is None:
+        return records, []
+    eligible = set(eligible_families)
+    if not eligible:
+        raise ValueError("E1 requires at least one eligible family")
+    observed = {str(record["pair"]["source"]["family"]) for record in records}
+    unknown = sorted(eligible.difference(observed))
+    if unknown:
+        raise ValueError(f"E1 eligible families are absent from the manifest: {unknown}")
+    retained = [
+        record
+        for record in records
+        if str(record["pair"]["source"]["family"]) in eligible
+    ]
+    return retained, sorted(observed.difference(eligible))
 
 
 def run_e1_tier_b(
@@ -30,20 +58,23 @@ def run_e1_tier_b(
     manifest_path: str | Path,
     output_dir: str | Path,
     limit: int | None = None,
+    eligible_families: tuple[str, ...] | None = None,
+    evidence_bindings: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Run the fixed five-context matrix without exposing intent to the detector process."""
 
     output = Path(output_dir).resolve()
     output.mkdir(parents=True, exist_ok=True)
+    resolution = int(getattr(adapter, "native_resolution", 512))
     blank_path = hard_render(
-        Image.new("RGB", (512, 512), (245, 245, 245)), output / "blank.png"
+        Image.new("RGB", (resolution, resolution), (245, 245, 245)), output / "blank.png"
     )["path"]
-    with Image.open(blank_path) as opened:
-        blank = opened.convert("RGB")
     trials: list[ContextTrial] = []
     rows: list[dict[str, Any]] = []
     by_category: dict[str, list[ContextTrial]] = defaultdict(list)
-    records = list(read_jsonl(manifest_path))
+    records, excluded_families = _filter_eligible_records(
+        list(read_jsonl(manifest_path)), eligible_families
+    )
     if limit is not None:
         records = stable_stratified_sample(
             records,
@@ -66,13 +97,11 @@ def run_e1_tier_b(
         with Image.open(counterfactual_path) as opened:
             counterfactual = opened.convert("RGB")
             hard_render(counterfactual, hard_path)
-        with Image.open(hard_path) as opened:
-            hard_rgb = opened.convert("RGB")
         prompt_context = f"Original instruction: {pair['intent_prompt']}\n{question.text}"
-        rgb_only = _model_answer(adapter, counterfactual, question.text, question)
-        prompt_only = _model_answer(adapter, blank, prompt_context, question)
-        rgb_prompt = _model_answer(adapter, counterfactual, prompt_context, question)
-        hard_answer = _model_answer(adapter, hard_rgb, question.text, question)
+        rgb_only = _model_answer(adapter, counterfactual_path, question.text, question)
+        prompt_only = _model_answer(adapter, blank_path, prompt_context, question)
+        rgb_prompt = _model_answer(adapter, counterfactual_path, prompt_context, question)
+        hard_answer = _model_answer(adapter, hard_path, question.text, question)
         detector_result = detector.observe(
             make_blind_request(hard_path, (question,), f"e1-{index:04d}")
         )
@@ -111,6 +140,10 @@ def run_e1_tier_b(
     report = {
         "schema_version": 1,
         "samples": len(trials),
+        "eligible_families": sorted(eligible_families) if eligible_families else None,
+        "excluded_manifest_families": excluded_families,
+        "context_resolution": resolution,
+        "evidence_bindings": evidence_bindings or {},
         "metrics": compute_e1_metrics(trials),
         "by_category": {
             category: compute_e1_metrics(category_trials)

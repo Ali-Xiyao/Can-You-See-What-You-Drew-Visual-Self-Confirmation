@@ -99,15 +99,21 @@ families means the scientific claim is unsupported for that backbone and stops p
 - [x] Implement `audit_generated_precision.py` with blind packet export/import and verifier diagnostics.
 - [x] Implement `finalize_joint_readiness.py` with fail-closed family intersection and SHA binding.
 - [x] Implement `render_readiness_matrix.py` with publication-safe color/vector/grayscale exports.
-- [ ] Make E1/E2 automatically read the v2.2 decision and reject ineligible families/backbones.
-- **Status:** completed_readiness_pending_e1_e2_wiring
+- [x] Make E1 automatically read the v2.2 decision and reject ineligible families/backbones.
+- [x] Bind Gate -1b to the same decision, public-observer audit, eligible families, and A4-selected
+  Show-o2 LoRA module hash.
+- [x] Bind the paired local E2 loop to the same decision, eligible families, frozen step-0 Show-o2,
+  objective-specific training batches, and checkpoint contract.
+- [ ] Bind the formal A800 E2 orchestrator and checkpoint evaluator to the same v2.2 contracts.
+- **Status:** local_path_complete_formal_wiring_pending
 
 ### Phase 5 — First Show-o2 candidate on local 3090s
 
 - [x] Create an isolated native-Windows Show-o2 environment on H: and capture an exact lock.
 - [x] Download only base 1.5B and its locked dependencies to H: with size/hash verification.
 - [x] Run A1 (six samples) at official 432x432; log GPU assignment, peak memory, time, outputs, and hashes.
-- [ ] If A1 passes, run A2 and A3 K=1. Run K=4 only for the A2-retained families.
+- [ ] If A1 passes, run A2 and A3 K=1. Run K=4 only for the A2-retained families (A2 complete;
+  A3 generation in progress for five retained families).
 - [ ] Run A4 LoRA backward only if A2/A3 leave a plausible path to four joint families.
 - **Status:** in_progress
 

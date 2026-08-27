@@ -6,6 +6,7 @@ import pytest
 
 from selfsight.analysis.prerequisites import (
     require_generated_domain,
+    require_public_observer_audit,
     require_selected_detector_audit,
 )
 from selfsight.utils.hashing import sha256_file
@@ -109,4 +110,72 @@ def test_selected_detector_rejects_identity_or_audit_tampering(tmp_path) -> None
             audit,
             model_id="candidate/model",
             revision="b" * 40,
+        )
+
+
+def test_public_observer_audit_is_family_conditioned(tmp_path) -> None:
+    audit = _write(
+        tmp_path / "public.json",
+        {
+            "observer_id": "public/model",
+            "observer_revision": "d" * 40,
+            "family_open_accuracy": {
+                "existence": 1.0,
+                "count": 0.85,
+                "color": 1.0,
+                "size": 0.10,
+                "spatial": 0.80,
+                "binding": 1.0,
+            },
+            "absolute_yes_bias": 0.06,
+            "abstain_rate": 0.0,
+        },
+    )
+    eligible = ("existence", "count", "color", "spatial", "binding")
+    report = require_public_observer_audit(
+        audit,
+        model_id="public/model",
+        revision="d" * 40,
+        eligible_families=eligible,
+    )
+    assert report["observer_id"] == "public/model"
+    with pytest.raises(RuntimeError, match="below the eligible-family floor"):
+        require_public_observer_audit(
+            audit,
+            model_id="public/model",
+            revision="d" * 40,
+            eligible_families=(*eligible[:3], "size"),
+        )
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        ("family_open_accuracy", float("nan"), "invalid family accuracy"),
+        ("absolute_yes_bias", float("nan"), "invalid yes-bias"),
+        ("abstain_rate", 1.1, "invalid abstention"),
+    ],
+)
+def test_public_observer_audit_rejects_non_finite_or_out_of_range_metrics(
+    tmp_path, field, value, message
+) -> None:
+    eligible = ("existence", "count", "color", "spatial")
+    payload = {
+        "observer_id": "public/model",
+        "observer_revision": "d" * 40,
+        "family_open_accuracy": {name: 0.9 for name in eligible},
+        "absolute_yes_bias": 0.0,
+        "abstain_rate": 0.0,
+    }
+    if field == "family_open_accuracy":
+        payload[field]["existence"] = value
+    else:
+        payload[field] = value
+    audit = _write(tmp_path / "public-invalid.json", payload)
+    with pytest.raises(RuntimeError, match=message):
+        require_public_observer_audit(
+            audit,
+            model_id="public/model",
+            revision="d" * 40,
+            eligible_families=eligible,
         )

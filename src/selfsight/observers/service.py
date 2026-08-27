@@ -15,13 +15,25 @@ from selfsight.observers.protocol import decode_request, encode_result, execute_
 from selfsight.utils.jsonl import atomic_write_json
 
 
-def _load_backend(name: str, model_id: str | None, revision: str | None, device: str):
+def _load_backend(
+    name: str,
+    model_id: str | None,
+    revision: str | None,
+    device: str,
+    backbone_config: Path | None = None,
+):
     if name == "mock":
         from selfsight.observers.mock import MockPixelObserver
 
         return MockPixelObserver()
     if not model_id or not revision:
         raise ValueError("A pinned --model-id and --revision are required for a real observer")
+    if name == "showo2":
+        from selfsight.observers.unified import Showo2BlindObserver
+
+        if backbone_config is None:
+            raise ValueError("Show-o2 observer requires --backbone-config")
+        return Showo2BlindObserver(model_id, revision, device, backbone_config)
     if name in {"showo", "showo_discrete", "janus"}:
         from selfsight.observers.unified import (
             DiscreteShowoBlindObserver,
@@ -48,6 +60,7 @@ def main() -> None:
         choices=(
             "mock",
             "showo",
+            "showo2",
             "showo_discrete",
             "janus",
             "smolvlm",
@@ -59,13 +72,20 @@ def main() -> None:
     parser.add_argument("--model-id")
     parser.add_argument("--revision")
     parser.add_argument("--device", default="cuda:1")
+    parser.add_argument("--backbone-config", type=Path)
     parser.add_argument("--ready-report", type=Path)
     args = parser.parse_args()
     load_started = perf_counter()
     # Third-party remote-code models sometimes print informational text to stdout.
     # Stdout is reserved exclusively for the JSONL protocol, so quarantine it.
     with redirect_stdout(sys.stderr):
-        observer = _load_backend(args.backend, args.model_id, args.revision, args.device)
+        observer = _load_backend(
+            args.backend,
+            args.model_id,
+            args.revision,
+            args.device,
+            args.backbone_config,
+        )
     if args.ready_report:
         report = {
             "schema_version": 1,
