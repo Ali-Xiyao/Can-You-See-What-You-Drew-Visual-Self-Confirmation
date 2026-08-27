@@ -323,7 +323,7 @@
   adapter. Gradient batches now preserve each backbone's actual objective: flow-matching
   `Showo2GenerationBatch` for Show-o2 and masked discrete `ShowoSFTBatch` for Show-o v1.
 - Added non-finite/out-of-range observer-evidence rejection and adapter-contract tests. Full Ruff
-  and all 73 tests pass; the only warnings are Pillow's already-known future PDF palette-mode
+  and all 77 tests pass; the only warnings are Pillow's already-known future PDF palette-mode
   deprecation notices from publication-figure tests.
 - Added explicit local/A800 Show-o2 experiment profiles while preserving the frozen Show-o v1
   profiles. They lock 432x432/50-step Show-o2 generation, audited-target-only LoRA, GPU0/GPU1 local
@@ -350,3 +350,14 @@
   IDs by scene ID, writes to an output-specific image root, and rejects any row/ID/path cardinality
   mismatch before writing a report. Collision-safe r2 is running under the unchanged manifest,
   fixed seeds, model revision, and verifier.
+- Completed the v2.2 A800 implementation path. The bootstrap creates a dedicated Show-o2
+  environment; migration canaries use the green Gate/backbone and eligible probe families; the
+  comparison hashes both hosts' rows/summaries and requires full backbone identity equality.
+- The formal orchestrator now validates three seed configs differ only in seed/profile, rechecks all
+  Gate -2/public-observer/A4/migration hashes and identities, enforces unique eligible sample
+  capacity before creating outputs, runs Show-o2 Gate -1b/training/evaluation sequentially, and
+  aggregates only the three registered seeds.
+- Added a decision-bound eligible E2 data builder. It redistributes exactly 2400/200/600 cases over
+  the selected families, preserves train/probe/outcome template separation, excludes every A1/A2/A3
+  signature, renders deterministic replay references, and writes a Gate-hashed registry. The
+  portability layer now rebases this three-manifest dataset without requiring unrelated Tier B/D.

@@ -369,3 +369,12 @@
   therefore collide across scientifically distinct cases. The checkpoint/case namespace must
   include `scene_id`, and Gate evidence must assert one candidate ID and one image path per row even
   when repeated prompts legitimately produce byte-identical RGBs.
+- Filtering the original six-family 2400/200/600 manifests after Gate -2 is sufficient for the
+  640-prompt local pilot but not for formal E2: with one failed family it leaves only 2000 training
+  and 500 outcome cases, below the registered 2400/600 unique denominators. Formal data must be
+  regenerated deterministically after the green decision, redistributing the fixed totals across
+  eligible families while excluding readiness signatures; it must not cycle or duplicate rows.
+- A migration boolean is not adequate formal authorization. The A800 handoff must bind local and
+  remote row/summary hashes, full backbone/source/dependency identity, and the exact eligible-family
+  list. Formal orchestration should reject modified seed YAMLs, insufficient family-conditioned
+  manifests, or missing migration evidence before creating a run directory.

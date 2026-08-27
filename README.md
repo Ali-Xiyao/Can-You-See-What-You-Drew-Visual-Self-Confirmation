@@ -389,15 +389,18 @@ export SELFSIGHT_ROOT=/data/selfsight
 source scripts/set_a800_env.sh
 bash scripts/bootstrap_a800.sh
 CORE="${SELFSIGHT_ENV_ROOT}/core/bin/python"
+SHOWO2="${SELFSIGHT_ENV_ROOT}/showo2/bin/python"
 "${CORE}" scripts/sync_repositories.py
-"${CORE}" scripts/download_models.py --group core
+"${CORE}" scripts/download_models.py --group readiness_candidate_1
 "${CORE}" scripts/download_models.py --group observers
 "${CORE}" scripts/materialize_a800_seed_configs.py --output "${SELFSIGHT_RUN_ROOT}/formal-configs"
 ```
 
 Run the fixed 32-prompt canary locally and on A800, then compare them with `scripts/compare_migration_canaries.py`. Formal E2 is blocked unless answer/verifier agreement is at least 95% and metric drift is at most 1 point.
 
-Because dataset manifests contain host-absolute RGB paths, run
+After a green Gate -2, `scripts/build_eligible_e2_data.py` creates the decision-bound 2400/200/600
+train/probe/outcome splits using only eligible families and excluding readiness signatures. Because
+their manifests contain host-absolute RGB paths, run
 `scripts/rebase_dataset_manifests.py` after copying data to Linux. It writes a new manifest view and
 verifies every original file/RGB SHA-256; it never edits the Windows manifests. The A800 runbook
 uses only this rebased view.
@@ -408,18 +411,16 @@ uses only this rebased view.
 
 - The 200-prompt gradient probe and 600-prompt outcome set never enter training or selector tuning.
 - Blind observer subprocesses receive only a hard-reloaded RGB path, atomic questions, and request metadata—never prompt, expected answer, generator state, or source label.
-- RFO training uses a frozen step-0 Show-o copy; `g_rfo` detection uses the held-out matched heterogeneous VLM.
+- RFO training uses a frozen step-0 copy of the selected Show-o2 backbone; `g_rfo` detection uses the fixed frozen Qwen2-VL-2B public observer.
 - Candidate IDs, prompt IDs, K, and random seeds are paired between Naive and RFO arms; common non-abstained counts are enforced.
 - Formal conclusions require three A800 seeds. Local one-seed curves are exploratory regardless of apparent effect size.
 
 Current gate state and exact evidence are tracked in `task_plan.md`, `findings.md`, and `progress.md`.
 
-As of the latest local evidence: the balanced mock loop and real Show-o engineering canary pass,
-but Show-o clears only 2/6 capability families and therefore fails Gate -1. Qwen2-VL clears 5/6
-but is 25pt stronger than Show-o rather than capability-matched; Janus-Pro clears 5/6 but is
-22.5pt stronger. SmolVLM and InternVL2-1B each clear only 3/6, while pure-discrete Show-o still
-clears only 2/6. The generated-RGB coverage sub-gate is independently red. These are explicit,
-hashed stop decisions, not missing-result defaults; Janus and pure-discrete Show-o are diagnostic
-rows and do not mutate the frozen `decision.json`. The locked Qwen2.5-VL-7B upper bound also loads
-on GPU1 in 16,636,220,928 peak allocated bytes and answers the six-family repeatability canary
-12/12 consistently; it is not used for post-hoc detector selection.
+As of the latest local evidence, Show-o2-1.5B passes A1 and retains five A2 reference families:
+existence, count, color, spatial, and binding. Absolute size is excluded. A3-r1 was automatically
+red and additionally invalidated by a candidate-path collision discovered during artifact audit.
+Collision-safe A3-r2 is running under the same manifest, seeds, revision, and verifier. Until r2
+finishes, no blind-human packet, A4, Gate -2 decision, fallback download, E1, or E2 is authorized.
+The frozen Show-o v1 negative result remains available at tag `v2.1-showo-gate-red` and is not
+recalculated by this branch.

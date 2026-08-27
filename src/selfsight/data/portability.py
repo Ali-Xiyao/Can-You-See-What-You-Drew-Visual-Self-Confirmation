@@ -11,6 +11,7 @@ from selfsight.utils.hashing import rgb_sha256, sha256_file
 from selfsight.utils.jsonl import atomic_write_json, atomic_write_jsonl, read_jsonl
 
 SCENE_MANIFESTS = ("train", "tier_a_probe", "tier_a_outcome", "tier_d")
+REQUIRED_SCENE_MANIFESTS = ("train", "tier_a_probe", "tier_a_outcome")
 
 
 def _image_for_scene(data_root: Path, scene: dict[str, Any]) -> Path:
@@ -84,6 +85,10 @@ def rebase_dataset_manifests(
     row_counts: dict[str, int] = {}
     for name in SCENE_MANIFESTS:
         source_path = source_dir / f"{name}.jsonl"
+        if not source_path.is_file():
+            if name in REQUIRED_SCENE_MANIFESTS:
+                raise FileNotFoundError(f"Required scene manifest is missing: {source_path}")
+            continue
         records = rebase_scene_records(list(read_jsonl(source_path)), root)
         destination = atomic_write_jsonl(output / source_path.name, records)
         manifest_paths[name] = str(destination.resolve())
@@ -93,14 +98,15 @@ def rebase_dataset_manifests(
         }
         row_counts[name] = len(records)
     tier_b_source = source_dir / "tier_b.jsonl"
-    tier_b_records = rebase_tier_b_records(list(read_jsonl(tier_b_source)), root)
-    tier_b_destination = atomic_write_jsonl(output / tier_b_source.name, tier_b_records)
-    manifest_paths["tier_b"] = str(tier_b_destination.resolve())
-    manifest_hashes["tier_b"] = {
-        "source": sha256_file(tier_b_source),
-        "rebased": sha256_file(tier_b_destination),
-    }
-    row_counts["tier_b"] = len(tier_b_records)
+    if tier_b_source.is_file():
+        tier_b_records = rebase_tier_b_records(list(read_jsonl(tier_b_source)), root)
+        tier_b_destination = atomic_write_jsonl(output / tier_b_source.name, tier_b_records)
+        manifest_paths["tier_b"] = str(tier_b_destination.resolve())
+        manifest_hashes["tier_b"] = {
+            "source": sha256_file(tier_b_source),
+            "rebased": sha256_file(tier_b_destination),
+        }
+        row_counts["tier_b"] = len(tier_b_records)
 
     registry = json.loads((source_dir / "registry.json").read_text(encoding="utf-8"))
     registry["manifests"] = manifest_paths
@@ -111,7 +117,7 @@ def rebase_dataset_manifests(
     }
     atomic_write_json(output / "registry.json", registry)
     selection_path = source_dir / "tier_d_selection.json"
-    if selection_path.is_file():
+    if selection_path.is_file() and "tier_d" in manifest_paths:
         selection = json.loads(selection_path.read_text(encoding="utf-8"))
         selection["manifest"] = manifest_paths["tier_d"]
         atomic_write_json(output / "tier_d_selection.json", selection)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import random
 from collections import Counter
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from dataclasses import replace
 
 from selfsight.schemas import Color, QuestionFamily, SceneObject, SceneSpec, Shape, Size
@@ -153,18 +153,25 @@ def generate_split(
     total: int,
     seed: int,
     forbidden_signatures: set[str] | None = None,
+    families: Sequence[QuestionFamily] | None = None,
 ) -> list[SceneSpec]:
     if split not in TEMPLATES:
         raise ValueError(f"Unknown split: {split}")
-    if total < len(FAMILIES):
-        raise ValueError("Each split must include all six question families")
+    selected_families = tuple(dict.fromkeys(families or FAMILIES))
+    if not selected_families or any(family not in FAMILIES for family in selected_families):
+        raise ValueError("Each split requires registered, unique question families")
+    if total < len(selected_families):
+        raise ValueError("Split total must cover every selected question family")
     forbidden = set(forbidden_signatures or ())
     local_signatures: set[str] = set()
     rng = random.Random(seed)
-    base, remainder = divmod(total, len(FAMILIES))
-    family_counts = {family: base + (index < remainder) for index, family in enumerate(FAMILIES)}
+    base, remainder = divmod(total, len(selected_families))
+    family_counts = {
+        family: base + (index < remainder)
+        for index, family in enumerate(selected_families)
+    }
     scenes: list[SceneSpec] = []
-    for family in FAMILIES:
+    for family in selected_families:
         for family_index in range(family_counts[family]):
             for attempt in range(10_000):
                 objects = _make_objects(family, rng)

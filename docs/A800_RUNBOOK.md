@@ -1,9 +1,9 @@
 # A800 80GB 单卡迁移与正式 E2 运行手册
 
-本手册只描述已经实现的 A800 路径。当前 Windows 证据中的 Gate 0
-generated-RGB coverage 与 Gate -1 都是红色，因此**现在把代码复制到 A800 也只能做环境和
-32-prompt canary，不能启动正式 E2**。`scripts/run_formal_e2.py` 会在创建输出目录、加载模型
-或消耗训练算力之前验证这些报告并失败关闭。
+本手册描述 v2.2 Show-o2 的 A800 路径。正式 E2 只接受完整绿色 Gate -2、其哈希绑定的 LoRA
+target selection、固定 Qwen2-VL-2B 公共观察器审计，以及绿色迁移 Gate。当前 Windows A3-r2
+仍在运行，因此**现在不能启动正式 E2**。`scripts/run_formal_e2.py` 会在创建输出目录、加载模型
+或消耗训练算力之前验证这些证据、三份 seed 配置和 eligible-family 数据容量并失败关闭。
 
 ## 1. 主机和存储前提
 
@@ -35,20 +35,23 @@ bash scripts/bootstrap_a800.sh
 source scripts/set_a800_env.sh
 
 CORE="${SELFSIGHT_ENV_ROOT}/core/bin/python"
+SHOWO2="${SELFSIGHT_ENV_ROOT}/showo2/bin/python"
 OBSERVER="${SELFSIGHT_ENV_ROOT}/observer/bin/python"
 JANUS="${SELFSIGHT_ENV_ROOT}/janus/bin/python"
 
 "${CORE}" scripts/sync_repositories.py
-"${CORE}" scripts/download_models.py --group core --large-file-transport auto
+"${CORE}" scripts/download_models.py --group readiness_candidate_1 --large-file-transport auto
 "${CORE}" scripts/download_models.py --group observers --large-file-transport auto
 
 "${CORE}" scripts/capture_environment_lock.py --role core \
   "${SELFSIGHT_RUN_ROOT}/manifests/a800-core-environment.json"
 "${OBSERVER}" scripts/capture_environment_lock.py --role observer \
   "${SELFSIGHT_RUN_ROOT}/manifests/a800-observer-environment.json"
+"${SHOWO2}" scripts/capture_environment_lock.py --role showo2 \
+  "${SELFSIGHT_RUN_ROOT}/manifests/a800-showo2-environment.json"
 "${JANUS}" scripts/capture_environment_lock.py --role janus \
   "${SELFSIGHT_RUN_ROOT}/manifests/a800-janus-environment.json"
-"${CORE}" -m selfsight.cli doctor --config configs/a800_80g.yaml \
+"${CORE}" -m selfsight.cli doctor --config configs/a800_80g_showo2.yaml \
   --output "${SELFSIGHT_RUN_ROOT}/manifests/a800-host.json"
 "${CORE}" -m pytest -q
 ```
@@ -58,47 +61,47 @@ JANUS="${SELFSIGHT_ENV_ROOT}/janus/bin/python"
 
 ## 3. 数据清单与 Gate 证据
 
-优先从 Windows 复制整个 `selfsight-v1` 数据目录和以下只读报告，保留文件名及内容不变：
+绿色 Gate -2 产生后，先在 Windows 上生成 decision-bound 的 E2 数据：
+
+```powershell
+& H:\selfsight-envs\core\python.exe scripts\build_eligible_e2_data.py `
+  --decision H:\selfsight-runs\readiness\SELECTED\decision.json `
+  --output H:\selfsight-data\selfsight-v2.2\e2-SELECTED-DECISION
+```
+
+该命令把固定 2400/200/600 数量重新均衡到 Gate -2 的 eligible families，并排除 A1/A2/A3
+全部 scene signature。它只在绿色 Gate 后运行，不通过重复 prompt 填充正式样本。复制整个输出
+目录以及以下只读证据，保留内容不变：
 
 - `manifests/train.jsonl`
 - `manifests/tier_a_probe.jsonl`
 - `manifests/tier_a_outcome.jsonl`
-- `manifests/tier_b.jsonl`
-- `manifests/tier_d.jsonl` 与 `manifests/tier_d_selection.json`（仅供 Gate 4 后的 E4）
-- Gate -1 最终决策、被其引用的 observer audit，以及 generated-domain 报告
+- `manifests/registry.json`
+- Gate -2 decision 及其 A1/A2/A3/A4 全部 evidence、LoRA target config
+- 固定 Qwen2-VL-2B public-observer audit
 
 manifest 内的图像路径是生成主机的绝对路径；不得用文本替换或软链接伪装 H 盘。复制后生成一份
 新的 Linux 路径视图。该工具不修改 Windows 原始 manifest，并会在写出前逐图验证原文件与 RGB
 SHA-256：
 
 ```bash
-REBASING="${SELFSIGHT_DATA_ROOT}/selfsight-v1/manifests-a800"
+E2_DATA="${SELFSIGHT_DATA_ROOT}/selfsight-v2.2/e2-SELECTED-DECISION"
+REBASING="${E2_DATA}/manifests-a800"
 "${CORE}" scripts/rebase_dataset_manifests.py \
-  --data-root "${SELFSIGHT_DATA_ROOT}/selfsight-v1" \
+  --data-root "${E2_DATA}" \
   --output "${REBASING}"
 ```
 
-然后只对 rebased manifests 重新跑无泄漏与像素审计：
-
-```bash
-"${CORE}" -m selfsight.cli audit-data "${SELFSIGHT_DATA_ROOT}/selfsight-v1" \
-  --manifest-dir "${REBASING}" \
-  --output "${SELFSIGHT_RUN_ROOT}/audits/a800-data-audit.json"
-"${CORE}" -m selfsight.cli audit-tier-b \
-  "${REBASING}/tier_b.jsonl" \
-  --output "${SELFSIGHT_RUN_ROOT}/audits/a800-tier-b-audit.json"
-"${CORE}" -m selfsight.cli audit-tier-d \
-  "${REBASING}/tier_d.jsonl" \
-  --output "${SELFSIGHT_RUN_ROOT}/audits/a800-tier-d-audit.json"
-```
+然后验证 `rebase_report.json` 中三份 manifest 的 row count、source/rebased hash 和逐图 RGB。
+Tier B/D 不属于这份 E2 数据，E1/Tier D 使用各自冻结清单，不应混入正式 E2 denominator。
 
 若不能复制数据，可用相同代码 commit 与配置重新生成；由于绝对路径不同，不能直接比较 JSONL
 文件 SHA。必须比较 registry 的 `split_signature_digest`、Tier-D `selection_digest`、全部 scene ID、
 prompt/atom/seed 和逐图 RGB SHA-256。任一非路径字段不一致都视为新数据版本，不能和 Windows
 canary 混用。
 
-当前红色报告应被保留为不可变证据。只有在用户批准了会改变实验设计的修订、重新跑完 Gate，
-且新的 `decision.json` 与 generated-domain report 同时为绿色后，才能继续第 5 节。
+红色或不完整报告应被保留为不可变证据。只有一个 `require_joint_readiness` 可验证的绿色
+`decision.json` 才能继续第 4/5 节。
 
 ## 4. 固定 32-prompt Windows/A800 canary
 
@@ -109,18 +112,22 @@ Windows：
 
 ```powershell
 . .\scripts\set_h_env.ps1
-$core = "H:\selfsight-envs\core\python.exe"
-& $core .\scripts\run_migration_canary.py `
-  --config configs\local_3090.yaml `
-  --probe-manifest H:\selfsight-data\selfsight-v1\manifests\tier_a_probe.jsonl `
+$showo2 = "H:\selfsight-envs\showo2\python.exe"
+& $showo2 .\scripts\run_migration_canary.py `
+  --config configs\local_3090_showo2.yaml `
+  --joint-readiness-decision H:\selfsight-runs\readiness\SELECTED\decision.json `
+  --backbone-config configs\backbones\SELECTED.yaml `
+  --probe-manifest H:\selfsight-data\selfsight-v2.2\e2-SELECTED-DECISION\manifests\tier_a_probe.jsonl `
   --output H:\selfsight-runs\migration\windows-32
 ```
 
 A800：
 
 ```bash
-"${CORE}" scripts/run_migration_canary.py \
-  --config configs/a800_80g.yaml \
+"${SHOWO2}" scripts/run_migration_canary.py \
+  --config configs/a800_80g_showo2.yaml \
+  --joint-readiness-decision /absolute/path/to/green/decision.json \
+  --backbone-config configs/backbones/SELECTED.yaml \
   --probe-manifest "${REBASING}/tier_a_probe.jsonl" \
   --output "${SELFSIGHT_RUN_ROOT}/migration/a800-32"
 ```
@@ -140,7 +147,7 @@ A800：
 
 ## 5. 物化正式配置与执行 E2
 
-以下命令只在 Gate -1、generated-domain Gate 和 migration Gate 全绿后执行。先物化三份不可
+以下命令只在 Gate -2 与 migration Gate 全绿后执行。先物化三份不可
 覆盖的 seed 配置：
 
 ```bash
@@ -149,27 +156,29 @@ FORMAL_CONFIGS="${SELFSIGHT_RUN_ROOT}/formal-configs"
 sha256sum "${FORMAL_CONFIGS}"/*.yaml > "${FORMAL_CONFIGS}/SHA256SUMS"
 ```
 
-然后使用 Gate -1 决策中锁定的异构 detector 参数运行。下列占位符必须逐字替换为该绿色决策
-记录的 backend、model id 与 revision；不要选择表现更高但能力不匹配的模型。
+公共 detector 固定为已经审计的 Qwen2-VL-2B，不得在 A800 上重新选模型。
 
 ```bash
 "${CORE}" scripts/run_formal_e2.py \
-  --base-config configs/a800_80g.yaml \
+  --base-config configs/a800_80g_showo2.yaml \
   --seed-config "${FORMAL_CONFIGS}/a800_seed_20260827.yaml" \
   --seed-config "${FORMAL_CONFIGS}/a800_seed_20260828.yaml" \
   --seed-config "${FORMAL_CONFIGS}/a800_seed_20260829.yaml" \
   --core-python "${CORE}" \
+  --showo2-python "${SHOWO2}" \
   --observer-python "${OBSERVER}" \
   --train-manifest "${REBASING}/train.jsonl" \
   --outcome-manifest "${REBASING}/tier_a_outcome.jsonl" \
   --probe-manifest "${REBASING}/tier_a_probe.jsonl" \
-  --gate-minus-1-report /absolute/path/to/green/decision.json \
-  --generated-domain-report /absolute/path/to/green/generated_domain_report.json \
+  --joint-readiness-decision /absolute/path/to/green/decision.json \
+  --backbone-config configs/backbones/SELECTED.yaml \
+  --observer-config configs/observers/qwen2vl_2b.yaml \
+  --lora-target-config /absolute/path/to/a4-lora-targets.json \
   --migration-report "${SELFSIGHT_RUN_ROOT}/migration/migration-gate.json" \
-  --detector-audit-report /absolute/path/to/selected/detector-audit.json \
-  --detector-backend SELECTED_BACKEND \
-  --detector-model-id SELECTED_MODEL_ID \
-  --detector-revision SELECTED_REVISION \
+  --detector-audit-report /absolute/path/to/qwen2vl-local120.json \
+  --detector-backend qwen2vl \
+  --detector-model-id Qwen/Qwen2-VL-2B-Instruct \
+  --detector-revision 895c3a49bc3fa70a340399125c650a463535e71c \
   --output "${SELFSIGHT_RUN_ROOT}/formal-e2"
 ```
 

@@ -11,7 +11,9 @@ from selfsight.analysis.formal import aggregate_formal_e2
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=Path, default=Path("configs/a800_80g.yaml"))
+    parser.add_argument(
+        "--config", type=Path, default=Path("configs/a800_80g_showo2.yaml")
+    )
     parser.add_argument("--metrics", type=Path, action="append", required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()

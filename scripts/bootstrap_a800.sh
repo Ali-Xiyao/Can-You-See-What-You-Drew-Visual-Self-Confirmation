@@ -15,6 +15,12 @@ python3.10 -m venv "${SELFSIGHT_ENV_ROOT}/observer"
   torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cu121
 "${SELFSIGHT_ENV_ROOT}/observer/bin/python" -m pip install -e '.[observer]'
 
+python3.10 -m venv "${SELFSIGHT_ENV_ROOT}/showo2"
+"${SELFSIGHT_ENV_ROOT}/showo2/bin/python" -m pip install --upgrade pip setuptools wheel
+"${SELFSIGHT_ENV_ROOT}/showo2/bin/python" -m pip install \
+  torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cu121
+"${SELFSIGHT_ENV_ROOT}/showo2/bin/python" -m pip install -e '.[showo2]'
+
 # Janus ships PyTorch .bin weights. Modern Transformers refuses to load them with
 # torch<2.6 because of CVE-2025-32434, so keep this audit-only backend isolated.
 python3.10 -m venv "${SELFSIGHT_ENV_ROOT}/janus"
@@ -38,7 +44,9 @@ fi
   "${SELFSIGHT_ENV_ROOT}/core.freeze.txt"
 "${SELFSIGHT_ENV_ROOT}/observer/bin/python" -m pip freeze > \
   "${SELFSIGHT_ENV_ROOT}/observer.freeze.txt"
+"${SELFSIGHT_ENV_ROOT}/showo2/bin/python" -m pip freeze > \
+  "${SELFSIGHT_ENV_ROOT}/showo2.freeze.txt"
 "${SELFSIGHT_ENV_ROOT}/janus/bin/python" -m pip freeze > \
   "${SELFSIGHT_ENV_ROOT}/janus.freeze.txt"
 
-echo "A800 core and observer environments created. Run the 32-prompt migration canary before any formal seed."
+echo "A800 core, Show-o2, and observer environments created. Run the 32-prompt migration canary before any formal seed."

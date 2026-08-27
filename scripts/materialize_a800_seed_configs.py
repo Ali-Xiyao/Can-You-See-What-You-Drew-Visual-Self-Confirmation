@@ -11,7 +11,9 @@ import yaml
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base", type=Path, default=Path("configs/a800_80g.yaml"))
+    parser.add_argument(
+        "--base", type=Path, default=Path("configs/a800_80g_showo2.yaml")
+    )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     values = yaml.safe_load(args.base.read_text(encoding="utf-8"))
@@ -19,7 +21,7 @@ def main() -> None:
     args.output.mkdir(parents=True, exist_ok=True)
     for seed in seeds:
         config = deepcopy(values)
-        config["profile"] = f"a800_80g_seed_{seed}"
+        config["profile"] = f"{values['profile']}_seed_{seed}"
         config["seed"] = seed
         config["training"]["seeds"] = [seed]
         path = args.output / f"a800_seed_{seed}.yaml"

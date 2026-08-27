@@ -6,10 +6,15 @@ import pytest
 
 from selfsight.data.counterfactuals import build_tier_b
 from selfsight.data.manifest import _scene_record
-from selfsight.data.portability import rebase_scene_records, rebase_tier_b_records
+from selfsight.data.portability import (
+    rebase_dataset_manifests,
+    rebase_scene_records,
+    rebase_tier_b_records,
+)
 from selfsight.data.renderer import render_scene
 from selfsight.schemas import as_serializable
 from selfsight.utils.hashing import rgb_sha256
+from selfsight.utils.jsonl import atomic_write_json, atomic_write_jsonl
 
 
 def test_scene_manifest_rebase_verifies_hashes(tmp_path, registered_splits) -> None:
@@ -48,3 +53,22 @@ def test_tier_b_rebase_preserves_complete_pair(tmp_path, registered_splits) -> N
     record["pair"]["source"] = as_serializable(broken)
     with pytest.raises(FileNotFoundError, match="incomplete"):
         rebase_tier_b_records([record], tmp_path)
+
+
+def test_family_restricted_e2_registry_rebases_without_tier_b_or_d(
+    tmp_path, registered_splits
+) -> None:
+    source = tmp_path / "eligible"
+    manifests = source / "manifests"
+    for split in ("train", "tier_a_probe", "tier_a_outcome"):
+        scene = registered_splits[split][0]
+        image = source / "reference_images" / scene.split / f"{scene.scene_id}.png"
+        render_scene(scene, image)
+        atomic_write_jsonl(manifests / f"{split}.jsonl", [_scene_record(scene, image)])
+    atomic_write_json(
+        manifests / "registry.json",
+        {"schema_version": 2, "data_namespace": "selfsight-v2.2-e2-eligible"},
+    )
+    report = rebase_dataset_manifests(source, tmp_path / "rebased")
+    assert set(report["manifests"]) == {"train", "tier_a_probe", "tier_a_outcome"}
+    assert not (tmp_path / "rebased" / "tier_b.jsonl").exists()
