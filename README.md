@@ -1,0 +1,264 @@
+# SelfSight
+
+Research implementation for **Can You See What You Drew? Visual Self-Confirmation in Unified Multimodal Models**.
+
+The repository is gate-first: exact controlled scenes and measurement audits precede every phenomenon claim. Local dual-RTX-3090 runs are one-seed engineering evidence only; formal inference requires the locked single-A800 80GB, three-seed configuration.
+
+## Storage and processes
+
+All large state is outside this checkout and under short H-drive paths:
+
+| Variable | Path |
+|---|---|
+| `SELFSIGHT_CACHE_ROOT` | `H:\selfsight-cache` |
+| `SELFSIGHT_DATA_ROOT` | `H:\selfsight-data` |
+| `SELFSIGHT_RUN_ROOT` | `H:\selfsight-runs` |
+| `SELFSIGHT_MODEL_ROOT` | `H:\selfsight-models` |
+| `SELFSIGHT_ENV_ROOT` | `H:\selfsight-envs` |
+| `SELFSIGHT_TMP_ROOT` | `H:\selfsight-tmp` |
+
+Start every PowerShell session from the repository root with:
+
+```powershell
+. .\scripts\set_h_env.ps1
+$core = "H:\selfsight-envs\core\python.exe"
+$observer = "H:\selfsight-envs\observer\python.exe"
+$janus = "H:\selfsight-envs\janus\Scripts\python.exe"
+```
+
+The script also disables the unreliable Xet route seen on this Windows host. Large locked LFS files use resumable aria2 transfer plus exact size/SHA-256 verification; small files still use Hugging Face Hub.
+The downloader ignores unrelated ONNX/OpenVINO/CoreML/GGUF/TF/Flax exports unless a model lock
+explicitly asks for them.
+
+GPU0 owns Show-o generation/training/backward. GPU1 owns frozen observers and parallel evaluation. The two 24GB cards are never treated as pooled 48GB memory.
+
+## 1. Environment and immutable assets
+
+The current local core environment was cloned from a working CUDA 12.1 environment and therefore uses Torch 2.5.1+cu121. This is a recorded local deviation; the A800 lock remains Torch 2.2.1.
+
+```powershell
+# Core plus figure dependencies. Omit CloneCudaEnv if installing CUDA wheels afresh.
+.\scripts\bootstrap_windows.ps1 -InstallFigure `
+  -CloneCudaEnv C:\Users\Admin\anaconda3\envs\quest-zero-p0
+
+# Sync exact Show-o and Janus commits to H:.
+& $core .\scripts\sync_repositories.py
+
+# Create the isolated observer environment.
+.\scripts\bootstrap_windows.ps1 -InstallObservers `
+  -CloneObserverCudaEnv C:\Users\Admin\anaconda3\envs\bind
+
+# Janus .bin loading requires Torch >=2.6; keep it out of the Qwen/Intern environment.
+.\scripts\bootstrap_windows.ps1 -InstallJanusObserver
+
+# Inspect size/revision plan, then obtain core weights.
+& $core .\scripts\download_models.py --group core --plan
+& $core .\scripts\download_models.py --group core --large-file-transport auto
+```
+
+Downloads are registered under `H:\selfsight-models`; `configs/models.lock.yaml` is authoritative. Never replace a locked revision with `main`.
+The complete local `core`, `observers`, and `audit` inventories are materialized at their locked
+revisions. `late_eval` remains intentionally absent until its upstream Gate is green.
+
+## 2. Deterministic data and Gate 0 smoke evidence
+
+```powershell
+& $core -m selfsight.cli doctor --config configs\local_3090.yaml `
+  --output H:\selfsight-runs\manifests\local-host.json
+
+& $core -m selfsight.cli build-data --config configs\local_3090.yaml `
+  --output H:\selfsight-data\selfsight-v1
+
+& $core -m selfsight.cli audit-data H:\selfsight-data\selfsight-v1 `
+  --output H:\selfsight-runs\audits\data-audit.json
+
+& $core -m selfsight.cli audit-tier-b `
+  H:\selfsight-data\selfsight-v1\manifests\tier_b.jsonl `
+  --output H:\selfsight-runs\audits\tier-b-audit.json
+
+# Deterministic 600-image E4 subset: 300 Tier-A images + 150 complete Tier-B pairs.
+& $core -m selfsight.cli build-tier-d H:\selfsight-data\selfsight-v1 --seed 20260827
+& $core -m selfsight.cli audit-tier-d `
+  H:\selfsight-data\selfsight-v1\manifests\tier_d.jsonl `
+  --output H:\selfsight-runs\audits\tier-d-audit.json
+
+# Export the blinded 120-image manual packet (six families x 20).
+& $core .\scripts\manual_reference_audit.py export `
+  --manifest H:\selfsight-data\selfsight-v1\manifests\tier_a_outcome.jsonl `
+  --output H:\selfsight-runs\audits\manual-reference
+
+& $core -m pytest -q
+& $core -m selfsight.cli mock-pilot --config configs\local_3090.yaml `
+  --output H:\selfsight-runs\mock-pilot
+```
+
+The mock output is stamped `synthetic_smoke_only` and must never be cited as scientific evidence.
+The programmatic reference gate currently passes 3,200/3,200 scenes, 400/400 Tier-B pairs, and
+600/600 registered Tier-D images; manual stratified agreement remains a separate pending audit.
+
+After a blinded reviewer fills `review_blinded.csv`, score it without modifying the separate answer key:
+
+```powershell
+& $core .\scripts\manual_reference_audit.py score `
+  --review-csv H:\selfsight-runs\audits\manual-reference\review_blinded.csv `
+  --answer-key H:\selfsight-runs\audits\manual-reference\answer_key.json `
+  --output H:\selfsight-runs\audits\manual-reference\manual-audit-report.json
+```
+
+Exact Windows package/CUDA inventories are captured in `H:\selfsight-envs\locks` by the bootstrap script.
+
+## 3. Real model canaries and Gate -1
+
+```powershell
+# Show-o: generation, RGB reload/MMU, T2I+replay LoRA step, save/corrupt/exact restore.
+& $core .\scripts\canary_showo.py --config configs\local_3090.yaml `
+  --output H:\selfsight-runs\canaries\showo-local
+
+# Train-only, six-family generated-RGB parseability audit; no Tier-A held-out prompt is used.
+& $core .\scripts\canary_generated_domain.py --config configs\local_3090.yaml `
+  --manifest H:\selfsight-data\selfsight-v1\manifests\train.jsonl `
+  --limit 60 --verifier generated_cv_v2 `
+  --output H:\selfsight-runs\canaries\generated-domain-cv2-dev60-20260827
+
+# Example isolated observer canary; repeat for the locked capability ladder.
+& $core .\scripts\canary_observer.py --python $observer --backend smolvlm `
+  --model-id HuggingFaceTB/SmolVLM-500M-Instruct `
+  --revision a7da5b986cb59b408707209984f360a5f4ad7e47 `
+  --manifest H:\selfsight-data\selfsight-v1\manifests\tier_a_probe.jsonl `
+  --output H:\selfsight-runs\canaries\smolvlm
+```
+
+Run `selfsight.cli audit-observer` for Show-o and every candidate on program-rendered truth, then finalize the matched detector:
+
+```powershell
+& $core -m selfsight.cli finalize-gate-minus-1 `
+  --reference-audit H:\selfsight-runs\audits\data-audit.json `
+  --showo-report H:\selfsight-runs\gate-minus-1\showo-local120.json `
+  --candidate-report H:\selfsight-runs\gate-minus-1\smolvlm-local120.json `
+  --candidate-report H:\selfsight-runs\gate-minus-1\internvl-local120.json `
+  --candidate-report H:\selfsight-runs\gate-minus-1\qwen2vl-local120.json `
+  --output H:\selfsight-runs\gate-minus-1\decision.json
+```
+
+Gate -1 is a hard stop: Show-o needs at least four question families at 80% or above, and the frozen heterogeneous observer must be within 3 percentage points of Show-o macro accuracy after forced-choice/yes-bias auditing.
+
+When this Gate is red, render the preregistered capability-floor fallback artifact instead of
+running E1/E2:
+
+```powershell
+& $core .\scripts\render_capability_floor.py `
+  --report H:\selfsight-runs\gate-minus-1\showo-local120.json `
+  --report H:\selfsight-runs\gate-minus-1\showo-discrete-local120.json `
+  --report H:\selfsight-runs\gate-minus-1\janus-local120.json `
+  --report H:\selfsight-runs\gate-minus-1\smolvlm-local120.json `
+  --report H:\selfsight-runs\gate-minus-1\internvl-local120.json `
+  --report H:\selfsight-runs\gate-minus-1\qwen2vl-local120.json `
+  --evidence-status "local diagnostic; Gate -1 decision frozen" `
+  --output H:\selfsight-runs\gate-minus-1\figure2-all-backbones-local
+```
+
+The figure exports PNG/PDF/SVG/grayscale plus tidy CSV and a QA manifest. Accuracy is redundantly
+encoded by cell text and a bold outline at the 80% threshold; yes-bias uses a separate axis.
+
+There is an earlier generated-domain stop rule as well: deterministic primary-answer coverage on
+generated RGBs must be at least 95%. The exact-palette verifier remains authoritative for
+program-rendered references; `generated_cv_v2` is a deterministic contour candidate for approximate
+model output and must receive its own blinded human-agreement audit before adoption. Current
+train-only canaries are below 95%, so E1, Gate -1b, and real self-training remain blocked even while
+the independent reference-image observer ladder is audited.
+
+## 4. E1, Gate -1b, and local one-seed loop
+
+The current `decision.json` is red and contains no selected detector, so the commands below must not
+be run now. After an explicitly approved design revision produces a new green decision, copy the
+detector identity and exact audit path from that decision; never substitute the strongest model by
+hand:
+
+```powershell
+$gate = "H:\selfsight-runs\gate-minus-1\NEW-GREEN-decision.json"
+$domain = "H:\selfsight-runs\canaries\NEW-GREEN-generated-domain\generated_domain_report.json"
+$detectorAudit = "H:\selfsight-runs\gate-minus-1\SELECTED-detector-audit.json"
+$detectorBackend = "SELECTED_BACKEND"
+$detectorModel = "SELECTED_MODEL_ID"
+$detectorRevision = "SELECTED_REVISION"
+
+& $core .\scripts\run_e1.py --config configs\local_3090.yaml `
+  --manifest H:\selfsight-data\selfsight-v1\manifests\tier_b.jsonl `
+  --gate-minus-1-report $gate --generated-domain-report $domain `
+  --detector-audit-report $detectorAudit `
+  --detector-python $observer --detector-backend $detectorBackend `
+  --detector-model-id $detectorModel --detector-revision $detectorRevision `
+  --output H:\selfsight-runs\e1
+
+& $core .\scripts\run_gradient_gate.py --config configs\local_3090.yaml `
+  --probe-manifest H:\selfsight-data\selfsight-v1\manifests\tier_a_probe.jsonl `
+  --gate-minus-1-report $gate --generated-domain-report $domain `
+  --detector-audit-report $detectorAudit `
+  --detector-python $observer --detector-backend $detectorBackend `
+  --detector-model-id $detectorModel --detector-revision $detectorRevision `
+  --output H:\selfsight-runs\gate-minus-1b
+
+& $core .\scripts\run_local_pilot.py --config configs\local_3090.yaml `
+  --train-manifest H:\selfsight-data\selfsight-v1\manifests\train.jsonl `
+  --gate-report $gate `
+  --gradient-gate-report H:\selfsight-runs\gate-minus-1b\gate_minus_1b.json `
+  --generated-domain-report $domain `
+  --frozen-observer-python $core --output H:\selfsight-runs\local-pilot --resume
+```
+
+All entry points validate the locked Gate identity, the selected detector model/revision, the exact
+SHA-256 of its capability audit, internal consistency, sample basis, and 95% coverage threshold
+before creating an output directory or loading a model. A red, mismatched, or malformed report
+therefore fails closed rather than becoming an accidental training override.
+
+If Gate -1b fails, E2 remains allowed but GDA reporting is disabled and the preregistered entropy/public-view fallback is activated. Checkpoints are adapter-only and each round is atomically committed, so rerunning with `--resume` is safe.
+
+Evaluate every checkpoint with `scripts/evaluate_pilot.py`. This produces internal/external correctness, SCFR@competent, entropy/public-view signals, optional GDA-free/GDA-gold/noise-floor trajectories, exploratory D*/Dg, and Figure 1 in PNG/PDF/SVG/grayscale. Local nonappearance of D* does not block migration if engineering, stability, gradients, and resume all pass.
+
+## 5. A800 migration and formal E2
+
+The operator-facing, fail-closed handoff procedure is in
+[`docs/A800_RUNBOOK.md`](docs/A800_RUNBOOK.md). It includes storage setup, immutable asset checks,
+the paired 32-prompt canary, exact acceptance thresholds, restart behavior, and the formal command.
+
+On the Linux A800 host, place the checkout at a short data mount, then:
+
+```bash
+export SELFSIGHT_ROOT=/data/selfsight
+source scripts/set_a800_env.sh
+bash scripts/bootstrap_a800.sh
+CORE="${SELFSIGHT_ENV_ROOT}/core/bin/python"
+"${CORE}" scripts/sync_repositories.py
+"${CORE}" scripts/download_models.py --group core
+"${CORE}" scripts/download_models.py --group observers
+"${CORE}" scripts/materialize_a800_seed_configs.py --output "${SELFSIGHT_RUN_ROOT}/formal-configs"
+```
+
+Run the fixed 32-prompt canary locally and on A800, then compare them with `scripts/compare_migration_canaries.py`. Formal E2 is blocked unless answer/verifier agreement is at least 95% and metric drift is at most 1 point.
+
+Because dataset manifests contain host-absolute RGB paths, run
+`scripts/rebase_dataset_manifests.py` after copying data to Linux. It writes a new manifest view and
+verifies every original file/RGB SHA-256; it never edits the Windows manifests. The A800 runbook
+uses only this rebased view.
+
+`scripts/run_formal_e2.py` executes the three locked seeds resumably. `scripts/aggregate_formal_e2.py` performs paired seed bootstrap, Gate 2/2b decisions, GDA-free versus entropy/public-view comparison, and multi-seed Figure 1. E3, E4, Tier C, and human evaluation remain blocked until their preregistered upstream Gates pass.
+
+## Scientific invariants
+
+- The 200-prompt gradient probe and 600-prompt outcome set never enter training or selector tuning.
+- Blind observer subprocesses receive only a hard-reloaded RGB path, atomic questions, and request metadata—never prompt, expected answer, generator state, or source label.
+- RFO training uses a frozen step-0 Show-o copy; `g_rfo` detection uses the held-out matched heterogeneous VLM.
+- Candidate IDs, prompt IDs, K, and random seeds are paired between Naive and RFO arms; common non-abstained counts are enforced.
+- Formal conclusions require three A800 seeds. Local one-seed curves are exploratory regardless of apparent effect size.
+
+Current gate state and exact evidence are tracked in `task_plan.md`, `findings.md`, and `progress.md`.
+
+As of the latest local evidence: the balanced mock loop and real Show-o engineering canary pass,
+but Show-o clears only 2/6 capability families and therefore fails Gate -1. Qwen2-VL clears 5/6
+but is 25pt stronger than Show-o rather than capability-matched; Janus-Pro clears 5/6 but is
+22.5pt stronger. SmolVLM and InternVL2-1B each clear only 3/6, while pure-discrete Show-o still
+clears only 2/6. The generated-RGB coverage sub-gate is independently red. These are explicit,
+hashed stop decisions, not missing-result defaults; Janus and pure-discrete Show-o are diagnostic
+rows and do not mutate the frozen `decision.json`. The locked Qwen2.5-VL-7B upper bound also loads
+on GPU1 in 16,636,220,928 peak allocated bytes and answers the six-family repeatability canary
+12/12 consistently; it is not used for post-hoc detector selection.

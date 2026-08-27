@@ -1,0 +1,77 @@
+profile: local_3090
+seed: 20260827
+
+paths:
+  cache_root: ${SELFSIGHT_CACHE_ROOT}
+  data_root: ${SELFSIGHT_DATA_ROOT}
+  run_root: ${SELFSIGHT_RUN_ROOT}
+  model_root: ${SELFSIGHT_MODEL_ROOT}
+  tmp_root: ${SELFSIGHT_TMP_ROOT}
+
+hardware:
+  generator_device: cuda:0
+  observer_device: cuda:1
+  precision: bf16
+  attention: sdpa
+  distributed: false
+
+model:
+  trainable_id: showlab/show-o-w-clip-vit-512x512
+  pure_discrete_audit_id: showlab/show-o-512x512
+  vq_id: showlab/magvitv2
+  vision_tower_id: openai/clip-vit-large-patch14-336
+  image_resolution: 512
+  generation_timesteps: 25
+  guidance_scale: 5.0
+  temperature: 1.0
+
+data:
+  full_train_prompts: 2400
+  local_train_prompts: 640
+  tier_a_probe: 200
+  tier_a_outcome: 600
+  local_probe: 32
+  local_outcome: 120
+  images_per_prompt: 2
+  tier_b_pairs: 400
+  tier_d_images: 600
+  tier_e_images: 200
+
+training:
+  arms: [naive, rfo_self]
+  seeds: [20260827]
+  rounds: 10
+  prompts_per_round: 64
+  candidate_k: 2
+  optimizer_steps_per_round: 25
+  micro_batch_size: 1
+  gradient_accumulation_steps: 8
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  warmup_ratio: 0.10
+  max_grad_norm: 1.0
+  understanding_replay_ratio: 0.25
+  gradient_checkpointing: true
+  lora:
+    rank: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: [q_proj, k_proj, v_proj, dense, fc1, fc2]
+    forbidden_trainable: [embed_tokens, lm_head, mm_projector, vision_tower, vq_model]
+
+gradient_probe:
+  size: 32
+  criteria: [naive, rfo, gold]
+  noise_floor_splits: 8
+  expected_gda_effect: 0.20
+  identical_cosine_min: 0.999
+  ema_alpha: 0.35
+
+gates:
+  verifier_agreement_min: 0.98
+  verifier_coverage_min: 0.95
+  observer_family_accuracy_min: 0.80
+  observer_min_passing_families: 4
+  matched_observer_delta_max: 0.03
+  forced_choice_bias_max: 0.10
+  scfr_post_breakpoint_offset_steps: 25

@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Environments and local IDE state
+.venv/
+.conda/
+.idea/
+.vscode/
+
+# Secrets and local overrides
+.env
+*.local.yaml
+*.local.json
+
+# Large/generated experiment state
+/data/
+/runs/
+/checkpoints/
+/artifacts/
+/models/
+/vendor/
+/wandb/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# Allow tiny committed fixtures
+!tests/fixtures/
+!tests/fixtures/**
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store

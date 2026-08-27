@@ -1,0 +1,16 @@
+* text=auto
+.gitattributes text eol=lf
+.gitignore text eol=lf
+
+# Linux/A800 entry points must never acquire Windows CRLF endings.
+*.sh text eol=lf
+
+# Keep source, configs, and research records byte-stable across hosts.
+*.py text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+*.md text eol=lf
+
+# Native Windows entry points use conventional CRLF working-tree endings.
+*.ps1 text eol=crlf

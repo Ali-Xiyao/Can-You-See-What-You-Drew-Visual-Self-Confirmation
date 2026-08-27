@@ -1,0 +1,81 @@
+schema_version: 1
+captured_at: "2026-08-27"
+models:
+  - id: microsoft/phi-1_5
+    revision: 77aa61eeac94fbf33d492b9f2744c98b42d5b5eb
+    group: core
+    role: showo_config_and_tokenizer
+    license: microsoft-research-license
+    allow_patterns:
+      - config.json
+      - tokenizer.json
+      - tokenizer_config.json
+      - special_tokens_map.json
+      - vocab.json
+      - merges.txt
+  - id: showlab/show-o-w-clip-vit-512x512
+    revision: ff3abf7fb8cd9b3b3647aafdbfa80c8805ae9665
+    group: core
+    role: trainable_backbone
+    license: apache-2.0
+  - id: showlab/magvitv2
+    revision: 5c3fa78f8b3523347c5cd1a4c97f3c4e96f33d5d
+    group: core
+    role: visual_tokenizer
+    license: mit
+  - id: openai/clip-vit-large-patch14-336
+    revision: ce19dc912ca5cd21c8a653c79e251e808ccabcd1
+    group: core
+    role: showo_vision_tower
+    license: unknown
+    allow_patterns:
+      - config.json
+      - preprocessor_config.json
+      - pytorch_model.bin
+      - tokenizer.json
+      - tokenizer_config.json
+      - special_tokens_map.json
+      - vocab.json
+      - merges.txt
+  - id: HuggingFaceTB/SmolVLM-500M-Instruct
+    revision: a7da5b986cb59b408707209984f360a5f4ad7e47
+    group: observers
+    role: matched_candidate_low
+    license: apache-2.0
+  - id: OpenGVLab/InternVL2-1B
+    revision: 0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187
+    group: observers
+    role: matched_candidate_mid
+    license: mit
+  - id: Qwen/Qwen2-VL-2B-Instruct
+    revision: 895c3a49bc3fa70a340399125c650a463535e71c
+    group: observers
+    role: matched_candidate_high
+    license: apache-2.0
+  - id: Qwen/Qwen2.5-VL-7B-Instruct
+    revision: cc594898137f460bfe9f0759e9844b3ce807cfb5
+    group: observers
+    role: upper_bound_observer
+    license: apache-2.0
+  - id: deepseek-ai/Janus-Pro-1B
+    revision: 960ab33191f61342a4c60ae74d8dc356a39fafcb
+    group: audit
+    role: inference_audit_backbone
+    license: mit
+  - id: showlab/show-o-512x512
+    revision: dbe757d951099968fb102d249d35a764528df2dd
+    group: audit
+    role: pure_discrete_audit
+    license: apache-2.0
+  - id: zhiqiulin/clip-flant5-xl
+    revision: 3b4a6b1b3e43634a47fd4c4a9007fa703bc74769
+    group: late_eval
+    role: vqascore_baseline
+    license: apache-2.0
+repositories:
+  - id: showlab/Show-o
+    revision: 45a5a2de01d1ebd10cd5864d29310a76476cdf23
+    group: core
+  - id: deepseek-ai/Janus
+    revision: 1daa72fa409002d40931bd7b36a9280362469ead
+    group: audit
