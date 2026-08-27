@@ -366,7 +366,7 @@
   candidate ID and image path per A3 row, refuses to run when the automatic A3 checks are green,
   and emits an immutable red decision with blind-human/A4 explicitly skipped. Seven focused joint
   readiness tests pass.
-- Full repository verification after recursive A3 evidence validation passes: Ruff clean and 86/86
+- Full repository verification after recursive download authorization passes: Ruff clean and 87/87
   tests green. The only
   warnings are the already-known future Pillow PDF palette-mode deprecations in figure-export tests.
 - Extended the publication readiness matrix for upstream-stop decisions. Registered but unmeasured
@@ -385,3 +385,16 @@
   finalizer now verifies the rows JSONL hash, recomputes row/ID/path cardinalities, requires every
   candidate image to exist, recomputes its decoded-RGB SHA-256, and stores the recomputed artifact
   counts in the decision. A modified rows file or image can no longer inherit a valid summary hash.
+- Collision-safe A3-r2 completed 210 candidates in 2730.05 seconds with 210 unique IDs, 210 unique
+  paths, and 186 unique decoded RGBs. Independent recomputation passed; its automatic metrics match
+  invalid diagnostic r1 exactly. Report SHA-256 is
+  `f9d3c3d10c6ed2f69dfae2e18ca1274e5e2e8d2b2e6c773f88a4e60e41e4d3bc`; rows SHA-256 is
+  `9d34ed3df90af76fa7fe1b6ca36f43e3950970a91cdd4fabc2e857bd99305d33`.
+- Froze the rank-1 upstream-stop decision at SHA-256
+  `d2bd4190d3d9b2d92b1aa79958ea88dde200efb54ba90f6af449e4b9df54d685`. Gate -2B passed;
+  Gate -2C failed on 70% overall coverage, 40% spatial coverage, 60% count/spatial Oracle@4, and
+  16pt fixed-seed swing. Blind human precision and A4 are N/T. Publication matrix QA passes with
+  PNG/PDF/SVG/grayscale/CSV exports under `figure-readiness-rank1-red`.
+- Extended fallback-download authorization through the predecessor's nested A3 rows and RGB graph.
+  The exact 5,661,868,606-byte HQ plan resolved with 66,893,271,040 free bytes; the authorized,
+  resumable HQ download is now running and binds the rank-1 decision SHA into its registry.

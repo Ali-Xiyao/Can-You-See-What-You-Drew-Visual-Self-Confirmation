@@ -90,7 +90,7 @@ def _evidence(path: Path, label: str) -> dict[str, Any]:
     return {"label": label, "path": str(path), "sha256": sha256_file(path)}
 
 
-def _validate_generated_artifacts(generated: Mapping[str, Any]) -> dict[str, int]:
+def validate_generated_artifacts(generated: Mapping[str, Any]) -> dict[str, int]:
     """Recompute A3 row/image integrity instead of trusting summary counters."""
 
     rows_path = Path(str(generated.get("rows", ""))).resolve()
@@ -226,7 +226,7 @@ def finalize_joint_readiness_stop(
             dependency_revisions=dependencies,
             label=label,
         )
-    artifact_counts = _validate_generated_artifacts(generated)
+    artifact_counts = validate_generated_artifacts(generated)
     main_families = tuple(str(item) for item in readiness["main_families"])
     thresholds = readiness["thresholds"]
     reference_thresholds = thresholds["reference"]
@@ -399,7 +399,7 @@ def finalize_joint_readiness(
             dependency_revisions=dependency_revisions,
             label=label,
         )
-    artifact_counts = _validate_generated_artifacts(generated)
+    artifact_counts = validate_generated_artifacts(generated)
 
     main_families = tuple(str(item) for item in readiness["main_families"])
     thresholds = readiness["thresholds"]

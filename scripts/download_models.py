@@ -15,6 +15,7 @@ from urllib.parse import quote
 
 import yaml
 
+from selfsight.analysis.readiness import validate_generated_artifacts
 from selfsight.utils.hashing import sha256_file
 from selfsight.utils.jsonl import atomic_write_json
 
@@ -108,6 +109,11 @@ def _validate_fallback_download_authorization(
             raise RuntimeError("Upstream-stop predecessor must not contain human/A4 evidence")
     elif evidence.get("human") is None or evidence.get("lora") is None:
         raise RuntimeError("Completed predecessor is missing human/A4 evidence")
+    generated_path = Path(str(evidence["generated"]["path"])).resolve()
+    generated_report = json.loads(generated_path.read_text(encoding="utf-8"))
+    if not isinstance(generated_report, Mapping):
+        raise TypeError("Predecessor A3 generated evidence must be a JSON object")
+    validate_generated_artifacts(generated_report)
     return {
         "path": str(path),
         "sha256": sha256_file(path),

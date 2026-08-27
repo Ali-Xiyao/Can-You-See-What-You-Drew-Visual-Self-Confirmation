@@ -113,25 +113,27 @@ families means the scientific claim is unsupported for that backbone and stops p
 - [x] Create an isolated native-Windows Show-o2 environment on H: and capture an exact lock.
 - [x] Download only base 1.5B and its locked dependencies to H: with size/hash verification.
 - [x] Run A1 (six samples) at official 432x432; log GPU assignment, peak memory, time, outputs, and hashes.
-- [ ] If A1 passes, run A2 and A3 K=1. Run K=4 only for the A2-retained families (A2 complete;
-  A3-r1 completed red but failed candidate-identity integrity; collision-safe A3-r2 is running with
-  the same manifest/seeds and five retained families).
+- [x] Run A2 and collision-safe A3-r2 under the locked rank-1 model, manifest, and seeds; retain r1
+  only as an invalid diagnostic. r2 completed 210 unique IDs/paths and reproduced r1's automatic
+  metrics exactly.
 - [x] Implement a fail-closed upstream-stop decision for an automatic A3 failure; require
   collision-free candidate artifacts and record blind-human/A4 evidence as skipped rather than
   manufacturing missing measurements.
-- [ ] Run A4 LoRA backward only if A2/A3 leave a plausible path to four joint families.
-- **Status:** in_progress
+- [x] Apply the preregistered stop rule: automatic A3 was red, so blind-human precision and A4 are
+  explicitly N/T rather than fabricated failures.
+- **Status:** completed_rank1_red
 
 ### Phase 6 — Conditional fallback and local phenomenon work
 
 - [ ] If base generation fails but reference observation passes, allow the registered short generation
   warm-up; otherwise move directly to HQ.
-- [ ] Download/audit HQ only after a recorded base decision; 7B only after both 1.5B decisions.
+- [ ] Download/audit HQ only after a recorded base decision; 7B only after both 1.5B decisions. The
+  immutable base red decision is complete and the authorized HQ download is in progress.
 - [x] Enforce the candidate ladder inside the downloader: fallback downloads require the immediately
   prior red Gate -2 decision, exact rank/model/fallback identity, and valid evidence SHA-256 records.
 - [ ] If Gate -2 is green with at least four families, run family-restricted E1, Gate -1b, and paired local E2.
 - [ ] If fewer than four families are eligible, finalize the conditional negative result and stop before self-training.
-- **Status:** pending
+- **Status:** in_progress
 
 ### Phase 7 — A800 migration and formal experiments
 
