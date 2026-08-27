@@ -366,7 +366,7 @@
   candidate ID and image path per A3 row, refuses to run when the automatic A3 checks are green,
   and emits an immutable red decision with blind-human/A4 explicitly skipped. Seven focused joint
   readiness tests pass.
-- Full repository verification after fallback-chain integration passes: Ruff clean and 85/85
+- Full repository verification after recursive A3 evidence validation passes: Ruff clean and 86/86
   tests green. The only
   warnings are the already-known future Pillow PDF palette-mode deprecations in figure-export tests.
 - Extended the publication readiness matrix for upstream-stop decisions. Registered but unmeasured
@@ -381,3 +381,7 @@
 - Applied the same immutable-chain validation at fallback Gate finalization: a rank-2/rank-3
   decision now rejects a non-adjacent predecessor, inconsistent red status, missing evidence set,
   invalid upstream-stop contract, unavailable evidence path, or any evidence SHA-256 mismatch.
+- Hardened both full and upstream-stop Gate finalization against detached A3 summaries. The
+  finalizer now verifies the rows JSONL hash, recomputes row/ID/path cardinalities, requires every
+  candidate image to exist, recomputes its decoded-RGB SHA-256, and stores the recomputed artifact
+  counts in the decision. A modified rows file or image can no longer inherit a valid summary hash.

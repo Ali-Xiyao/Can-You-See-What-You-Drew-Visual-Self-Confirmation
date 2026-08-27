@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from PIL import Image
 
 from selfsight.analysis.readiness import (
     _validate_predecessor,
@@ -12,6 +13,7 @@ from selfsight.analysis.readiness import (
     finalize_joint_readiness_stop,
     require_joint_readiness,
 )
+from selfsight.utils.hashing import rgb_sha256, sha256_file
 
 FAMILIES = ("existence", "count", "color", "size", "spatial", "binding")
 
@@ -39,6 +41,30 @@ def _evidence(tmp_path: Path, *, weak_families: int = 0) -> dict[str, Path]:
         "source_revision": backbone["source"]["revision"],
         "dependency_revisions": backbone["dependencies"],
     }
+    rows = []
+    for index, family in enumerate(FAMILIES):
+        image_path = tmp_path / "images" / f"candidate-{index}.png"
+        image_path.parent.mkdir(parents=True, exist_ok=True)
+        Image.new("RGB", (2, 2), (index * 20, 10, 30)).save(image_path)
+        rows.append(
+            {
+                "candidate_id": f"candidate-{index}",
+                "image_path": str(image_path),
+                "rgb_sha256": rgb_sha256(image_path),
+                "family": family,
+            }
+        )
+    rows_path = tmp_path / "generated-rows.jsonl"
+    rows_path.write_text(
+        "".join(json.dumps(row, sort_keys=True) + "\n" for row in rows), encoding="utf-8"
+    )
+    generated_artifacts = {
+        "rows": str(rows_path),
+        "rows_sha256": sha256_file(rows_path),
+        "candidates": len(rows),
+        "unique_candidate_ids": len(rows),
+        "unique_image_paths": len(rows),
+    }
     return {
         "canary": _write_json(tmp_path / "canary.json", {**common, "passed": True}),
         "reference": _write_json(
@@ -55,6 +81,7 @@ def _evidence(tmp_path: Path, *, weak_families: int = 0) -> dict[str, Path]:
             tmp_path / "generated.json",
             {
                 **common,
+                **generated_artifacts,
                 "overall_coverage": 0.85,
                 "family_coverage": family_coverage,
                 "overall_oracle_at_4": 0.80,
@@ -112,9 +139,6 @@ def test_joint_readiness_upstream_stop_freezes_red_without_human_or_a4(tmp_path:
     generated = json.loads(evidence["generated"].read_text(encoding="utf-8"))
     generated.update(
         {
-            "candidates": 210,
-            "unique_candidate_ids": 210,
-            "unique_image_paths": 210,
             "overall_coverage": 0.70,
             "fixed_seed_coverage_swing_points": 16.0,
             "checks": {
@@ -148,9 +172,8 @@ def test_joint_readiness_upstream_stop_rejects_colliding_a3_artifacts(tmp_path: 
     generated = json.loads(evidence["generated"].read_text(encoding="utf-8"))
     generated.update(
         {
-            "candidates": 210,
-            "unique_candidate_ids": 186,
-            "unique_image_paths": 186,
+            "unique_candidate_ids": 5,
+            "unique_image_paths": 5,
         }
     )
     _write_json(evidence["generated"], generated)
@@ -162,6 +185,15 @@ def test_joint_readiness_upstream_stop_rejects_colliding_a3_artifacts(tmp_path: 
             reference_report_path=evidence["reference"],
             generated_report_path=evidence["generated"],
         )
+
+
+def test_joint_readiness_rejects_tampered_a3_rows(tmp_path: Path):
+    evidence = _evidence(tmp_path)
+    generated = json.loads(evidence["generated"].read_text(encoding="utf-8"))
+    with Path(generated["rows"]).open("a", encoding="utf-8") as handle:
+        handle.write("{}\n")
+    with pytest.raises(RuntimeError, match="rows SHA-256 mismatch"):
+        _finalize(tmp_path, evidence)
 
 
 def test_joint_readiness_binds_identity_before_writing(tmp_path: Path):

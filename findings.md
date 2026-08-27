@@ -396,3 +396,8 @@
   download registry does not prove that the predecessor evidence remained unchanged during the
   next audit, so fallback finalization independently checks every predecessor evidence hash and the
   adjacent candidate rank before binding the red decision SHA.
+- Hashing only the A3 summary JSON is insufficient because that JSON points to a separate rows JSONL
+  and 210 external RGB files. A scientifically immutable decision must traverse that evidence graph:
+  summary -> rows hash -> unique candidate IDs/paths -> decoded RGB hashes. File-byte hashes are not
+  interchangeable with decoded-RGB hashes because PNG encoding metadata may change without changing
+  the pixels seen by the verifier.

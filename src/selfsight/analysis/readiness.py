@@ -9,8 +9,8 @@ from typing import Any
 
 import yaml
 
-from selfsight.utils.hashing import sha256_file
-from selfsight.utils.jsonl import atomic_write_json
+from selfsight.utils.hashing import rgb_sha256, sha256_file
+from selfsight.utils.jsonl import atomic_write_json, read_jsonl
 
 
 def _read_json(path: str | Path, label: str) -> tuple[Path, dict[str, Any]]:
@@ -88,6 +88,47 @@ def _require_runtime_lock(
 
 def _evidence(path: Path, label: str) -> dict[str, Any]:
     return {"label": label, "path": str(path), "sha256": sha256_file(path)}
+
+
+def _validate_generated_artifacts(generated: Mapping[str, Any]) -> dict[str, int]:
+    """Recompute A3 row/image integrity instead of trusting summary counters."""
+
+    rows_path = Path(str(generated.get("rows", ""))).resolve()
+    expected_rows_hash = generated.get("rows_sha256")
+    if not rows_path.is_file() or not isinstance(expected_rows_hash, str):
+        raise RuntimeError("A3 generated rows evidence is unavailable")
+    if sha256_file(rows_path) != expected_rows_hash:
+        raise RuntimeError("A3 generated rows SHA-256 mismatch")
+    rows = list(read_jsonl(rows_path))
+    candidates = int(generated.get("candidates", -1))
+    candidate_ids = {str(row.get("candidate_id", "")) for row in rows}
+    image_paths = {str(Path(str(row.get("image_path", ""))).resolve()) for row in rows}
+    if (
+        candidates <= 0
+        or len(rows) != candidates
+        or len(candidate_ids) != candidates
+        or len(image_paths) != candidates
+        or "" in candidate_ids
+    ):
+        raise RuntimeError("A3 decision requires collision-free candidate artifacts")
+    for row in rows:
+        image_path = Path(str(row.get("image_path", ""))).resolve()
+        expected_rgb_hash = row.get("rgb_sha256")
+        if not image_path.is_file() or not isinstance(expected_rgb_hash, str):
+            raise RuntimeError(f"A3 candidate image is unavailable: {image_path}")
+        if rgb_sha256(image_path) != expected_rgb_hash:
+            raise RuntimeError(f"A3 candidate RGB SHA-256 mismatch: {image_path}")
+    recorded_ids = int(generated.get("unique_candidate_ids", -1))
+    recorded_paths = int(generated.get("unique_image_paths", -1))
+    if recorded_ids != len(candidate_ids) or recorded_paths != len(image_paths):
+        raise RuntimeError(
+            "A3 recorded artifact counts are inconsistent with collision-free candidates"
+        )
+    return {
+        "candidates": candidates,
+        "unique_candidate_ids": len(candidate_ids),
+        "unique_image_paths": len(image_paths),
+    }
 
 
 def _validate_predecessor(
@@ -185,13 +226,7 @@ def finalize_joint_readiness_stop(
             dependency_revisions=dependencies,
             label=label,
         )
-    candidates = int(generated.get("candidates", -1))
-    if (
-        candidates <= 0
-        or int(generated.get("unique_candidate_ids", -1)) != candidates
-        or int(generated.get("unique_image_paths", -1)) != candidates
-    ):
-        raise RuntimeError("A3 stop decision requires collision-free candidate artifacts")
+    artifact_counts = _validate_generated_artifacts(generated)
     main_families = tuple(str(item) for item in readiness["main_families"])
     thresholds = readiness["thresholds"]
     reference_thresholds = thresholds["reference"]
@@ -294,6 +329,7 @@ def finalize_joint_readiness_stop(
             "fixed_seed_coverage_swing_points": swing,
             "overall_precision": None,
             "family_precision": None,
+            "artifact_counts": artifact_counts,
         },
         "thresholds": thresholds,
         "evidence": {
@@ -363,6 +399,7 @@ def finalize_joint_readiness(
             dependency_revisions=dependency_revisions,
             label=label,
         )
+    artifact_counts = _validate_generated_artifacts(generated)
 
     main_families = tuple(str(item) for item in readiness["main_families"])
     thresholds = readiness["thresholds"]
@@ -492,6 +529,7 @@ def finalize_joint_readiness(
             "overall_precision": overall_precision,
             "family_precision": dict(family_precision),
             "fixed_seed_coverage_swing_points": coverage_swing,
+            "artifact_counts": artifact_counts,
         },
         "thresholds": thresholds,
         "evidence": {
