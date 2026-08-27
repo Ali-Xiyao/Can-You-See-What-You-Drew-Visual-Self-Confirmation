@@ -300,3 +300,15 @@
   config follows the same official constructor path. Its current immutable revision is
   `a09a35458c702b33eeacc393d103063234e8bc28`, with four model shards totaling about 15.23 GB. It is
   locked in the rank-3 fallback group but remains excluded from the candidate-1 download.
+- A readiness figure is fundamentally matrix data, not a distribution or trend. The truthful main
+  visualization is therefore an exact annotated candidate-by-gate matrix plus a family-by-metric
+  threshold matrix for the latest candidate; averaging families into bars would hide the joint
+  intersection that defines Gate -2. Categorical pass/fail cells require no continuous colorbar.
+- Matplotlib `imshow` rasterizes even a categorical matrix inside SVG, which defeats the vector
+  export requirement. Drawing each cell as a `Rectangle` preserves vector structure and also allows
+  redundant fail hatching. In the first preview, family labels at x=-0.18 intruded into the first
+  cell; moving them to x=-0.55 cleared the overlap without shrinking the final-size typography.
+- The SciPilot PDF checker treats top-level Type-0 fonts without a direct FontDescriptor as possibly
+  unembedded and warns even when Matplotlib uses `pdf.fonttype=42`; it does not recurse into the
+  descendant CID font. This is a conservative WARN, not a Type-3 FAIL. SVG and 600-DPI PNG checks
+  pass, and the PDF remains generated with TrueType/fonttype-42 settings.

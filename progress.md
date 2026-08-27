@@ -260,3 +260,16 @@
   adapter now derives latent geometry, sequence/token counts, inference steps, language-base path,
   and dependency locks from the selected candidate rather than assuming the 432px 1.5B profile.
   Nineteen focused v2.2 tests pass and targeted Ruff is clean.
+- Materialized the complete isolated benchmark at `H:\selfsight-data\selfsight-v2.2`: 6 canary,
+  120 reference, and 60 generated-domain rows. Registry hashes are
+  `675a999418fe13949ab6d8d51df1af93732c7351852873d329ce5f8b20024141` (canary),
+  `2fe81a6e3d83fac2bb1c04b9158046e32b4f83b5f2885ecab317fddc868b819a` (reference), and
+  `0059d62a168394adfefd7882f8e22419b86734d41e7595c09da2e9c27d3ab78a` (generated).
+- Full repository Ruff and all 52 tests pass. Committed the first v2.2 implementation as
+  `8fb06b0` and pushed branch `experiment/v2.2-joint-readiness` to `origin`.
+- Implemented `render_readiness_matrix.py` under the SciPilot scientific-figure workflow. The
+  first render exposed an overlapping family label and rasterized SVG; the second uses pure vector
+  rectangles, shifted labels, exact annotated cells, colorblind-safe blue/orange plus hatch/text,
+  and a 600-DPI grayscale preview. Programmatic layout QA, direct color/grayscale review, PNG strict
+  compliance, and SVG compliance pass; the PDF checker emits only a conservative Type-0 font
+  embedding warning and no Type-3/FAIL.

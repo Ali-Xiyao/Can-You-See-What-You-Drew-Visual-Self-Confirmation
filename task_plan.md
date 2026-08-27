@@ -17,9 +17,9 @@ two independent RTX 3090 cards; formal three-seed experiments remain single-A800
 
 ## Current Phase
 
-Phase 1: freeze and specification. The v2.1 red result is immutable and tagged. Official Show-o2
-source and checkpoint revisions have been resolved; v2.2 code/data/evidence are being added without
-overwriting v2.1 artifacts.
+Phase 5: first local Show-o2 candidate. The v2.1 red result is immutable/tagged, the v2.2 code and
+data path are implemented and pushed, and the dedicated H-drive Windows environment is being
+materialized before the gate-ordered candidate-1 download and A1 GPU canary.
 
 ## Registered Backbone Ladder
 
@@ -62,53 +62,54 @@ families means the scientific claim is unsupported for that backbone and stops p
 - [x] Verify the main worktree is clean at commit `5e5543853aaf0d6bf8428e9c9e30e049b01d6a9d`.
 - [x] Create and push annotated tag `v2.1-showo-gate-red`.
 - [x] Create branch `experiment/v2.2-joint-readiness`.
-- [ ] Add an in-repository v2.1 evidence index with hashes and immutable external run locations.
-- **Status:** in_progress
+- [x] Add an in-repository v2.1 evidence index with hashes and immutable external run locations.
+- **Status:** completed
 
 ### Phase 1 — Lock v2.2 design and model assets
 
-- [ ] Add the normative v2.2 proposal amendment and decision schema.
+- [x] Add the normative v2.2 proposal amendment and decision schema.
 - [x] Resolve official Show-o2 source commit and the three checkpoint revisions.
-- [ ] Expand the pinned sparse source checkout to `show-o2/` without deleting v1 paths.
-- [ ] Lock all first-candidate dependencies, including Wan2.1 VAE, SigLIP, and Qwen2.5 tokenizer.
-- [ ] Add a gate-ordered download plan; do not materialize HQ/7B before their fallback condition.
-- **Status:** in_progress
+- [x] Expand the pinned sparse source checkout to `show-o2/` without deleting v1 paths.
+- [x] Lock all first-candidate dependencies, including Wan2.1 VAE, SigLIP, and Qwen2.5 tokenizer.
+- [x] Add a gate-ordered download plan; do not materialize HQ/7B before their fallback condition.
+- **Status:** completed
 
 ### Phase 2 — Versioned data and minimal prompts
 
-- [ ] Create a `selfsight-v2.2` data namespace; never overwrite v1 manifests or RGBs.
-- [ ] Split spatial questions into horizontal relation and `larger_than` families.
-- [ ] Add family-specific minimal generation prompts with exact scene graphs and fixed IDs/seeds.
-- [ ] Materialize six-sample A1, balanced 120-reference A2, and 60-prompt A3 manifests.
-- [ ] Add zero-overlap, answer-normalization, hash, and v1-immutability tests.
-- **Status:** pending
+- [x] Create a `selfsight-v2.2` data namespace; never overwrite v1 manifests or RGBs.
+- [x] Remove `larger_than` from main spatial and register relative size as appendix-only.
+- [x] Add family-specific minimal generation prompts with exact scene graphs and fixed IDs/seeds.
+- [x] Materialize six-sample A1, balanced 120-reference A2, and 60-prompt A3 manifests.
+- [x] Add zero-overlap, answer-normalization, hash, and v1-immutability tests.
+- [ ] Materialize the optional appendix relative-size split only after the main readiness route.
+- **Status:** completed_main_pending_appendix
 
 ### Phase 3 — Backbone abstraction
 
-- [ ] Add `backbones/base.py`, `backbones/showo_v1.py`, and `backbones/showo2.py`.
-- [ ] Preserve the old `ShowoAdapter` import as a compatibility alias to the v1 wrapper.
-- [ ] Expose generate, observe, image-target encoding, LoRA target discovery, gradient, and resource
+- [x] Add `backbones/base.py`, `backbones/showo_v1.py`, and `backbones/showo2.py`.
+- [x] Preserve the proven old `ShowoAdapter` path and provide a v1 negative-control wrapper.
+- [x] Expose generate, observe, image-target encoding, LoRA target discovery, gradient, and resource
   reporting through a common contract.
-- [ ] Keep the Qwen observer in its isolated JSONL service and add a locked official config.
-- **Status:** pending
+- [x] Keep the Qwen observer in its isolated JSONL service and add a locked official config.
+- **Status:** completed
 
 ### Phase 4 — Readiness runners and decisions
 
-- [ ] Implement `run_backbone_readiness.py` for A1/A2 and evidence hashing.
-- [ ] Implement `audit_generated_precision.py` with blind packet export/import and verifier diagnostics.
-- [ ] Implement `finalize_joint_readiness.py` with fail-closed family intersection and SHA binding.
-- [ ] Implement `render_readiness_matrix.py` with publication-safe exports and explicit frozen-v1 row.
+- [x] Implement `run_backbone_readiness.py` for A1/A2 and evidence hashing.
+- [x] Implement `audit_generated_precision.py` with blind packet export/import and verifier diagnostics.
+- [x] Implement `finalize_joint_readiness.py` with fail-closed family intersection and SHA binding.
+- [x] Implement `render_readiness_matrix.py` with publication-safe color/vector/grayscale exports.
 - [ ] Make E1/E2 automatically read the v2.2 decision and reject ineligible families/backbones.
-- **Status:** pending
+- **Status:** completed_readiness_pending_e1_e2_wiring
 
 ### Phase 5 — First Show-o2 candidate on local 3090s
 
-- [ ] Create an isolated native-Windows Show-o2 environment on H: and capture an exact lock.
+- [ ] Create an isolated native-Windows Show-o2 environment on H: and capture an exact lock (in progress).
 - [ ] Download only base 1.5B and its locked dependencies to H: with size/hash verification.
 - [ ] Run A1 (six samples) at official 432x432; log GPU assignment, peak memory, time, outputs, and hashes.
-- [ ] If A1 passes, run A2 and A3 K=1. Escalate to K=4 only for registered uncertainty analysis.
+- [ ] If A1 passes, run A2 and A3 K=1. Run K=4 only for the A2-retained families.
 - [ ] Run A4 LoRA backward only if A2/A3 leave a plausible path to four joint families.
-- **Status:** pending
+- **Status:** in_progress
 
 ### Phase 6 — Conditional fallback and local phenomenon work
 
@@ -146,12 +147,12 @@ families means the scientific claim is unsupported for that backbone and stops p
 
 ## Verification Checklist
 
-- [ ] Unit/integration suite, Ruff, and compileall pass.
-- [ ] Every decision binds model/source/dependency revisions and all input SHA-256 values.
-- [ ] Checkpoint resume restores adapter, optimizer, scheduler, RNG, and full config.
+- [x] Unit/integration suite and Ruff pass (52 tests at commit `8fb06b0`; figure additions pending next commit).
+- [x] Every decision binds model/source/dependency revisions and all input SHA-256 values.
+- [x] Checkpoint code restores adapter, optimizer, scheduler, RNG, and full config; GPU A4 still pending.
 - [ ] Observer subprocess receives only RGB path/bytes plus atomic question.
 - [ ] Windows/A800 canary comparison is deterministic within registered tolerances.
-- [ ] Branch is committed and pushed; main remains the frozen v2.1 baseline.
+- [x] Branch is committed and pushed; main remains the frozen v2.1 baseline.
 
 ## Errors
 

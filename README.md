@@ -86,6 +86,11 @@ the exact shared-transformer module names and binds them to the A1/tree hashes:
   --human-report "$root\a3-human.json" `
   --lora-report "$root\a4-lora.json" `
   --output "$root\decision.json"
+
+& $core .\scripts\render_readiness_matrix.py `
+  --decision "$root\decision.json" `
+  --evidence-status "local one-seed engineering evidence" `
+  --output "$root\figure-readiness"
 ```
 
 A red decision stops E1/E2 and names only the preregistered next candidate. HQ/7B configs and
