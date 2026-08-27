@@ -47,7 +47,18 @@ $root = "H:\selfsight-runs\readiness\showo2-1p5b"
   --manifest H:\selfsight-data\selfsight-v2.2\manifests\generated.jsonl `
   --output "$root\a3-generated.json"
 
-# The packet shows only RGB plus an atomic question. Fill review_blinded.csv before score.
+# If A3's automatic coverage/Oracle/seed-stability checks are red, freeze the red decision here.
+# Human precision and A4 are then recorded as preregistered skips, never fabricated as failures.
+& $showo2 .\scripts\finalize_joint_readiness.py `
+  --backbone-config configs\backbones\showo2_1p5b.yaml `
+  --canary-report "$root\a1-canary.json" `
+  --reference-report "$root\a2-reference.json" `
+  --generated-report "$root\a3-generated.json" `
+  --stop-before-human-a4 `
+  --output "$root\decision-red.json"
+
+# Continue below only if A3's automatic checks are green. The packet shows only RGB plus an
+# atomic question. Fill review_blinded.csv before score.
 & $showo2 .\scripts\audit_generated_precision.py export `
   --generated-report "$root\a3-generated.json" `
   --output "$root\a3-blind-packet"
@@ -93,9 +104,11 @@ the exact shared-transformer module names and binds them to the A1/tree hashes:
   --output "$root\figure-readiness"
 ```
 
-A red decision stops E1/E2 and names only the preregistered next candidate. HQ/7B configs and
-download groups exist for that route, but cannot be used without `--predecessor` pointing to the
-immediately preceding immutable red decision. Full rules are in
+A red decision stops E1/E2 and names only the preregistered next candidate. An automatic A3 failure
+stops before human review and A4 because neither can repair failed coverage, Oracle@4, or seed
+stability; the decision explicitly stores those evidence fields as absent. HQ/7B configs and download
+groups exist for that route, but cannot be used without `--predecessor` pointing to the immediately
+preceding immutable red decision. Full rules are in
 [`docs/PROPOSAL_V2.2_AMENDMENT.md`](docs/PROPOSAL_V2.2_AMENDMENT.md).
 
 ## Storage and processes

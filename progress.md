@@ -361,3 +361,10 @@
   the selected families, preserves train/probe/outcome template separation, excludes every A1/A2/A3
   signature, renders deterministic replay references, and writes a Gate-hashed registry. The
   portability layer now rebases this three-manifest dataset without requiring unrelated Tier B/D.
+- Added a preregistered upstream-stop finalizer for automatic A3 failures. It revalidates the exact
+  A1/A2/A3 identity and runtime locks, recomputes the automatic A2/A3 checks, requires one unique
+  candidate ID and image path per A3 row, refuses to run when the automatic A3 checks are green,
+  and emits an immutable red decision with blind-human/A4 explicitly skipped. Seven focused joint
+  readiness tests pass.
+- Full repository verification after integration passes: Ruff clean and 79/79 tests green. The only
+  warnings are the already-known future Pillow PDF palette-mode deprecations in figure-export tests.

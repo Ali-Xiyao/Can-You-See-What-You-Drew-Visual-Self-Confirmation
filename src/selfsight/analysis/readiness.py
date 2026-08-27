@@ -113,6 +113,176 @@ def _validate_predecessor(
     return {**_evidence(path, "predecessor"), "model_id": predecessor.get("model_id")}
 
 
+def finalize_joint_readiness_stop(
+    *,
+    backbone_config_path: str | Path,
+    readiness_config_path: str | Path,
+    canary_report_path: str | Path,
+    reference_report_path: str | Path,
+    generated_report_path: str | Path,
+    output_path: str | Path | None = None,
+    predecessor_path: str | Path | None = None,
+) -> dict[str, Any]:
+    """Freeze an upstream A3 failure without fabricating human or A4 evidence."""
+
+    backbone_path, backbone = _read_yaml(backbone_config_path, "backbone config")
+    readiness_path, readiness = _read_yaml(readiness_config_path, "readiness config")
+    canary_path, canary = _read_json(canary_report_path, "A1 canary report")
+    reference_path, reference = _read_json(reference_report_path, "A2 reference report")
+    generated_path, generated = _read_json(generated_report_path, "A3 generated report")
+    model_id = str(backbone["backbone_id"])
+    revision = str(backbone["revision"])
+    source_revision = str(backbone["source"]["revision"])
+    dependencies = {str(key): str(value) for key, value in backbone["dependencies"].items()}
+    for label, report in (
+        ("A1 canary", canary),
+        ("A2 reference", reference),
+        ("A3 generated", generated),
+    ):
+        _require_identity(report, model_id=model_id, revision=revision, label=label)
+        _require_runtime_lock(
+            report,
+            source_revision=source_revision,
+            dependency_revisions=dependencies,
+            label=label,
+        )
+    candidates = int(generated.get("candidates", -1))
+    if (
+        candidates <= 0
+        or int(generated.get("unique_candidate_ids", -1)) != candidates
+        or int(generated.get("unique_image_paths", -1)) != candidates
+    ):
+        raise RuntimeError("A3 stop decision requires collision-free candidate artifacts")
+    main_families = tuple(str(item) for item in readiness["main_families"])
+    thresholds = readiness["thresholds"]
+    reference_thresholds = thresholds["reference"]
+    generated_thresholds = thresholds["generated"]
+    reference_accuracy = _mapping(reference, "family_open_accuracy", "A2 reference")
+    family_coverage = _mapping(generated, "family_coverage", "A3 generated")
+    family_oracle = _mapping(generated, "family_oracle_at_4", "A3 generated")
+    for label, values in (
+        ("reference accuracy", reference_accuracy),
+        ("generated coverage", family_coverage),
+        ("generated Oracle@4", family_oracle),
+    ):
+        missing = sorted(set(main_families).difference(values))
+        if missing:
+            raise RuntimeError(f"{label} is missing families: {missing}")
+    reference_min = float(reference_thresholds["family_open_accuracy_min"])
+    observation_families = tuple(
+        family
+        for family in main_families
+        if _fraction(reference_accuracy[family], f"A2 {family} accuracy") >= reference_min
+    )
+    gate_b = {
+        "family_open_accuracy": len(observation_families)
+        >= int(reference_thresholds["families_passing_min"]),
+        "yes_bias": _points(reference["absolute_yes_bias_points"], "A2 yes bias")
+        <= float(reference_thresholds["yes_bias_points_max"]),
+        "repeat_agreement": _fraction(reference["repeat_agreement"], "A2 repeat")
+        >= float(reference_thresholds["repeat_agreement_min"]),
+        "abstain_rate": _fraction(reference["abstain_rate"], "A2 abstain")
+        <= float(reference_thresholds["abstain_rate_max"]),
+    }
+    overall_coverage = _fraction(generated["overall_coverage"], "A3 overall coverage")
+    overall_oracle = _fraction(generated["overall_oracle_at_4"], "A3 overall Oracle@4")
+    swing = _points(
+        generated["fixed_seed_coverage_swing_points"], "A3 fixed-seed coverage swing"
+    )
+    generated_retained = tuple(
+        family
+        for family in main_families
+        if _fraction(family_coverage[family], f"A3 {family} coverage")
+        >= float(generated_thresholds["family_coverage_min"])
+    )
+    automatic_c = {
+        "overall_primary_answer_coverage": overall_coverage
+        >= float(generated_thresholds["overall_coverage_min"]),
+        "retained_family_coverage": all(
+            family in generated_retained for family in observation_families
+        ),
+        "oracle_at_4": overall_oracle >= float(generated_thresholds["oracle_at_4_min"]),
+        "fixed_seed_coverage_swing": swing
+        <= float(generated_thresholds["fixed_seed_coverage_swing_points_max"]),
+    }
+    recorded_checks = _mapping(generated, "checks", "A3 generated")
+    if any(bool(recorded_checks.get(key)) != value for key, value in automatic_c.items()):
+        raise RuntimeError("A3 automatic checks are internally inconsistent")
+    automatic_pass = all(automatic_c.values())
+    if bool(generated.get("passed_without_human_precision")) != automatic_pass:
+        raise RuntimeError("A3 automatic pass flag is internally inconsistent")
+    if automatic_pass:
+        raise RuntimeError("A3 automatic Gate is green; blind-human audit and A4 are required")
+    predecessor = _validate_predecessor(backbone, predecessor_path)
+    fallback_model = backbone.get("fallback", {}).get("on_failure")
+    report = {
+        "schema_version": 2,
+        "gate": "minus_2_joint_readiness",
+        "decision_mode": "upstream_stop_before_human_and_a4",
+        "model_id": model_id,
+        "revision": revision,
+        "candidate_rank": int(backbone["candidate_rank"]),
+        "native_resolution": int(backbone["official_profile"]["resolution"]),
+        "source": dict(backbone["source"]),
+        "dependency_revisions": dependencies,
+        "passed": False,
+        "checks": {
+            "minus_2a_unified_functionality": False,
+            "minus_2b_reference_observation": all(gate_b.values()),
+            "minus_2c_generated_measurability": False,
+            "minus_2d_joint_families": False,
+        },
+        "subchecks": {
+            "minus_2a": {
+                "same_checkpoint_generate_and_observe": bool(canary.get("passed")),
+                "lora_backward_and_resume": False,
+                "frozen_step0_supported": False,
+            },
+            "minus_2b": gate_b,
+            "minus_2c": {"blind_verifier_precision": False, **automatic_c},
+            "minus_2d": {"joint_eligible_families": False},
+        },
+        "skipped_by_stop_rule": ["blind_human_precision", "a4_lora_backward_resume"],
+        "observation_eligible_families": list(observation_families),
+        "generated_retained_families": list(generated_retained),
+        "selected_eligible_families": [],
+        "metrics": {
+            "family_open_accuracy": dict(reference_accuracy),
+            "family_coverage": dict(family_coverage),
+            "family_oracle_at_4": dict(family_oracle),
+            "overall_coverage": overall_coverage,
+            "overall_oracle_at_4": overall_oracle,
+            "fixed_seed_coverage_swing_points": swing,
+            "overall_precision": None,
+            "family_precision": None,
+        },
+        "thresholds": thresholds,
+        "evidence": {
+            "backbone_config": _evidence(backbone_path, "backbone_config"),
+            "readiness_config": _evidence(readiness_path, "readiness_config"),
+            "canary": _evidence(canary_path, "canary"),
+            "reference": _evidence(reference_path, "reference"),
+            "generated": _evidence(generated_path, "generated"),
+            "human": None,
+            "lora": None,
+            "predecessor": predecessor,
+        },
+        "fallback": {
+            "next_model_id": fallback_model,
+            "action": (
+                f"Stop phenomenon work and audit fallback {fallback_model}."
+                if fallback_model
+                else "Stop phenomenon work and report the conditional negative result."
+            ),
+        },
+    }
+    if output_path is not None:
+        if Path(output_path).exists():
+            raise FileExistsError(f"Refusing to overwrite Gate -2 decision: {output_path}")
+        atomic_write_json(output_path, report)
+    return report
+
+
 def finalize_joint_readiness(
     *,
     backbone_config_path: str | Path,

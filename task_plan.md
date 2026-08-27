@@ -116,6 +116,9 @@ families means the scientific claim is unsupported for that backbone and stops p
 - [ ] If A1 passes, run A2 and A3 K=1. Run K=4 only for the A2-retained families (A2 complete;
   A3-r1 completed red but failed candidate-identity integrity; collision-safe A3-r2 is running with
   the same manifest/seeds and five retained families).
+- [x] Implement a fail-closed upstream-stop decision for an automatic A3 failure; require
+  collision-free candidate artifacts and record blind-human/A4 evidence as skipped rather than
+  manufacturing missing measurements.
 - [ ] Run A4 LoRA backward only if A2/A3 leave a plausible path to four joint families.
 - **Status:** in_progress
 

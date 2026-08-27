@@ -6,7 +6,11 @@ from pathlib import Path
 import pytest
 import yaml
 
-from selfsight.analysis.readiness import finalize_joint_readiness, require_joint_readiness
+from selfsight.analysis.readiness import (
+    finalize_joint_readiness,
+    finalize_joint_readiness_stop,
+    require_joint_readiness,
+)
 
 FAMILIES = ("existence", "count", "color", "size", "spatial", "binding")
 
@@ -100,6 +104,63 @@ def test_joint_readiness_red_with_only_three_joint_families(tmp_path: Path):
     assert not decision["passed"]
     assert decision["checks"]["minus_2d_joint_families"] is False
     assert decision["fallback"]["next_model_id"] == "showlab/show-o2-1.5B-HQ"
+
+
+def test_joint_readiness_upstream_stop_freezes_red_without_human_or_a4(tmp_path: Path):
+    evidence = _evidence(tmp_path)
+    generated = json.loads(evidence["generated"].read_text(encoding="utf-8"))
+    generated.update(
+        {
+            "candidates": 210,
+            "unique_candidate_ids": 210,
+            "unique_image_paths": 210,
+            "overall_coverage": 0.70,
+            "fixed_seed_coverage_swing_points": 16.0,
+            "checks": {
+                "overall_primary_answer_coverage": False,
+                "retained_family_coverage": True,
+                "oracle_at_4": True,
+                "fixed_seed_coverage_swing": False,
+            },
+            "passed_without_human_precision": False,
+        }
+    )
+    _write_json(evidence["generated"], generated)
+    decision_path = tmp_path / "stop-decision.json"
+    decision = finalize_joint_readiness_stop(
+        backbone_config_path="configs/backbones/showo2_1p5b.yaml",
+        readiness_config_path="configs/readiness_v2.2.yaml",
+        canary_report_path=evidence["canary"],
+        reference_report_path=evidence["reference"],
+        generated_report_path=evidence["generated"],
+        output_path=decision_path,
+    )
+    assert not decision["passed"]
+    assert decision["evidence"]["human"] is None
+    assert decision["evidence"]["lora"] is None
+    assert decision["fallback"]["next_model_id"] == "showlab/show-o2-1.5B-HQ"
+    assert decision_path.is_file()
+
+
+def test_joint_readiness_upstream_stop_rejects_colliding_a3_artifacts(tmp_path: Path):
+    evidence = _evidence(tmp_path)
+    generated = json.loads(evidence["generated"].read_text(encoding="utf-8"))
+    generated.update(
+        {
+            "candidates": 210,
+            "unique_candidate_ids": 186,
+            "unique_image_paths": 186,
+        }
+    )
+    _write_json(evidence["generated"], generated)
+    with pytest.raises(RuntimeError, match="collision-free"):
+        finalize_joint_readiness_stop(
+            backbone_config_path="configs/backbones/showo2_1p5b.yaml",
+            readiness_config_path="configs/readiness_v2.2.yaml",
+            canary_report_path=evidence["canary"],
+            reference_report_path=evidence["reference"],
+            generated_report_path=evidence["generated"],
+        )
 
 
 def test_joint_readiness_binds_identity_before_writing(tmp_path: Path):

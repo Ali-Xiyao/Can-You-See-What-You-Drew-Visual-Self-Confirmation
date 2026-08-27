@@ -378,3 +378,8 @@
   remote row/summary hashes, full backbone/source/dependency identity, and the exact eligible-family
   list. Formal orchestration should reject modified seed YAMLs, insufficient family-conditioned
   manifests, or missing migration evidence before creating a run directory.
+- Blind-human precision and A4 test different necessary conditions, but neither can rescue an A3
+  automatic failure in answer coverage, Oracle@4, retained-family coverage, or seed stability.
+  Continuing into those stages after an automatic red wastes compute and risks representing absent
+  measurements as negative results. A valid fail-fast decision must therefore preserve `null`
+  evidence plus an explicit skip reason, while remaining permanently ineligible for E1/E2.

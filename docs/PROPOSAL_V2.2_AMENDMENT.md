@@ -134,6 +134,12 @@ unified model, and that comparison is conditioned on the frozen family/item set.
 6. Run E1, Gate -1b, and local paired E2 only after a green decision with at least four families.
 7. Migrate to A800 only after the local short run is stable and interpretable.
 
+The sequence is fail-fast. If A3's automatic coverage, Oracle@4, retained-family coverage, or
+fixed-seed-stability checks are red, freeze an upstream-stop Gate -2 decision before exporting a
+human packet or running A4. The decision must mark blind-human precision and A4 as skipped and
+store their evidence as absent; it must not invent failing measurements. Human review and A4 remain
+mandatory whenever all automatic A3 checks are green.
+
 ## Conditional warm-up
 
 If reference observation passes but controlled generation fails, try the HQ checkpoint, verify the
@@ -149,10 +155,15 @@ replay may create a new common `t0`. Both arms and the frozen self-observer must
 - backbone ID and immutable model revision;
 - official source revision and dependency revisions;
 - native resolution and candidate rank;
-- SHA-256 of reference, generated, blind-human, and LoRA reports;
+- SHA-256 of reference and generated reports, plus blind-human and LoRA reports when the automatic
+  A3 route remains alive;
 - retained observation families and final joint-eligible families;
 - every threshold and check result;
 - final pass/fail plus the registered fallback action.
+
+An upstream-stop decision additionally binds the collision-free A3 candidate cardinalities and an
+explicit skipped-evidence list. It is a valid red predecessor for the next registered candidate, but
+can never authorize E1/E2.
 
 E1/E2 read the selected backbone and eligible families from this file. They may not accept a manual
 backbone override.
@@ -162,4 +173,3 @@ backbone override.
 - [Show-o official repository](https://github.com/showlab/Show-o)
 - [Show-o2 1.5B checkpoint](https://huggingface.co/showlab/show-o2-1.5B)
 - [Show-o2 1.5B-HQ checkpoint](https://huggingface.co/showlab/show-o2-1.5B-HQ)
-
