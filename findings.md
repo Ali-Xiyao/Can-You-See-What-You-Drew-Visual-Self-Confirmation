@@ -492,3 +492,11 @@
 - With no NVLink, both 3090s remain useful at the experiment-stage boundary: expose physical GPU1 as
   the sole visible device so a locked logical `cuda:0` config runs there unchanged. This is auditable
   stage-level scheduling, not model sharding or an implicit 48GB claim.
+- Scaling the unified checkpoint from 1.5B-HQ to 7B did not repair the registered generated-domain
+  measurability condition. The 7B model improved Oracle@4 to 92% and retained-family coverage passed,
+  yet first-candidate overall coverage stayed below threshold and seed swing worsened to 16pt. This
+  separates "at least one usable draw exists" from "the fixed sampler exposes a stable measurable
+  channel," and triggers the automatic stop before any human precision or backward test.
+- PDF font audits must follow Type0/CID descendant dictionaries. A shallow checker can label a
+  Matplotlib CID TrueType subset as unembedded even when Poppler reports `emb=yes`, `sub=yes`, and
+  `uni=yes`; render validation plus `pdffonts` is the authoritative check used for the final matrix.

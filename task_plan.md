@@ -17,9 +17,9 @@ two independent RTX 3090 cards; formal three-seed experiments remain single-A800
 
 ## Current Phase
 
-Phase 6: HQ automatic A3 is green, but the completed 49-item human audit is decisively red. Fix the
-count-answer normalization/evidence binding, freeze a stop-after-human decision with A4 explicitly
-N/T, render the red readiness route, and only then authorize the registered Show-o2-7B fallback.
+Phase 6: all three registered Show-o2 candidates are now frozen red. The 7B fallback passed A1/A2
+but failed automatic A3 on overall coverage and fixed-seed stability, so human precision and A4 are
+explicitly N/T and the preregistered conditional-negative stop is final for this backbone ladder.
 
 ## Registered Backbone Ladder
 
@@ -132,9 +132,11 @@ families means the scientific claim is unsupported for that backbone and stops p
   A1, and A2 are now complete; 7B A3 is running on physical GPU1.
 - [x] Enforce the candidate ladder inside the downloader: fallback downloads require the immediately
   prior red Gate -2 decision, exact rank/model/fallback identity, and valid evidence SHA-256 records.
-- [ ] If Gate -2 is green with at least four families, run family-restricted E1, Gate -1b, and paired local E2.
-- [ ] If fewer than four families are eligible, finalize the conditional negative result and stop before self-training.
-- **Status:** in_progress
+- [x] Evaluate the E1/Gate -1b/E2 authorization condition. It is not met because rank-3 Gate -2C
+  is red; these phenomenon experiments are preregistered N/T rather than pending work.
+- [x] Because the final candidate failed automatic Gate -2C, freeze the conditional negative result
+  and stop before blind human review, A4, E1, Gate -1b, or self-training.
+- **Status:** completed_conditional_negative
 - [x] Validate the completed human CSV: 49/49 rows, one reviewer, valid parseability fields, SHA-256
   `70fe561e0f25f6bf94e6a138d930a86ed9712969dd86c618155e926905dcb68e`.
 - [x] Accept arbitrary nonnegative numeric human counts and bind the exact review CSV SHA into the
@@ -144,11 +146,12 @@ families means the scientific claim is unsupported for that backbone and stops p
 - [x] Score/freeze the HQ human report and Gate -2 decision, recursively revalidating A3 rows/RGBs
   and the rank-1 predecessor.
 - [x] Render the HQ red readiness matrix with measured precision failures and A4 marked N/T.
-- [ ] Complete the running Show-o2 7B A3 after its green A1/A2 evidence, then follow the registered
-  automatic-stop or blind-human route and finalize Gate -2 before any phenomenon experiment.
-- [ ] Run full verification, commit, and push.
-- **Current blocker:** no external blocker; the collision-safe 210-candidate 7B A3 is running on
-  physical GPU1 and must finish before its registered next branch can be selected.
+- [x] Complete Show-o2 7B A3 after its green A1/A2 evidence. A3 failed automatic coverage/stability,
+  so freeze the stop-before-human/A4 decision with the exact HQ predecessor and no next fallback.
+- [x] Run final full verification; the complete test suite and Ruff pass after the frozen decision
+  and three-candidate figure QA.
+- **Current blocker:** none. Final verification/documentation is in progress; the registered local
+  candidate ladder is exhausted and no phenomenon experiment is authorized.
 
 ### Phase 6a — Project-root path normalization
 
@@ -169,13 +172,17 @@ families means the scientific claim is unsupported for that backbone and stops p
 
 ### Phase 7 — A800 migration and formal experiments
 
-- [ ] Re-materialize exact locked revisions on Linux/A800 and run the 32-prompt migration canary.
-- [ ] Require >=95% answer/verifier-label agreement and <=1pt metric deviation.
-- [ ] Run three-seed E2, then later gates in proposal order, only for the frozen eligible family set.
-- **Status:** pending
+- [x] Evaluate A800/formal authorization. The local candidate ladder has no green Gate -2 and no
+  eligible family set, so the migration canary and formal E2 are N/T under the registered design.
+- [ ] Re-materialize exact locked revisions on Linux/A800 only if a future, separately registered
+  backbone/design revision reopens the Gate; this is outside the completed v2.2 ladder.
+- **Status:** not_authorized_for_v2.2
 
 ## Hard Stops
 
+- Do not download any additional model or model weight without fresh, explicit user approval. If a
+  future step appears to require one, pause first and report the exact model/revision, expected disk
+  use, purpose, and no-download alternatives; planning or inspecting an existing lock is read-only.
 - Never rewrite or re-decide the v2.1 Gate -1 evidence.
 - Never download the whole ladder speculatively; each fallback requires a hashed predecessor decision.
 - Never interpret reference-image understanding as generated-image self-confirmation without A3.

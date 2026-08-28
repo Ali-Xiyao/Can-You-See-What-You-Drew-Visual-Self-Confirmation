@@ -509,3 +509,23 @@
   `CUDA_VISIBLE_DEVICES=1`; PyTorch sees one logical `cuda:0`, preserving the locked backbone YAML.
   Physical GPU0 is idle, confirming that the two non-NVLink 3090s are being used as independent
   workers rather than unsafe pooled memory. Full tests and Ruff pass in the H-rooted environment.
+- Show-o2 7B A3 completed 210 collision-free candidates on physical GPU1 in 7151.39s. It produced
+  210 unique candidate IDs, 210 unique paths, and 186 unique decoded RGBs. The immutable report SHA
+  is `f9c89d5c8f36bcad6a920e0a5e49895d95442a0fcf22049e90eaf5f93ca8a271`; rows SHA is
+  `6213c6693a8278f8f360d569cae304a7552292103854d9080337229d367eb9ec`.
+- Automatic 7B Gate -2C is red despite 92% Oracle@4 and all retained-family coverage checks passing:
+  overall coverage is 76.67% versus the 80% threshold, and fixed-seed coverage swing is 16pt versus
+  the 10pt maximum. Coverage by seed index is 90%, 74%, 86%, and 86%. Per-family coverage is
+  existence/count 100%, color/binding 90%, spatial 70%, and excluded size 10%.
+- Recursively revalidated every A3 row/path/decoded RGB and froze the rank-3 upstream-stop decision
+  at SHA-256 `7674feadb71cbaebcae41cf53fcd47274e1475165ac38dff067c613dbf0a27bc`, binding the exact HQ
+  predecessor SHA. Human precision and A4 remain N/T; there is no next fallback and E1/E2 are not
+  authorized for this ladder.
+- Rendered the complete three-candidate readiness ladder with exact categorical matrices rather
+  than aggregated bars. Data profiling confirms three ranks, 15 Gate cells, and 72 family-metric
+  cells. Program QA, color/grayscale visual review, 600-DPI PNG inspection, SVG export, and Poppler
+  PDF rendering all pass. `pdffonts` confirms both CID TrueType subsets are embedded and Unicode
+  mapped; the generic checker warning was a Type0-font traversal false positive.
+- User authorization boundary updated after the completed ladder: no additional model/model-weight
+  download may start without fresh explicit approval. Any future proposed download must pause first
+  and disclose the exact model/revision, expected disk use, purpose, and no-download alternatives.
