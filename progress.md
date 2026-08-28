@@ -494,3 +494,18 @@
   exact CSV, 600-DPI PNG, PDF, SVG, and grayscale exports; the per-family Joint column is derived
   directly from the four registered metric thresholds rather than from the downstream selection
   list. The locked 33,102,908,272-byte 7B download is now running with resumable aria2 transport.
+- Completed and independently rehashed the full locked Show-o2 7B model group, including exact
+  Show-o2 revision `3012b1d6aee8b57829b23d02cba9190ef5cc3361` and Qwen2.5-7B revision
+  `a09a35458c702b33eeacc393d103063234e8bc28`. The official 7B snapshot omits the shard index expected
+  by its upstream Diffusers loader; the adapter now derives and validates that deterministic index.
+- Replaced full CPU materialization with Accelerate low-memory direct BF16 GPU dispatch after the
+  first A2 attempt crashed in `c10.dll` near the Windows host-RAM ceiling. A1 passed 6/6 in 301.17s
+  with 19.89GB peak allocated GPU memory. The stable A2 rerun used roughly half the host private
+  memory and completed 120 references in 1901.51s.
+- Show-o2 7B A2 passed all registered checks: 90.83% macro open accuracy, zero yes-bias, 100% repeat
+  agreement, and zero abstention. Binding/color/existence/spatial scored 100%, count 90%, and size
+  55%, retaining five families and excluding size from A3 K=4.
+- Started the collision-safe 210-candidate 7B A3 on physical GPU1 using
+  `CUDA_VISIBLE_DEVICES=1`; PyTorch sees one logical `cuda:0`, preserving the locked backbone YAML.
+  Physical GPU0 is idle, confirming that the two non-NVLink 3090s are being used as independent
+  workers rather than unsafe pooled memory. Full tests and Ruff pass in the H-rooted environment.

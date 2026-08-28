@@ -127,9 +127,9 @@ families means the scientific claim is unsupported for that backbone and stops p
 
 - [ ] If base generation fails but reference observation passes, allow the registered short generation
   warm-up; otherwise move directly to HQ.
-- [ ] Download/audit HQ only after a recorded base decision; 7B only after both 1.5B decisions. The
-  immutable base red decision, authorized HQ download, HQ A1/A2, and automatic HQ A3 are complete.
-  A3 is automatically green; the completed 49-item blind-human precision audit is red.
+- [x] Download/audit HQ only after a recorded base decision; 7B only after both 1.5B decisions. The
+  immutable base/HQ red decisions authorize the exact 7B revision, whose full locked model group,
+  A1, and A2 are now complete; 7B A3 is running on physical GPU1.
 - [x] Enforce the candidate ladder inside the downloader: fallback downloads require the immediately
   prior red Gate -2 decision, exact rank/model/fallback identity, and valid evidence SHA-256 records.
 - [ ] If Gate -2 is green with at least four families, run family-restricted E1, Gate -1b, and paired local E2.
@@ -144,11 +144,11 @@ families means the scientific claim is unsupported for that backbone and stops p
 - [x] Score/freeze the HQ human report and Gate -2 decision, recursively revalidating A3 rows/RGBs
   and the rank-1 predecessor.
 - [x] Render the HQ red readiness matrix with measured precision failures and A4 marked N/T.
-- [ ] Download and run the locked Show-o2 7B fallback after the HQ red decision; finalize its Gate -2
-  route before permitting or rejecting any phenomenon experiment.
+- [ ] Complete the running Show-o2 7B A3 after its green A1/A2 evidence, then follow the registered
+  automatic-stop or blind-human route and finalize Gate -2 before any phenomenon experiment.
 - [ ] Run full verification, commit, and push.
-- **Current blocker:** locked 7B model transfer/audit is in progress; no scientific blocker remains in
-  the HQ evidence chain.
+- **Current blocker:** no external blocker; the collision-safe 210-candidate 7B A3 is running on
+  physical GPU1 and must finish before its registered next branch can be selected.
 
 ### Phase 6a — Project-root path normalization
 
@@ -186,8 +186,12 @@ families means the scientific claim is unsupported for that backbone and stops p
 
 ## Fixed Local Resource Policy
 
-- GPU0: Show-o2 generation, gradient, and LoRA work.
-- GPU1: frozen Qwen observer, verifier support, and parallel audits.
+- GPU0 and GPU1 are independent 24GB workers, not a pooled 48GB device. A complete Show-o2 stage may
+  run on either card via an explicit logical-to-physical CUDA mapping; never split one model across
+  the non-NVLink pair.
+- Default concurrency remains GPU0 for trainable Show-o2 work and GPU1 for a frozen observer. When
+  stages are dependency-serial, either idle card may instead run the next complete stage; the 7B A3
+  uses `CUDA_VISIBLE_DEVICES=1` so locked logical `cuda:0` maps reproducibly to physical GPU1.
 - Models remain at `H:\selfsight-models`; every other environment, cache, data, temporary, run,
   and review artifact stays below this repository root.
 - Native Windows is attempted first. A Windows-incompatible official kernel may trigger a documented
@@ -195,7 +199,7 @@ families means the scientific claim is unsupported for that backbone and stops p
 
 ## Verification Checklist
 
-- [x] Unit/integration suite and Ruff pass (60 tests after the A1 Windows/runtime fixes).
+- [x] Unit/integration suite and Ruff pass after the 7B sharded-loader/low-RAM fixes.
 - [x] Every decision binds model/source/dependency revisions and all input SHA-256 values.
 - [x] Checkpoint code restores adapter, optimizer, scheduler, RNG, and full config; GPU A4 still pending.
 - [ ] Observer subprocess receives only RGB path/bytes plus atomic question.

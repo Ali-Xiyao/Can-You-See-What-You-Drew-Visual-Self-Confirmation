@@ -481,3 +481,14 @@
   grid. Loading with `from_pretrained` does not rewrite `image_position_ids`, so a naive 512 adapter
   takes the fixed-grid branch and fails on 1024 versus 729 tokens. Correct use requires a 1024 T2I
   position-ID buffer to trigger interpolation and a separate 432/729 path for image understanding.
+- The official Show-o2 7B snapshot is internally complete but lacks the JSON shard index required by
+  the upstream loader's Diffusers filename constant. Reconstructing the weight map from meta-only
+  `torch.load` calls is deterministic and avoids copying tensor storage; the derived index must be
+  validated against the complete numbered shard set before reuse.
+- A 7B checkpoint that fits a 24GB 3090 in BF16 can still fail on a 64GB Windows host if
+  `from_pretrained` first materializes full FP32/CPU state. Direct low-CPU-memory dispatch to one GPU
+  reduced process private memory from roughly 45GB to 23GB and made the 120-image audit stable while
+  preserving the exact weights and precision.
+- With no NVLink, both 3090s remain useful at the experiment-stage boundary: expose physical GPU1 as
+  the sole visible device so a locked logical `cuda:0` config runs there unchanged. This is auditable
+  stage-level scheduling, not model sharding or an implicit 48GB claim.
