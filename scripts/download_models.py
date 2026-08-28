@@ -208,7 +208,7 @@ def _run_resumable_command(
     command: list[str],
     *,
     label: str,
-    max_attempts: int = 20,
+    max_attempts: int = 200,
     base_delay_seconds: float = 5.0,
 ) -> None:
     """Restart an interrupted segmented transfer while preserving its aria2 state."""
