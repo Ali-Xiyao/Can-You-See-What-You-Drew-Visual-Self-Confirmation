@@ -386,7 +386,6 @@ def main() -> None:
                         "--file-allocation=none",
                         "--connect-timeout=10",
                         "--timeout=30",
-                        "--lowest-speed-limit=64K",
                         "--max-tries=0",
                         "--retry-wait=1",
                         "--auto-file-renaming=false",
