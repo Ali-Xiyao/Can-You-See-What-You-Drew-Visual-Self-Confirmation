@@ -15,6 +15,5 @@ service:
     - rgb_image
     - atomic_question
 capability_audit:
-  report: H:\selfsight-runs\gate-minus-1\qwen2vl-2b-local\capability_report.json
+  report: runs/gate-minus-1/qwen2vl-local120.json
   frozen_under_v2_1: true
-

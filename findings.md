@@ -19,6 +19,63 @@
   below the 650GB formal-stage target. All generated data, environments, repositories, caches,
   models, and runs remain on H:.
 
+## Project-root relocation findings (2026-08-28)
+
+- External non-model roots are exactly `H:\selfsight-cache`, `H:\selfsight-data`,
+  `H:\selfsight-envs`, `H:\selfsight-runs`, and `H:\selfsight-tmp`; the permitted model exception
+  is `H:\selfsight-models`.
+- Active runtime path literals occur in `scripts/set_h_env.ps1`, `scripts/run_local_pilot.py`,
+  `configs/observers/qwen2vl_2b.yaml`, `README.md`, and `docs/A800_RUNBOOK.md`. Historical evidence
+  indexes and append-only planning logs also contain old absolute paths and need an explicit
+  relocation map rather than silent deletion.
+- `H:\selfsight-tmp` contains failed-install and pip scratch remnants in addition to potentially
+  useful diagnostics. It will be moved intact first; cleanup is a separate decision.
+- The first recursive all-root size scan exceeded the command window. Root-by-root inventory is
+  required before any move.
+- Fast root inventories show cache = 2,934,775,578 bytes / 494 files, data = 29,613,652 bytes /
+  4,206 files, and runs = 238,347,555 bytes / 6,259 files. The tmp and env trees need separate
+  enumeration because of their high small-file counts.
+- Separate inventories completed: envs = 24,159,333,878 bytes / 210,686 files; tmp =
+  6,200,156,426 bytes / 34,127 files. Total non-model relocation payload is about 31.93 GiB and
+  255,772 files. Because source and destination are on H:, a directory rename avoids a 32GB copy.
+- The shortest project-local layout is selected: `<repo>\cache`, `<repo>\data`, `<repo>\envs`,
+  `<repo>\runs`, and `<repo>\tmp`. These avoid an extra runtime directory level and will be
+  repository-ignored. `SELFSIGHT_PROJECT_ROOT` will be derived from the environment script's own
+  location, so moving or cloning the repository does not reintroduce hard-coded non-model roots.
+- Existing immutable JSON/JSONL reports embed old absolute run/data paths. Rewriting their contents
+  would invalidate nested SHA-256 decisions. The safe migration is to move bytes unchanged and use
+  temporary legacy directory junctions plus a recorded relocation map for backward compatibility;
+  all newly emitted artifacts and all active commands will use project-local paths.
+- No running Python/model process holds the old roots; the only matching process during the check
+  was the inventory PowerShell command itself. The project root is a normal H-drive directory, and
+  the selected project-local targets did not pre-exist at inventory time.
+- The same-volume migration completed successfully. All five project-local targets are ordinary
+  directories; each legacy `H:\selfsight-*` non-model root is now an NTFS junction targeting the
+  corresponding directory below the repository. The relocation manifest records that immutable
+  evidence bytes were not rewritten.
+- All four relocated Python entry points start from their new project-local paths: core, observer,
+  Show-o2 (Python 3.10.19), and Janus (Python 3.10.7). `set_h_env.ps1` emits only repository-local
+  non-model roots and the permitted external model root.
+- Three anchor hashes survived byte-for-byte: rank-1 frozen decision `d2bd4190...d685`, HQ A3 report
+  `c19a7193...86ac`, and blind-review ZIP `e9127794...20d7`.
+- The offline fallback predecessor validator reaccepted the entire rank-1 authorization chain and
+  returned the same decision SHA/model identity. A downloader-plan attempt was intentionally
+  abandoned after the Hugging Face proxy reset; local evidence validation does not need network.
+- Post-move root inventories match pre-move counts/bytes exactly for cache, data, envs, and tmp.
+  Runs gained only the 1,425-byte relocation manifest (6,260 files / 238,348,980 bytes). H: contains
+  no other recently created project root outside `Xiyao_Wang`, the permitted model directory, and
+  the five compatibility junctions.
+- The only additional task input outside H: was the Codex-managed pasted design note. A byte-exact
+  project copy now lives in `docs/source-notes/`; the app's attachment store remains outside project
+  scope and is not safe to mutate as part of repository cleanup.
+- `configs/observers/qwen2vl_2b.yaml` is consumed by several runners and cannot safely depend on a
+  generic config interpolator. Its capability-report path should be treated as historical evidence
+  or resolved explicitly from `SELFSIGHT_RUN_ROOT` by the consuming code; a raw `${...}` string in
+  YAML would be unsafe without verifying every loader.
+- The observer config's old capability-report location did not exist even before migration. The
+  actual frozen audit is `runs/gate-minus-1/qwen2vl-local120.json`; the active relative config path
+  now names that real project-local file.
+
 ## Research and Model Facts
 - Official Show-o supplies 512px pure-discrete and CLIP-ViT checkpoints plus Accelerate training code, but no native PEFT/LoRA integration.
 - Official Show-o requirements include Linux-oriented optional packages; a curated Windows environment is safer than installing the full list.

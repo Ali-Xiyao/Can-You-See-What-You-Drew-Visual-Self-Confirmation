@@ -22,6 +22,9 @@ htmlcov/
 # Large/generated experiment state
 /data/
 /runs/
+/cache/
+/envs/
+/tmp/
 /checkpoints/
 /artifacts/
 /models/

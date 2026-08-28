@@ -1,0 +1,785 @@
+# 我的明确建议
+
+**不需要死守 Show-o 1.3B，但也不能把普通的 Qwen-VL 直接替换成主模型。**
+
+这个项目的主模型必须满足一个很特殊的条件：
+
+> **同一个可训练模型既能生成图像，又能重新读取 RGB 图像并回答视觉问题。**
+
+因此，我建议采用下面的组合：
+
+* **主训练模型：优先尝试 Show-o2-1.5B / Show-o2-1.5B-HQ**
+* **冻结外部观察者：Qwen2-VL-2B 或 Qwen3-VL-2B**
+* **程序化 gold verifier：保留现有 deterministic verifier**
+* **当前 Show-o 1.3B：保留为能力下界和负对照，不再承担主训练实验**
+
+这不是因为论文必须属于 Show-o，而是因为目前公开的千问模型被拆成了两类：
+
+1. **Qwen3-VL、Qwen2.5-VL、Qwen3-Omni**：能看图、能回答文本，但不能生成图像；
+2. **Qwen-Image**：能生成和编辑图像，但公开接口主要输出图像，不是一个能够同时做通用 VQA 文本回答的统一模型。
+
+所以，把 `Qwen-Image + Qwen3-VL` 组合起来当然能跑，但那已经是：
+
+> 一个图像生成器 + 一个独立视觉评审器
+
+而不是：
+
+> 同一个统一多模态模型重新看自己画出的图像
+
+这会改变论文的核心科学问题。
+
+---
+
+# 一、千问到底可以怎么用
+
+## 1. Qwen3-VL / Qwen2.5-VL：非常适合做观察者
+
+Qwen3-VL 的公开接口是 `ImageTextToText`：输入图片和问题，输出文本答案，官方能力重点也是视觉识别、空间理解、OCR、grounding、视频理解等。它没有公开的图像生成路径。([GitHub][1])
+
+你当前实验也已经证明 Qwen 很适合这一角色：
+
+* Show-o：macro accuracy 65%，只有 2/6 family 过线；
+* Qwen2-VL-2B：macro accuracy 90%，有 5/6 family 过线；
+* yes-bias 也在门槛内。
+
+因此，Qwen2-VL-2B 已经足够做低成本 frozen public observer，不必一开始就用 7B。
+
+## 2. Qwen3-Omni：仍然不能做主生成模型
+
+Qwen3-Omni 能理解文本、图片、音频和视频，输出形式是文本和实时语音，不包含图像生成。([GitHub][2])
+
+所以它可以替代 Qwen-VL 做 observer，但不能替代 Show-o 的图像生成部分。
+
+## 3. Qwen-Image：不能直接替换当前主模型
+
+Qwen-Image 的公开定位是一个 **20B MMDiT 图像生成与编辑模型**。官方 quickstart 是 text-to-image、image editing，输出结果仍是图像。虽然 Qwen-Image-2.0 的介绍里使用了“integrated understanding and generation”这样的表述，但公开仓库目前展示的是“生成与编辑统一”，没有展示一个通用的 image-to-text VQA 头，让同一个模型回答“图里有几个圆”“方块是什么颜色”之类的问题。([GitHub][3])
+
+因此我目前的判断是：
+
+> **Qwen-Image 不是当前实验的 drop-in unified backbone。**
+
+它可以作为一个强生成器 baseline，但不能直接用于“模型重新看自己画的图”这一主张。
+
+## 4. Qwen-Image + Qwen3-VL 可以做，但论文会变
+
+这种组合可以形成：
+
+```text
+Qwen-Image 生成图片
+        ↓
+Qwen3-VL 重新观察
+        ↓
+筛选与自训练
+```
+
+这时研究问题会变成：
+
+> 强视觉 critic 能否防止图像生成模型在自训练中发生 reward hacking？
+
+这是一个合理的新项目，但不能继续声称：
+
+> unified model mistakenly confirms its own intention.
+
+因为生成者和观察者已经不是同一个模型。
+
+---
+
+# 二、为什么 Show-o2 是目前最合理的替代
+
+Show-o2 官方明确支持：
+
+* 图像理解；
+* 图像生成；
+* 视频理解和生成；
+* multimodal understanding 与 generation 的训练代码；
+* 1.5B 和 7B checkpoint；
+* 1.5B-HQ 图像生成版本。
+
+其架构仍然是原生统一多模态模型，只是从原 Show-o 的离散图像 token 路线，升级到了 3D Causal VAE、autoregressive understanding head 和 flow-matching generation head。([GitHub][4])
+
+这意味着：
+
+* 论文故事不需要更换；
+* “同一模型生成—重新观察”仍然成立；
+* 模型规模仍然可控；
+* 生成能力可能明显优于当前 Show-o；
+* 理解能力也有希望跨过能力门槛。
+
+但要注意，**Show-o2 不能通过改一两个参数直接接入现有代码**。
+
+当前 `ShowoAdapter` 写死了：
+
+* Phi-1.5 tokenizer；
+* MAGVIT-v2；
+* CLIP vision tower；
+* `t2i_generate`；
+* Show-o 特有 attention mask；
+* 特定 LoRA target modules。
+
+而 Show-o2 使用不同的 VAE、generation head 和训练流程。因此应当新增 `Showo2Adapter`，而不是把当前 `ShowoAdapter` 改得面目全非。
+
+---
+
+# 三、Proposal 应该怎么改成 v2.2
+
+## 修改 1：不再把 Show-o 1.3B 写死为唯一 backbone
+
+现在 Proposal 中的表述是：
+
+> Train `showlab/show-o-w-clip-vit-512x512` only.
+
+这条应当修改为：
+
+> **The trainable unified backbone is selected by a preregistered Joint Generate–Observe Readiness Gate.**
+
+中文可以写成：
+
+> 主训练 backbone 不再由模型名称预先指定，而由统一的“生成—观察联合可行性门控”从候选模型中选择。只有同时具备可测量生成能力、可靠视觉观察能力和可复现后训练路径的统一模型，才进入正式训练动态实验。
+
+候选顺序建议固定为：
+
+1. Show-o2-1.5B；
+2. Show-o2-1.5B-HQ；
+3. Show-o2-7B，仅在 1.5B 全部失败时；
+4. 其他真正同时支持生成和理解的 UMM。
+
+原 Show-o 1.3B 不再参与候选竞争，而是固定为 capability-floor negative control。
+
+---
+
+## 修改 2：把主张改成“条件性主张”
+
+原来的隐含主张是：
+
+> unified model 会在 self-training 中发生 self-confirmation。
+
+这个说法太宽了，因为当前实验已经证明，有些统一模型根本没有跨过“能够可靠重新观察”的能力门槛。
+
+建议改为：
+
+> **For unified multimodal models that cross a joint generate-and-observe readiness threshold, when does self-consistency stop tracking publicly verifiable visual correctness?**
+
+中文：
+
+> 对于已经跨过“能生成、能重新看懂、且生成结果可被外部测量”联合门槛的统一多模态模型，自一致性在什么时候开始不再代表外部像素正确性？
+
+这样当前 Show-o 的失败不会推翻主命题，只说明：
+
+> Show-o 1.3B 尚未进入该科学问题的适用区间。
+
+---
+
+## 修改 3：新增 Gate −2：Joint Generate–Observe Readiness
+
+这是整个 v2.2 最重要的修改。
+
+当前项目分别检查了：
+
+* 生成图片是否可解析；
+* observer 是否有能力。
+
+但没有把二者汇总成一个“同一 family 上同时成立”的门槛。
+
+建议新增以下四个部分。
+
+### Gate −2A：统一功能完整性
+
+候选 backbone 必须满足：
+
+* 同一个 checkpoint 能 text-to-image；
+* 同一个 checkpoint 能 image-to-text atomic QA；
+* 能保留一份冻结的 step-0 observer；
+* generation branch 可以 LoRA 后训练；
+* checkpoint 和 optimizer 可以恢复。
+
+只会生成或只会理解的模型不进入候选。
+
+### Gate −2B：参考图像理解能力
+
+在程序完美渲染的图片上：
+
+| 条件                          |   建议门槛 |
+| --------------------------- | -----: |
+| 每个保留 family 的 open accuracy |   ≥80% |
+| 通过 family 数量                |     ≥4 |
+| yes-bias                    | ≤10 pt |
+| 重复回答一致率                     |   ≥90% |
+| abstain rate                |   ≤20% |
+
+这部分与现有 Gate −1 基本一致。
+
+### Gate −2C：生成图像可测量性
+
+我不建议继续只使用“95% coverage”这一个指标。应该改为 precision-first：
+
+| 条件                              |   建议门槛 |
+| ------------------------------- | -----: |
+| verifier 对已回答样本的人工盲审 precision  |   ≥95% |
+| overall primary-answer coverage |   ≥80% |
+| 每个保留 family coverage            |   ≥70% |
+| Oracle@K=4：至少有一个正确候选            |   ≥70% |
+| 不同固定 seed 间 coverage 波动         | ≤10 pt |
+
+为什么允许 coverage 低于 95%？
+
+因为诚实 abstain 并不可怕。真正危险的是 verifier 为了提高 coverage 而强行猜测。只要：
+
+* 回答时足够准；
+* 缺失率不会随训练 arm 系统性变化；
+* 每个 family 有足够样本；
+
+80%左右的稳定 coverage 是可以分析的。
+
+不过，这个新门槛不能拿来重新解锁当前结果。当前 Show-o 是 55% overall coverage、binding 0%、exact scene 0%，依然明显不合格。
+
+### Gate −2D：联合 eligible family
+
+最终不是分别问：
+
+* 哪些 family 模型能看懂；
+* 哪些 family verifier 能解析；
+
+而是求交集：
+
+```text
+JointEligible(family)
+=
+SelfObservationAccuracy ≥ 80%
+AND
+GeneratedCoverage ≥ 70%
+AND
+VerifierPrecision ≥ 95%
+AND
+Oracle@4 ≥ 70%
+```
+
+至少 4 个 family 同时满足，才允许进入 E1 和 E2。
+
+---
+
+# 四、Benchmark 本身也需要修改
+
+不能只换模型。当前 prompt 设计对小型生成模型来说过于负担。
+
+现有数据生成器会给每一个对象同时描述：
+
+* 大小；
+* 颜色；
+* 形状；
+* 位置。
+
+而且多数 family 有两个对象，count 和 binding 有三个对象。即使当前只测“颜色”，模型仍然需要同时完成形状、位置、大小等多个约束。
+
+这使得当前 benchmark 实际测的是：
+
+> 多对象、多属性组合生成能力
+
+而不只是：
+
+> 模型是否能看到某个原子视觉事实。
+
+## v2.2 应改成 family-specific minimal prompts
+
+### Existence
+
+旧形式可能是：
+
+> Draw a large red square in the upper-left and a small green circle in the lower-right.
+
+新形式：
+
+> Draw one red square on a plain white background.
+
+负样本：
+
+> Draw one blue circle on a plain white background.
+
+只检查红色方块是否存在。
+
+### Color
+
+> Draw one square in blue on a plain white background.
+
+不再同时指定大小和位置。
+
+### Size
+
+> Draw one large circle on a plain white background.
+
+或：
+
+> Draw one small square on a plain white background.
+
+### Spatial
+
+> Draw a red square to the left of a blue circle on a plain white background.
+
+不再同时要求大小关系。
+
+### Count
+
+> Draw exactly two blue circles, separated from each other, on a plain white background.
+
+### Binding
+
+> Draw a red square and a blue circle, separated from each other, on a plain white background.
+
+只需要两个对象，不需要三个对象，也不额外指定大小。
+
+---
+
+## 把当前 `SPATIAL` 中的 `larger_than` 拆出去
+
+当前代码会在 spatial family 中随机选择：
+
+* left_of；
+* above；
+* larger_than。
+
+但 `larger_than` 实际上是大小关系，不是空间关系。
+
+建议：
+
+* 主 spatial 只保留 left/right、above/below；
+* relative size 放到 appendix 或独立 family；
+* 绝对 size 和相对 size 不混在同一项里。
+
+这会让每个问题族的失败原因更清楚。
+
+---
+
+# 五、模型和观察者应该怎么重新分工
+
+推荐的 v2.2 架构如下：
+
+```text
+                     ┌──────────────────────────┐
+Prompt ─────────────▶│ Trainable Show-o2_t      │
+                     └────────────┬─────────────┘
+                                  │
+                                  ▼
+                           RGB hard render
+                                  │
+             ┌────────────────────┼────────────────────┐
+             ▼                    ▼                    ▼
+ Frozen Show-o2_t0        Frozen Qwen-VL       Program verifier
+ RFO training judge       GDA detector          Gold evaluation
+```
+
+## 1. Trainable Show-o2_t
+
+负责：
+
+* 生成候选；
+* 接受 self-training；
+* 随 checkpoint 演化。
+
+## 2. Frozen Show-o2_t0
+
+负责 RFO-Self 的样本选择。
+
+关键是必须一直保持 step-0，不随训练更新，否则生成者和 observer 会共同漂移。
+
+## 3. Frozen Qwen-VL
+
+负责：
+
+* 独立 public observer；
+* `g_rfo` 的检测方向；
+* capability upper bound；
+* 机制审计。
+
+当前 Qwen2-VL-2B 已经有 90% macro 和 5/6 family 通过，因此第一版不需要直接上 7B。
+
+## 4. Program verifier
+
+只用于：
+
+* D*；
+* external correctness；
+* g_gold；
+* benchmark gold。
+
+不能参与部署式的 GDA-free detector。
+
+---
+
+# 六、能力匹配条件怎么修改
+
+当前规则是：
+
+> 异构 observer 的整体 macro accuracy 必须与 Show-o 相差不超过 3 pt。
+
+这个规则方向是对的，但实现太粗。
+
+问题在于：
+
+* 两个模型 macro 都是 85%，可能一个擅长颜色、一个擅长计数；
+* Qwen 总体比 Show-o 强，但在某些具体样本难度层上可能是可匹配的；
+* 为了全局 macro 匹配，可能找不到任何 observer。
+
+建议改成 **item- and family-conditioned matching**：
+
+1. 先只保留双方都达到能力地板的 family；
+2. 根据程序图上的 item difficulty 分层；
+3. 在每一层抽取双方参考准确率相差 ≤3 pt 的样本；
+4. `OG-matched` 和 self-preference 只在这个 matched subset 上报告；
+5. 其余完整数据用于 public observer 和 upper-bound 分析。
+
+不要通过随机给 Qwen 答案加噪声来“降级匹配”，那会制造一个不真实的 observer。
+
+同时，能力匹配不必再阻塞所有实验：
+
+* **Self-confirmation 机制主张**需要能力匹配；
+* **RFO training**需要 capable frozen observer；
+* **GDA early warning**需要独立且稳定的 observer；
+* 后两者不必要求全局 macro 完全匹配。
+
+---
+
+# 七、代码仓库具体要改哪些地方
+
+## 1. 冻结当前结果
+
+先保留当前 `main` 的所有红色证据，建议打 tag：
+
+```text
+v2.1-showo-gate-red
+```
+
+当前 `decision.json`、Figure 2、生成图片 canary 和报告都不能覆盖或重新计算。当前 fail-closed 设计是正确的：红色或不匹配的 prerequisite 会在创建输出目录和加载模型之前终止实验。
+
+新工作使用独立分支：
+
+```text
+experiment/v2.2-joint-readiness
+```
+
+## 2. 抽象 backbone 接口
+
+新增：
+
+```text
+src/selfsight/backbones/base.py
+src/selfsight/backbones/showo_v1.py
+src/selfsight/backbones/showo2.py
+```
+
+统一接口至少包含：
+
+```text
+generate_images()
+observe_atoms()
+attach_lora()
+generation_loss()
+understanding_replay_loss()
+collect_gradient()
+save_adapter()
+load_adapter()
+```
+
+当前 `ShowoAdapter` 不删除，移动成 `showo_v1.py`，用于复现旧负结果。
+
+## 3. 新增 Show-o2 adapter
+
+需要重新实现：
+
+* tokenizer / prompt processor；
+* 3D Causal VAE decode；
+* flow-matching generation；
+* image understanding；
+* LoRA target module audit；
+* generation SFT loss；
+* understanding replay；
+* adapter-only checkpoint；
+* gradient collection。
+
+不能直接复制当前 Show-o 的 `q_proj/k_proj/v_proj/dense/fc1/fc2` target list。需要先打印 Show-o2 的 trainable module tree，再决定哪些共享 transformer 和 generation block 可以安全加 LoRA。
+
+## 4. 把 Qwen observer 独立成正式模块
+
+建议新增：
+
+```text
+src/selfsight/observers/qwen_vl.py
+configs/observers/qwen2vl_2b.yaml
+configs/observers/qwen3vl_2b.yaml
+```
+
+第一主 observer 使用当前已经审计过的 Qwen2-VL-2B。
+
+Qwen3-VL-2B 作为后续替代候选，先做完整 120-image audit，不要只凭官方 benchmark 直接替换。
+
+## 5. 新增联合 readiness 脚本
+
+建议新增：
+
+```text
+scripts/run_backbone_readiness.py
+scripts/audit_generated_precision.py
+scripts/finalize_joint_readiness.py
+scripts/render_readiness_matrix.py
+```
+
+输出：
+
+```text
+readiness/
+  showo_v1/
+  showo2_1p5b/
+  showo2_1p5b_hq/
+  decision.json
+  readiness_matrix.csv
+  figure_readiness.pdf
+```
+
+最终 `decision.json` 必须包含：
+
+* backbone model ID；
+* revision；
+* reference audit SHA-256；
+* generated audit SHA-256；
+* human verifier audit SHA-256；
+* LoRA canary SHA-256；
+* selected eligible families；
+* final passed/failed。
+
+E1 和 E2 必须从这个文件中自动读取 selected backbone，不能由命令行手动指定。
+
+---
+
+# 八、实际执行顺序
+
+## 阶段 A：先测 Show-o2，不训练
+
+### A1. 六样本工程 canary
+
+验证：
+
+* 权重加载；
+* 一张 3090 能否推理；
+* text-to-image；
+* RGB 写盘；
+* image-to-text；
+* 重复生成与重复回答；
+* 显存峰值。
+
+Show-o2-1.5B 名义参数不大，但它还有 VAE 和 flow-matching 路径，不能仅凭“1.5B”就断言一定能在 3090 完成训练。
+
+### A2. 120 张程序参考图审计
+
+与现有 Gate −1 完全相同：
+
+* 六个 family 各 20；
+* open；
+* forced choice；
+* order reversal；
+* yes-bias；
+* abstain。
+
+只有至少 4 个 family ≥80% 才继续。
+
+### A3. 60-prompt generated-domain audit
+
+使用新的 minimal prompts：
+
+* 每个 family 10；
+* 先 K=1；
+* 再对保留 family 测 K=4；
+* deterministic verifier；
+* contact sheet；
+* blind manual sample。
+
+先测试：
+
+1. Show-o2-1.5B；
+2. Show-o2-1.5B-HQ。
+
+不能假定 HQ 一定更适合，因为 HQ 可能只提升生成，理解部分未必同步增强，必须分别审计。
+
+### A4. LoRA backward canary
+
+仅在 A2 和 A3 有希望时做：
+
+* attach LoRA；
+* 一步 generation loss；
+* 一步 understanding replay；
+* backward；
+* optimizer step；
+* adapter corrupt/restore；
+* resume。
+
+这一阶段如果 3090 放不下，可以使用 A800，但仍然只做 canary，不直接跑正式 E2。
+
+---
+
+## 阶段 B：必要时做 readiness warm-up
+
+如果 Show-o2：
+
+* 能看懂参考图片；
+* 但受控生成仍然不稳定；
+
+可以增加一次**非自反馈式能力预适配**。
+
+训练数据全部来自 train split 的程序 renderer：
+
+* 文本 → 程序渲染图：generation SFT；
+* 程序渲染图 + 原子问题 → 答案：VQA SFT；
+* 一部分通用理解 replay，防止能力退化；
+* 不使用任何 self-reward；
+* 不使用 probe/outcome；
+* 不使用 E1/E2 的结果调参。
+
+得到共同起点：
+
+```text
+Backbone t0 = readiness-adapted checkpoint
+```
+
+然后：
+
+* Naive arm 从 t0 开始；
+* RFO arm也从 t0 开始；
+* frozen self-observer 是 t0 的副本；
+* 所有正式实验共享同一个 t0。
+
+为了防止审稿人说“现象是你适配出来的”，论文里需要同时报告：
+
+* 原始 pretrained checkpoint；
+* readiness-adapted t0；
+* 两者的生成/理解 readiness 差异。
+
+---
+
+## 阶段 C：只跑本地短程 E1 / Gate −1b / E2
+
+通过 Joint Readiness 后才运行：
+
+1. E1 Pixel Override；
+2. Gate −1b gradient noise floor；
+3. 单 seed Naive vs RFO；
+4. 真实 internal / external / GDA 曲线；
+5. 检查是否出现趋势，而不是立即做正式显著性。
+
+本地 one-seed 仍然只作为 feasibility evidence。
+
+---
+
+## 阶段 D：最后才迁移 A800
+
+只有以下条件全部成立才上正式三 seed：
+
+* 至少 4 个 joint-eligible families；
+* verifier precision 达标；
+* generated coverage 达标；
+* Show-o2 LoRA 和 resume 稳定；
+* Gate −1b 有足够窄的噪声地板；
+* 短程 E2 至少出现可解释的动态，而不是完全随机。
+
+然后再用 A800 跑：
+
+* 3 seeds；
+* Naive / RFO；
+* D*；
+* Dg；
+* Lead；
+* Gate 2 / 2b。
+
+---
+
+# 九、如果 Show-o2 也失败，怎么决策
+
+## 情况 1：理解通过，生成失败
+
+优先顺序：
+
+1. Show-o2-1.5B-HQ；
+2. minimal prompt benchmark；
+3. generation-only readiness warm-up；
+4. 再跑联合门控。
+
+## 情况 2：生成通过，理解失败
+
+进行：
+
+* image-to-atom VQA warm-up；
+* 通用理解 replay；
+* 冻结新 t0；
+* 重跑参考图审计。
+
+## 情况 3：两边都失败
+
+不要再强行调 verifier。
+
+此时有两个方向：
+
+### 方向 A：换另一个真正的统一模型
+
+仍然保留原论文故事，但要确认：
+
+* 生成；
+* 理解；
+* 后训练；
+* 冻结观察；
+* RGB reload；
+
+全部可实现。
+
+### 方向 B：改成 Qwen 双模型故事
+
+使用：
+
+```text
+Qwen-Image → Qwen3-VL
+```
+
+论文改为：
+
+> **When Does a Multimodal Critic Stop Protecting Self-Training?**
+
+或者：
+
+> **Public Visual Verification for Self-Training Image Generators**
+
+此时删除：
+
+* same-model self-confirmation；
+* self-observer bias；
+* model sees what it drew；
+
+保留：
+
+* internal reward vs external correctness 分叉；
+* public RGB verifier；
+* GDA early warning；
+* RFO 式隔离反馈。
+
+这是一个合理的备选论文，但和当前 Proposal 已经不是同一个项目。
+
+---
+
+# 十、最终选择建议
+
+我的优先级是：
+
+| 优先级 | 模型                   | 用途                                    |
+| --: | -------------------- | ------------------------------------- |
+|   1 | **Show-o2-1.5B**     | 新主 backbone 候选                        |
+|   2 | **Show-o2-1.5B-HQ**  | 生成侧候选                                 |
+|   3 | **Qwen2-VL-2B**      | frozen public observer / GDA detector |
+|   4 | **Qwen3-VL-2B**      | 新 observer 候选，需完整审计                   |
+|   5 | Show-o 1.3B          | capability-floor negative control     |
+|   6 | Qwen-Image           | 强生成 baseline，不作为同模型主线                 |
+|   7 | Qwen-Image + Qwen-VL | 仅在准备重写论文故事时采用                         |
+
+因此，最合理的下一步不是“把 Show-o 的字符串替换成 Qwen”，而是：
+
+> **把仓库改造成 backbone-agnostic，并首先接入 Show-o2-1.5B；与此同时正式把 Qwen2-VL-2B 固定为外部公共观察者。**
+
+这样既利用了千问已经证明很强的视觉理解能力，又不会破坏“同一个统一模型生成并重新观察”这一核心科学故事。
+
+[1]: https://github.com/QwenLM/Qwen3-VL "GitHub - QwenLM/Qwen3-VL: Qwen3-VL is the multimodal large language model series developed by Qwen team, Alibaba Cloud. · GitHub"
+[2]: https://github.com/QwenLM/Qwen3-Omni?utm_source=chatgpt.com "GitHub - QwenLM/Qwen3-Omni: Qwen3-omni is a natively end-to-end, omni-modal LLM developed by the Qwen team at Alibaba Cloud, capable of understanding text, audio, images, and video, as well as generating speech in real time. · GitHub"
+[3]: https://github.com/QwenLM/Qwen-Image?utm_source=chatgpt.com "GitHub - QwenLM/Qwen-Image: Qwen-Image is a powerful image generation foundation model capable of complex text rendering and precise image editing. · GitHub"
+[4]: https://github.com/showlab/Show-o?utm_source=chatgpt.com "GitHub - showlab/Show-o: [ICLR & NeurIPS 2025] Repository for Show-o series, One Single Transformer to Unify Multimodal Understanding and Generation. · GitHub"

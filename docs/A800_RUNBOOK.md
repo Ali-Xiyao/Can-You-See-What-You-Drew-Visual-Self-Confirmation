@@ -1,16 +1,16 @@
 # A800 80GB 单卡迁移与正式 E2 运行手册
 
 本手册描述 v2.2 Show-o2 的 A800 路径。正式 E2 只接受完整绿色 Gate -2、其哈希绑定的 LoRA
-target selection、固定 Qwen2-VL-2B 公共观察器审计，以及绿色迁移 Gate。当前 Windows A3-r2
-仍在运行，因此**现在不能启动正式 E2**。`scripts/run_formal_e2.py` 会在创建输出目录、加载模型
+target selection、固定 Qwen2-VL-2B 公共观察器审计，以及绿色迁移 Gate。当前 HQ 自动 A3 已通过，
+但盲审人工 precision 与 A4 尚未完成，因此**现在不能启动正式 E2**。`scripts/run_formal_e2.py` 会在创建输出目录、加载模型
 或消耗训练算力之前验证这些证据、三份 seed 配置和 eligible-family 数据容量并失败关闭。
 
 ## 1. 主机和存储前提
 
 - Linux x86_64、单张 NVIDIA A800 80GB；不启用分布式训练。
 - Python 3.10、可工作的 NVIDIA 驱动；环境使用 CUDA 12.1 PyTorch wheel。
-- 选择一个短、独占且至少有 650GB 可用空间的数据根目录。下文用
-  `/data/selfsight` 举例，实际路径由操作者显式设置。
+- 将整个 Git checkout 放在至少有 650GB 可用空间的独占数据盘。非模型环境、缓存、数据、
+  临时文件和结果全部位于 checkout 内；模型权重允许使用独立的大容量目录。
 - 代码必须来自一个固定 Git commit；模型与外部仓库 revision 由
   `configs/models.lock.yaml` 固定。
 
@@ -21,12 +21,14 @@ git rev-parse HEAD
 nvidia-smi --query-gpu=index,name,memory.total,driver_version --format=csv
 df -h /data
 
-export SELFSIGHT_ROOT=/data/selfsight
+export SELFSIGHT_PROJECT_ROOT="$(pwd)"
+export SELFSIGHT_MODEL_ROOT=/data/selfsight-models
 source scripts/set_a800_env.sh
 ```
 
-`set_a800_env.sh` 会把 Hugging Face、Torch、pip、临时文件、数据、模型、运行结果和虚拟环境
-全部放到 `${SELFSIGHT_ROOT}` 下。不要用 `sudo pip`，也不要让 `HF_HOME` 回落到 home 目录。
+`set_a800_env.sh` 会把 Hugging Face、Torch、pip、临时文件、数据、运行结果和虚拟环境
+全部放到 `${SELFSIGHT_PROJECT_ROOT}` 下。模型目录由 `SELFSIGHT_MODEL_ROOT` 单独指定；若不指定，
+才默认使用 checkout 内的 `models/`。不要用 `sudo pip`，也不要让 `HF_HOME` 回落到 home 目录。
 
 ## 2. 环境、代码仓库与锁定权重
 
@@ -64,9 +66,11 @@ JANUS="${SELFSIGHT_ENV_ROOT}/janus/bin/python"
 绿色 Gate -2 产生后，先在 Windows 上生成 decision-bound 的 E2 数据：
 
 ```powershell
-& H:\selfsight-envs\core\python.exe scripts\build_eligible_e2_data.py `
-  --decision H:\selfsight-runs\readiness\SELECTED\decision.json `
-  --output H:\selfsight-data\selfsight-v2.2\e2-SELECTED-DECISION
+. .\scripts\set_h_env.ps1
+$core = Join-Path $env:SELFSIGHT_ENV_ROOT "core\python.exe"
+& $core scripts\build_eligible_e2_data.py `
+  --decision "$env:SELFSIGHT_RUN_ROOT\readiness\SELECTED\decision.json" `
+  --output "$env:SELFSIGHT_DATA_ROOT\selfsight-v2.2\e2-SELECTED-DECISION"
 ```
 
 该命令把固定 2400/200/600 数量重新均衡到 Gate -2 的 eligible families，并排除 A1/A2/A3
@@ -112,13 +116,13 @@ Windows：
 
 ```powershell
 . .\scripts\set_h_env.ps1
-$showo2 = "H:\selfsight-envs\showo2\python.exe"
+$showo2 = Join-Path $env:SELFSIGHT_ENV_ROOT "showo2\python.exe"
 & $showo2 .\scripts\run_migration_canary.py `
   --config configs\local_3090_showo2.yaml `
-  --joint-readiness-decision H:\selfsight-runs\readiness\SELECTED\decision.json `
+  --joint-readiness-decision "$env:SELFSIGHT_RUN_ROOT\readiness\SELECTED\decision.json" `
   --backbone-config configs\backbones\SELECTED.yaml `
-  --probe-manifest H:\selfsight-data\selfsight-v2.2\e2-SELECTED-DECISION\manifests\tier_a_probe.jsonl `
-  --output H:\selfsight-runs\migration\windows-32
+  --probe-manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v2.2\e2-SELECTED-DECISION\manifests\tier_a_probe.jsonl" `
+  --output "$env:SELFSIGHT_RUN_ROOT\migration\windows-32"
 ```
 
 A800：

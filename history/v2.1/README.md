@@ -1,7 +1,12 @@
 # Frozen v2.1 Show-o Gate-Red Evidence Index
 
+The path labels below are the original immutable evidence locations. After the 2026-08-28 storage
+migration, the physical files live under the repository-local `runs/` tree; compatibility junctions
+preserve these historical names without changing any evidence bytes or SHA-256 values.
+
 The authoritative source snapshot is Git tag `v2.1-showo-gate-red` at commit
-`5e5543853aaf0d6bf8428e9c9e30e049b01d6a9d`. The external run artifacts remain immutable on H:;
+`5e5543853aaf0d6bf8428e9c9e30e049b01d6a9d`. The run artifacts remain immutable on H: under this
+project's `runs/` directory;
 this index records their paths and SHA-256 values without copying or recalculating them.
 
 | Artifact | Bytes | SHA-256 |
@@ -14,4 +19,3 @@ this index records their paths and SHA-256 values without copying or recalculati
 
 The v2.2 branch may cite these artifacts as a negative-control row, but it must never rewrite their
 content or use relaxed v2.2 coverage thresholds to change their frozen decision.
-

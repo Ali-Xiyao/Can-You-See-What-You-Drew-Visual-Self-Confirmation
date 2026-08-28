@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 import yaml
@@ -32,7 +33,7 @@ def main() -> None:
     parser.add_argument(
         "--frozen-observer-python",
         type=Path,
-        default=Path(r"H:\selfsight-envs\core\python.exe"),
+        default=Path(os.environ.get("SELFSIGHT_ENV_ROOT", "envs")) / "core" / "python.exe",
     )
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--resume", action="store_true")

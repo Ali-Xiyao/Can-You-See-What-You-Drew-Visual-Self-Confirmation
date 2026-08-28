@@ -10,7 +10,7 @@ def _candidate(candidate_id: str, prompt_id: str, seed: int, rgb_hash: str) -> C
         prompt_id=prompt_id,
         scene_id=prompt_id,
         sampling_seed=seed,
-        image_path="H:\\selfsight-data\\dummy.png",
+        image_path="project-data/dummy.png",
         rgb_sha256=rgb_hash,
         generator_id="test",
         generator_revision="0" * 40,

@@ -15,9 +15,9 @@ only after both smaller candidates fail. The commands below therefore download a
 
 ```powershell
 . .\scripts\set_h_env.ps1
-$core = "H:\selfsight-envs\core\python.exe"
-$showo2 = "H:\selfsight-envs\showo2\python.exe"
-$root = "H:\selfsight-runs\readiness\showo2-1p5b"
+$core = Join-Path $env:SELFSIGHT_ENV_ROOT "core\python.exe"
+$showo2 = Join-Path $env:SELFSIGHT_ENV_ROOT "showo2\python.exe"
+$root = Join-Path $env:SELFSIGHT_RUN_ROOT "readiness\showo2-1p5b"
 
 # Dedicated native-Windows environment; omits FlashAttention/DeepSpeed/xFormers/TF/ONNX/W&B.
 .\scripts\bootstrap_showo2_windows.ps1
@@ -32,19 +32,19 @@ $root = "H:\selfsight-runs\readiness\showo2-1p5b"
 # A1 and A2 use the same locked checkpoint for generation and RGB atomic QA.
 & $showo2 .\scripts\run_backbone_readiness.py canary `
   --backbone-config configs\backbones\showo2_1p5b.yaml `
-  --manifest H:\selfsight-data\selfsight-v2.2\manifests\canary.jsonl `
+  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v2.2\manifests\canary.jsonl" `
   --output "$root\a1-canary.json"
 
 & $showo2 .\scripts\run_backbone_readiness.py reference `
   --backbone-config configs\backbones\showo2_1p5b.yaml `
-  --manifest H:\selfsight-data\selfsight-v2.2\manifests\reference.jsonl `
+  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v2.2\manifests\reference.jsonl" `
   --output "$root\a2-reference.json"
 
 # A3 runs K=1 for all families and K=4 only for A2-retained families.
 & $showo2 .\scripts\audit_generated_precision.py generate `
   --backbone-config configs\backbones\showo2_1p5b.yaml `
   --reference-report "$root\a2-reference.json" `
-  --manifest H:\selfsight-data\selfsight-v2.2\manifests\generated.jsonl `
+  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v2.2\manifests\generated.jsonl" `
   --output "$root\a3-generated.json"
 
 # If A3's automatic coverage/Oracle/seed-stability checks are red, freeze the red decision here.
@@ -98,7 +98,7 @@ the exact shared-transformer module names and binds them to the A1/tree hashes:
   --generated-report "$root\a3-generated.json" `
   --human-report "$root\a3-human.json" `
   --target-config "$root\a4-lora-targets.json" `
-  --manifest H:\selfsight-data\selfsight-v2.2\manifests\reference.jsonl `
+  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v2.2\manifests\reference.jsonl" `
   --output "$root\a4-lora.json"
 
 & $showo2 .\scripts\finalize_joint_readiness.py `
@@ -135,29 +135,38 @@ For example, after rank 1 has produced `decision-red.json`, rank 2 is the only a
 
 ## Storage and processes
 
-All large state is outside this checkout and under short H-drive paths:
+All non-model state is inside this checkout. The environment script derives these paths from the
+repository location, so the checkout may be moved without editing configs. Model weights are the
+single external exception and remain under the dedicated H-drive model root:
 
 | Variable | Path |
 |---|---|
-| `SELFSIGHT_CACHE_ROOT` | `H:\selfsight-cache` |
-| `SELFSIGHT_DATA_ROOT` | `H:\selfsight-data` |
-| `SELFSIGHT_RUN_ROOT` | `H:\selfsight-runs` |
+| `SELFSIGHT_PROJECT_ROOT` | `<repo>` |
+| `SELFSIGHT_CACHE_ROOT` | `<repo>\cache` |
+| `SELFSIGHT_DATA_ROOT` | `<repo>\data` |
+| `SELFSIGHT_RUN_ROOT` | `<repo>\runs` |
 | `SELFSIGHT_MODEL_ROOT` | `H:\selfsight-models` |
-| `SELFSIGHT_ENV_ROOT` | `H:\selfsight-envs` |
-| `SELFSIGHT_TMP_ROOT` | `H:\selfsight-tmp` |
+| `SELFSIGHT_ENV_ROOT` | `<repo>\envs` |
+| `SELFSIGHT_TMP_ROOT` | `<repo>\tmp` |
 
 Start every PowerShell session from the repository root with:
 
 ```powershell
 . .\scripts\set_h_env.ps1
-$core = "H:\selfsight-envs\core\python.exe"
-$observer = "H:\selfsight-envs\observer\python.exe"
-$janus = "H:\selfsight-envs\janus\Scripts\python.exe"
+$core = Join-Path $env:SELFSIGHT_ENV_ROOT "core\python.exe"
+$observer = Join-Path $env:SELFSIGHT_ENV_ROOT "observer\python.exe"
+$janus = Join-Path $env:SELFSIGHT_ENV_ROOT "janus\Scripts\python.exe"
 ```
 
 The script also disables the unreliable Xet route seen on this Windows host. Large locked LFS files use resumable aria2 transfer plus exact size/SHA-256 verification; small files still use Hugging Face Hub.
 The downloader ignores unrelated ONNX/OpenVINO/CoreML/GGUF/TF/Flax exports unless a model lock
 explicitly asks for them.
+
+Existing immutable reports still contain their original legacy data/run evidence paths. The one-time
+`scripts/migrate_project_roots.ps1` migration keeps those bytes unchanged and creates NTFS
+compatibility junctions whose targets are the project-local directories. New commands must use the
+environment variables above, not the legacy junction names. The physical location and mapping are
+recorded in `runs/manifests/project-root-relocation.json`.
 
 GPU0 owns Show-o generation/training/backward. GPU1 owns frozen observers and parallel evaluation. The two 24GB cards are never treated as pooled 48GB memory.
 
@@ -193,32 +202,32 @@ revisions. `late_eval` remains intentionally absent until its upstream Gate is g
 
 ```powershell
 & $core -m selfsight.cli doctor --config configs\local_3090.yaml `
-  --output H:\selfsight-runs\manifests\local-host.json
+  --output "$env:SELFSIGHT_RUN_ROOT\manifests\local-host.json"
 
 & $core -m selfsight.cli build-data --config configs\local_3090.yaml `
-  --output H:\selfsight-data\selfsight-v1
+  --output "$env:SELFSIGHT_DATA_ROOT\selfsight-v1"
 
-& $core -m selfsight.cli audit-data H:\selfsight-data\selfsight-v1 `
-  --output H:\selfsight-runs\audits\data-audit.json
+& $core -m selfsight.cli audit-data "$env:SELFSIGHT_DATA_ROOT\selfsight-v1" `
+  --output "$env:SELFSIGHT_RUN_ROOT\audits\data-audit.json"
 
 & $core -m selfsight.cli audit-tier-b `
-  H:\selfsight-data\selfsight-v1\manifests\tier_b.jsonl `
-  --output H:\selfsight-runs\audits\tier-b-audit.json
+  "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_b.jsonl" `
+  --output "$env:SELFSIGHT_RUN_ROOT\audits\tier-b-audit.json"
 
 # Deterministic 600-image E4 subset: 300 Tier-A images + 150 complete Tier-B pairs.
-& $core -m selfsight.cli build-tier-d H:\selfsight-data\selfsight-v1 --seed 20260827
+& $core -m selfsight.cli build-tier-d "$env:SELFSIGHT_DATA_ROOT\selfsight-v1" --seed 20260827
 & $core -m selfsight.cli audit-tier-d `
-  H:\selfsight-data\selfsight-v1\manifests\tier_d.jsonl `
-  --output H:\selfsight-runs\audits\tier-d-audit.json
+  "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_d.jsonl" `
+  --output "$env:SELFSIGHT_RUN_ROOT\audits\tier-d-audit.json"
 
 # Export the blinded 120-image manual packet (six families x 20).
 & $core .\scripts\manual_reference_audit.py export `
-  --manifest H:\selfsight-data\selfsight-v1\manifests\tier_a_outcome.jsonl `
-  --output H:\selfsight-runs\audits\manual-reference
+  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_a_outcome.jsonl" `
+  --output "$env:SELFSIGHT_RUN_ROOT\audits\manual-reference"
 
 & $core -m pytest -q
 & $core -m selfsight.cli mock-pilot --config configs\local_3090.yaml `
-  --output H:\selfsight-runs\mock-pilot
+  --output "$env:SELFSIGHT_RUN_ROOT\mock-pilot"
 ```
 
 The mock output is stamped `synthetic_smoke_only` and must never be cited as scientific evidence.
@@ -229,44 +238,44 @@ After a blinded reviewer fills `review_blinded.csv`, score it without modifying 
 
 ```powershell
 & $core .\scripts\manual_reference_audit.py score `
-  --review-csv H:\selfsight-runs\audits\manual-reference\review_blinded.csv `
-  --answer-key H:\selfsight-runs\audits\manual-reference\answer_key.json `
-  --output H:\selfsight-runs\audits\manual-reference\manual-audit-report.json
+  --review-csv "$env:SELFSIGHT_RUN_ROOT\audits\manual-reference\review_blinded.csv" `
+  --answer-key "$env:SELFSIGHT_RUN_ROOT\audits\manual-reference\answer_key.json" `
+  --output "$env:SELFSIGHT_RUN_ROOT\audits\manual-reference\manual-audit-report.json"
 ```
 
-Exact Windows package/CUDA inventories are captured in `H:\selfsight-envs\locks` by the bootstrap script.
+Exact Windows package/CUDA inventories are captured in `<repo>\envs\locks` by the bootstrap script.
 
 ## 3. Real model canaries and Gate -1
 
 ```powershell
 # Show-o: generation, RGB reload/MMU, T2I+replay LoRA step, save/corrupt/exact restore.
 & $core .\scripts\canary_showo.py --config configs\local_3090.yaml `
-  --output H:\selfsight-runs\canaries\showo-local
+  --output "$env:SELFSIGHT_RUN_ROOT\canaries\showo-local"
 
 # Train-only, six-family generated-RGB parseability audit; no Tier-A held-out prompt is used.
 & $core .\scripts\canary_generated_domain.py --config configs\local_3090.yaml `
-  --manifest H:\selfsight-data\selfsight-v1\manifests\train.jsonl `
+  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\train.jsonl" `
   --limit 60 --verifier generated_cv_v2 `
-  --output H:\selfsight-runs\canaries\generated-domain-cv2-dev60-20260827
+  --output "$env:SELFSIGHT_RUN_ROOT\canaries\generated-domain-cv2-dev60-20260827"
 
 # Example isolated observer canary; repeat for the locked capability ladder.
 & $core .\scripts\canary_observer.py --python $observer --backend smolvlm `
   --model-id HuggingFaceTB/SmolVLM-500M-Instruct `
   --revision a7da5b986cb59b408707209984f360a5f4ad7e47 `
-  --manifest H:\selfsight-data\selfsight-v1\manifests\tier_a_probe.jsonl `
-  --output H:\selfsight-runs\canaries\smolvlm
+  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_a_probe.jsonl" `
+  --output "$env:SELFSIGHT_RUN_ROOT\canaries\smolvlm"
 ```
 
 Run `selfsight.cli audit-observer` for Show-o and every candidate on program-rendered truth, then finalize the matched detector:
 
 ```powershell
 & $core -m selfsight.cli finalize-gate-minus-1 `
-  --reference-audit H:\selfsight-runs\audits\data-audit.json `
-  --showo-report H:\selfsight-runs\gate-minus-1\showo-local120.json `
-  --candidate-report H:\selfsight-runs\gate-minus-1\smolvlm-local120.json `
-  --candidate-report H:\selfsight-runs\gate-minus-1\internvl-local120.json `
-  --candidate-report H:\selfsight-runs\gate-minus-1\qwen2vl-local120.json `
-  --output H:\selfsight-runs\gate-minus-1\decision.json
+  --reference-audit "$env:SELFSIGHT_RUN_ROOT\audits\data-audit.json" `
+  --showo-report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\showo-local120.json" `
+  --candidate-report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\smolvlm-local120.json" `
+  --candidate-report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\internvl-local120.json" `
+  --candidate-report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\qwen2vl-local120.json" `
+  --output "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\decision.json"
 ```
 
 Gate -1 is a hard stop: Show-o needs at least four question families at 80% or above, and the frozen heterogeneous observer must be within 3 percentage points of Show-o macro accuracy after forced-choice/yes-bias auditing.
@@ -276,14 +285,14 @@ running E1/E2:
 
 ```powershell
 & $core .\scripts\render_capability_floor.py `
-  --report H:\selfsight-runs\gate-minus-1\showo-local120.json `
-  --report H:\selfsight-runs\gate-minus-1\showo-discrete-local120.json `
-  --report H:\selfsight-runs\gate-minus-1\janus-local120.json `
-  --report H:\selfsight-runs\gate-minus-1\smolvlm-local120.json `
-  --report H:\selfsight-runs\gate-minus-1\internvl-local120.json `
-  --report H:\selfsight-runs\gate-minus-1\qwen2vl-local120.json `
+  --report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\showo-local120.json" `
+  --report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\showo-discrete-local120.json" `
+  --report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\janus-local120.json" `
+  --report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\smolvlm-local120.json" `
+  --report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\internvl-local120.json" `
+  --report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\qwen2vl-local120.json" `
   --evidence-status "local diagnostic; Gate -1 decision frozen" `
-  --output H:\selfsight-runs\gate-minus-1\figure2-all-backbones-local
+  --output "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\figure2-all-backbones-local"
 ```
 
 The figure exports PNG/PDF/SVG/grayscale plus tidy CSV and a QA manifest. Accuracy is redundantly
@@ -305,13 +314,13 @@ yes-bias, and abstention floors before loading either model:
 
 ```powershell
 . .\scripts\set_h_env.ps1
-$showo2 = "H:\selfsight-envs\showo2\python.exe"
-$observer = "H:\selfsight-envs\observer\python.exe"
-$root = "H:\selfsight-runs\readiness\showo2-1p5b"
-$observerAudit = "H:\selfsight-runs\gate-minus-1\qwen2vl-local120.json"
+$showo2 = Join-Path $env:SELFSIGHT_ENV_ROOT "showo2\python.exe"
+$observer = Join-Path $env:SELFSIGHT_ENV_ROOT "observer\python.exe"
+$root = Join-Path $env:SELFSIGHT_RUN_ROOT "readiness\showo2-1p5b"
+$observerAudit = Join-Path $env:SELFSIGHT_RUN_ROOT "gate-minus-1\qwen2vl-local120.json"
 
 & $showo2 .\scripts\run_e1.py --config configs\local_3090_showo2.yaml `
-  --manifest H:\selfsight-data\selfsight-v1\manifests\tier_b.jsonl `
+  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_b.jsonl" `
   --joint-readiness-decision "$root\decision.json" `
   --backbone-config configs\backbones\showo2_1p5b.yaml `
   --observer-config configs\observers\qwen2vl_2b.yaml `
@@ -319,11 +328,11 @@ $observerAudit = "H:\selfsight-runs\gate-minus-1\qwen2vl-local120.json"
   --detector-python $observer --detector-backend qwen2vl `
   --detector-model-id Qwen/Qwen2-VL-2B-Instruct `
   --detector-revision 895c3a49bc3fa70a340399125c650a463535e71c `
-  --output H:\selfsight-runs\e1\showo2-1p5b
+  --output "$env:SELFSIGHT_RUN_ROOT\e1\showo2-1p5b"
 
 & $showo2 .\scripts\run_gradient_gate.py `
   --config configs\local_3090_showo2.yaml `
-  --probe-manifest H:\selfsight-data\selfsight-v1\manifests\tier_a_probe.jsonl `
+  --probe-manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_a_probe.jsonl" `
   --joint-readiness-decision "$root\decision.json" `
   --backbone-config configs\backbones\showo2_1p5b.yaml `
   --observer-config configs\observers\qwen2vl_2b.yaml `
@@ -332,23 +341,23 @@ $observerAudit = "H:\selfsight-runs\gate-minus-1\qwen2vl-local120.json"
   --detector-python $observer --detector-backend qwen2vl `
   --detector-model-id Qwen/Qwen2-VL-2B-Instruct `
   --detector-revision 895c3a49bc3fa70a340399125c650a463535e71c `
-  --device cuda:1 --output H:\selfsight-runs\gate-minus-1b\showo2-1p5b
+  --device cuda:1 --output "$env:SELFSIGHT_RUN_ROOT\gate-minus-1b\showo2-1p5b"
 
 & $showo2 .\scripts\run_local_pilot.py `
   --config configs\local_3090_showo2.yaml `
-  --train-manifest H:\selfsight-data\selfsight-v1\manifests\train.jsonl `
+  --train-manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\train.jsonl" `
   --joint-readiness-decision "$root\decision.json" `
   --backbone-config configs\backbones\showo2_1p5b.yaml `
   --lora-target-config "$root\a4-lora-targets.json" `
-  --gradient-gate-report H:\selfsight-runs\gate-minus-1b\showo2-1p5b\gate_minus_1b.json `
+  --gradient-gate-report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1b\showo2-1p5b\gate_minus_1b.json" `
   --frozen-observer-python $showo2 `
-  --output H:\selfsight-runs\local-pilot\showo2-1p5b --resume
+  --output "$env:SELFSIGHT_RUN_ROOT\local-pilot\showo2-1p5b" --resume
 
 & $showo2 .\scripts\evaluate_pilot.py `
   --config configs\local_3090_showo2.yaml `
-  --run-root H:\selfsight-runs\local-pilot\showo2-1p5b `
-  --outcome-manifest H:\selfsight-data\selfsight-v1\manifests\tier_a_outcome.jsonl `
-  --probe-manifest H:\selfsight-data\selfsight-v1\manifests\tier_a_probe.jsonl `
+  --run-root "$env:SELFSIGHT_RUN_ROOT\local-pilot\showo2-1p5b" `
+  --outcome-manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_a_outcome.jsonl" `
+  --probe-manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_a_probe.jsonl" `
   --joint-readiness-decision "$root\decision.json" `
   --backbone-config configs\backbones\showo2_1p5b.yaml `
   --observer-config configs\observers\qwen2vl_2b.yaml `
@@ -371,35 +380,35 @@ current `decision.json` is red, so they also remain blocked unless supplied a di
 green v2.1 decision; they are not a route around Gate -2:
 
 ```powershell
-$gate = "H:\selfsight-runs\gate-minus-1\NEW-GREEN-decision.json"
-$domain = "H:\selfsight-runs\canaries\NEW-GREEN-generated-domain\generated_domain_report.json"
-$detectorAudit = "H:\selfsight-runs\gate-minus-1\SELECTED-detector-audit.json"
+$gate = Join-Path $env:SELFSIGHT_RUN_ROOT "gate-minus-1\NEW-GREEN-decision.json"
+$domain = Join-Path $env:SELFSIGHT_RUN_ROOT "canaries\NEW-GREEN-generated-domain\generated_domain_report.json"
+$detectorAudit = Join-Path $env:SELFSIGHT_RUN_ROOT "gate-minus-1\SELECTED-detector-audit.json"
 $detectorBackend = "SELECTED_BACKEND"
 $detectorModel = "SELECTED_MODEL_ID"
 $detectorRevision = "SELECTED_REVISION"
 
 & $core .\scripts\run_e1.py --config configs\local_3090.yaml `
-  --manifest H:\selfsight-data\selfsight-v1\manifests\tier_b.jsonl `
+  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_b.jsonl" `
   --gate-minus-1-report $gate --generated-domain-report $domain `
   --detector-audit-report $detectorAudit `
   --detector-python $observer --detector-backend $detectorBackend `
   --detector-model-id $detectorModel --detector-revision $detectorRevision `
-  --output H:\selfsight-runs\e1
+  --output "$env:SELFSIGHT_RUN_ROOT\e1"
 
 & $core .\scripts\run_gradient_gate.py --config configs\local_3090.yaml `
-  --probe-manifest H:\selfsight-data\selfsight-v1\manifests\tier_a_probe.jsonl `
+  --probe-manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_a_probe.jsonl" `
   --gate-minus-1-report $gate --generated-domain-report $domain `
   --detector-audit-report $detectorAudit `
   --detector-python $observer --detector-backend $detectorBackend `
   --detector-model-id $detectorModel --detector-revision $detectorRevision `
-  --output H:\selfsight-runs\gate-minus-1b
+  --output "$env:SELFSIGHT_RUN_ROOT\gate-minus-1b"
 
 & $core .\scripts\run_local_pilot.py --config configs\local_3090.yaml `
-  --train-manifest H:\selfsight-data\selfsight-v1\manifests\train.jsonl `
+  --train-manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\train.jsonl" `
   --gate-report $gate `
-  --gradient-gate-report H:\selfsight-runs\gate-minus-1b\gate_minus_1b.json `
+  --gradient-gate-report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1b\gate_minus_1b.json" `
   --generated-domain-report $domain `
-  --frozen-observer-python $core --output H:\selfsight-runs\local-pilot --resume
+  --frozen-observer-python $core --output "$env:SELFSIGHT_RUN_ROOT\local-pilot" --resume
 ```
 
 The legacy entry points validate the locked Gate identity, selected detector model/revision, exact

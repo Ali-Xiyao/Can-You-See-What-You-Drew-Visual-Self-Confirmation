@@ -1,12 +1,24 @@
 $ErrorActionPreference = "Stop"
 
+$projectRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
+$projectPrefix = $projectRoot.TrimEnd("\") + "\"
+
 $roots = @{
-    SELFSIGHT_CACHE_ROOT = "H:\selfsight-cache"
-    SELFSIGHT_DATA_ROOT = "H:\selfsight-data"
-    SELFSIGHT_RUN_ROOT = "H:\selfsight-runs"
+    SELFSIGHT_PROJECT_ROOT = $projectRoot
+    SELFSIGHT_CACHE_ROOT = Join-Path $projectRoot "cache"
+    SELFSIGHT_DATA_ROOT = Join-Path $projectRoot "data"
+    SELFSIGHT_RUN_ROOT = Join-Path $projectRoot "runs"
     SELFSIGHT_MODEL_ROOT = "H:\selfsight-models"
-    SELFSIGHT_ENV_ROOT = "H:\selfsight-envs"
-    SELFSIGHT_TMP_ROOT = "H:\selfsight-tmp"
+    SELFSIGHT_ENV_ROOT = Join-Path $projectRoot "envs"
+    SELFSIGHT_TMP_ROOT = Join-Path $projectRoot "tmp"
+}
+
+foreach ($name in @("SELFSIGHT_CACHE_ROOT", "SELFSIGHT_DATA_ROOT", "SELFSIGHT_RUN_ROOT",
+        "SELFSIGHT_ENV_ROOT", "SELFSIGHT_TMP_ROOT")) {
+    $resolved = [System.IO.Path]::GetFullPath($roots[$name])
+    if (-not $resolved.StartsWith($projectPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "$name must stay below the project root: $resolved"
+    }
 }
 
 foreach ($entry in $roots.GetEnumerator()) {

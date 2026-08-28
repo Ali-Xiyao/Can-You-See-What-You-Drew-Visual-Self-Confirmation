@@ -211,6 +211,65 @@
 
 ## 2026-08-28 — v2.2 Joint Readiness revision
 
+### Project-root relocation request
+
+- User requires every project file except model weights to live below
+  `H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation`.
+- Started Phase 6a. The model root `H:\selfsight-models` is the sole allowed external exception;
+  human annotation and A4 are paused until paths and evidence are revalidated.
+- Inventory attempt 1 recursively summed every external root in one PowerShell call and exceeded
+  the 30-second command window without yielding output. The next attempt will enumerate roots and
+  query each root separately instead of repeating the same monolithic scan.
+- Enumerated the five external roots and active hard-coded references. Selected direct project
+  subdirectories `cache/data/envs/runs/tmp`; the existing `H:\selfsight-models` stays unchanged.
+- Completed per-root inventories. The relocation covers 255,772 files / about 31.93 GiB, dominated
+  by 24.16GB of environments and 6.20GB of temporary/failed-install diagnostics.
+- Verified no live Python/model process is using the external roots and no project-local target
+  directory currently conflicts with the planned moves.
+- README path rewrite attempt 1 used multiple `Update File` blocks for the same file in one patch;
+  the patch tool rejected it before changing README. The retry will use one operation containing
+  all hunks, matching the tool's atomic-file constraint.
+- Retried README in separate atomic updates. All active README commands now derive non-model paths
+  from `SELFSIGHT_*_ROOT`; only the A800 runbook and the intentional migration-script source map
+  still contain legacy non-model roots.
+- Added repository-rooted Windows/Linux environment setup, a guarded same-volume migration script,
+  project-local test fixtures, and a regression test that forbids new active hard-coded external
+  non-model paths.
+- First targeted path-policy run found one Ruff import-order issue and a false positive from the
+  generated ignored `src/selfsight.egg-info/PKG-INFO`. The test now excludes generated egg-info;
+  Ruff will apply its deterministic import formatter before the retry.
+- Targeted Ruff and four path/candidate tests now pass. Both PowerShell files parse with zero AST
+  errors. Git Bash is not installed, so `set_a800_env.sh` still requires Linux `bash -n` validation
+  during the A800 migration; its edits use POSIX/Bash syntax only.
+- Preflight verified all five exact destinations are inside the current Git project, do not exist,
+  and share the H: volume with their sources. `scripts/migrate_project_roots.ps1` then moved every
+  non-model root and wrote `runs/manifests/project-root-relocation.json`.
+- Two verification-command syntax mistakes were non-mutating: one JavaScript wrapper omitted the
+  declaration form accepted by the tool, and one PowerShell `foreach` result was piped without
+  array grouping. Both were corrected without rerunning the migration. The corrected audit confirms
+  five ordinary project directories plus five legacy junctions targeting them exactly.
+- Sourced the new environment policy and launched all four relocated Python executables from the
+  project-local `envs/` tree. Recomputed frozen decision, HQ A3, and review-ZIP hashes; all match the
+  pre-migration values exactly.
+- Recursive HQ A3 validation passed all 210 collision-free candidate IDs, paths, and decoded-RGB
+  hashes after relocation. The first fallback-chain check used downloader `--plan`, which needlessly
+  queried the Hugging Face API and failed on a transient proxy reset before local authorization.
+  The retry will call the same local predecessor validator directly, avoiding network/model writes.
+- Offline predecessor validation passed and reproduced the frozen decision SHA/model identity.
+  Post-move file/byte inventories match the original roots; only runs gained the relocation manifest.
+- Full repository Ruff passed and the complete pytest suite reached 100% with exit code 0 after
+  relocation. The only warnings are the two pre-existing future Pillow PDF-mode deprecations.
+- Two combined documentation patches were rejected before modification: the first used the wrong
+  historical README heading; the second contained an empty hunk boundary. Splitting the changes into
+  valid atomic patches resolved both without touching experiment artifacts.
+- Mirrored the Codex-managed 22,673-byte model/backbone revision attachment into
+  `docs/source-notes/model-backbone-revision-20260828.txt`; source and project copy share SHA-256
+  `32fddaba...c41a`. The app-owned attachment itself was not deleted.
+- Final verification collected 90 tests, then reran Ruff and all 90 tests successfully. PowerShell
+  path interpolation with spaces resolves to existing project-local manifests/runs; the review ZIP
+  remains at SHA-256 `e9127794...20d7`. Active source/config/docs/tests contain zero legacy
+  non-model absolute roots outside the intentional one-time migration map.
+
 - The user approved a material backbone/design revision after the frozen Show-o v1 Gate -1 red
   result. The new scientific claim is conditional on a unified model passing joint generation and
   observation readiness for a registered subset of families.

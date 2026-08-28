@@ -17,9 +17,10 @@ two independent RTX 3090 cards; formal three-seed experiments remain single-A800
 
 ## Current Phase
 
-Phase 5: first local Show-o2 candidate. The v2.1 red result is immutable/tagged, the v2.2 code and
-data path are implemented and pushed, the H-drive Windows environment and candidate-1 assets are
-locked, and A1 is green. The next operation is the 120-image A2 reference-observation audit.
+Phase 6a: relocate every non-model project asset into this repository root. Preserve
+`H:\selfsight-models` as the only permitted external project root, rewrite all active path
+configuration, and revalidate the immutable readiness evidence after relocation. Human annotation
+and A4 remain paused until this migration is complete.
 
 ## Registered Backbone Ladder
 
@@ -138,6 +139,23 @@ families means the scientific claim is unsupported for that backbone and stops p
 - **Current blocker:** external human annotations are required by the preregistered blind-precision
   audit; they cannot be substituted with model labels.
 
+### Phase 6a — Project-root path normalization
+
+- [x] Inventory every `H:\selfsight-*` root and every absolute path reference in source, config,
+  scripts, documentation, registries, reports, checkpoints, and review artifacts.
+- [x] Keep model weights only at `H:\selfsight-models`; move environments, data, runs, cache,
+  temporary files, and review packets below the current project root.
+- [x] Replace hard-coded non-model H-drive roots with project-root-derived paths and add fail-closed
+  path-policy validation.
+- [x] Rewrite movable runtime metadata without changing scientific payloads; preserve original
+  content hashes wherever paths are not part of the evidence object.
+- [x] Revalidate Gate evidence chains, tests, Ruff, environment executables, and the human-review
+  ZIP after relocation.
+- [x] Scan H: and the repository for residual non-model `selfsight-*` paths; confirm no physical
+  source copies remain outside the project and retain only the five validated evidence junctions.
+- [ ] Commit and push the complete migration on `experiment/v2.2-joint-readiness`.
+- **Status:** in_progress
+
 ### Phase 7 — A800 migration and formal experiments
 
 - [ ] Re-materialize exact locked revisions on Linux/A800 and run the 32-prompt migration canary.
@@ -159,7 +177,8 @@ families means the scientific claim is unsupported for that backbone and stops p
 
 - GPU0: Show-o2 generation, gradient, and LoRA work.
 - GPU1: frozen Qwen observer, verifier support, and parallel audits.
-- Environments, caches, models, data, temporary files, and runs stay under short H-drive roots.
+- Models remain at `H:\selfsight-models`; every other environment, cache, data, temporary, run,
+  and review artifact stays below this repository root.
 - Native Windows is attempted first. A Windows-incompatible official kernel may trigger a documented
   WSL2 fallback, but not an unrecorded implementation change.
 
