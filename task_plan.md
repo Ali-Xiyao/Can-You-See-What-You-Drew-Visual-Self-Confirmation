@@ -17,9 +17,9 @@ two independent RTX 3090 cards; formal three-seed experiments remain single-A800
 
 ## Current Phase
 
-Phase 6: all three registered Show-o2 candidates are now frozen red. The 7B fallback passed A1/A2
-but failed automatic A3 on overall coverage and fixed-seed stability, so human precision and A4 are
-explicitly N/T and the preregistered conditional-negative stop is final for this backbone ladder.
+Phase 8: the registered v2.2 ladder remains permanently frozen red. At the user's explicit request,
+continue only in an isolated `exploratory-post-gate` namespace using already-downloaded weights.
+The goal is engineering/diagnostic completion, not retroactive formal evidence.
 
 ## Registered Backbone Ladder
 
@@ -150,8 +150,9 @@ families means the scientific claim is unsupported for that backbone and stops p
   so freeze the stop-before-human/A4 decision with the exact HQ predecessor and no next fallback.
 - [x] Run final full verification; the complete test suite and Ruff pass after the frozen decision
   and three-candidate figure QA.
-- **Current blocker:** none. Final verification/documentation is in progress; the registered local
-  candidate ladder is exhausted and no phenomenon experiment is authorized.
+- **Current blocker:** none. The registered local candidate ladder is exhausted and no registered
+  phenomenon experiment is authorized. The separate
+  user-authorized engineering diagnostic is complete under Phase 8.
 
 ### Phase 6a — Project-root path normalization
 
@@ -178,6 +179,24 @@ families means the scientific claim is unsupported for that backbone and stops p
   backbone/design revision reopens the Gate; this is outside the completed v2.2 ladder.
 - **Status:** not_authorized_for_v2.2
 
+### Phase 8 — User-authorized post-Gate exploratory continuation
+
+- [x] Inventory the existing-only model/evidence/runtime surface and choose the smallest diagnostic
+  backbone/family set without changing any frozen Gate report or downloading weights. Use
+  Show-o2-1.5B-HQ with `existence/color/spatial` only.
+- [x] Add a fail-loud exploratory authorization artifact and runner mode whose outputs are physically
+  separated from `runs/readiness`; every report must state that it is non-preregistered/non-formal.
+- [x] Run the Show-o2 LoRA A4 backward/resume canary first. Stop and diagnose on NaN, OOM, invalid
+  target modules, or checkpoint mismatch before launching E1/E2.
+- [x] Run E1 and RFO isolation checks using RGB/question-only observer traffic, then run Gate -1b
+  gradient diagnostics on the same exploratory family set.
+- [x] If all mechanism checks are stable, run the one-seed paired local Base/Naive/RFO-Self pilot
+  with identical prompt IDs, candidate pools, update counts, and checkpoint evaluation.
+- [x] Produce exploratory figures/reports with explicit provenance and retain the frozen v2.2
+  conditional-negative conclusion unchanged.
+- [x] Do not run formal three-seed/A800 work unless separately authorized after local diagnostics.
+- **Status:** completed_local_exploratory_formal_not_authorized
+
 ## Hard Stops
 
 - Do not download any additional model or model weight without fresh, explicit user approval. If a
@@ -190,6 +209,8 @@ families means the scientific claim is unsupported for that backbone and stops p
 - Never use Qwen2-VL training or selection outputs as evidence that the unified backbone can see its
   own drawing; it remains a frozen external observer/detector.
 - Never generalize beyond the Gate -2 eligible families.
+- Post-Gate exploratory outputs must never be written into a frozen readiness directory, used to
+  overwrite a decision, or described as preregistered/formal evidence.
 
 ## Fixed Local Resource Policy
 
@@ -208,9 +229,9 @@ families means the scientific claim is unsupported for that backbone and stops p
 
 - [x] Unit/integration suite and Ruff pass after the 7B sharded-loader/low-RAM fixes.
 - [x] Every decision binds model/source/dependency revisions and all input SHA-256 values.
-- [x] Checkpoint code restores adapter, optimizer, scheduler, RNG, and full config; GPU A4 still pending.
-- [ ] Observer subprocess receives only RGB path/bytes plus atomic question.
-- [ ] Windows/A800 canary comparison is deterministic within registered tolerances.
+- [x] Checkpoint code restores adapter, optimizer, scheduler, RNG, and full config; exploratory GPU A4 passed.
+- [x] Observer subprocess receives only RGB path/bytes plus atomic question.
+- [x] Windows/A800 canary is explicitly N/T because the registered A800 route is not authorized.
 - [x] Branch is committed and pushed; main remains the frozen v2.1 baseline.
 
 ## Errors

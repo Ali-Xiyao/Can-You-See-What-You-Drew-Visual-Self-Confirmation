@@ -48,3 +48,8 @@ def test_e1_family_filter_is_fail_closed() -> None:
     assert excluded == ["size"]
     with pytest.raises(ValueError, match="absent"):
         _filter_eligible_records(records, ("binding",))
+    retained, excluded = _filter_eligible_records(
+        records, ("existence", "binding"), require_all_eligible_present=False
+    )
+    assert retained == records[:1]
+    assert excluded == ["size"]

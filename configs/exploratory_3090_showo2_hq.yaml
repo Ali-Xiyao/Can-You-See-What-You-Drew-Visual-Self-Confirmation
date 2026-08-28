@@ -1,0 +1,83 @@
+profile: exploratory_3090_showo2_hq
+seed: 20260828
+
+paths:
+  cache_root: ${SELFSIGHT_CACHE_ROOT}
+  data_root: ${SELFSIGHT_DATA_ROOT}
+  run_root: ${SELFSIGHT_RUN_ROOT}
+  model_root: ${SELFSIGHT_MODEL_ROOT}
+  tmp_root: ${SELFSIGHT_TMP_ROOT}
+
+hardware:
+  generator_device: cuda:0
+  observer_device: cuda:1
+  precision: bf16
+  attention: sdpa
+  distributed: false
+
+model:
+  trainable_id: showlab/show-o2-1.5B-HQ
+  backbone_config: configs/backbones/showo2_1p5b_hq.yaml
+  frozen_negative_control_id: showlab/show-o-w-clip-vit-512x512
+  language_base_id: Qwen/Qwen2.5-1.5B-Instruct
+  vision_tower_id: google/siglip-so400m-patch14-384
+  image_autoencoder_id: Wan-AI/Wan2.1-T2V-14B
+  image_resolution: 512
+  generation_timesteps: 20
+  guidance_scale: 5.0
+  temperature: 1.0
+
+data:
+  full_train_prompts: 2400
+  local_train_prompts: 640
+  tier_a_probe: 200
+  tier_a_outcome: 600
+  local_probe: 12
+  local_outcome: 24
+  images_per_prompt: 2
+  tier_b_pairs: 400
+  tier_d_images: 600
+  tier_e_images: 200
+
+training:
+  arms: [naive, rfo_self]
+  seeds: [20260828]
+  rounds: 2
+  prompts_per_round: 12
+  candidate_k: 2
+  optimizer_steps_per_round: 5
+  micro_batch_size: 1
+  gradient_accumulation_steps: 8
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  warmup_ratio: 0.10
+  max_grad_norm: 1.0
+  understanding_replay_ratio: 0.25
+  gradient_checkpointing: true
+  lora:
+    rank: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: []
+    target_selection_required: true
+    forbidden_trainable: [embed_tokens, lm_head, image_embedder_und, und_trans, fusion_proj]
+
+gradient_probe:
+  size: 12
+  criteria: [naive, rfo, gold]
+  noise_floor_splits: 4
+  expected_gda_effect: 0.20
+  identical_cosine_min: 0.999
+  ema_alpha: 0.35
+
+gates:
+  verifier_agreement_min: 0.95
+  verifier_coverage_min: 0.80
+  observer_family_accuracy_min: 0.80
+  observer_min_passing_families: 3
+  forced_choice_bias_max: 0.10
+  observer_abstain_max: 0.20
+  family_verifier_coverage_min: 0.70
+  oracle_at_4_min: 0.70
+  fixed_seed_swing_max: 0.10
+  scfr_post_breakpoint_offset_steps: 5

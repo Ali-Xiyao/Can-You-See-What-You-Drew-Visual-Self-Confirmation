@@ -9,6 +9,10 @@ from pathlib import Path
 import yaml
 
 from selfsight.analysis.e1 import run_e1_tier_b
+from selfsight.analysis.exploratory import (
+    validate_bound_exploratory_authorization,
+    validate_exploratory_observer_audit,
+)
 from selfsight.analysis.prerequisites import (
     require_gate_minus_one,
     require_generated_domain,
@@ -31,6 +35,8 @@ def main() -> None:
     parser.add_argument("--gate-minus-1-report", type=Path)
     parser.add_argument("--generated-domain-report", type=Path)
     parser.add_argument("--joint-readiness-decision", type=Path)
+    parser.add_argument("--exploratory-authorization", type=Path)
+    parser.add_argument("--frozen-decision", type=Path)
     parser.add_argument(
         "--backbone-config",
         type=Path,
@@ -52,7 +58,83 @@ def main() -> None:
     config = load_config(args.config)
     eligible_families = None
     evidence_bindings = {}
-    if args.joint_readiness_decision is not None:
+    exploratory_authorization = None
+    if args.exploratory_authorization is not None:
+        if any(
+            item is not None
+            for item in (
+                args.joint_readiness_decision,
+                args.gate_minus_1_report,
+                args.generated_domain_report,
+            )
+        ):
+            parser.error("Do not mix exploratory authorization with registered Gate inputs")
+        if args.frozen_decision is None:
+            parser.error("Exploratory E1 requires --frozen-decision")
+        output = args.output.resolve()
+        exploratory_authorization = validate_bound_exploratory_authorization(
+            args.exploratory_authorization,
+            stage="e1_observation_contexts",
+            backbone_config_path=args.backbone_config,
+            decision_path=args.frozen_decision,
+            output_path=output,
+        )
+        eligible_families = tuple(
+            str(item) for item in exploratory_authorization["families"]
+        )
+        backbone_path = args.backbone_config.resolve()
+        backbone = yaml.safe_load(backbone_path.read_text(encoding="utf-8"))
+        experiment_model = config.values["model"]
+        official = backbone["official_profile"]
+        if (
+            experiment_model.get("trainable_id") != backbone.get("backbone_id")
+            or int(experiment_model.get("image_resolution", -1))
+            != int(official["resolution"])
+            or int(experiment_model.get("generation_timesteps", -1))
+            != int(official["generation_steps"])
+        ):
+            raise RuntimeError("Exploratory E1 config does not match the locked HQ profile")
+        observer_path = args.observer_config.resolve()
+        observer = yaml.safe_load(observer_path.read_text(encoding="utf-8"))
+        if (
+            observer.get("observer_id") != args.detector_model_id
+            or observer.get("revision") != args.detector_revision
+        ):
+            raise RuntimeError("Exploratory E1 detector does not match its locked config")
+        validate_exploratory_observer_audit(
+            args.detector_audit_report,
+            model_id=args.detector_model_id,
+            revision=args.detector_revision,
+            eligible_families=eligible_families,
+            family_accuracy_min=float(config.values["gates"]["observer_family_accuracy_min"]),
+            yes_bias_max=float(config.values["gates"]["forced_choice_bias_max"]),
+            abstain_rate_max=float(config.values["gates"]["observer_abstain_max"]),
+        )
+        adapter = Showo2Adapter(
+            backbone_config=backbone_path,
+            device=str(backbone["hardware"]["generator_device"]),
+            lazy=False,
+        )
+        authorization_path = args.exploratory_authorization.resolve()
+        evidence_bindings = {
+            "exploratory_authorization": {
+                "path": str(authorization_path),
+                "sha256": sha256_file(authorization_path),
+            },
+            "frozen_red_decision": {
+                "path": str(args.frozen_decision.resolve()),
+                "sha256": sha256_file(args.frozen_decision.resolve()),
+            },
+            "backbone_config": {
+                "path": str(backbone_path),
+                "sha256": sha256_file(backbone_path),
+            },
+            "public_observer_audit": {
+                "path": str(args.detector_audit_report.resolve()),
+                "sha256": sha256_file(args.detector_audit_report.resolve()),
+            },
+        }
+    elif args.joint_readiness_decision is not None:
         if args.gate_minus_1_report is not None or args.generated_domain_report is not None:
             parser.error("Do not mix v2.2 Joint Readiness with legacy v2.1 Gate -1 inputs")
         decision_path = args.joint_readiness_decision.resolve()
@@ -160,6 +242,16 @@ def main() -> None:
             limit=args.limit,
             eligible_families=eligible_families,
             evidence_bindings=evidence_bindings,
+            non_formal=exploratory_authorization is not None,
+            exploratory_authorization=(
+                None
+                if exploratory_authorization is None
+                else {
+                    "path": str(args.exploratory_authorization.resolve()),
+                    "sha256": sha256_file(args.exploratory_authorization.resolve()),
+                    "digest": exploratory_authorization["authorization_digest"],
+                }
+            ),
         )
     print(json.dumps({key: value for key, value in report.items() if key != "rows"}, indent=2))
 

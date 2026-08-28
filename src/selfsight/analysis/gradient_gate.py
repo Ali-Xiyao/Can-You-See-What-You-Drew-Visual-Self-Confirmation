@@ -113,6 +113,8 @@ def run_gradient_gate(
     lora_target_modules: Sequence[str] | None = None,
     eligible_families: Sequence[str] | None = None,
     evidence_bindings: Mapping[str, Any] | None = None,
+    non_formal: bool = False,
+    exploratory_authorization: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     import torch
 
@@ -233,6 +235,8 @@ def run_gradient_gate(
     if len(common) < 8:
         report = {
             "schema_version": 1,
+            "non_formal": bool(non_formal),
+            "exploratory_authorization": dict(exploratory_authorization or {}),
             "gate": "minus_1b",
             "model_id": adapter.model_id,
             "revision": adapter.revision,
@@ -314,6 +318,8 @@ def run_gradient_gate(
     }
     report = {
         "schema_version": 1,
+        "non_formal": bool(non_formal),
+        "exploratory_authorization": dict(exploratory_authorization or {}),
         "gate": "minus_1b",
         "model_id": adapter.model_id,
         "revision": adapter.revision,

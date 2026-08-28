@@ -8,6 +8,10 @@ from pathlib import Path
 
 import yaml
 
+from selfsight.analysis.exploratory import (
+    validate_bound_exploratory_authorization,
+    validate_exploratory_observer_audit,
+)
 from selfsight.analysis.prerequisites import (
     require_gate_minus_one,
     require_public_observer_audit,
@@ -28,6 +32,9 @@ def main() -> None:
     parser.add_argument("--probe-manifest", type=Path, required=True)
     parser.add_argument("--gate-minus-1-report", type=Path)
     parser.add_argument("--joint-readiness-decision", type=Path)
+    parser.add_argument("--exploratory-authorization", type=Path)
+    parser.add_argument("--frozen-decision", type=Path)
+    parser.add_argument("--exploratory-a4-report", type=Path)
     parser.add_argument(
         "--backbone-config",
         type=Path,
@@ -49,7 +56,73 @@ def main() -> None:
     eligible_families = ()
     lora_targets = None
     backbone_path = None
-    if args.joint_readiness_decision is not None:
+    if args.exploratory_authorization is not None:
+        if args.joint_readiness_decision is not None or args.gate_minus_1_report is not None:
+            parser.error("Do not mix exploratory authorization with registered Gate inputs")
+        if (
+            args.frozen_decision is None
+            or args.exploratory_a4_report is None
+            or args.lora_target_config is None
+        ):
+            parser.error("Exploratory evaluation requires frozen decision, A4, and LoRA targets")
+        config = load_config(args.config)
+        authorization = validate_bound_exploratory_authorization(
+            args.exploratory_authorization,
+            stage="paired_local_e2",
+            backbone_config_path=args.backbone_config,
+            decision_path=args.frozen_decision,
+            output_path=args.run_root.resolve() / "evaluations",
+        )
+        eligible_families = tuple(str(item) for item in authorization["families"])
+        backbone_path = args.backbone_config.resolve()
+        backbone = yaml.safe_load(backbone_path.read_text(encoding="utf-8"))
+        if (
+            config.values["model"].get("trainable_id") != backbone.get("backbone_id")
+            or authorization.get("model_id") != backbone.get("backbone_id")
+            or authorization.get("revision") != backbone.get("revision")
+        ):
+            raise RuntimeError("Exploratory evaluation identity mismatch")
+        observer = yaml.safe_load(args.observer_config.read_text(encoding="utf-8"))
+        if (
+            observer.get("observer_id") != args.detector_model_id
+            or observer.get("revision") != args.detector_revision
+        ):
+            raise RuntimeError("Exploratory evaluation detector identity mismatch")
+        validate_exploratory_observer_audit(
+            args.detector_audit_report,
+            model_id=args.detector_model_id,
+            revision=args.detector_revision,
+            eligible_families=eligible_families,
+            family_accuracy_min=float(config.values["gates"]["observer_family_accuracy_min"]),
+            yes_bias_max=float(config.values["gates"]["forced_choice_bias_max"]),
+            abstain_rate_max=float(config.values["gates"]["observer_abstain_max"]),
+        )
+        canary_path = Path(str(authorization["evidence"]["canary"]["path"])).resolve()
+        target_path = args.lora_target_config.resolve()
+        selection = validate_lora_target_selection(
+            target_path, canary_report=canary_path
+        )
+        a4 = json.loads(args.exploratory_a4_report.read_text(encoding="utf-8"))
+        if (
+            a4.get("passed") is not True
+            or a4.get("non_formal") is not True
+            or a4.get("exploratory_authorization_sha256")
+            != sha256_file(args.exploratory_authorization.resolve())
+            or a4.get("target_config_sha256") != sha256_file(target_path)
+            or a4.get("target_selection_digest") != selection.get("selection_digest")
+        ):
+            raise RuntimeError("Exploratory evaluation LoRA evidence differs from A4")
+        training_report = json.loads(
+            (args.run_root.resolve() / "training_report.json").read_text(encoding="utf-8")
+        )
+        if (
+            training_report.get("non_formal") is not True
+            or training_report.get("model_id") != authorization.get("model_id")
+            or training_report.get("revision") != authorization.get("revision")
+        ):
+            raise RuntimeError("Exploratory evaluation run does not match its authorization")
+        lora_targets = tuple(str(item) for item in selection["target_modules"])
+    elif args.joint_readiness_decision is not None:
         if args.gate_minus_1_report is not None or args.lora_target_config is None:
             parser.error(
                 "v2.2 evaluation requires --lora-target-config and cannot mix Gate -1"

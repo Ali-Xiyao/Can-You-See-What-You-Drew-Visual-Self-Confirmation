@@ -394,6 +394,10 @@ def evaluate_paired_run(
         target_modules=tuple(lora_target_modules or lora["target_modules"]),
         gradient_checkpointing=bool(config.values["training"]["gradient_checkpointing"]),
     )
+    # Checkpoint outcomes are inference measurements. Disable LoRA dropout and all other training
+    # stochasticity before image generation and observation; gradients remain disabled by the
+    # adapter's inference paths, and Gate -1b controls whether the separate GDA path is entered.
+    adapter.model.eval()
     optimizer, scheduler = _optimizer_and_scheduler(adapter, config)
     evaluations = run_root / "evaluations"
     evaluations.mkdir(exist_ok=True)
@@ -446,8 +450,9 @@ def evaluate_paired_run(
             CandidateManifest(temporary / "outcome" / "candidate_manifest.jsonl").write(
                 final_candidates, verify_rgb=False
             )
-            gda = (
-                _evaluate_gda(
+            if bool(training_report.get("gda_enabled")):
+                adapter.model.train()
+                gda = _evaluate_gda(
                     adapter=adapter,
                     detector=detector,
                     records=probes,
@@ -456,11 +461,12 @@ def evaluate_paired_run(
                     checkpoint_id=key,
                     config=config,
                 )
-                if bool(training_report.get("gda_enabled"))
-                else {"valid": False, "reason": "Gate -1b fallback active"}
-            )
+                adapter.model.eval()
+            else:
+                gda = {"valid": False, "reason": "Gate -1b fallback active"}
             report = {
                 "schema_version": 1,
+                "non_formal": bool(training_report.get("non_formal")),
                 "arm": arm,
                 "round": round_index,
                 "step": round_index * int(config.values["training"]["optimizer_steps_per_round"]),
@@ -559,6 +565,7 @@ def evaluate_paired_run(
     )
     report = {
         "schema_version": 1,
+        "non_formal": bool(training_report.get("non_formal")),
         "status": (
             "formal_single_seed_evaluation_complete"
             if str(config.values["profile"]).startswith("a800_80g")

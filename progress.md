@@ -529,3 +529,65 @@
 - User authorization boundary updated after the completed ladder: no additional model/model-weight
   download may start without fresh explicit approval. Any future proposed download must pause first
   and disclose the exact model/revision, expected disk use, purpose, and no-download alternatives.
+- User explicitly authorized continuing after the frozen red Gate if execution remains stable. The
+  continuation is registered locally as `exploratory-post-gate`: it may use both independent 3090s
+  and existing weights, but cannot mutate/reinterpret v2.2 decisions or make formal claims. Planned
+  order is existing-asset audit -> A4 backward/resume -> E1/RFO isolation -> Gate -1b -> paired
+  one-seed E2; every scale-up remains mechanism-gated.
+- Existing-asset audit selected Show-o2-1.5B-HQ and the three measured-pass families
+  `existence/color/spatial`. No model download is needed. HQ is preferred over 7B for the first
+  backward canary because its automatic A3 is green and its measured inference footprint leaves
+  substantially more 3090 headroom; all known-failing HQ families remain excluded.
+- Implemented a fail-loud exploratory authorization layer that binds the frozen HQ red decision and
+  every A1/A2/A3 evidence SHA, forbids model downloads, restricts the diagnostic families to
+  `existence/color/spatial`, and confines all writes below `runs/exploratory-post-gate`.
+- Added the explicit authorization route to the A4 runner without weakening its registered route.
+  Focused Ruff checks and 13 readiness/authorization tests pass.
+- The first real A4 attempt stopped before backward because wrapper-style PEFT injection changed the
+  inner Qwen attribute path expected by upstream Show-o2. No checkpoint/report was written. Switched
+  to PEFT in-place injection with a fail-loud embedding-contract assertion before retrying.
+- The second A4 attempt reached the multimodal forward but exposed an upstream in-place-write conflict
+  with reentrant checkpointing's grad-bearing embedding leaf. No checkpoint/report was written.
+  Changed the pinned Transformers path to non-reentrant checkpointing before the next retry.
+- Exploratory HQ A4 is green. Both mixed generation/replay losses and LoRA gradient norms were finite;
+  all seven trainability, mutation, exact-restore, resumed-step, optimizer/scheduler, and adapter-only
+  checkpoint checks passed. Peak allocated GPU memory was 10,902,030,336 bytes (~10.15 GiB), and the
+  two-step canary took 12.07 seconds after model load.
+- Added an exploratory E1 route that revalidates the frozen authorization, HQ config, Qwen2-VL-2B
+  identity/audit, diagnostic-family floors, and output namespace before either model loads. The E1
+  report now carries explicit non-formal provenance; 15 focused authorization/E1/isolation/config
+  tests pass under the locked H-drive environment.
+- The first E1 canary attempt stopped before observation because the generic family filter required
+  Tier B to contain authorized `existence`, although Tier B has no existence counterfactual category.
+  No E1 report was written. The exploratory route now uses the authorized/manifest intersection and
+  records the present subset explicitly; the registered route remains strict.
+- The corrected 12-pair E1 canary completed on the two independent 3090s. It reports hard-render
+  consistency 1.0, pixel-sensitive feedback preference 1.0, observation gain 0.75, SCFR 0.333, and
+  POE 0.333. All 12 serialized detector requests pass the strict blind-wire validator and contain
+  only the five allow-listed top-level fields.
+- The first 12-probe gradient run completed without OOM/NaN (peak 8.89GB allocated) and separated
+  Qwen from the trainer, but the identical-selection control was only 0.9889 because LoRA dropout
+  was outside the seeded transport context. Its GDA/noise decision is invalidated for interpretation.
+  Bound the training forward's dropout RNG to the same latent seed before rerunning.
+- The corrected gradient repeat reached identical cosine 1.0 and kept every per-block control near
+  one. Gate -1b remains red for the preregistered noise checks: 9/12 common selections, GDA-free
+  cosine 0.9913, GDA-gold 0.9635, and a wide split-half interval [0.1348, 0.2899]. The registered
+  fallback is active: continue paired E2 but disable GDA reporting.
+- Added a separately hash-bound exploratory E2 route. It requires the authorization, frozen red
+  decision, corrected gradient report, green exploratory A4, exact LoRA target audit, HQ config, and
+  output namespace before creating round zero. Twelve pilot/prerequisite/config tests pass.
+- The paired two-round training loop completed at step 10. Both rounds trained all 12 paired prompts
+  with zero abstentions; each arm completed five optimizer steps per round with finite losses and
+  gradient norms. Round-2 mean T2I loss was 0.01602 (Naive) versus 0.01610 (RFO-Self). GDA remains
+  disabled and the entropy/public-view fallback is active.
+- Checkpoint evaluation completed for Base plus both arms at rounds 1 and 2: 24 outcome prompts and
+  two images per prompt yielded 240 evaluated images. At round 2, Naive/RFO-Self internal scores
+  were both 0.8542; external correctness was 0.5625/0.5417; verifier coverage was 0.5833/0.5833;
+  public-view consistency was 0.8333/0.8542. D* is not estimable from three checkpoints, Dg is
+  disabled by the Gate -1b fallback, and SCFR denominators are too sparse for interpretation.
+- Reworked Figure 1 so unavailable GDA is explicitly marked as not reported and sparse SCFR carries
+  its checkpoint/denominator warning. Programmatic layout QA has zero issues, the 600-DPI PNG and
+  SVG pass, color and grayscale previews remain distinguishable, Poppler rendering matches the PNG,
+  and `pdffonts` confirms embedded CID TrueType subsets with Unicode maps.
+- Wrote the final non-formal summary beside the run. The dual-3090 local engineering loop is complete
+  without any new model download; the frozen v2.2 red conclusion and A800 hard stop remain unchanged.

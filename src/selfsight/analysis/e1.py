@@ -32,7 +32,10 @@ def _model_answer(adapter: Any, image_path: str | Path, text: str, question: Any
 
 
 def _filter_eligible_records(
-    records: list[dict[str, Any]], eligible_families: tuple[str, ...] | None
+    records: list[dict[str, Any]],
+    eligible_families: tuple[str, ...] | None,
+    *,
+    require_all_eligible_present: bool = True,
 ) -> tuple[list[dict[str, Any]], list[str]]:
     if eligible_families is None:
         return records, []
@@ -41,7 +44,7 @@ def _filter_eligible_records(
         raise ValueError("E1 requires at least one eligible family")
     observed = {str(record["pair"]["source"]["family"]) for record in records}
     unknown = sorted(eligible.difference(observed))
-    if unknown:
+    if unknown and require_all_eligible_present:
         raise ValueError(f"E1 eligible families are absent from the manifest: {unknown}")
     retained = [
         record
@@ -60,6 +63,8 @@ def run_e1_tier_b(
     limit: int | None = None,
     eligible_families: tuple[str, ...] | None = None,
     evidence_bindings: dict[str, Any] | None = None,
+    non_formal: bool = False,
+    exploratory_authorization: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Run the fixed five-context matrix without exposing intent to the detector process."""
 
@@ -73,7 +78,9 @@ def run_e1_tier_b(
     rows: list[dict[str, Any]] = []
     by_category: dict[str, list[ContextTrial]] = defaultdict(list)
     records, excluded_families = _filter_eligible_records(
-        list(read_jsonl(manifest_path)), eligible_families
+        list(read_jsonl(manifest_path)),
+        eligible_families,
+        require_all_eligible_present=not non_formal,
     )
     if limit is not None:
         records = stable_stratified_sample(
@@ -139,8 +146,16 @@ def run_e1_tier_b(
         raise ValueError("E1 received no Tier-B records")
     report = {
         "schema_version": 1,
+        "non_formal": bool(non_formal),
+        "exploratory_authorization": exploratory_authorization,
         "samples": len(trials),
         "eligible_families": sorted(eligible_families) if eligible_families else None,
+        "manifest_present_eligible_families": sorted(
+            {
+                str(record["pair"]["source"]["family"])
+                for record in records
+            }
+        ),
         "excluded_manifest_families": excluded_families,
         "context_resolution": resolution,
         "evidence_bindings": evidence_bindings or {},

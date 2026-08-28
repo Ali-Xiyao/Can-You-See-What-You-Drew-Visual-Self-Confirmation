@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 from selfsight.analysis.breakpoints import estimate_d_g, estimate_d_star
-from selfsight.analysis.figure1 import render_figure1_from_csv
+from selfsight.analysis.figure1 import build_figure1, render_figure1_from_csv
 
 
 def _rows():
@@ -45,3 +45,22 @@ def test_breakpoints_and_figure_exports(tmp_path):
     )
     for path in outputs.values():
         assert Path(path).is_file()
+
+
+def test_figure_marks_disabled_gda_and_sparse_scfr():
+    frame = pd.DataFrame(_rows()[:3])
+    frame[["gda_free", "gda_gold", "noise_low", "noise_high"]] = float("nan")
+    frame["scfr_competent"] = [float("nan"), 1.0, float("nan")]
+    frame["scfr_denominator"] = [0, 1, 0]
+
+    figure = build_figure1(
+        frame,
+        evidence_status="local_single_seed_exploratory",
+    )
+    try:
+        text = "\n".join(item.get_text() for item in figure.findobj() if hasattr(item, "get_text"))
+        assert "GDA not reported" in text
+        assert "Sparse diagnostic: 1/3 checkpoints; max denominator=1" in text
+        assert "LOCAL SINGLE SEED EXPLORATORY" in text
+    finally:
+        figure.clear()

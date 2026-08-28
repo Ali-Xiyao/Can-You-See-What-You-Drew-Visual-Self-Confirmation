@@ -661,7 +661,7 @@ class Showo2Adapter(ModelAdapter):
         if invalid:
             raise ValueError(f"Unaudited or non-shared Show-o2 LoRA targets: {invalid[:20]}")
         peft_targets = tuple(name.removeprefix("showo.") for name in targets)
-        from peft import LoraConfig, TaskType, get_peft_model
+        from peft import LoraConfig, TaskType, inject_adapter_in_model
 
         for parameter in self.model.parameters():
             parameter.requires_grad_(False)
@@ -673,12 +673,24 @@ class Showo2Adapter(ModelAdapter):
             task_type=TaskType.CAUSAL_LM,
             target_modules=list(peft_targets),
         )
-        self.model.showo = get_peft_model(self.model.showo, lora_config)
-        if gradient_checkpointing:
-            if hasattr(self.model.showo, "gradient_checkpointing_enable"):
-                self.model.showo.gradient_checkpointing_enable()
-            if hasattr(self.model.showo, "enable_input_require_grads"):
-                self.model.showo.enable_input_require_grads()
+        # The upstream multimodal wrapper directly calls
+        # ``self.showo.model.embed_tokens`` in several forward paths. Wrapping the
+        # language model in PeftModelForCausalLM adds another ``model`` level and
+        # breaks that fixed contract. In-place injection preserves the original
+        # Qwen2ForCausalLM structure while replacing only the audited Linear layers.
+        self.model.showo = inject_adapter_in_model(lora_config, self.model.showo)
+        if not hasattr(self.model.showo.model, "embed_tokens"):
+            raise RuntimeError("In-place LoRA injection changed the Show-o2 embedding contract")
+        if gradient_checkpointing and hasattr(
+            self.model.showo, "gradient_checkpointing_enable"
+        ):
+            # Reentrant checkpointing requires a grad-bearing embedding input. The upstream
+            # Show-o2 forward mutates that embedding tensor in-place while inserting image/time
+            # tokens, which is illegal for a leaf that requires grad. Non-reentrant checkpointing
+            # records the graph without that input requirement and remains compatible with LoRA.
+            self.model.showo.gradient_checkpointing_enable(
+                gradient_checkpointing_kwargs={"use_reentrant": False}
+            )
         trainable_names = tuple(
             name for name, parameter in self.model.named_parameters() if parameter.requires_grad
         )
@@ -735,18 +747,25 @@ class Showo2Adapter(ModelAdapter):
         attention = omni_attn_mask_naive(text.size(0), text.size(1), positions, self.device).to(
             self.dtype
         )
-        _, loss_flow = self.model(
-            text_tokens=text,
-            image_latents=noised,
-            t=t.to(self.dtype),
-            attention_mask=attention,
-            image_masks=image_masks,
-            image_labels=velocity,
-            modality_positions=positions,
-            output_hidden_states=True,
-            max_seq_len=text.size(1),
-            device=self.device,
-        )
+        # LoRA dropout is active during training. Bind its random mask to the batch seed so
+        # same-candidate gradient repeats are an exact control and criterion comparisons share
+        # the same stochastic path. The surrounding fork prevents diagnostics from perturbing the
+        # caller's global CUDA RNG state.
+        with torch.random.fork_rng(devices=self._fork_devices()):
+            torch.manual_seed(int(batch.latent_seed))
+            torch.cuda.manual_seed(int(batch.latent_seed))
+            _, loss_flow = self.model(
+                text_tokens=text,
+                image_latents=noised,
+                t=t.to(self.dtype),
+                attention_mask=attention,
+                image_masks=image_masks,
+                image_labels=velocity,
+                modality_positions=positions,
+                output_hidden_states=True,
+                max_seq_len=text.size(1),
+                device=self.device,
+            )
         return loss_flow
 
     def understanding_replay_loss(self, batch: Showo2ReplayBatch):

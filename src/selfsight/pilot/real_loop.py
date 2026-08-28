@@ -11,6 +11,7 @@ from fractions import Fraction
 from pathlib import Path
 from typing import Any
 
+from selfsight.analysis.exploratory import validate_bound_exploratory_authorization
 from selfsight.analysis.prerequisites import require_gate_minus_one, require_generated_domain
 from selfsight.analysis.readiness import require_joint_readiness
 from selfsight.backbones.showo2 import (
@@ -84,6 +85,40 @@ def _assert_joint_prerequisites(
     joint = bindings.get("joint_readiness_decision") if isinstance(bindings, Mapping) else None
     if not isinstance(joint, Mapping) or joint.get("sha256") != sha256_file(decision_path):
         raise RuntimeError("Gate -1b is not hash-bound to the supplied Gate -2 decision")
+    return bool(gradient.get("passed")), eligible
+
+
+def _assert_exploratory_gradient(
+    authorization_path: str | Path,
+    authorization: Mapping[str, Any],
+    frozen_decision_path: str | Path,
+    gradient_gate_report: str | Path,
+) -> tuple[bool, tuple[str, ...]]:
+    """Bind a non-formal E2 fallback to its exact authorization and red decision."""
+
+    authorization_path = Path(authorization_path).resolve()
+    frozen_path = Path(frozen_decision_path).resolve()
+    gradient = _read_json(Path(gradient_gate_report).resolve())
+    if gradient.get("gate") != "minus_1b" or gradient.get("non_formal") is not True:
+        raise RuntimeError("Exploratory E2 requires a completed non-formal Gate -1b report")
+    if (
+        gradient.get("model_id") != authorization.get("model_id")
+        or gradient.get("revision") != authorization.get("revision")
+    ):
+        raise RuntimeError("Exploratory Gate -1b backbone identity mismatch")
+    eligible = tuple(str(item) for item in authorization["families"])
+    if tuple(str(item) for item in gradient.get("eligible_families", ())) != eligible:
+        raise RuntimeError("Exploratory Gate -1b family set differs from its authorization")
+    bindings = gradient.get("evidence_bindings")
+    auth_binding = bindings.get("exploratory_authorization") if isinstance(bindings, Mapping) else None
+    red_binding = bindings.get("frozen_red_decision") if isinstance(bindings, Mapping) else None
+    if (
+        not isinstance(auth_binding, Mapping)
+        or auth_binding.get("sha256") != sha256_file(authorization_path)
+        or not isinstance(red_binding, Mapping)
+        or red_binding.get("sha256") != sha256_file(frozen_path)
+    ):
+        raise RuntimeError("Exploratory Gate -1b is not hash-bound to its authorization/decision")
     return bool(gradient.get("passed")), eligible
 
 
@@ -377,10 +412,49 @@ def run_real_paired_pilot(
     joint_readiness_decision: str | Path | None = None,
     backbone_config: str | Path | None = None,
     lora_target_modules: Sequence[str] | None = None,
+    exploratory_authorization: str | Path | None = None,
+    frozen_decision: str | Path | None = None,
+    exploratory_a4_report: str | Path | None = None,
+    lora_target_config: str | Path | None = None,
 ) -> dict[str, Any]:
     config = load_config(config_path)
     eligible_families: tuple[str, ...] = ()
-    if joint_readiness_decision is not None:
+    exploratory = exploratory_authorization is not None
+    if exploratory:
+        if joint_readiness_decision is not None or gate_report is not None or generated_domain_report is not None:
+            raise ValueError("Exploratory E2 cannot mix registered Gate inputs")
+        if (
+            frozen_decision is None
+            or exploratory_a4_report is None
+            or backbone_config is None
+            or not lora_target_modules
+            or lora_target_config is None
+        ):
+            raise ValueError("Exploratory E2 is missing authorization-bound Show-o2 evidence")
+        authorization = validate_bound_exploratory_authorization(
+            exploratory_authorization,
+            stage="paired_local_e2",
+            backbone_config_path=backbone_config,
+            decision_path=frozen_decision,
+            output_path=output_dir,
+        )
+        gda_enabled, eligible_families = _assert_exploratory_gradient(
+            exploratory_authorization,
+            authorization,
+            frozen_decision,
+            gradient_gate_report,
+        )
+        a4 = _read_json(exploratory_a4_report)
+        if (
+            a4.get("passed") is not True
+            or a4.get("non_formal") is not True
+            or a4.get("exploratory_authorization_sha256")
+            != sha256_file(Path(exploratory_authorization).resolve())
+            or a4.get("target_config_sha256")
+            != sha256_file(Path(lora_target_config).resolve())
+        ):
+            raise RuntimeError("Exploratory A4 does not bind the paired E2 training contract")
+    elif joint_readiness_decision is not None:
         if generated_domain_report is not None:
             raise ValueError("v2.2 E2 must not mix the legacy generated-domain Gate")
         gda_enabled, eligible_families = _assert_joint_prerequisites(
@@ -398,7 +472,30 @@ def run_real_paired_pilot(
             generated_domain_report,
             generated_coverage_min=float(config.values["gates"]["verifier_coverage_min"]),
         )
-    if joint_readiness_decision is not None:
+    showo2_mode = joint_readiness_decision is not None or exploratory
+    if exploratory:
+        authorization_path = Path(str(exploratory_authorization)).resolve()
+        frozen_path = Path(str(frozen_decision)).resolve()
+        a4_path = Path(str(exploratory_a4_report)).resolve()
+        target_path = Path(str(lora_target_config)).resolve()
+        checkpoint_contract = {
+            "schema_version": 3,
+            "non_formal": True,
+            "base_config_digest": config.digest,
+            "exploratory_authorization_sha256": sha256_file(authorization_path),
+            "frozen_red_decision_sha256": sha256_file(frozen_path),
+            "gradient_gate_sha256": sha256_file(Path(gradient_gate_report).resolve()),
+            "exploratory_a4_sha256": sha256_file(a4_path),
+            "backbone_config_sha256": sha256_file(Path(str(backbone_config)).resolve()),
+            "lora_target_config_sha256": sha256_file(target_path),
+            "lora_target_modules": [str(item) for item in lora_target_modules or ()],
+        }
+        checkpoint_config_digest = sha256_json(checkpoint_contract)
+        checkpoint_config_values = {
+            "base_experiment_config": config.values,
+            "exploratory_training_contract": checkpoint_contract,
+        }
+    elif joint_readiness_decision is not None:
         joint_path = Path(joint_readiness_decision).resolve()
         target_modules = tuple(str(item) for item in lora_target_modules or ())
         checkpoint_contract = {
@@ -432,7 +529,16 @@ def run_real_paired_pilot(
     else:
         write_config_snapshot(config, existing_config)
         write_host_manifest(run_root / "host_manifest.json")
-        if joint_readiness_decision is not None:
+        if exploratory:
+            prerequisite_paths = {
+                "exploratory_authorization": Path(str(exploratory_authorization)).resolve(),
+                "frozen_red_decision": Path(str(frozen_decision)).resolve(),
+                "gate_minus_1b": Path(gradient_gate_report).resolve(),
+                "exploratory_a4": Path(str(exploratory_a4_report)).resolve(),
+                "backbone_config": Path(str(backbone_config)).resolve(),
+                "lora_target_config": Path(str(lora_target_config)).resolve(),
+            }
+        elif joint_readiness_decision is not None:
             prerequisite_paths = {
                 "gate_minus_2": Path(joint_readiness_decision).resolve(),
                 "gate_minus_1b": Path(gradient_gate_report).resolve(),
@@ -510,7 +616,7 @@ def run_real_paired_pilot(
     if not schedule_path.exists():
         atomic_write_jsonl(schedule_path, (as_serializable(entry) for entry in schedule))
 
-    if joint_readiness_decision is not None:
+    if showo2_mode:
         adapter = Showo2Adapter(
             backbone_config=Path(str(backbone_config)).resolve(),
             device=str(config.values["hardware"]["generator_device"]),
@@ -556,7 +662,7 @@ def run_real_paired_pilot(
         "-m",
         "selfsight.observers.service",
         "--backend",
-        "showo2" if joint_readiness_decision is not None else "showo",
+        "showo2" if showo2_mode else "showo",
         "--model-id",
         adapter.model_id,
         "--revision",
@@ -566,7 +672,7 @@ def run_real_paired_pilot(
         "--ready-report",
         str(run_root / "frozen_observer_ready.json"),
     ]
-    if joint_readiness_decision is not None:
+    if showo2_mode:
         command.extend(["--backbone-config", str(Path(str(backbone_config)).resolve())])
     with ObserverServiceClient(command, run_root / "frozen_observer_wire.jsonl") as frozen_observer:
         for round_index in range(start_round, int(training["rounds"])):
@@ -673,6 +779,7 @@ def run_real_paired_pilot(
 
     report = {
         "schema_version": 1,
+        "non_formal": bool(exploratory),
         "status": "training_complete_pending_checkpoint_evaluation",
         "run_root": str(run_root),
         "rounds": int(training["rounds"]),

@@ -8,6 +8,10 @@ from pathlib import Path
 
 import yaml
 
+from selfsight.analysis.exploratory import (
+    validate_bound_exploratory_authorization,
+    validate_exploratory_observer_audit,
+)
 from selfsight.analysis.gradient_gate import run_gradient_gate
 from selfsight.analysis.prerequisites import (
     require_gate_minus_one,
@@ -29,6 +33,9 @@ def main() -> None:
     parser.add_argument("--gate-minus-1-report", type=Path)
     parser.add_argument("--generated-domain-report", type=Path)
     parser.add_argument("--joint-readiness-decision", type=Path)
+    parser.add_argument("--exploratory-authorization", type=Path)
+    parser.add_argument("--frozen-decision", type=Path)
+    parser.add_argument("--exploratory-a4-report", type=Path)
     parser.add_argument(
         "--backbone-config",
         type=Path,
@@ -53,7 +60,108 @@ def main() -> None:
     lora_targets = None
     eligible_families = None
     evidence_bindings = {}
-    if args.joint_readiness_decision is not None:
+    exploratory_authorization = None
+    if args.exploratory_authorization is not None:
+        if any(
+            item is not None
+            for item in (
+                args.joint_readiness_decision,
+                args.gate_minus_1_report,
+                args.generated_domain_report,
+            )
+        ):
+            parser.error("Do not mix exploratory authorization with registered Gate inputs")
+        if args.frozen_decision is None or args.exploratory_a4_report is None:
+            parser.error(
+                "Exploratory Gate -1b requires --frozen-decision and --exploratory-a4-report"
+            )
+        if args.lora_target_config is None:
+            parser.error("Exploratory Gate -1b requires --lora-target-config")
+        output = args.output.resolve()
+        exploratory_authorization = validate_bound_exploratory_authorization(
+            args.exploratory_authorization,
+            stage="gradient_gate",
+            backbone_config_path=args.backbone_config,
+            decision_path=args.frozen_decision,
+            output_path=output,
+        )
+        eligible_families = tuple(
+            str(item) for item in exploratory_authorization["families"]
+        )
+        backbone_path = args.backbone_config.resolve()
+        backbone = yaml.safe_load(backbone_path.read_text(encoding="utf-8"))
+        experiment_model = config.values["model"]
+        official = backbone["official_profile"]
+        if (
+            experiment_model.get("trainable_id") != backbone.get("backbone_id")
+            or int(experiment_model.get("image_resolution", -1))
+            != int(official["resolution"])
+            or int(experiment_model.get("generation_timesteps", -1))
+            != int(official["generation_steps"])
+        ):
+            raise RuntimeError("Exploratory Gate -1b config does not match the locked HQ profile")
+        observer_path = args.observer_config.resolve()
+        observer = yaml.safe_load(observer_path.read_text(encoding="utf-8"))
+        if (
+            observer.get("observer_id") != args.detector_model_id
+            or observer.get("revision") != args.detector_revision
+        ):
+            raise RuntimeError("Exploratory Gate -1b detector identity mismatch")
+        validate_exploratory_observer_audit(
+            args.detector_audit_report,
+            model_id=args.detector_model_id,
+            revision=args.detector_revision,
+            eligible_families=eligible_families,
+            family_accuracy_min=float(config.values["gates"]["observer_family_accuracy_min"]),
+            yes_bias_max=float(config.values["gates"]["forced_choice_bias_max"]),
+            abstain_rate_max=float(config.values["gates"]["observer_abstain_max"]),
+        )
+        canary_path = Path(
+            str(exploratory_authorization["evidence"]["canary"]["path"])
+        ).resolve()
+        target_path = args.lora_target_config.resolve()
+        target_sha = sha256_file(target_path)
+        target_selection = validate_lora_target_selection(
+            target_path, canary_report=canary_path
+        )
+        a4_path = args.exploratory_a4_report.resolve()
+        a4 = json.loads(a4_path.read_text(encoding="utf-8"))
+        authorization_sha = sha256_file(args.exploratory_authorization.resolve())
+        if (
+            a4.get("passed") is not True
+            or a4.get("non_formal") is not True
+            or a4.get("exploratory_authorization_sha256") != authorization_sha
+            or a4.get("target_config_sha256") != target_sha
+            or a4.get("target_selection_digest") != target_selection.get("selection_digest")
+        ):
+            raise RuntimeError("Exploratory A4 evidence does not bind this gradient route")
+        lora_targets = tuple(str(item) for item in target_selection["target_modules"])
+        adapter = Showo2Adapter(
+            backbone_config=backbone_path,
+            device=str(backbone["hardware"]["generator_device"]),
+            lazy=True,
+        )
+        evidence_bindings = {
+            "exploratory_authorization": {
+                "path": str(args.exploratory_authorization.resolve()),
+                "sha256": authorization_sha,
+            },
+            "frozen_red_decision": {
+                "path": str(args.frozen_decision.resolve()),
+                "sha256": sha256_file(args.frozen_decision.resolve()),
+            },
+            "exploratory_a4": {"path": str(a4_path), "sha256": sha256_file(a4_path)},
+            "backbone_config": {
+                "path": str(backbone_path),
+                "sha256": sha256_file(backbone_path),
+            },
+            "public_observer_audit": {
+                "path": str(args.detector_audit_report.resolve()),
+                "sha256": sha256_file(args.detector_audit_report.resolve()),
+            },
+            "lora_target_config": {"path": str(target_path), "sha256": target_sha},
+        }
+    elif args.joint_readiness_decision is not None:
         if args.gate_minus_1_report is not None or args.generated_domain_report is not None:
             parser.error("Do not mix v2.2 Joint Readiness with legacy v2.1 inputs")
         if args.lora_target_config is None:
@@ -172,6 +280,16 @@ def main() -> None:
         lora_target_modules=lora_targets,
         eligible_families=eligible_families,
         evidence_bindings=evidence_bindings,
+        non_formal=exploratory_authorization is not None,
+        exploratory_authorization=(
+            None
+            if exploratory_authorization is None
+            else {
+                "path": str(args.exploratory_authorization.resolve()),
+                "sha256": sha256_file(args.exploratory_authorization.resolve()),
+                "digest": exploratory_authorization["authorization_digest"],
+            }
+        ),
     )
     print(json.dumps(report, indent=2))
 

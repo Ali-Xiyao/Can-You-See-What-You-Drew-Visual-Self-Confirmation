@@ -500,3 +500,43 @@
 - PDF font audits must follow Type0/CID descendant dictionaries. A shallow checker can label a
   Matplotlib CID TrueType subset as unembedded even when Poppler reports `emb=yes`, `sub=yes`, and
   `uni=yes`; render validation plus `pdffonts` is the authoritative check used for the final matrix.
+- The safest post-Gate diagnostic backbone is Show-o2-1.5B-HQ, not 7B. HQ passed automatic A3 and
+  peaked at about 8.7GB for A1, leaving realistic activation/optimizer headroom on one 24GB card;
+  7B inference alone consumes about 20GB and is a poor first LoRA-backward target locally.
+- The only defensible exploratory family intersection from already measured HQ evidence is
+  `existence/color/spatial`: each passes HQ observation, generated coverage, Oracle@4, and the blind
+  human verifier-precision audit. Count fails human precision and Oracle@4, binding fails human
+  precision, and absolute size fails reference observation. This three-family set is explicitly
+  diagnostic and cannot satisfy the registered four-family claim.
+- The frozen HQ metrics give the exact exploratory margins: generated coverage is 1.0/1.0/0.8 and
+  Oracle@4 is 1.0/1.0/1.0 for existence/color/spatial; blind-human precision is 1.0 for all three.
+  The frozen joint decision remains red and records A4 as skipped, so any A4 continuation must carry
+  a separate authorization artifact and write outside `runs/readiness`.
+- PEFT's `get_peft_model` cannot wrap Show-o2's inner Qwen model without breaking the upstream
+  multimodal forward contract: Show-o2 directly dereferences `showo.model.embed_tokens`, while the
+  PEFT wrapper inserts an extra model level. PEFT's in-place adapter injection preserves the original
+  Qwen2ForCausalLM structure and still replaces only the hash-audited shared transformer linears.
+- Reentrant gradient checkpointing is also incompatible with upstream Show-o2's in-place insertion
+  into text embeddings: forcing the frozen embedding output to require gradients makes it a leaf and
+  PyTorch rejects the write. Non-reentrant checkpointing records LoRA's graph without requiring a
+  grad-bearing input and preserves the upstream tensor contract.
+- With in-place LoRA injection and non-reentrant checkpointing, Show-o2-1.5B-HQ backward/resume uses
+  only about 10.15 GiB allocated memory on a 24GB 3090. This removes local VRAM as the immediate A4
+  blocker and confirms exact adapter restore plus optimizer/scheduler continuation.
+- Tier B intentionally spans count/color/spatial/binding and contains no existence pair, so a Gate
+  family set must be intersected with the Tier-B support rather than treated as a required manifest
+  schema. The exploratory E1 report records both the authorized set and the actually present subset;
+  the registered route retains its pre-existing strict check.
+- Gradient reproducibility requires controlling LoRA dropout as well as the flow-matching noise.
+  Seeding only transport sampling left the transformer dropout on global CUDA RNG state and reduced
+  an identical-selection repeat to cosine 0.9889. The generation-loss forward is now enclosed in a
+  forked RNG context keyed by the registered batch seed.
+- The completed one-seed diagnostic does not show an RFO-Self advantage over Naive on external
+  correctness: from a common 0.5208 base, round-2 Naive reaches 0.5625 while RFO-Self reaches
+  0.5417. RFO-Self retains slightly higher public-view consistency (0.8542 versus 0.8333), but the
+  result has one seed, only three checkpoints, and no valid GDA signal, so it is an engineering
+  observation rather than evidence for or against the mechanism.
+- Missing diagnostic values should be rendered as explicit protocol states, not empty axes or
+  numeric zero. The final exploratory Figure 1 says that GDA was not reported because Gate -1b
+  failed and prints the sparse SCFR denominator; this preserves the distinction between a null
+  measurement, a negative measurement and an unrun measurement.

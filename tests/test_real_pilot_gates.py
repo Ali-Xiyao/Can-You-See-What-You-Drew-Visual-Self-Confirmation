@@ -4,7 +4,11 @@ import json
 
 import pytest
 
-from selfsight.pilot.real_loop import _assert_joint_prerequisites, _assert_prerequisites
+from selfsight.pilot.real_loop import (
+    _assert_exploratory_gradient,
+    _assert_joint_prerequisites,
+    _assert_prerequisites,
+)
 from selfsight.utils.hashing import sha256_file
 
 
@@ -98,3 +102,32 @@ def test_real_pilot_joint_prerequisites_bind_decision_and_families(tmp_path) -> 
     _write_json(gradient, value)
     with pytest.raises(RuntimeError, match="eligible families"):
         _assert_joint_prerequisites(decision, gradient)
+
+
+def test_exploratory_pilot_allows_red_gradient_fallback_when_hash_bound(tmp_path) -> None:
+    families = ["existence", "color", "spatial"]
+    authorization = _write_json(tmp_path / "authorization.json", {"artifact": "bound"})
+    frozen = _write_json(tmp_path / "red.json", {"passed": False})
+    authorization_record = {
+        "model_id": "showlab/show-o2-1.5B-HQ",
+        "revision": "locked",
+        "families": families,
+    }
+    gradient = _write_json(
+        tmp_path / "gradient.json",
+        {
+            "gate": "minus_1b",
+            "non_formal": True,
+            "model_id": authorization_record["model_id"],
+            "revision": authorization_record["revision"],
+            "passed": False,
+            "eligible_families": families,
+            "evidence_bindings": {
+                "exploratory_authorization": {"sha256": sha256_file(authorization)},
+                "frozen_red_decision": {"sha256": sha256_file(frozen)},
+            },
+        },
+    )
+    assert _assert_exploratory_gradient(
+        authorization, authorization_record, frozen, gradient
+    ) == (False, tuple(families))

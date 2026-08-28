@@ -153,6 +153,11 @@ def _plot_seed_traces(
         )
 
 
+def _has_finite(frame: pd.DataFrame, columns: tuple[str, ...]) -> bool:
+    values = frame.loc[:, list(columns)].apply(pd.to_numeric, errors="coerce").to_numpy(dtype=float)
+    return bool(np.isfinite(values).any())
+
+
 def _shade_lead(axes: list[Any], d_g: float | None, d_star: float | None) -> None:
     for ax in axes:
         if d_g is not None:
@@ -228,56 +233,100 @@ def build_figure1(
     axes[0].set_ylim(0.0, 1.02)
     axes[0].legend(frameon=False, loc="lower right", ncol=2, handlelength=2.3)
 
-    noise_low = _summary(selected, "noise_low")["median"].to_numpy(dtype=float)
-    noise_high = _summary(selected, "noise_high")["median"].to_numpy(dtype=float)
-    steps = _summary(selected, "noise_low")["step"].to_numpy(dtype=float)
-    axes[1].fill_between(
-        steps,
-        noise_low,
-        noise_high,
-        color=OKABE_ITO["noise"],
-        alpha=0.22,
-        linewidth=0,
-        label="Gate -1b noise floor (95%)",
-    )
-    _plot_seed_traces(axes[1], selected, "gda_free", color=OKABE_ITO["gda_free"], linestyle="-")
-    _plot_series(
-        axes[1],
-        _summary(selected, "gda_free"),
-        label="GDA-free",
-        color=OKABE_ITO["gda_free"],
-        linestyle="-",
-        marker="^",
-    )
-    _plot_seed_traces(axes[1], selected, "gda_gold", color=OKABE_ITO["gda_gold"], linestyle="-.")
-    _plot_series(
-        axes[1],
-        _summary(selected, "gda_gold"),
-        label="GDA-gold",
-        color=OKABE_ITO["gda_gold"],
-        linestyle="-.",
-        marker="D",
-    )
+    gda_available = _has_finite(selected, ("gda_free", "gda_gold", "noise_low", "noise_high"))
+    if gda_available:
+        noise_low = _summary(selected, "noise_low")["median"].to_numpy(dtype=float)
+        noise_high = _summary(selected, "noise_high")["median"].to_numpy(dtype=float)
+        steps = _summary(selected, "noise_low")["step"].to_numpy(dtype=float)
+        axes[1].fill_between(
+            steps,
+            noise_low,
+            noise_high,
+            color=OKABE_ITO["noise"],
+            alpha=0.22,
+            linewidth=0,
+            label="Gate -1b noise floor (95%)",
+        )
+        _plot_seed_traces(axes[1], selected, "gda_free", color=OKABE_ITO["gda_free"], linestyle="-")
+        _plot_series(
+            axes[1],
+            _summary(selected, "gda_free"),
+            label="GDA-free",
+            color=OKABE_ITO["gda_free"],
+            linestyle="-",
+            marker="^",
+        )
+        _plot_seed_traces(axes[1], selected, "gda_gold", color=OKABE_ITO["gda_gold"], linestyle="-.")
+        _plot_series(
+            axes[1],
+            _summary(selected, "gda_gold"),
+            label="GDA-gold",
+            color=OKABE_ITO["gda_gold"],
+            linestyle="-.",
+            marker="D",
+        )
+        axes[1].legend(frameon=False, loc="lower left", ncol=3, handlelength=2.3)
+    else:
+        axes[1].text(
+            0.5,
+            0.5,
+            "GDA not reported\nGate -1b noise-floor criterion failed",
+            transform=axes[1].transAxes,
+            ha="center",
+            va="center",
+            color="#555555",
+            fontsize=8,
+        )
     axes[1].axhline(0.0, color="#777777", linewidth=0.5)
     axes[1].set_ylabel("Gradient cosine")
     axes[1].set_ylim(-1.02, 1.02)
-    axes[1].legend(frameon=False, loc="lower left", ncol=3, handlelength=2.3)
 
-    _plot_seed_traces(
-        axes[2], selected, "scfr_competent", color=OKABE_ITO["scfr"], linestyle="-."
-    )
-    _plot_series(
-        axes[2],
-        _summary(selected, "scfr_competent"),
-        label="SCFR@competent",
-        color=OKABE_ITO["scfr"],
-        linestyle="-.",
-        marker="v",
-    )
+    scfr_available = _has_finite(selected, ("scfr_competent",))
+    if scfr_available:
+        _plot_seed_traces(
+            axes[2], selected, "scfr_competent", color=OKABE_ITO["scfr"], linestyle="-."
+        )
+        _plot_series(
+            axes[2],
+            _summary(selected, "scfr_competent"),
+            label="SCFR@competent",
+            color=OKABE_ITO["scfr"],
+            linestyle="-.",
+            marker="v",
+        )
+        axes[2].legend(frameon=False, loc="upper left")
+        finite_count = int(pd.to_numeric(selected["scfr_competent"], errors="coerce").notna().sum())
+        if finite_count < 3:
+            denominator = pd.to_numeric(selected.get("scfr_denominator"), errors="coerce")
+            max_denominator = int(denominator.max()) if denominator.notna().any() else 0
+            axes[2].text(
+                0.99,
+                0.94,
+                f"Sparse diagnostic: {finite_count}/{len(selected)} checkpoints; max denominator={max_denominator}",
+                transform=axes[2].transAxes,
+                ha="right",
+                va="top",
+                color="#555555",
+                fontsize=6.5,
+            )
+    else:
+        axes[2].text(
+            0.5,
+            0.5,
+            "SCFR unavailable: no competent denominator",
+            transform=axes[2].transAxes,
+            ha="center",
+            va="center",
+            color="#555555",
+            fontsize=8,
+        )
     axes[2].set_ylabel("SCFR (proportion)")
     axes[2].set_xlabel("Optimizer step")
     axes[2].set_ylim(0.0, 1.02)
-    axes[2].legend(frameon=False, loc="upper left")
+    step_values = sorted(float(item) for item in selected["step"].unique())
+    axes[2].set_xticks(step_values)
+    if len(step_values) > 1:
+        axes[2].set_xlim(step_values[0], step_values[-1])
 
     _shade_lead(axes, d_g, d_star)
     for ax, label in zip(axes, ("a", "b", "c")):
@@ -293,8 +342,9 @@ def build_figure1(
         midpoint = (d_g + d_star) / 2.0
         axes[0].text(midpoint, 0.04, "Lead", ha="center", va="bottom", fontsize=7)
     if evidence_status.lower() != "formal":
+        readable_status = evidence_status.replace("_", " ").upper()
         fig.suptitle(
-            f"{evidence_status.upper()} PIPELINE OUTPUT - NOT SCIENTIFIC EVIDENCE",
+            f"{readable_status} PIPELINE OUTPUT - NOT SCIENTIFIC EVIDENCE",
             color="#9C2F2F",
             fontsize=8,
             fontweight="bold",

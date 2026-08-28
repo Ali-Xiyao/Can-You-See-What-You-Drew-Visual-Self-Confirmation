@@ -10,6 +10,7 @@ from time import perf_counter
 
 import yaml
 
+from selfsight.analysis.exploratory import validate_exploratory_authorization
 from selfsight.backbones.lora_selection import (
     build_lora_target_selection,
     validate_lora_target_selection,
@@ -116,13 +117,28 @@ def _run(args: argparse.Namespace) -> dict:
     reference = _read_json(args.reference_report)
     generated = _read_json(args.generated_report)
     human = _read_json(args.human_report)
-    retained = _assert_route(
-        backbone=backbone,
-        canary=canary,
-        reference=reference,
-        generated=generated,
-        human=human,
-    )
+    authorization = None
+    if args.exploratory_authorization is None:
+        retained = _assert_route(
+            backbone=backbone,
+            canary=canary,
+            reference=reference,
+            generated=generated,
+            human=human,
+        )
+    else:
+        authorization = validate_exploratory_authorization(
+            args.exploratory_authorization,
+            stage="a4_lora_backward_resume",
+            backbone_config_path=args.backbone_config,
+            decision_path=args.frozen_decision,
+            canary_report_path=args.canary_report,
+            reference_report_path=args.reference_report,
+            generated_report_path=args.generated_report,
+            human_report_path=args.human_report,
+            output_path=args.output,
+        )
+        retained = tuple(str(item) for item in authorization["families"])
     target_selection = validate_lora_target_selection(
         args.target_config, canary_report=args.canary_report
     )
@@ -229,6 +245,16 @@ def _run(args: argparse.Namespace) -> dict:
     return {
         "schema_version": 2,
         "stage": "minus_2a_lora_backward_resume",
+        "non_formal": authorization is not None,
+        "exploratory_authorization": (
+            None if authorization is None else str(args.exploratory_authorization)
+        ),
+        "exploratory_authorization_sha256": (
+            None
+            if authorization is None
+            else sha256_file(args.exploratory_authorization)
+        ),
+        "exploratory_families": None if authorization is None else list(retained),
         "model_id": adapter.model_id,
         "revision": adapter.revision,
         "source_revision": adapter.identity.source_revision,
@@ -277,6 +303,8 @@ def _parser() -> argparse.ArgumentParser:
     run.add_argument("--reference-report", type=Path, required=True)
     run.add_argument("--generated-report", type=Path, required=True)
     run.add_argument("--human-report", type=Path, required=True)
+    run.add_argument("--exploratory-authorization", type=Path)
+    run.add_argument("--frozen-decision", type=Path)
     run.add_argument("--target-config", type=Path, required=True)
     run.add_argument("--manifest", type=Path, required=True)
     run.add_argument("--output", type=Path, required=True)
@@ -304,6 +332,13 @@ def main() -> None:
             "manifest",
         ):
             setattr(args, field, getattr(args, field).resolve())
+        if args.exploratory_authorization is not None:
+            args.exploratory_authorization = args.exploratory_authorization.resolve()
+            if args.frozen_decision is None:
+                raise ValueError("--frozen-decision is required in exploratory mode")
+            args.frozen_decision = args.frozen_decision.resolve()
+        elif args.frozen_decision is not None:
+            raise ValueError("--frozen-decision requires --exploratory-authorization")
         args.output = args.output.resolve()
         if args.output.exists():
             raise FileExistsError(f"Refusing to overwrite A4 report: {args.output}")
