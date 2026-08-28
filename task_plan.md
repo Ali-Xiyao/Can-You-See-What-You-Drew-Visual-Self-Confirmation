@@ -17,10 +17,10 @@ two independent RTX 3090 cards; formal three-seed experiments remain single-A800
 
 ## Current Phase
 
-Phase 6a: relocate every non-model project asset into this repository root. Preserve
-`H:\selfsight-models` as the only permitted external project root, rewrite all active path
-configuration, and revalidate the immutable readiness evidence after relocation. Human annotation
-and A4 remain paused until this migration is complete.
+Phase 6: HQ automatic A3 is green and the 49-item blind-human packet awaits annotations before A4.
+The Phase 6a storage migration is complete: `H:\selfsight-models` is the only external data root,
+all non-model bytes live below this repository, and immutable evidence resolves through validated
+legacy junctions without content changes.
 
 ## Registered Backbone Ladder
 
@@ -153,8 +153,8 @@ families means the scientific claim is unsupported for that backbone and stops p
   ZIP after relocation.
 - [x] Scan H: and the repository for residual non-model `selfsight-*` paths; confirm no physical
   source copies remain outside the project and retain only the five validated evidence junctions.
-- [ ] Commit and push the complete migration on `experiment/v2.2-joint-readiness`.
-- **Status:** in_progress
+- [x] Commit and push the complete migration on `experiment/v2.2-joint-readiness`.
+- **Status:** completed
 
 ### Phase 7 — A800 migration and formal experiments
 

@@ -269,6 +269,9 @@
   path interpolation with spaces resolves to existing project-local manifests/runs; the review ZIP
   remains at SHA-256 `e9127794...20d7`. Active source/config/docs/tests contain zero legacy
   non-model absolute roots outside the intentional one-time migration map.
+- Committed the complete project-root migration as `a443db4` and pushed
+  `experiment/v2.2-joint-readiness` to the requested GitHub repository. Phase 6a is complete; the
+  next scientific action remains scoring the returned human-review CSV, then A4 if it passes.
 
 - The user approved a material backbone/design revision after the frozen Show-o v1 Gate -1 red
   result. The new scientific claim is conditional on a unified model passing joint generation and
