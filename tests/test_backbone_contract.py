@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -64,10 +65,29 @@ def test_showo2_materialization_audit_rejects_meta_tensors() -> None:
         Showo2Adapter._assert_materialized(meta, "test")
 
 
+def test_showo2_builds_missing_official_7b_shard_index(tmp_path: Path) -> None:
+    import torch
+
+    first = tmp_path / "pytorch_model-00001-of-00002.bin"
+    second = tmp_path / "pytorch_model-00002-of-00002.bin"
+    torch.save({"layer.weight": torch.ones(2, dtype=torch.float32)}, first)
+    torch.save({"layer.bias": torch.ones(3, dtype=torch.bfloat16)}, second)
+
+    index = Showo2Adapter._ensure_legacy_shard_index(tmp_path, torch)
+    assert index == tmp_path / "diffusion_pytorch_model.bin.index.json"
+    payload = json.loads(index.read_text(encoding="utf-8"))
+    assert payload == {
+        "metadata": {"total_size": 14},
+        "weight_map": {
+            "layer.bias": second.name,
+            "layer.weight": first.name,
+        },
+    }
+    assert Showo2Adapter._ensure_legacy_shard_index(tmp_path, torch) == index
+
+
 def test_showo2_hq_uses_separate_generation_and_observation_geometry() -> None:
-    adapter = Showo2Adapter(
-        backbone_config="configs/backbones/showo2_1p5b_hq.yaml", lazy=True
-    )
+    adapter = Showo2Adapter(backbone_config="configs/backbones/showo2_1p5b_hq.yaml", lazy=True)
     profile = adapter.backbone_config["official_profile"]
     assert adapter.native_resolution == 512
     assert adapter.mmu_resolution == 432

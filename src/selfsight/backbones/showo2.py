@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+import re
 import sys
 import warnings
 from collections import Counter
@@ -36,6 +38,7 @@ from selfsight.training.checkpoint import load_checkpoint, save_checkpoint
 from selfsight.training.gradients import collect_lora_gradient, collect_lora_gradient_accumulated
 from selfsight.utils.cuda import cuda_device_index
 from selfsight.utils.hashing import rgb_sha256, sha256_json
+from selfsight.utils.jsonl import atomic_write_json
 
 
 @dataclass(frozen=True)
@@ -152,6 +155,61 @@ class Showo2Adapter(ModelAdapter):
             preview = ", ".join(meta[:8])
             raise RuntimeError(f"{label} retained meta tensors after weight loading: {preview}")
 
+    @staticmethod
+    def _ensure_legacy_shard_index(snapshot: Path, torch_module: Any) -> Path | None:
+        """Create the Diffusers index omitted by the official Show-o2 7B snapshot."""
+
+        if (snapshot / "pytorch_model.bin").is_file():
+            return None
+        pattern = re.compile(r"pytorch_model-(\d{5})-of-(\d{5})\.bin")
+        shards = sorted(
+            path
+            for path in snapshot.glob("pytorch_model-*-of-*.bin")
+            if pattern.fullmatch(path.name)
+        )
+        if not shards:
+            return None
+        totals = {int(pattern.fullmatch(path.name).group(2)) for path in shards}
+        if len(totals) != 1 or totals.pop() != len(shards):
+            raise RuntimeError(f"Incomplete Show-o2 checkpoint shard set: {snapshot}")
+
+        # The upstream loader overrides WEIGHTS_NAME with pytorch_model.bin but keeps
+        # Diffusers' index constant, so this exact filename is required.
+        index_path = snapshot / "diffusion_pytorch_model.bin.index.json"
+        shard_names = {path.name for path in shards}
+        if index_path.is_file():
+            payload = json.loads(index_path.read_text(encoding="utf-8"))
+            weight_map = payload.get("weight_map") if isinstance(payload, Mapping) else None
+            if isinstance(weight_map, Mapping) and set(weight_map.values()) == shard_names:
+                return index_path
+            raise RuntimeError(f"Invalid derived Show-o2 shard index: {index_path}")
+
+        weight_map: dict[str, str] = {}
+        total_size = 0
+        for shard in shards:
+            state_dict = torch_module.load(
+                shard,
+                map_location="meta",
+                weights_only=True,
+                mmap=True,
+            )
+            if not isinstance(state_dict, Mapping):
+                raise TypeError(f"Show-o2 shard is not a state dict: {shard}")
+            for name, value in state_dict.items():
+                key = str(name)
+                if key in weight_map:
+                    raise RuntimeError(f"Duplicate Show-o2 tensor across shards: {key}")
+                if not torch_module.is_tensor(value):
+                    raise TypeError(f"Non-tensor Show-o2 state entry: {key}")
+                weight_map[key] = shard.name
+                total_size += int(value.numel()) * int(value.element_size())
+            del state_dict
+        atomic_write_json(
+            index_path,
+            {"metadata": {"total_size": total_size}, "weight_map": weight_map},
+        )
+        return index_path
+
     def _load(self) -> None:
         if self._loaded:
             return
@@ -181,6 +239,7 @@ class Showo2Adapter(ModelAdapter):
         from transport import Sampler, create_transport
 
         showo_path = snapshot_path(self.model_id, lock_path=self.lock_path)
+        self._ensure_legacy_shard_index(showo_path, torch)
         profile = self.backbone_config["official_profile"]
         t2i_tokens = int(profile["t2i_image_tokens_with_time"])
         mmu_tokens = int(profile["mmu_image_tokens_with_time"])
@@ -194,9 +253,7 @@ class Showo2Adapter(ModelAdapter):
             raise RuntimeError("Show-o2 MMU token/latent geometry mismatch")
         language_base_id = str(profile["language_base_id"])
         qwen_path = snapshot_path(language_base_id, lock_path=self.lock_path)
-        siglip_path = snapshot_path(
-            "google/siglip-so400m-patch14-384", lock_path=self.lock_path
-        )
+        siglip_path = snapshot_path("google/siglip-so400m-patch14-384", lock_path=self.lock_path)
         wan_path = snapshot_path(
             "Wan-AI/Wan2.1-T2V-14B",
             lock_path=self.lock_path,
@@ -225,6 +282,9 @@ class Showo2Adapter(ModelAdapter):
                 clip_pretrained_model_path=str(siglip_path),
                 use_safetensors=False,
                 local_files_only=True,
+                low_cpu_mem_usage=True,
+                device_map={"": str(self.device)},
+                torch_dtype=self.dtype,
             )
         native_position_tokens = int(model.position_embedding.weight.shape[0])
         if native_position_tokens != mmu_tokens - 1:
@@ -427,9 +487,7 @@ class Showo2Adapter(ModelAdapter):
 
         pixels = torch.stack(
             [self._image_tensor(image, resolution=resolution) for image in images]
-        ).to(
-            self.device, dtype=self.dtype
-        )
+        ).to(self.device, dtype=self.dtype)
         with torch.random.fork_rng(devices=self._fork_devices()):
             torch.manual_seed(int(seed))
             torch.cuda.manual_seed(int(seed))
@@ -460,12 +518,10 @@ class Showo2Adapter(ModelAdapter):
         system_ids = self.tokenizer(
             "system\nYou are a helpful assistant.<|im_end|>", add_special_tokens=False
         )["input_ids"]
-        role_user = self.tokenizer(
-            "\n<|im_start|>user\n", add_special_tokens=False
-        )["input_ids"]
-        role_assistant = self.tokenizer(
-            "\n<|im_start|>assistant\n", add_special_tokens=False
-        )["input_ids"]
+        role_user = self.tokenizer("\n<|im_start|>user\n", add_special_tokens=False)["input_ids"]
+        role_assistant = self.tokenizer("\n<|im_start|>assistant\n", add_special_tokens=False)[
+            "input_ids"
+        ]
         question_ids = self.tokenizer(question, add_special_tokens=False)["input_ids"]
         text_a = torch.tensor(
             [self.token_ids["bos_id"], *system_ids, *role_user],
@@ -555,7 +611,9 @@ class Showo2Adapter(ModelAdapter):
         import torch
 
         linear = tuple(
-            name for name, module in self.model.named_modules() if isinstance(module, torch.nn.Linear)
+            name
+            for name, module in self.model.named_modules()
+            if isinstance(module, torch.nn.Linear)
         )
         suffixes = Counter(name.rsplit(".", 1)[-1] for name in linear)
         shared = tuple(name for name in linear if name.startswith("showo.model.layers."))
@@ -626,7 +684,9 @@ class Showo2Adapter(ModelAdapter):
         )
         invalid_trainables = [name for name in trainable_names if "lora_" not in name.lower()]
         if invalid_trainables:
-            raise RuntimeError(f"Non-LoRA Show-o2 parameters became trainable: {invalid_trainables[:20]}")
+            raise RuntimeError(
+                f"Non-LoRA Show-o2 parameters became trainable: {invalid_trainables[:20]}"
+            )
         self.model.train()
         self._lora_attached = True
         return {
@@ -636,7 +696,9 @@ class Showo2Adapter(ModelAdapter):
             "target_modules": targets,
             "peft_relative_target_modules": peft_targets,
             "trainable_parameters": sum(
-                parameter.numel() for parameter in self.model.parameters() if parameter.requires_grad
+                parameter.numel()
+                for parameter in self.model.parameters()
+                if parameter.requires_grad
             ),
             "trainable_names": trainable_names,
         }
@@ -670,9 +732,9 @@ class Showo2Adapter(ModelAdapter):
             self.device,
         )
         image_masks = (text == self.token_ids["img_pad_id"]).to(self.dtype)
-        attention = omni_attn_mask_naive(
-            text.size(0), text.size(1), positions, self.device
-        ).to(self.dtype)
+        attention = omni_attn_mask_naive(text.size(0), text.size(1), positions, self.device).to(
+            self.dtype
+        )
         _, loss_flow = self.model(
             text_tokens=text,
             image_latents=noised,
@@ -692,12 +754,10 @@ class Showo2Adapter(ModelAdapter):
         import torch
 
         size = len(batch.images)
-        if not (
-            size
-            == len(batch.questions)
-            == len(batch.answers)
-            == len(batch.sample_ids)
-        ) or size == 0:
+        if (
+            not (size == len(batch.questions) == len(batch.answers) == len(batch.sample_ids))
+            or size == 0
+        ):
             raise ValueError("Show-o2 replay fields must be non-empty and equal length")
         latents = self._encode_images(batch.images, seed=batch.latent_seed)
         pad_id = int(self.tokenizer.pad_token_id)
@@ -705,9 +765,9 @@ class Showo2Adapter(ModelAdapter):
         labels = []
         positions = []
         for question, answer in zip(batch.questions, batch.answers):
-            prefix = self.tokenizer(
-                f"Question: {question}\nAnswer:", add_special_tokens=False
-            )["input_ids"]
+            prefix = self.tokenizer(f"Question: {question}\nAnswer:", add_special_tokens=False)[
+                "input_ids"
+            ]
             answer_ids = self.tokenizer(f" {answer}", add_special_tokens=False)["input_ids"]
             row = [
                 self.token_ids["bos_id"],
@@ -853,9 +913,7 @@ class Showo2Adapter(ModelAdapter):
             total_parameters=total,
             trainable_parameters=trainable,
             allocated_gpu_bytes=int(torch.cuda.memory_allocated(self.device)),
-            reserved_gpu_bytes=int(
-                torch.cuda.memory_reserved(cuda_device_index(self.device))
-            ),
+            reserved_gpu_bytes=int(torch.cuda.memory_reserved(cuda_device_index(self.device))),
         )
 
     def dependency_revisions(self) -> dict[str, str]:
