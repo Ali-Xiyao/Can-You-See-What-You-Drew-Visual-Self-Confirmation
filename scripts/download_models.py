@@ -9,6 +9,7 @@ import os
 import shutil
 import subprocess
 from collections.abc import Mapping
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
@@ -337,47 +338,76 @@ def main() -> None:
         direct_snapshot.mkdir(parents=True, exist_ok=True)
         large_paths = []
         if use_aria2:
-            for item in record["inventory"]:
-                if int(item["size"] or 0) < 64 * 1024 * 1024 or not item.get("lfs_sha256"):
-                    continue
-                relative = str(item["path"])
-                destination = direct_snapshot / relative
-                expected_size = int(item["size"])
-                expected_sha = str(item["lfs_sha256"])
+            large_items = [
+                item
+                for item in record["inventory"]
+                if int(item["size"] or 0) >= 64 * 1024 * 1024 and item.get("lfs_sha256")
+            ]
+            ready_items = []
+            pending_items = []
+            for item in large_items:
+                destination = direct_snapshot / str(item["path"])
+                control_path = destination.with_name(f"{destination.name}.aria2")
                 ready = (
                     destination.is_file()
-                    and destination.stat().st_size == expected_size
-                    and file_sha256(destination) == expected_sha
+                    and not control_path.exists()
+                    and destination.stat().st_size == int(item["size"])
+                    and file_sha256(destination) == str(item["lfs_sha256"])
                 )
-                if not ready:
-                    destination.parent.mkdir(parents=True, exist_ok=True)
-                    url = (
-                        f"https://huggingface.co/{record['id']}/resolve/{record['revision']}/"
-                        f"{quote(relative)}?download=true"
-                    )
-                    subprocess.run(
-                        [
-                            str(aria2),
-                            "--continue=true",
-                            "--max-connection-per-server=16",
-                            "--split=16",
-                            "--min-split-size=1M",
-                            "--file-allocation=none",
-                            "--auto-file-renaming=false",
-                            "--allow-overwrite=true",
-                            "--console-log-level=warn",
-                            "--summary-interval=30",
-                            f"--dir={destination.parent}",
-                            f"--out={destination.name}",
-                            url,
-                        ],
-                        check=True,
-                    )
+                (ready_items if ready else pending_items).append(item)
+            large_paths = [str(item["path"]) for item in ready_items]
+            workers = min(4, len(pending_items))
+            connections = max(1, 16 // max(1, workers))
+
+            def materialize_large_file(
+                item: Mapping[str, Any],
+                *,
+                snapshot: Path = direct_snapshot,
+                record_id: str = str(record["id"]),
+                record_revision: str = str(record["revision"]),
+                connection_count: int = connections,
+            ) -> str:
+                relative = str(item["path"])
+                destination = snapshot / relative
+                expected_size = int(item["size"])
+                expected_sha = str(item["lfs_sha256"])
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                url = (
+                    f"https://huggingface.co/{record_id}/resolve/{record_revision}/"
+                    f"{quote(relative)}?download=true"
+                )
+                subprocess.run(
+                    [
+                        str(aria2),
+                        "--continue=true",
+                        f"--max-connection-per-server={connection_count}",
+                        f"--split={connection_count}",
+                        "--min-split-size=1M",
+                        "--file-allocation=none",
+                        "--connect-timeout=10",
+                        "--timeout=30",
+                        "--lowest-speed-limit=64K",
+                        "--max-tries=0",
+                        "--retry-wait=1",
+                        "--auto-file-renaming=false",
+                        "--allow-overwrite=true",
+                        "--console-log-level=warn",
+                        "--summary-interval=30",
+                        f"--dir={destination.parent}",
+                        f"--out={destination.name}",
+                        url,
+                    ],
+                    check=True,
+                )
                 if destination.stat().st_size != expected_size:
-                    raise RuntimeError(f"Size mismatch for {record['id']}/{relative}")
+                    raise RuntimeError(f"Size mismatch for {record_id}/{relative}")
                 if file_sha256(destination) != expected_sha:
-                    raise RuntimeError(f"LFS SHA256 mismatch for {record['id']}/{relative}")
-                large_paths.append(relative)
+                    raise RuntimeError(f"LFS SHA256 mismatch for {record_id}/{relative}")
+                return relative
+
+            if pending_items:
+                with ThreadPoolExecutor(max_workers=workers) as executor:
+                    large_paths.extend(executor.map(materialize_large_file, pending_items))
         small_patterns = [
             item["path"] for item in record["inventory"] if item["path"] not in large_paths
         ]

@@ -176,7 +176,9 @@ $observer = Join-Path $env:SELFSIGHT_ENV_ROOT "observer\python.exe"
 $janus = Join-Path $env:SELFSIGHT_ENV_ROOT "janus\Scripts\python.exe"
 ```
 
-The script also disables the unreliable Xet route seen on this Windows host. Large locked LFS files use resumable aria2 transfer plus exact size/SHA-256 verification; small files still use Hugging Face Hub.
+The script also disables the unreliable Xet route seen on this Windows host. Large locked LFS files
+use resumable aria2 transfer, bounded parallel shards, stalled-connection recycling, and exact
+size/SHA-256 verification; small files still use Hugging Face Hub.
 The downloader ignores unrelated ONNX/OpenVINO/CoreML/GGUF/TF/Flax exports unless a model lock
 explicitly asks for them.
 
