@@ -78,6 +78,8 @@ def test_generated_precision_packet_is_blind_and_scores(tmp_path: Path) -> None:
     assert report["passed"]
     assert report["overall_precision"] == 1.0
     assert all(value == 1.0 for value in report["family_precision"].values())
+    assert report["review_csv"] == str(review.resolve())
+    assert report["review_csv_sha256"] == sha256_file(review)
 
 
 def test_generated_precision_incomplete_annotations_fail(tmp_path: Path) -> None:
@@ -116,9 +118,7 @@ def test_generated_precision_incomplete_annotations_fail(tmp_path: Path) -> None
             "selection_digest": sha256_json(key_rows),
         },
     )
-    report = score_generated_precision_audit(
-        review, key_path, families=["existence", "count"]
-    )
+    report = score_generated_precision_audit(review, key_path, families=["existence", "count"])
     assert not report["passed"]
     assert report["complete_annotations"] == 0
     assert report["family_precision"]["count"] == 0.0

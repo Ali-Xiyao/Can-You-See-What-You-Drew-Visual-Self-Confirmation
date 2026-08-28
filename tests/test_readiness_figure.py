@@ -77,3 +77,24 @@ def test_readiness_figure_distinguishes_upstream_stop_from_failure(tmp_path: Pat
     gate_rows = Path(outputs["gate_csv"]).read_text(encoding="utf-8")
     assert "minus_2a_unified_functionality,False,False" in gate_rows
     assert "minus_2d_joint_families,False,False" in gate_rows
+
+
+def test_readiness_figure_marks_human_failure_but_a4_not_tested(tmp_path: Path) -> None:
+    decision = _decision(tmp_path / "rank2-human-stop.json", rank=2, passed=False)
+    report = json.loads(decision.read_text(encoding="utf-8"))
+    report["decision_mode"] = "stop_after_human_before_a4"
+    report["skipped_by_stop_rule"] = ["a4_lora_backward_resume"]
+    report["selected_eligible_families"] = []
+    decision.write_text(json.dumps(report), encoding="utf-8")
+
+    outputs = render_readiness_matrix(
+        [decision], tmp_path / "human-stop-figure", evidence_status="synthetic human stop"
+    )
+    qa = json.loads(Path(outputs["qa"]).read_text(encoding="utf-8"))
+    assert qa["passed"]
+    assert qa["profile"]["not_tested_cells"] == 0
+    family_rows = Path(outputs["family_csv"]).read_text(encoding="utf-8")
+    assert family_rows.count(",precision,0.6,0.95,True,False,") == 2
+    gate_rows = Path(outputs["gate_csv"]).read_text(encoding="utf-8")
+    assert "minus_2a_unified_functionality,False,False" in gate_rows
+    assert "minus_2c_generated_measurability,False,True" in gate_rows

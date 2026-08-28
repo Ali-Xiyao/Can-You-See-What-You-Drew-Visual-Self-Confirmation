@@ -72,6 +72,17 @@ $root = Join-Path $env:SELFSIGHT_RUN_ROOT "readiness\showo2-1p5b"
   --review-csv "$root\a3-blind-packet\review_blinded.csv" `
   --answer-key "$root\a3-blind-packet\answer_key.json" `
   --output "$root\a3-human.json"
+
+# If the complete blind-human audit is red, freeze that measured failure and skip A4.
+# The decision binds the exact review CSV and answer-key hashes.
+& $showo2 .\scripts\finalize_joint_readiness.py `
+  --backbone-config configs\backbones\showo2_1p5b.yaml `
+  --canary-report "$root\a1-canary.json" `
+  --reference-report "$root\a2-reference.json" `
+  --generated-report "$root\a3-generated.json" `
+  --human-report "$root\a3-human.json" `
+  --stop-after-human-before-a4 `
+  --output "$root\decision-human-red.json"
 ```
 
 Blind-review rules are fail-closed. Review the contact sheets without opening `answer_key.json` or
@@ -118,9 +129,11 @@ the exact shared-transformer module names and binds them to the A1/tree hashes:
 
 A red decision stops E1/E2 and names only the preregistered next candidate. An automatic A3 failure
 stops before human review and A4 because neither can repair failed coverage, Oracle@4, or seed
-stability; the decision explicitly stores those evidence fields as absent. HQ/7B configs and download
-groups exist for that route, but fallback downloads require `--predecessor-decision` pointing to the
-immediately preceding immutable red decision (fallback finalization later uses `--predecessor`).
+stability. A completed red human audit stops after human review but before A4 because backward/resume
+evidence cannot repair verifier precision. Each decision distinguishes measured failure from skipped
+evidence. HQ/7B configs and download groups exist for that route, but fallback downloads require
+`--predecessor-decision` pointing to the immediately preceding immutable red decision (fallback
+finalization later uses `--predecessor`).
 Readiness figures encode absent measurements as gray dotted `N/T`
 cells, never as orange failures. Full rules are in
 [`docs/PROPOSAL_V2.2_AMENDMENT.md`](docs/PROPOSAL_V2.2_AMENDMENT.md).
@@ -131,6 +144,11 @@ For example, after rank 1 has produced `decision-red.json`, rank 2 is the only a
 & $core .\scripts\download_models.py --group readiness_fallback_hq --plan
 & $core .\scripts\download_models.py --group readiness_fallback_hq `
   --predecessor-decision "$root\decision-red.json"
+
+# After an immutable rank-2 red decision, rank 3 is the only authorized next download.
+& $core .\scripts\download_models.py --group readiness_fallback_7b --plan
+& $core .\scripts\download_models.py --group readiness_fallback_7b `
+  --predecessor-decision "$env:SELFSIGHT_RUN_ROOT\readiness\showo2-1p5b-hq\decision-hq-red.json"
 ```
 
 ## Storage and processes

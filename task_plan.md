@@ -17,10 +17,9 @@ two independent RTX 3090 cards; formal three-seed experiments remain single-A800
 
 ## Current Phase
 
-Phase 6: HQ automatic A3 is green and the 49-item blind-human packet awaits annotations before A4.
-The Phase 6a storage migration is complete: `H:\selfsight-models` is the only external data root,
-all non-model bytes live below this repository, and immutable evidence resolves through validated
-legacy junctions without content changes.
+Phase 6: HQ automatic A3 is green, but the completed 49-item human audit is decisively red. Fix the
+count-answer normalization/evidence binding, freeze a stop-after-human decision with A4 explicitly
+N/T, render the red readiness route, and only then authorize the registered Show-o2-7B fallback.
 
 ## Registered Backbone Ladder
 
@@ -130,14 +129,26 @@ families means the scientific claim is unsupported for that backbone and stops p
   warm-up; otherwise move directly to HQ.
 - [ ] Download/audit HQ only after a recorded base decision; 7B only after both 1.5B decisions. The
   immutable base red decision, authorized HQ download, HQ A1/A2, and automatic HQ A3 are complete.
-  A3 is automatically green; the 49-item blind-human packet now awaits annotations before A4.
+  A3 is automatically green; the completed 49-item blind-human precision audit is red.
 - [x] Enforce the candidate ladder inside the downloader: fallback downloads require the immediately
   prior red Gate -2 decision, exact rank/model/fallback identity, and valid evidence SHA-256 records.
 - [ ] If Gate -2 is green with at least four families, run family-restricted E1, Gate -1b, and paired local E2.
 - [ ] If fewer than four families are eligible, finalize the conditional negative result and stop before self-training.
 - **Status:** in_progress
-- **Current blocker:** external human annotations are required by the preregistered blind-precision
-  audit; they cannot be substituted with model labels.
+- [x] Validate the completed human CSV: 49/49 rows, one reviewer, valid parseability fields, SHA-256
+  `70fe561e0f25f6bf94e6a138d930a86ed9712969dd86c618155e926905dcb68e`.
+- [x] Accept arbitrary nonnegative numeric human counts and bind the exact review CSV SHA into the
+  scored human report.
+- [x] Add and test a fail-closed stop-after-human finalizer: measured human precision red, A4 N/T,
+  no LoRA/backward run, adjacent 7B fallback only.
+- [x] Score/freeze the HQ human report and Gate -2 decision, recursively revalidating A3 rows/RGBs
+  and the rank-1 predecessor.
+- [x] Render the HQ red readiness matrix with measured precision failures and A4 marked N/T.
+- [ ] Download and run the locked Show-o2 7B fallback after the HQ red decision; finalize its Gate -2
+  route before permitting or rejecting any phenomenon experiment.
+- [ ] Run full verification, commit, and push.
+- **Current blocker:** locked 7B model transfer/audit is in progress; no scientific blocker remains in
+  the HQ evidence chain.
 
 ### Phase 6a — Project-root path normalization
 

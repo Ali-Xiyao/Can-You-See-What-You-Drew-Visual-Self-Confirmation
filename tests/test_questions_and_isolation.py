@@ -8,7 +8,7 @@ from selfsight.data.renderer import render_scene
 from selfsight.observers.client import ObserverServiceClient
 from selfsight.observers.protocol import assert_blind_wire_payload, encode_request
 from selfsight.rfo.isolation import hard_render, make_blind_request
-from selfsight.schemas import QuestionFormat
+from selfsight.schemas import QuestionFamily, QuestionFormat
 from selfsight.utils.hashing import rgb_sha256
 
 
@@ -21,6 +21,19 @@ def test_answer_normalization_and_option_order(registered_splits):
     forced = build_question(atom, QuestionFormat.FORCED_CHOICE, choice_order_seed=1)
     index = forced.choices.index(atom.answer)
     assert normalize_answer(chr(65 + index), forced) == atom.answer
+
+
+def test_generated_count_normalization_accepts_nonnegative_counts_outside_ontology(
+    registered_splits,
+):
+    scene = next(
+        item for item in registered_splits["tier_a_outcome"] if item.family == QuestionFamily.COUNT
+    )
+    question = build_question(build_primary_atom(scene))
+    assert normalize_answer("There are 6 visible squares.", question) == "6"
+    assert normalize_answer("06", question) == "6"
+    assert normalize_answer("-6", question) is None
+    assert normalize_answer("6 or 7", question) is None
 
 
 def test_hard_render_and_wire_context_are_blind(tmp_path, registered_splits):
@@ -46,7 +59,15 @@ def test_mock_observer_subprocess_only_reads_rgb(tmp_path, registered_splits):
     question = build_question(atom)
     image_path = tmp_path / "observer.png"
     hard_render(render_scene(scene), image_path)
-    command = [sys.executable, "-m", "selfsight.observers.service", "--backend", "mock", "--device", "cpu"]
+    command = [
+        sys.executable,
+        "-m",
+        "selfsight.observers.service",
+        "--backend",
+        "mock",
+        "--device",
+        "cpu",
+    ]
     log_path = tmp_path / "wire.jsonl"
     with ObserverServiceClient(command, log_path) as client:
         result = client.observe(make_blind_request(image_path, (question,), "subprocess-test"))

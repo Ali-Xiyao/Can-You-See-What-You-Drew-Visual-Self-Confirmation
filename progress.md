@@ -271,7 +271,11 @@
   non-model absolute roots outside the intentional one-time migration map.
 - Committed the complete project-root migration as `a443db4` and pushed
   `experiment/v2.2-joint-readiness` to the requested GitHub repository. Phase 6a is complete; the
-  next scientific action remains scoring the returned human-review CSV, then A4 if it passes.
+  next scientific action was scoring the returned human-review CSV, then A4 only if it passed.
+- Received the corrected human CSV. It is complete and hash-locked; square/rectangle relabeling
+  exposes the verifier's deliberately loose contour criterion. In-memory sensitivity scoring is
+  83.67% after correcting count parsing, so A4 is forbidden; the stop-after-human decision has now
+  been frozen and the authorized 7B fallback is in progress.
 
 - The user approved a material backbone/design revision after the frozen Show-o v1 Gate -1 red
   result. The new scientific claim is conditional on a unified model passing joint generation and
@@ -478,3 +482,15 @@
   HQ Gate -2 remain correctly blocked. Preselected 196 audited shared-transformer LoRA modules
   across q/k/v/o and gated MLP projections; selection digest is
   `033751f817684cdfb2e9fef1eb99e6e6c8bd74615eca049288ea021bf6abe80c`.
+- Scored the completed HQ blind review after extending count normalization to arbitrary
+  nonnegative integers. The immutable 49-row CSV hash is
+  `70fe561e0f25f6bf94e6a138d930a86ed9712969dd86c618155e926905dcb68e`; agreement is
+  41/49 (83.67%) versus the registered 95% threshold. Count precision is 40% and binding
+  precision is 77.78%; existence, color, size, and spatial are 100% on the audited sample.
+- Added and exercised the fail-closed `stop_after_human_before_a4` route. The HQ decision binds the
+  exact review CSV, hidden answer key, A1/A2/A3 evidence graph, and rank-1 predecessor, records the
+  human failure as measured, leaves A4 absent/N/T, and authorizes only adjacent Show-o2 7B.
+- Rendered and manually reviewed the two-candidate readiness matrix. Programmatic QA passes with
+  exact CSV, 600-DPI PNG, PDF, SVG, and grayscale exports; the per-family Joint column is derived
+  directly from the four registered metric thresholds rather than from the downstream selection
+  list. The locked 33,102,908,272-byte 7B download is now running with resumable aria2 transport.

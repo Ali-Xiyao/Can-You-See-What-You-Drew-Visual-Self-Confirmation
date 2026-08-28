@@ -9,6 +9,7 @@ from pathlib import Path
 from selfsight.analysis.readiness import (
     finalize_joint_readiness,
     finalize_joint_readiness_stop,
+    finalize_joint_readiness_stop_after_human,
 )
 
 
@@ -24,6 +25,7 @@ def main() -> None:
     parser.add_argument("--human-report", type=Path)
     parser.add_argument("--lora-report", type=Path)
     parser.add_argument("--stop-before-human-a4", action="store_true")
+    parser.add_argument("--stop-after-human-before-a4", action="store_true")
     parser.add_argument("--predecessor", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
@@ -36,10 +38,19 @@ def main() -> None:
         "predecessor_path": args.predecessor,
         "output_path": args.output,
     }
+    if args.stop_before_human_a4 and args.stop_after_human_before_a4:
+        parser.error("Choose only one registered stop mode")
     if args.stop_before_human_a4:
         if args.human_report is not None or args.lora_report is not None:
             parser.error("Stop mode must not provide human or A4 reports")
         report = finalize_joint_readiness_stop(**common)
+    elif args.stop_after_human_before_a4:
+        if args.human_report is None or args.lora_report is not None:
+            parser.error("Human-stop mode requires --human-report and forbids --lora-report")
+        report = finalize_joint_readiness_stop_after_human(
+            **common,
+            human_report_path=args.human_report,
+        )
     else:
         if args.human_report is None or args.lora_report is None:
             parser.error("Full Gate -2 finalization requires --human-report and --lora-report")

@@ -164,12 +164,13 @@ def score_generated_precision_audit(
 ) -> dict[str, Any]:
     """Score complete blind annotations; missing family evidence fails closed at precision zero."""
 
+    review_path = Path(review_csv).resolve()
     key_path = Path(answer_key).resolve()
     key = json.loads(key_path.read_text(encoding="utf-8"))
     if sha256_json(key["rows"]) != key["selection_digest"]:
         raise RuntimeError("Generated precision answer-key digest mismatch")
     keyed = {str(row["audit_id"]): row for row in key["rows"]}
-    with Path(review_csv).open("r", encoding="utf-8-sig", newline="") as handle:
+    with review_path.open("r", encoding="utf-8-sig", newline="") as handle:
         rows = list(csv.DictReader(handle))
     if {str(row["audit_id"]) for row in rows} != set(keyed):
         raise RuntimeError("Blind review IDs do not exactly match the answer key")
@@ -221,6 +222,8 @@ def score_generated_precision_audit(
         "revision": key["revision"],
         "source_revision": key["source_revision"],
         "dependency_revisions": key["dependency_revisions"],
+        "review_csv": str(review_path),
+        "review_csv_sha256": sha256_file(review_path),
         "answer_key": str(key_path),
         "answer_key_sha256": sha256_file(key_path),
         "selection_digest": key["selection_digest"],

@@ -66,12 +66,18 @@ def load_readiness_decisions(
         seen_ranks.add(rank)
         model_id = str(report["model_id"])
         checks = report["checks"]
-        upstream_stop = report.get("decision_mode") == "upstream_stop_before_human_and_a4"
-        unmeasured_gates = (
-            {"minus_2a_unified_functionality", "minus_2d_joint_families"}
-            if upstream_stop
-            else set()
-        )
+        decision_mode = report.get("decision_mode")
+        upstream_stop = decision_mode == "upstream_stop_before_human_and_a4"
+        human_stop = decision_mode == "stop_after_human_before_a4"
+        if upstream_stop:
+            unmeasured_gates = {
+                "minus_2a_unified_functionality",
+                "minus_2d_joint_families",
+            }
+        elif human_stop:
+            unmeasured_gates = {"minus_2a_unified_functionality"}
+        else:
+            unmeasured_gates = set()
         for gate in GATE_COLUMNS[:-1]:
             if gate not in checks:
                 raise RuntimeError(f"Decision is missing {gate}: {path}")
@@ -113,8 +119,16 @@ def load_readiness_decisions(
             "precision": report["metrics"]["family_precision"],
             "oracle_at_4": report["metrics"]["family_oracle_at_4"],
         }
-        eligible = {str(item) for item in report["selected_eligible_families"]}
         for family in FAMILY_ORDER:
+            joint_eligible = True
+            for metric in METRICS:
+                values = metric_values[metric]
+                if values is None or family not in values:
+                    joint_eligible = False
+                    break
+                joint_eligible = joint_eligible and (
+                    float(values[family]) >= metric_thresholds[metric]
+                )
             for metric in METRICS:
                 values = metric_values[metric]
                 measured = values is not None
@@ -134,9 +148,7 @@ def load_readiness_decisions(
                         raise RuntimeError(f"Missing {metric}/{family} value in {path}")
                     value = float(values[family])
                     if not 0.0 <= value <= 1.0:
-                        raise ValueError(
-                            f"Out-of-range {metric}/{family} value in {path}: {value}"
-                        )
+                        raise ValueError(f"Out-of-range {metric}/{family} value in {path}: {value}")
                 threshold = metric_thresholds[metric]
                 family_rows.append(
                     {
@@ -150,7 +162,7 @@ def load_readiness_decisions(
                         "threshold": threshold,
                         "measured": measured,
                         "metric_pass": measured and value >= threshold,
-                        "joint_eligible": family in eligible,
+                        "joint_eligible": joint_eligible,
                         "source_decision": str(path),
                     }
                 )
@@ -165,16 +177,13 @@ def load_readiness_decisions(
     if not sources:
         raise ValueError("At least one Gate -2 decision is required")
     gate_frame = pd.DataFrame(gate_rows).sort_values(["candidate_rank", "gate"])
-    family_frame = pd.DataFrame(family_rows).sort_values(
-        ["candidate_rank", "family", "metric"]
-    )
+    family_frame = pd.DataFrame(family_rows).sort_values(["candidate_rank", "family", "metric"])
     profile = {
         "candidate_count": len(sources),
         "gate_rows": len(gate_frame),
         "family_metric_rows": len(family_frame),
         "missing_values": int(
-            gate_frame.isna().sum().sum()
-            + family_frame.drop(columns=["value"]).isna().sum().sum()
+            gate_frame.isna().sum().sum() + family_frame.drop(columns=["value"]).isna().sum().sum()
         ),
         "not_tested_cells": int((~family_frame["measured"]).sum()),
         "family_count": int(family_frame["family"].nunique()),
@@ -189,9 +198,11 @@ def load_readiness_decisions(
         ),
         "sources": sources,
     }
-    if profile["missing_values"] or profile["duplicate_gate_cells"] or profile[
-        "duplicate_family_metric_cells"
-    ]:
+    if (
+        profile["missing_values"]
+        or profile["duplicate_gate_cells"]
+        or profile["duplicate_family_metric_cells"]
+    ):
         raise RuntimeError(f"Readiness figure data profile failed: {profile}")
     return gate_frame, family_frame, profile
 
@@ -320,11 +331,7 @@ def _family_panel(ax: Any, family_frame: pd.DataFrame) -> None:
                 0.88,
                 0.78,
                 facecolor=(
-                    NOT_TESTED_GRAY
-                    if not joint_measured
-                    else PASS_BLUE
-                    if joint
-                    else FAIL_ORANGE
+                    NOT_TESTED_GRAY if not joint_measured else PASS_BLUE if joint else FAIL_ORANGE
                 ),
                 edgecolor="#666666" if not joint_measured else "black",
                 linewidth=0.7,
@@ -405,9 +412,7 @@ def render_readiness_matrix(
     family_csv = output / "readiness_family_metrics.csv"
     gate_frame.to_csv(gate_csv, index=False)
     family_frame.to_csv(family_csv, index=False)
-    fig = build_readiness_figure(
-        gate_frame, family_frame, evidence_status=evidence_status
-    )
+    fig = build_readiness_figure(gate_frame, family_frame, evidence_status=evidence_status)
     paths = {
         "preview_png": str(output / "figure_readiness_preview.png"),
         "png": str(output / "figure_readiness.png"),
@@ -419,9 +424,7 @@ def render_readiness_matrix(
     with warnings.catch_warnings(record=True) as captured:
         warnings.simplefilter("always")
         fig.savefig(paths["preview_png"], dpi=150, bbox_inches="tight", facecolor="white")
-    layout_warnings.extend(
-        str(item.message) for item in captured if "Glyph" in str(item.message)
-    )
+    layout_warnings.extend(str(item.message) for item in captured if "Glyph" in str(item.message))
     fig.savefig(paths["png"], dpi=600, bbox_inches="tight", facecolor="white")
     fig.savefig(paths["pdf"], bbox_inches="tight", facecolor="white")
     fig.savefig(paths["svg"], bbox_inches="tight", facecolor="white")

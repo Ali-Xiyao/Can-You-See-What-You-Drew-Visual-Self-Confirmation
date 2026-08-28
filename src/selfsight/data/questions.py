@@ -26,18 +26,32 @@ def build_primary_atom(scene: SceneSpec) -> Atom:
     if family == QuestionFamily.EXISTENCE:
         shape = str(metadata["target_shape"])
         color = str(metadata["target_color"])
-        return Atom(atom_id, family, f"shape={shape};color={color}", "exists", "yes" if metadata["positive"] else "no")
+        return Atom(
+            atom_id,
+            family,
+            f"shape={shape};color={color}",
+            "exists",
+            "yes" if metadata["positive"] else "no",
+        )
     if family == QuestionFamily.COUNT:
         shape = str(metadata["target_shape"])
         return Atom(atom_id, family, f"shape={shape}", "count", str(metadata["count"]))
     if family in {QuestionFamily.COLOR, QuestionFamily.BINDING}:
         shape = str(metadata["target_shape"])
-        target = next(item for item in scene.objects if item.object_id == metadata["target_object_id"])
-        return Atom(atom_id, family, f"shape={shape}", "color", target.color.value, (target.object_id,))
+        target = next(
+            item for item in scene.objects if item.object_id == metadata["target_object_id"]
+        )
+        return Atom(
+            atom_id, family, f"shape={shape}", "color", target.color.value, (target.object_id,)
+        )
     if family == QuestionFamily.SIZE:
         shape = str(metadata["target_shape"])
-        target = next(item for item in scene.objects if item.object_id == metadata["target_object_id"])
-        return Atom(atom_id, family, f"shape={shape}", "size", target.size.value, (target.object_id,))
+        target = next(
+            item for item in scene.objects if item.object_id == metadata["target_object_id"]
+        )
+        return Atom(
+            atom_id, family, f"shape={shape}", "size", target.size.value, (target.object_id,)
+        )
     relation = str(metadata["relation"])
     subject = f"shape={metadata['subject_shape']}|shape={metadata['object_shape']}"
     return Atom(atom_id, family, subject, relation, "yes" if metadata["truth"] else "no")
@@ -130,9 +144,17 @@ def normalize_answer(raw: str, question: AtomicQuestion) -> str | None:
     elif family == QuestionFamily.SIZE:
         allowed = {size.value for size in Size}
     else:
-        allowed = {str(index) for index in range(5)}
         for word, number in NUMBER_WORDS.items():
             text = re.sub(rf"\b{word}\b", number, text)
+        # Reference scenes use the registered 0--4 ontology, but a blind audit of
+        # generated pixels can legitimately contain any non-negative count.
+        # Keeping the normalizer open-ended prevents a visible count such as six
+        # from being converted into an abstention merely because generation left
+        # the prompt ontology.
+        matches = set(re.findall(r"(?<![\w-])\d+(?!\w)", text))
+        if len(matches) == 1:
+            return str(int(next(iter(matches))))
+        return None
 
     matches = {token for token in allowed if re.search(rf"(?<!\w){re.escape(token)}(?!\w)", text)}
     if len(matches) == 1:

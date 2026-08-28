@@ -15,7 +15,10 @@ from urllib.parse import quote
 
 import yaml
 
-from selfsight.analysis.readiness import validate_generated_artifacts
+from selfsight.analysis.readiness import (
+    validate_generated_artifacts,
+    validate_human_precision_report,
+)
 from selfsight.utils.hashing import sha256_file
 from selfsight.utils.jsonl import atomic_write_json
 
@@ -64,7 +67,11 @@ def _validate_fallback_download_authorization(
     if bool(report.get("passed")):
         raise RuntimeError("A green Gate -2 decision cannot authorize a fallback download")
     checks = report.get("checks")
-    if not isinstance(checks, Mapping) or not checks or all(bool(value) for value in checks.values()):
+    if (
+        not isinstance(checks, Mapping)
+        or not checks
+        or all(bool(value) for value in checks.values())
+    ):
         raise RuntimeError("Fallback predecessor red status is internally inconsistent")
     if int(report.get("candidate_rank", -1)) != int(route["candidate_rank"]) - 1:
         raise RuntimeError("Fallback predecessor candidate rank is not immediately prior")
@@ -101,14 +108,32 @@ def _validate_fallback_download_authorization(
             raise RuntimeError(f"Unavailable predecessor evidence: {label}")
         if sha256_file(evidence_path) != expected:
             raise RuntimeError(f"Predecessor evidence SHA-256 mismatch: {label}")
-    if report.get("decision_mode") == "upstream_stop_before_human_and_a4":
+    decision_mode = report.get("decision_mode")
+    if decision_mode == "upstream_stop_before_human_and_a4":
         skipped = set(report.get("skipped_by_stop_rule", ()))
         if skipped != {"blind_human_precision", "a4_lora_backward_resume"}:
             raise RuntimeError("Upstream-stop predecessor has an invalid skipped-evidence contract")
         if evidence.get("human") is not None or evidence.get("lora") is not None:
             raise RuntimeError("Upstream-stop predecessor must not contain human/A4 evidence")
+    elif decision_mode == "stop_after_human_before_a4":
+        skipped = set(report.get("skipped_by_stop_rule", ()))
+        if skipped != {"a4_lora_backward_resume"}:
+            raise RuntimeError("Human-stop predecessor has an invalid skipped-evidence contract")
+        if evidence.get("human") is None or evidence.get("lora") is not None:
+            raise RuntimeError("Human-stop predecessor must contain human but not A4 evidence")
     elif evidence.get("human") is None or evidence.get("lora") is None:
         raise RuntimeError("Completed predecessor is missing human/A4 evidence")
+    if evidence.get("human") is not None:
+        human_path = Path(str(evidence["human"]["path"])).resolve()
+        human_report = json.loads(human_path.read_text(encoding="utf-8"))
+        if decision_mode == "stop_after_human_before_a4" or "review_csv" in human_report:
+            readiness_path = Path(str(evidence["readiness_config"]["path"])).resolve()
+            readiness = yaml.safe_load(readiness_path.read_text(encoding="utf-8"))
+            validate_human_precision_report(
+                human_report,
+                families=[str(item) for item in readiness["main_families"]],
+                threshold=float(readiness["thresholds"]["generated"]["verifier_precision_min"]),
+            )
     generated_path = Path(str(evidence["generated"]["path"])).resolve()
     generated_report = json.loads(generated_path.read_text(encoding="utf-8"))
     if not isinstance(generated_report, Mapping):
@@ -133,7 +158,9 @@ def _load_lock(path: Path) -> dict[str, Any]:
         raise TypeError("Invalid model lock file")
     for model in value["models"]:
         revision = str(model.get("revision", ""))
-        if len(revision) != 40 or any(character not in "0123456789abcdef" for character in revision):
+        if len(revision) != 40 or any(
+            character not in "0123456789abcdef" for character in revision
+        ):
             raise ValueError(f"Model is not pinned to a full commit SHA: {model.get('id')}")
     return value
 
@@ -198,7 +225,9 @@ def main() -> None:
         type=Path,
         help="Required immutable red Gate -2 decision for HQ/7B fallback downloads.",
     )
-    parser.add_argument("--plan", action="store_true", help="Resolve sizes and revisions without downloading")
+    parser.add_argument(
+        "--plan", action="store_true", help="Resolve sizes and revisions without downloading"
+    )
     parser.add_argument("--force-low-space", action="store_true")
     parser.add_argument(
         "--large-file-transport",
@@ -220,9 +249,9 @@ def main() -> None:
     ]
     if not selected:
         raise SystemExit("No models matched the requested group/model ID")
-    fallback_groups = {
-        str(model["group"]) for model in selected
-    }.intersection(FALLBACK_DOWNLOAD_ROUTE)
+    fallback_groups = {str(model["group"]) for model in selected}.intersection(
+        FALLBACK_DOWNLOAD_ROUTE
+    )
     if len(fallback_groups) > 1:
         raise SystemExit("Download exactly one registered fallback group at a time")
     authorization = None
@@ -280,7 +309,9 @@ def main() -> None:
     if args.plan:
         return
     if free < required and not args.force_low_space:
-        raise SystemExit(f"Need at least {required} free bytes for this batch; only {free} are free")
+        raise SystemExit(
+            f"Need at least {required} free bytes for this batch; only {free} are free"
+        )
 
     aria2 = shutil.which("aria2c")
     use_aria2 = args.large_file_transport == "aria2" or (
@@ -372,10 +403,14 @@ def main() -> None:
             **snapshot_kwargs,
         )
         if Path(snapshot_path).name != record["revision"]:
-            raise RuntimeError(f"Downloaded snapshot path is not the locked revision: {snapshot_path}")
+            raise RuntimeError(
+                f"Downloaded snapshot path is not the locked revision: {snapshot_path}"
+            )
         record["snapshot_path"] = str(Path(snapshot_path).resolve())
         atomic_write_json(
-            model_root / "registries" / f"{_safe_name(record['id'])}@{record['revision'][:12]}.json",
+            model_root
+            / "registries"
+            / f"{_safe_name(record['id'])}@{record['revision'][:12]}.json",
             {
                 "schema_version": 2 if authorization else 1,
                 "model": record,

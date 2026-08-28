@@ -68,6 +68,24 @@
 - The only additional task input outside H: was the Codex-managed pasted design note. A byte-exact
   project copy now lives in `docs/source-notes/`; the app's attachment store remains outside project
   scope and is not safe to mutate as part of repository cleanup.
+
+## HQ blind-human audit findings (2026-08-28)
+
+- Completed review CSV: 49/49 rows, reviewer `xiyao_wang`, 47 parseable and 2 abstained,
+  SHA-256 `70fe561e0f25f6bf94e6a138d930a86ed9712969dd86c618155e926905dcb68e`.
+- The registered contour verifier admits any four-vertex contour with aspect ratio 0.5–2.0 as a
+  square; direct review confirmed obvious rectangles. Human relabeling is therefore a valid
+  verifier failure, not annotator noise.
+- The original scorer reported 40/49 = 81.63% because its count normalizer rejected observations
+  above the prompt ontology even when the human and verifier returned the same valid nonnegative
+  integer. The corrected and tested scorer reports 41/49 = 83.67%, still far below 95%; the HQ
+  human gate is robustly red.
+- The red result is not a parsing artifact: eight disagreements remain after the correction (six
+  count and two binding). The exact scored sheet is recursively hash-bound through the human
+  report, HQ decision, and 7B download authorization chain.
+- A human-stage failure needs a distinct stop contract from an automatic A3 failure. Here verifier
+  precision is measured and failed, while A4 backward/resume is genuinely untested; only A4 may
+  be rendered as N/T. This preserves the causal meaning of the readiness matrix.
 - `configs/observers/qwen2vl_2b.yaml` is consumed by several runners and cannot safely depend on a
   generic config interpolator. Its capability-report path should be treated as historical evidence
   or resolved explicitly from `SELFSIGHT_RUN_ROOT` by the consuming code; a raw `${...}` string in

@@ -9,6 +9,7 @@ from typing import Any
 
 import yaml
 
+from selfsight.data.readiness_precision import score_generated_precision_audit
 from selfsight.utils.hashing import rgb_sha256, sha256_file
 from selfsight.utils.jsonl import atomic_write_json, read_jsonl
 
@@ -61,7 +62,9 @@ def _mapping(report: Mapping[str, Any], key: str, label: str) -> Mapping[str, An
     return value
 
 
-def _require_identity(report: Mapping[str, Any], *, model_id: str, revision: str, label: str) -> None:
+def _require_identity(
+    report: Mapping[str, Any], *, model_id: str, revision: str, label: str
+) -> None:
     if report.get("model_id") != model_id or report.get("revision") != revision:
         raise RuntimeError(
             f"{label} identity mismatch: expected {model_id}@{revision}, got "
@@ -88,6 +91,37 @@ def _require_runtime_lock(
 
 def _evidence(path: Path, label: str) -> dict[str, Any]:
     return {"label": label, "path": str(path), "sha256": sha256_file(path)}
+
+
+def validate_human_precision_artifacts(human: Mapping[str, Any]) -> None:
+    """Recursively validate the exact blind-review sheet and hidden answer key."""
+
+    for field, hash_field, label in (
+        ("review_csv", "review_csv_sha256", "blind review CSV"),
+        ("answer_key", "answer_key_sha256", "blind review answer key"),
+    ):
+        path = Path(str(human.get(field, ""))).resolve()
+        expected = human.get(hash_field)
+        if not path.is_file() or not isinstance(expected, str):
+            raise RuntimeError(f"{label} evidence is unavailable")
+        if sha256_file(path) != expected:
+            raise RuntimeError(f"{label} SHA-256 mismatch")
+
+
+def validate_human_precision_report(
+    human: Mapping[str, Any], *, families: list[str], threshold: float
+) -> None:
+    """Re-score immutable blind annotations and require an exact report match."""
+
+    validate_human_precision_artifacts(human)
+    recomputed = score_generated_precision_audit(
+        str(human["review_csv"]),
+        str(human["answer_key"]),
+        families=families,
+        threshold=threshold,
+    )
+    if dict(human) != recomputed:
+        raise RuntimeError("A3 human report differs from a fresh score of its bound evidence")
 
 
 def validate_generated_artifacts(generated: Mapping[str, Any]) -> dict[str, int]:
@@ -153,9 +187,7 @@ def _validate_predecessor(
         raise RuntimeError("Fallback predecessor candidate rank is not immediately prior")
     expected = _mapping(predecessor, "fallback", "predecessor decision").get("next_model_id")
     if expected != backbone["backbone_id"]:
-        raise RuntimeError(
-            f"Predecessor authorizes {expected!r}, not {backbone['backbone_id']!r}"
-        )
+        raise RuntimeError(f"Predecessor authorizes {expected!r}, not {backbone['backbone_id']!r}")
     evidence = _mapping(predecessor, "evidence", "predecessor decision")
     required_evidence = {
         "backbone_config",
@@ -182,14 +214,35 @@ def _validate_predecessor(
             raise RuntimeError(f"Unavailable predecessor evidence: {label}")
         if sha256_file(evidence_path) != evidence_hash:
             raise RuntimeError(f"Predecessor evidence SHA-256 mismatch: {label}")
-    if predecessor.get("decision_mode") == "upstream_stop_before_human_and_a4":
+    decision_mode = predecessor.get("decision_mode")
+    if decision_mode == "upstream_stop_before_human_and_a4":
         skipped = set(predecessor.get("skipped_by_stop_rule", ()))
         if skipped != {"blind_human_precision", "a4_lora_backward_resume"}:
             raise RuntimeError("Upstream-stop predecessor has an invalid skipped-evidence contract")
         if evidence.get("human") is not None or evidence.get("lora") is not None:
             raise RuntimeError("Upstream-stop predecessor must not contain human/A4 evidence")
+    elif decision_mode == "stop_after_human_before_a4":
+        skipped = set(predecessor.get("skipped_by_stop_rule", ()))
+        if skipped != {"a4_lora_backward_resume"}:
+            raise RuntimeError("Human-stop predecessor has an invalid skipped-evidence contract")
+        if evidence.get("human") is None or evidence.get("lora") is not None:
+            raise RuntimeError("Human-stop predecessor must contain human but not A4 evidence")
     elif evidence.get("human") is None or evidence.get("lora") is None:
         raise RuntimeError("Completed predecessor is missing human/A4 evidence")
+    if evidence.get("human") is not None:
+        _, human = _read_json(str(evidence["human"]["path"]), "predecessor human report")
+        if decision_mode == "stop_after_human_before_a4" or "review_csv" in human:
+            _, predecessor_readiness = _read_yaml(
+                str(evidence["readiness_config"]["path"]),
+                "predecessor readiness config",
+            )
+            validate_human_precision_report(
+                human,
+                families=[str(item) for item in predecessor_readiness["main_families"]],
+                threshold=float(
+                    predecessor_readiness["thresholds"]["generated"]["verifier_precision_min"]
+                ),
+            )
     return {**_evidence(path, "predecessor"), "model_id": predecessor.get("model_id")}
 
 
@@ -200,25 +253,33 @@ def finalize_joint_readiness_stop(
     canary_report_path: str | Path,
     reference_report_path: str | Path,
     generated_report_path: str | Path,
+    human_report_path: str | Path | None = None,
     output_path: str | Path | None = None,
     predecessor_path: str | Path | None = None,
 ) -> dict[str, Any]:
-    """Freeze an upstream A3 failure without fabricating human or A4 evidence."""
+    """Freeze an A3 failure without fabricating evidence after the failed check."""
 
     backbone_path, backbone = _read_yaml(backbone_config_path, "backbone config")
     readiness_path, readiness = _read_yaml(readiness_config_path, "readiness config")
     canary_path, canary = _read_json(canary_report_path, "A1 canary report")
     reference_path, reference = _read_json(reference_report_path, "A2 reference report")
     generated_path, generated = _read_json(generated_report_path, "A3 generated report")
+    human_path: Path | None = None
+    human: dict[str, Any] | None = None
+    if human_report_path is not None:
+        human_path, human = _read_json(human_report_path, "A3 blind-human report")
     model_id = str(backbone["backbone_id"])
     revision = str(backbone["revision"])
     source_revision = str(backbone["source"]["revision"])
     dependencies = {str(key): str(value) for key, value in backbone["dependencies"].items()}
-    for label, report in (
+    identity_reports = [
         ("A1 canary", canary),
         ("A2 reference", reference),
         ("A3 generated", generated),
-    ):
+    ]
+    if human is not None:
+        identity_reports.append(("A3 blind-human", human))
+    for label, report in identity_reports:
         _require_identity(report, model_id=model_id, revision=revision, label=label)
         _require_runtime_lock(
             report,
@@ -260,9 +321,7 @@ def finalize_joint_readiness_stop(
     }
     overall_coverage = _fraction(generated["overall_coverage"], "A3 overall coverage")
     overall_oracle = _fraction(generated["overall_oracle_at_4"], "A3 overall Oracle@4")
-    swing = _points(
-        generated["fixed_seed_coverage_swing_points"], "A3 fixed-seed coverage swing"
-    )
+    swing = _points(generated["fixed_seed_coverage_swing_points"], "A3 fixed-seed coverage swing")
     generated_retained = tuple(
         family
         for family in main_families
@@ -285,14 +344,54 @@ def finalize_joint_readiness_stop(
     automatic_pass = all(automatic_c.values())
     if bool(generated.get("passed_without_human_precision")) != automatic_pass:
         raise RuntimeError("A3 automatic pass flag is internally inconsistent")
-    if automatic_pass:
-        raise RuntimeError("A3 automatic Gate is green; blind-human audit and A4 are required")
+    family_precision: Mapping[str, Any] | None = None
+    overall_precision: float | None = None
+    if human is None:
+        if automatic_pass:
+            raise RuntimeError("A3 automatic Gate is green; blind-human audit and A4 are required")
+        decision_mode = "upstream_stop_before_human_and_a4"
+        skipped = ["blind_human_precision", "a4_lora_backward_resume"]
+    else:
+        if not automatic_pass:
+            raise RuntimeError("A3 automatic Gate is red; use the upstream stop path")
+        validate_human_precision_report(
+            human,
+            families=list(main_families),
+            threshold=float(generated_thresholds["verifier_precision_min"]),
+        )
+        if human.get("blind") is not True:
+            raise RuntimeError("A3 human report is not marked as blinded")
+        required = int(human.get("required_annotations", -1))
+        complete = int(human.get("complete_annotations", -1))
+        incomplete = human.get("incomplete_ids")
+        if required <= 0 or complete != required or incomplete != []:
+            raise RuntimeError("A3 human report is incomplete")
+        recorded_threshold = _fraction(human.get("threshold"), "A3 human threshold")
+        precision_threshold = float(generated_thresholds["verifier_precision_min"])
+        if recorded_threshold != precision_threshold:
+            raise RuntimeError("A3 human precision threshold differs from the readiness config")
+        family_precision = _mapping(human, "family_precision", "A3 blind-human")
+        audited_counts = _mapping(human, "family_audited_counts", "A3 blind-human")
+        missing_precision = sorted(set(main_families).difference(family_precision))
+        missing_counts = sorted(set(main_families).difference(audited_counts))
+        if missing_precision or missing_counts:
+            raise RuntimeError("A3 human report is missing registered family evidence")
+        if any(int(audited_counts[family]) <= 0 for family in main_families):
+            raise RuntimeError("A3 human report has an unaudited family")
+        overall_precision = _fraction(human["overall_precision"], "A3 overall precision")
+        calculated_human_pass = overall_precision >= precision_threshold
+        if bool(human.get("passed")) != calculated_human_pass:
+            raise RuntimeError("A3 human pass flag is internally inconsistent")
+        if calculated_human_pass:
+            raise RuntimeError("A3 human Gate is green; A4 is required")
+        decision_mode = "stop_after_human_before_a4"
+        skipped = ["a4_lora_backward_resume"]
     predecessor = _validate_predecessor(backbone, predecessor_path)
     fallback_model = backbone.get("fallback", {}).get("on_failure")
     report = {
         "schema_version": 2,
         "gate": "minus_2_joint_readiness",
-        "decision_mode": "upstream_stop_before_human_and_a4",
+        "decision_mode": decision_mode,
         "model_id": model_id,
         "revision": revision,
         "candidate_rank": int(backbone["candidate_rank"]),
@@ -316,7 +415,7 @@ def finalize_joint_readiness_stop(
             "minus_2c": {"blind_verifier_precision": False, **automatic_c},
             "minus_2d": {"joint_eligible_families": False},
         },
-        "skipped_by_stop_rule": ["blind_human_precision", "a4_lora_backward_resume"],
+        "skipped_by_stop_rule": skipped,
         "observation_eligible_families": list(observation_families),
         "generated_retained_families": list(generated_retained),
         "selected_eligible_families": [],
@@ -327,8 +426,8 @@ def finalize_joint_readiness_stop(
             "overall_coverage": overall_coverage,
             "overall_oracle_at_4": overall_oracle,
             "fixed_seed_coverage_swing_points": swing,
-            "overall_precision": None,
-            "family_precision": None,
+            "overall_precision": overall_precision,
+            "family_precision": None if family_precision is None else dict(family_precision),
             "artifact_counts": artifact_counts,
         },
         "thresholds": thresholds,
@@ -338,7 +437,7 @@ def finalize_joint_readiness_stop(
             "canary": _evidence(canary_path, "canary"),
             "reference": _evidence(reference_path, "reference"),
             "generated": _evidence(generated_path, "generated"),
-            "human": None,
+            "human": None if human_path is None else _evidence(human_path, "human"),
             "lora": None,
             "predecessor": predecessor,
         },
@@ -356,6 +455,31 @@ def finalize_joint_readiness_stop(
             raise FileExistsError(f"Refusing to overwrite Gate -2 decision: {output_path}")
         atomic_write_json(output_path, report)
     return report
+
+
+def finalize_joint_readiness_stop_after_human(
+    *,
+    backbone_config_path: str | Path,
+    readiness_config_path: str | Path,
+    canary_report_path: str | Path,
+    reference_report_path: str | Path,
+    generated_report_path: str | Path,
+    human_report_path: str | Path,
+    output_path: str | Path | None = None,
+    predecessor_path: str | Path | None = None,
+) -> dict[str, Any]:
+    """Freeze a complete blind-human A3 failure and skip the now-irrelevant A4."""
+
+    return finalize_joint_readiness_stop(
+        backbone_config_path=backbone_config_path,
+        readiness_config_path=readiness_config_path,
+        canary_report_path=canary_report_path,
+        reference_report_path=reference_report_path,
+        generated_report_path=generated_report_path,
+        human_report_path=human_report_path,
+        output_path=output_path,
+        predecessor_path=predecessor_path,
+    )
 
 
 def finalize_joint_readiness(
@@ -382,9 +506,7 @@ def finalize_joint_readiness(
     model_id = str(backbone["backbone_id"])
     revision = str(backbone["revision"])
     source_revision = str(backbone["source"]["revision"])
-    dependency_revisions = {
-        str(key): str(value) for key, value in backbone["dependencies"].items()
-    }
+    dependency_revisions = {str(key): str(value) for key, value in backbone["dependencies"].items()}
     for label, report in (
         ("A1 canary", canary),
         ("A2 reference", reference),
@@ -425,10 +547,8 @@ def finalize_joint_readiness(
     gate_b_checks = {
         "family_open_accuracy": len(observation_families)
         >= int(reference_thresholds["families_passing_min"]),
-        "yes_bias": yes_bias_points
-        <= float(reference_thresholds["yes_bias_points_max"]),
-        "repeat_agreement": repeat_agreement
-        >= float(reference_thresholds["repeat_agreement_min"]),
+        "yes_bias": yes_bias_points <= float(reference_thresholds["yes_bias_points_max"]),
+        "repeat_agreement": repeat_agreement >= float(reference_thresholds["repeat_agreement_min"]),
         "abstain_rate": abstain_rate <= float(reference_thresholds["abstain_rate_max"]),
     }
 

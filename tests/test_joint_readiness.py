@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import json
 from pathlib import Path
 
@@ -11,9 +12,11 @@ from selfsight.analysis.readiness import (
     _validate_predecessor,
     finalize_joint_readiness,
     finalize_joint_readiness_stop,
+    finalize_joint_readiness_stop_after_human,
     require_joint_readiness,
 )
-from selfsight.utils.hashing import rgb_sha256, sha256_file
+from selfsight.data.readiness_precision import score_generated_precision_audit
+from selfsight.utils.hashing import rgb_sha256, sha256_file, sha256_json
 
 FAMILIES = ("existence", "count", "color", "size", "spatial", "binding")
 
@@ -187,6 +190,104 @@ def test_joint_readiness_upstream_stop_rejects_colliding_a3_artifacts(tmp_path: 
         )
 
 
+def test_joint_readiness_human_stop_binds_review_and_skips_only_a4(tmp_path: Path):
+    evidence = _evidence(tmp_path)
+    generated = json.loads(evidence["generated"].read_text(encoding="utf-8"))
+    generated["checks"] = {
+        "overall_primary_answer_coverage": True,
+        "retained_family_coverage": True,
+        "oracle_at_4": True,
+        "fixed_seed_coverage_swing": True,
+    }
+    generated["passed_without_human_precision"] = True
+    _write_json(evidence["generated"], generated)
+
+    common = json.loads(evidence["human"].read_text(encoding="utf-8"))
+    answers = {
+        "existence": "yes",
+        "count": "1",
+        "color": "red",
+        "size": "small",
+        "spatial": "yes",
+        "binding": "red",
+    }
+    key_rows = []
+    annotations = []
+    for index, family in enumerate(FAMILIES):
+        audit_id = f"a{index}"
+        key_rows.append(
+            {
+                "audit_id": audit_id,
+                "family": family,
+                "primary_question": {
+                    "question_id": f"q{index}",
+                    "atom_id": audit_id,
+                    "family": family,
+                    "text": "Answer from visible pixels.",
+                    "expected_answer": answers[family],
+                    "question_format": "open",
+                    "choices": [],
+                    "choice_order_seed": 0,
+                },
+                "verifier_answer": answers[family],
+            }
+        )
+        annotations.append(
+            {
+                "audit_id": audit_id,
+                "human_answer": "no" if index == 0 else answers[family],
+                "parseable_yes_no": "yes",
+                "reviewer_id": "reviewer",
+            }
+        )
+    review = tmp_path / "review.csv"
+    with review.open("w", encoding="utf-8-sig", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(annotations[0]))
+        writer.writeheader()
+        writer.writerows(annotations)
+    answer_key = tmp_path / "answer-key.json"
+    _write_json(
+        answer_key,
+        {
+            **common,
+            "rows": key_rows,
+            "selection_digest": sha256_json(key_rows),
+        },
+    )
+    human = score_generated_precision_audit(
+        review,
+        answer_key,
+        families=list(FAMILIES),
+        threshold=0.95,
+    )
+    _write_json(evidence["human"], human)
+
+    decision = finalize_joint_readiness_stop_after_human(
+        backbone_config_path="configs/backbones/showo2_1p5b.yaml",
+        readiness_config_path="configs/readiness_v2.2.yaml",
+        canary_report_path=evidence["canary"],
+        reference_report_path=evidence["reference"],
+        generated_report_path=evidence["generated"],
+        human_report_path=evidence["human"],
+    )
+    assert decision["decision_mode"] == "stop_after_human_before_a4"
+    assert decision["skipped_by_stop_rule"] == ["a4_lora_backward_resume"]
+    assert decision["metrics"]["overall_precision"] == pytest.approx(5 / 6)
+    assert decision["evidence"]["human"]["sha256"] == sha256_file(evidence["human"])
+    assert decision["evidence"]["lora"] is None
+
+    review.write_text("tampered\n", encoding="utf-8")
+    with pytest.raises(RuntimeError, match="blind review CSV SHA-256 mismatch"):
+        finalize_joint_readiness_stop_after_human(
+            backbone_config_path="configs/backbones/showo2_1p5b.yaml",
+            readiness_config_path="configs/readiness_v2.2.yaml",
+            canary_report_path=evidence["canary"],
+            reference_report_path=evidence["reference"],
+            generated_report_path=evidence["generated"],
+            human_report_path=evidence["human"],
+        )
+
+
 def test_joint_readiness_rejects_tampered_a3_rows(tmp_path: Path):
     evidence = _evidence(tmp_path)
     generated = json.loads(evidence["generated"].read_text(encoding="utf-8"))
@@ -247,9 +348,7 @@ def test_fallback_requires_failed_predecessor_authorization(tmp_path: Path):
     backbone["backbone_id"] = "showlab/show-o2-1.5B-HQ"
     backbone["revision"] = "d3a220ec55feaacbdfcb053847edee14edd4e69a"
     del backbone["dependencies"]["showlab/show-o2-1.5B"]
-    backbone["dependencies"]["showlab/show-o2-1.5B-HQ"] = (
-        "d3a220ec55feaacbdfcb053847edee14edd4e69a"
-    )
+    backbone["dependencies"]["showlab/show-o2-1.5B-HQ"] = "d3a220ec55feaacbdfcb053847edee14edd4e69a"
     backbone["fallback"]["on_failure"] = "showlab/show-o2-7B"
     hq_config = second_root / "hq.yaml"
     hq_config.write_text(yaml.safe_dump(backbone, sort_keys=False), encoding="utf-8")
@@ -287,8 +386,6 @@ def test_fallback_finalizer_rejects_tampered_predecessor_evidence(tmp_path: Path
     )
     with evidence["generated"].open("a", encoding="utf-8") as handle:
         handle.write(" ")
-    hq = yaml.safe_load(
-        Path("configs/backbones/showo2_1p5b_hq.yaml").read_text(encoding="utf-8")
-    )
+    hq = yaml.safe_load(Path("configs/backbones/showo2_1p5b_hq.yaml").read_text(encoding="utf-8"))
     with pytest.raises(RuntimeError, match="Predecessor evidence SHA-256 mismatch"):
         _validate_predecessor(hq, predecessor_path)
