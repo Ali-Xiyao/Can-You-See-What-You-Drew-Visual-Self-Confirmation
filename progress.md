@@ -664,3 +664,6 @@
 - Final repository verification passes: Ruff reports no issues across `src`, `scripts` and `tests`,
   and the complete test suite passes 106/106. The only warnings are the existing Matplotlib/Pillow
   PDF backend deprecation notices.
+- Committed v2.3 as `5f2d7d018574576ed883664971b70ebc3ee1f3e9` and pushed
+  `experiment/v2.3-rfo-gold` to the GitHub origin. The user-owned root `review_blinded.csv` remains
+  untracked and was not included.
