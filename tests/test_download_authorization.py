@@ -1,11 +1,15 @@
 import csv
 import json
+import subprocess
 from pathlib import Path
 
 import pytest
 from PIL import Image
 
-from scripts.download_models import _validate_fallback_download_authorization
+from scripts.download_models import (
+    _run_resumable_command,
+    _validate_fallback_download_authorization,
+)
 from selfsight.data.readiness_precision import score_generated_precision_audit
 from selfsight.utils.hashing import rgb_sha256, sha256_file, sha256_json
 
@@ -194,3 +198,29 @@ def test_7b_download_accepts_hashed_human_stop_predecessor(tmp_path: Path) -> No
     decision = _decision(tmp_path, human_stop=True)
     authorization = _validate_fallback_download_authorization("readiness_fallback_7b", decision)
     assert authorization["authorized_model_id"] == "showlab/show-o2-7B"
+
+
+def test_resumable_command_restarts_transient_process_failures(monkeypatch) -> None:
+    attempts = []
+    delays = []
+
+    def fake_run(command, *, check):
+        attempts.append((command, check))
+        if len(attempts) < 3:
+            raise subprocess.CalledProcessError(1, command)
+
+    monkeypatch.setattr("scripts.download_models.subprocess.run", fake_run)
+    monkeypatch.setattr("scripts.download_models.sleep", delays.append)
+    _run_resumable_command(
+        ["aria2c", "--continue=true"],
+        label="model/shard",
+        max_attempts=3,
+        base_delay_seconds=2,
+    )
+
+    assert attempts == [
+        (["aria2c", "--continue=true"], True),
+        (["aria2c", "--continue=true"], True),
+        (["aria2c", "--continue=true"], True),
+    ]
+    assert delays == [2, 4]

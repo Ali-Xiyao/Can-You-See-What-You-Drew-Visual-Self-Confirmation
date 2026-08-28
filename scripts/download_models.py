@@ -11,6 +11,7 @@ import subprocess
 from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from time import sleep
 from typing import Any
 from urllib.parse import quote
 
@@ -203,6 +204,32 @@ def _filter_inventory(
     ]
 
 
+def _run_resumable_command(
+    command: list[str],
+    *,
+    label: str,
+    max_attempts: int = 20,
+    base_delay_seconds: float = 5.0,
+) -> None:
+    """Restart an interrupted segmented transfer while preserving its aria2 state."""
+
+    if max_attempts < 1:
+        raise ValueError("max_attempts must be positive")
+    for attempt in range(1, max_attempts + 1):
+        try:
+            subprocess.run(command, check=True)
+            return
+        except subprocess.CalledProcessError:
+            if attempt == max_attempts:
+                raise
+            delay = min(30.0, base_delay_seconds * attempt)
+            print(
+                f"Transient aria2 failure for {label}; "
+                f"resuming after {delay:.0f}s ({attempt}/{max_attempts})."
+            )
+            sleep(delay)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--lock", type=Path, default=Path("configs/models.lock.yaml"))
@@ -376,7 +403,7 @@ def main() -> None:
                     f"https://huggingface.co/{record_id}/resolve/{record_revision}/"
                     f"{quote(relative)}?download=true"
                 )
-                subprocess.run(
+                _run_resumable_command(
                     [
                         str(aria2),
                         "--continue=true",
@@ -396,7 +423,7 @@ def main() -> None:
                         f"--out={destination.name}",
                         url,
                     ],
-                    check=True,
+                    label=f"{record_id}/{relative}",
                 )
                 if destination.stat().st_size != expected_size:
                     raise RuntimeError(f"Size mismatch for {record_id}/{relative}")
