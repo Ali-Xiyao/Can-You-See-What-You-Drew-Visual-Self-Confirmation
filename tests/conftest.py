@@ -14,7 +14,8 @@ def registered_splits():
 
 @pytest.fixture(autouse=True)
 def h_drive_environment(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
-    project_root = tmp_path / "project"
+    repository = Path(__file__).resolve().parents[1]
+    project_root = repository / "tmp" / "pytest" / tmp_path.parent.name / tmp_path.name / "project"
     roots = {
         "SELFSIGHT_PROJECT_ROOT": str(project_root),
         "SELFSIGHT_CACHE_ROOT": str(project_root / "cache"),

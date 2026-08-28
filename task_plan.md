@@ -1,25 +1,27 @@
-# Task Plan: Visual Self-Confirmation v2.2 Joint Readiness
+# Task Plan: Visual Self-Confirmation v2.3 RFO-Gold Mechanism Gate
 
 ## Goal
 
-Determine whether an openly reproducible unified backbone can both draw and read the controlled
-visual concepts required by Visual Self-Confirmation. Only a backbone that passes the registered
-Joint Generate–Observe Readiness gate may enter E1/E2. Local work targets one engineering seed on
-two independent RTX 3090 cards; formal three-seed experiments remain single-A800-80GB work.
+Preserve v2.2 as a frozen conditional-negative result, then determine locally whether perfect
+candidate feedback can produce a measurable training advantage. v2.3 first tests RFO-Gold as a
+mechanism positive control on the existing Show-o2-1.5B-HQ backbone. No A800 work or new model
+download is allowed while the mechanism gate remains unresolved.
 
 ## Authoritative Inputs
 
 - `Can You See What You Drew Visual Self-Confirmation.md` (frozen proposal v2.1)
 - `docs/PROPOSAL_V2.2_AMENDMENT.md` (normative v2.2 amendment, to be implemented here)
 - User-approved model/backbone revision dated 2026-08-28
+- User-approved v2.3 RFO-Gold mechanism-first design dated 2026-08-29
 - Frozen v2.1 Git tag: `v2.1-showo-gate-red`
-- Active branch: `experiment/v2.2-joint-readiness`
+- Frozen v2.2 implementation commit: `509e774631fadcb1acb8a9820327d697e312dc32`
+- Active branch target: `experiment/v2.3-rfo-gold`
 
 ## Current Phase
 
-Phase 8: the registered v2.2 ladder remains permanently frozen red. At the user's explicit request,
-continue only in an isolated `exploratory-post-gate` namespace using already-downloaded weights.
-The goal is engineering/diagnostic completion, not retroactive formal evidence.
+v2.3 is fail-closed at Phase 12. The first gradient repeat made the 64/96 informative-pool floor
+mathematically unreachable after 42 screened prompts, so repeats 2/3 and all three-seed training are
+not tested. A future candidate-bank probe requires a separately named amendment; A800 remains N/T.
 
 ## Registered Backbone Ladder
 
@@ -197,6 +199,61 @@ families means the scientific claim is unsupported for that backbone and stops p
 - [x] Do not run formal three-seed/A800 work unless separately authorized after local diagnostics.
 - **Status:** completed_local_exploratory_formal_not_authorized
 
+### Phase 9 — v2.3 protocol and isolation
+
+- [x] Push `experiment/v2.3-rfo-gold`, created from frozen implementation commit `509e774`.
+- [x] Add a normative v2.3 amendment and a hash-bound local authorization that cannot modify or
+  reinterpret v2.2 evidence.
+- [x] Register existing-only model assets, three local seeds, K=4, fixed diffusion/dropout RNG and
+  the four trajectories Base/Naive/RFO-Self/RFO-Gold.
+- [x] Lock mechanism-first stop rules before any new training run.
+- **Status:** completed
+
+### Phase 10 — v2.3 visual semantics and calibration
+
+- [x] Replace ambiguous `square` wording in the v2.3 main path with `box`/`quadrilateral`; record an
+  explicit aspect-ratio policy and keep v2.1/v2.2 manifests byte-for-byte unchanged.
+- [x] Keep `existence/color/spatial` as the main mechanism families; place count/binding in a hard
+  diagnostic tier and exclude absolute size from the mechanism gate.
+- [x] Materialize versioned v2.3 train/probe/outcome manifests with zero overlap and exact hashes.
+- [x] Produce a blind human/verifier calibration packet and require >=95% agreement under the new
+  vocabulary before training. If human labels are not yet available, stop at this gate.
+- **Status:** completed
+
+### Phase 11 — RFO-Gold and informative candidate selection
+
+- [x] Add `rfo_gold` as the third selection/gradient arm without changing the Naive or RFO-Self
+  objectives; do not instantiate train checkpoints after a red gradient gate.
+- [x] Generate K=4 paired candidates with fixed seeds and select only pools whose gold-verifier
+  best/worst score gap clears a preregistered informativeness threshold.
+- [x] Keep prompt IDs and candidate seeds identical across Naive/RFO-Self/RFO-Gold; abstain
+  symmetrically when a pool is not informative.
+- [x] Add packet resume, candidate-pool identity, selector isolation and blind-wire evidence audits;
+  checkpoint/resume remains N/T because the survival gate forbids training initialization.
+- **Status:** completed_selector_training_not_authorized
+
+### Phase 12 — v2.3 gradient survival gate
+
+- [x] Expand the fixed gradient probe to 96 items; stop repeat 1 at the fail-closed mathematical
+  boundary (9 informative after 42 screened, optimistic maximum 63 < 64), so repeats 2/3 are N/T.
+- [x] Compare identical, Naive, RFO-Self and RFO-Gold gradients on the nine available diagnostic
+  pools, including
+  cosine, norm ratio, per-block statistics and split-half noise intervals.
+- [x] Apply identical cosine >=0.999 and stable Gold/noise ordering requirements. Identical is 1.0,
+  but sample supply fails and the Gold cosine remains inside the wide split-half interval; stop and
+  diagnose the candidate probe before any training.
+- **Status:** completed_red_informative_pool_supply
+
+### Phase 13 — three-seed local short curves
+
+- [ ] Run three small local seeds only if semantics, RFO-Gold selection and gradient gates pass.
+- [ ] Produce Base/Naive/RFO-Self/RFO-Gold checkpoint curves with external correctness, internal
+  score, verifier coverage, public-view consistency and SCFR with explicit denominators.
+- [ ] Decide: Gold red -> redesign loss/probe; Gold green and Self red -> improve self-observation;
+  Gold/Self green but measurability red -> consider backbone only after a new authorization.
+- [x] Keep A800 migration N/T until the v2.3 local mechanism gate is green.
+- **Status:** not_tested_gradient_gate_red
+
 ## Hard Stops
 
 - Do not download any additional model or model weight without fresh, explicit user approval. If a
@@ -211,6 +268,10 @@ families means the scientific claim is unsupported for that backbone and stops p
 - Never generalize beyond the Gate -2 eligible families.
 - Post-Gate exploratory outputs must never be written into a frozen readiness directory, used to
   overwrite a decision, or described as preregistered/formal evidence.
+- v2.3 must not write inside any v2.2 output directory. Its data and runs live under versioned
+  `selfsight-v2.3` and `runs/v2.3-rfo-gold` roots.
+- Do not start v2.3 training before the new vocabulary's blind human/verifier agreement reaches 95%.
+- Do not scale a failed RFO-Gold mechanism gate; a red Gold control routes to loss/probe diagnosis.
 
 ## Fixed Local Resource Policy
 

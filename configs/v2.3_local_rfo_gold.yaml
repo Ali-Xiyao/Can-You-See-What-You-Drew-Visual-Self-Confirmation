@@ -1,0 +1,85 @@
+profile: v2p3_local_rfo_gold
+benchmark_version: "2.3"
+seed: 20260829
+seeds: [20260829, 20260830, 20260831]
+
+paths:
+  cache_root: ${SELFSIGHT_CACHE_ROOT}
+  data_root: ${SELFSIGHT_DATA_ROOT}
+  run_root: ${SELFSIGHT_RUN_ROOT}
+  model_root: ${SELFSIGHT_MODEL_ROOT}
+  tmp_root: ${SELFSIGHT_TMP_ROOT}
+
+hardware:
+  generator_device: cuda:0
+  observer_device: cuda:1
+  precision: bf16
+  attention: sdpa
+  distributed: false
+
+model:
+  trainable_id: showlab/show-o2-1.5B-HQ
+  backbone_config: configs/backbones/showo2_1p5b_hq.yaml
+  language_base_id: Qwen/Qwen2.5-1.5B-Instruct
+  vision_tower_id: google/siglip-so400m-patch14-384
+  image_autoencoder_id: Wan-AI/Wan2.1-T2V-14B
+  image_resolution: 512
+  generation_timesteps: 20
+  guidance_scale: 5.0
+  temperature: 1.0
+
+vocabulary:
+  square_display_name: box
+  quadrilateral_aspect_ratio_min: 0.50
+  quadrilateral_aspect_ratio_max: 2.00
+  human_verifier_agreement_min: 0.95
+
+data:
+  primary_families: [existence, color, spatial]
+  hard_families: [count, binding]
+  train_prompts: 432
+  gradient_probe: 96
+  outcome_prompts: 90
+  hard_outcome_prompts: 60
+  images_per_prompt: 2
+
+training:
+  arms: [naive, rfo_self, rfo_gold]
+  rounds: 3
+  search_prompts_per_round: 48
+  accepted_prompts_per_round: 16
+  candidate_k: 4
+  informative_gold_gap_min: 1.0
+  optimizer_steps_per_round: 8
+  micro_batch_size: 1
+  gradient_accumulation_steps: 8
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  warmup_ratio: 0.10
+  max_grad_norm: 1.0
+  understanding_replay_ratio: 0.25
+  gradient_checkpointing: true
+  lora:
+    rank: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: []
+    target_selection_required: true
+    forbidden_trainable: [embed_tokens, lm_head, image_embedder_und, und_trans, fusion_proj]
+
+gradient_probe:
+  size: 96
+  repeats: 3
+  candidate_k: 4
+  minimum_common_informative: 64
+  identical_cosine_min: 0.999
+  naive_gold_cosine_max: 0.995
+  gold_score_advantage_min: 0.10
+  required_passing_repeats: 2
+  noise_floor_splits: 4
+
+gates:
+  verifier_agreement_min: 0.95
+  observer_family_accuracy_min: 0.80
+  forced_choice_bias_max: 0.10
+  observer_abstain_max: 0.20

@@ -540,3 +540,43 @@
   numeric zero. The final exploratory Figure 1 says that GDA was not reported because Gate -1b
   failed and prints the sparse SCFR denominator; this preserves the distinction between a null
   measurement, a negative measurement and an unrun measurement.
+- v2.3's highest-information intervention is an oracle selector, not additional scale. If Gold fails
+  under the same candidates and updates as Naive, self-observer quality is not the limiting variable;
+  the correction objective, sample weighting or gradient probe must be revised before more compute.
+- The `square`/rectangle disagreement is a construct-definition problem rather than merely verifier
+  noise. v2.3 must either use the appearance-tolerant term `box`/`quadrilateral` or state an explicit
+  aspect-ratio tolerance, then re-establish >=95% blind human/verifier agreement before training.
+- Existing selection primitives already support arbitrary observation maps and the gradient path
+  already computes a `gold` criterion, but the real training loop hard-codes only
+  `("naive", "rfo_self")` and pairwise balancing. v2.3 should extend the arm contract and use one
+  common accepted-prompt intersection across all three trainable arms.
+- The contour verifier already classifies four-vertex components with aspect ratio 0.5--2.0 as the
+  internal `Shape.SQUARE`. Changing the enum would break frozen manifests; the safe versioned design
+  is to retain `square` as the internal geometry code while exposing `box`/`quadrilateral` in v2.3
+  prompts and atomic questions, with the 0.5--2.0 aspect ratio stated as protocol metadata.
+- A primary-atom gold score is naturally binary. With K=4, an informative pool can be defined before
+  training as `max(score)-min(score) >= 1.0`, meaning at least one verifier-correct and one
+  verifier-incorrect candidate. This directly instantiates the requested visibly good/bad contrast
+  without tuning a learned confidence threshold.
+- The frozen HQ blind audit contains 28 annotated main-path cases: existence n=10, color n=10 and
+  spatial n=8. Each family has verifier-human precision 1.0. The user explicitly stated that
+  rectangle-like square outputs were counted as correct, so these labels already follow the proposed
+  appearance-tolerant `box` interpretation. v2.3 can derive a hash-bound calibration artifact by
+  rewording only the visible question text and retaining the original answers/RGB hashes; it must
+  describe this as reused calibration evidence, not a new blind annotation round.
+- Frozen v2.2 registry paths still contain historical `H:\selfsight-data` strings even though the
+  project-root migration provides current files under `data/selfsight-v2.2`. New v2.3 artifacts
+  should record resolved project-root paths and content hashes rather than copying stale path text.
+- On the v2.3 HQ probe, random K=4 candidate generation does not supply a sufficiently large Gold
+  contrast set. After 42/96 screened prompts only nine common pools contained both correct and
+  incorrect candidates, making the registered 64-pool floor mathematically unreachable even if all
+  54 remaining prompts passed. The mechanism experiment must stop at candidate construction rather
+  than treating missing Gold opportunities as a null training effect.
+- The nine-pool diagnostic nevertheless validates the implementation path: identical and Naive/Self
+  cosines are exactly 1.0, while Naive/Gold is 0.274 and Gold improves the selected verifier score by
+  0.25 over eight finite comparisons. Because the split-half interval is [-0.082, 0.322], this Gold
+  direction is inside sampling noise and cannot authorize training or support a mechanism claim.
+- A candidate-bank design is the clean next probe intervention: search a preregistered, bounded bank
+  using disjoint seeds, then present a shared K=4 subset with both correct and incorrect candidates.
+  This changes sample construction rather than thresholds, and must be versioned separately so the
+  v2.3 supply failure remains immutable.

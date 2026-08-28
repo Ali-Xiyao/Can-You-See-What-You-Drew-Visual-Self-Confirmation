@@ -591,3 +591,76 @@
   and `pdffonts` confirms embedded CID TrueType subsets with Unicode maps.
 - Wrote the final non-formal summary beside the run. The dual-3090 local engineering loop is complete
   without any new model download; the frozen v2.2 red conclusion and A800 hard stop remain unchanged.
+
+## Session: 2026-08-29 — v2.3 RFO-Gold mechanism gate
+
+- **Status:** completed_fail_closed
+- User explicitly selected a mechanism-first v2.3 and rejected immediate A800 migration.
+- Locked intent: preserve all v2.2 thresholds/results; use existing Show-o2-1.5B-HQ and existing
+  Qwen observer only; add RFO-Gold, K=4 informative pools, fixed diffusion/dropout RNG, a 96-item
+  gradient probe repeated three times and three local short-curve seeds.
+- Added Phase 9-13 survival gates to `task_plan.md`. Visual-semantics agreement >=95% is a hard stop
+  before training, and a red RFO-Gold control stops scale-up in favor of objective/probe diagnosis.
+- Created local branch `experiment/v2.3-rfo-gold` from `509e774`; it is not pushed yet.
+- Initial code audit found reusable gold-scoring/gradient primitives but a two-arm-only real loop.
+  Frozen schemas will keep `square` internally; the v2.3 display vocabulary will use `box` with the
+  existing contour verifier's explicit 0.5--2.0 four-vertex aspect-ratio tolerance.
+
+### Errors encountered
+
+| Error | Attempt | Resolution |
+|---|---:|---|
+| Looked for nonexistent `human_precision_report.json` in the frozen HQ directory | 1 | Use the registered filename `a3-human-r1.json`; do not retry the guessed path. |
+| Guessed v1 manifest names `probe.jsonl`/`outcome.jsonl` | 1 | Registry confirms canonical names are `tier_a_probe.jsonl` and `tier_a_outcome.jsonl`. |
+| Passed a YAML config path to Ruff as if it were Python | 1 | Restrict Ruff inputs to Python source/scripts/tests; validate YAML through `load_config` and tests. |
+| Combined patch contained a malformed empty hunk | 1 | Reissued one valid contextual patch; no file was changed by the failed attempt. |
+| First v2.3 materialization found two shared template IDs between primary and hard outcome views | 1 | Prefix transformed template IDs with the v2.3 target split, then rebuild the failed-only output directory. |
+| Recursive deletion of failed-only v2.3 intermediate data was blocked by command policy | 1 | Preserved it by moving to `data/selfsight-v2.3.failed-template-overlap-20260829`; rebuilt at the canonical path. |
+| Used venv-style `Scripts/python.exe` paths after the environments had been migrated as Conda roots | 1 | Resolve and use the existing project-local `envs/showo2/python.exe` and `envs/core/python.exe` entry points. |
+| Requested nonexistent compatibility test file `tests/test_pilot.py` | 1 | Use the registered real-loop suite `tests/test_real_pilot_gates.py`; selection-only tests already pass. |
+| New gradient module had one unused `math` import | 1 | Removed the import before rerunning Ruff; no runtime output was created. |
+| First two full gradient CLI launches remained before output creation/GPU load on a cold H-drive Python start | 2 | Interrupted safely with no run artifacts, confirmed the module imports in 5.7 seconds, and added flushed stage markers before a third launch. |
+| A read-only PowerShell summary piped directly after `foreach`, causing an empty-pipe parser error | 1 | Stored the loop output in `$rows` before formatting; the running gradient process and packets were unaffected. |
+| Ruff required alphabetical order for the expanded v2.3 `__all__` export list | 1 | Reordered the export list before rerunning tests/audit; no runtime evidence changed. |
+| Full suite found two config tests receiving a C-drive root from the autouse test fixture | 1 | Derive unique test roots below the repository's H-drive `tmp/pytest` tree; keep the production H-drive validator unchanged. |
+| Initial residual-path `rg` expression used unsupported look-ahead in the default regex engine | 1 | Reran the same read-only audit with `--pcre2`; no forbidden C-drive/non-model legacy root or positive A800/download marker was found. |
+- The third launch completed the unusually slow cold PyTorch/Show-o2 load and established the intended
+  dual-card layout: about 9.3 GiB on GPU0 and 8.0 GiB on GPU1. The first 11 complete K=4 packets were
+  all noninformative. Interrupted during the next uncommitted packet to add a preregistered-threshold
+  impossibility stop: once observed informative plus every remaining prompt is still below 64, the
+  gate finalizes red without wasting two further independent repeats.
+
+- Audited the exact HQ human report/key. The v2.3 main-family subset has 28 complete labels and
+  100% verifier-human precision in each of existence/color/spatial. This clears the >=95% semantic
+  calibration threshold under the user's explicitly stated rectangle-as-square annotation policy,
+  provided the derived artifact records the reused-evidence status and box tolerance.
+- Added the normative v2.3 amendment and locked local config. Config digest is
+  `d9b7fca7fe2703ca07396edaa21722975861ab17bd3976a8352ad1e2602f746c`; it fixes three seeds,
+  K=4, 48 searched/16 accepted pools per round, three rounds, eight steps, and the 96x3 gradient gate.
+- Implemented version-isolated data transformation, box-language calibration, evidence-bound local
+  authorization and CLI builders. No source RGB, v2.2 manifest or frozen report is edited.
+- Canonical v2.3 data materialization passed: 432 train, 96 gradient probe, 90 primary outcome and
+  60 hard outcome rows. All 678 references passed RGB/atom verification; train/probe/outcome have
+  zero signature, template and prompt overlap. Registry digest is
+  `f1fd4de4de61093b4d19425cfb733c58d04a534194b4a980f4c534922a0176a9`.
+- Derived the v2.3 box calibration from the already blinded user labels: 28/28 main-family rows agree
+  with the generated-image verifier, both overall and per-family agreement are 1.0, clearing the
+  0.95 hard stop. The hash-bound local authorization is now valid for the gradient survival gate.
+- Implemented the three-arm symmetric informative-pool contract. RFO-Gold reads only generated RGB
+  through the tolerant contour verifier, and any abstention, noninformative Gold pool, or cross-arm
+  candidate mismatch removes the prompt identically from all three arms.
+- The v2.3 gradient survival gate stopped red at its exact mathematical boundary. After 42/96
+  prompts, only nine pools were common/informative (existence 6, color 2, spatial 1); even all 54
+  remaining prompts could yield at most 63, below the locked 64 floor. Repeats 2/3 and three-seed
+  training were not run.
+- The nine-pool diagnostic is internally healthy but underpowered: identical cosine 1.0,
+  Naive/RFO-Self 1.0, Naive/RFO-Gold 0.274, Gold selected-score advantage +0.25 over eight finite
+  comparisons, and split-half interval [-0.082, 0.322]. Gold is directionally distinct but inside
+  the wide noise interval, so it is not a mechanism pass.
+- The evidence audit is green: 42 packets, 168 unique K=4 candidate records with valid RGB hashes,
+  aligned three-arm decisions, 168 schema-valid RGB/question-only observer requests, and no v2.3
+  visible `square` wording. No model was downloaded, A800 was unused, and peak GPU0 allocation was
+  8,892,721,152 bytes (~8.28 GiB reported by PyTorch; nvidia-smi process footprint peaked higher).
+- Final repository verification passes: Ruff reports no issues across `src`, `scripts` and `tests`,
+  and the complete test suite passes 106/106. The only warnings are the existing Matplotlib/Pillow
+  PDF backend deprecation notices.

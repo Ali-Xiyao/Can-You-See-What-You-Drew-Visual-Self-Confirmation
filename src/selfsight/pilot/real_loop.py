@@ -26,7 +26,14 @@ from selfsight.data.subsets import stable_stratified_sample
 from selfsight.observers.client import ObserverServiceClient
 from selfsight.rfo.isolation import make_blind_request
 from selfsight.rfo.selection import balance_paired_decisions, select_candidate
-from selfsight.schemas import CandidateRecord, SceneSpec, SelectionDecision, as_serializable
+from selfsight.schemas import (
+    AtomicQuestion,
+    CandidateRecord,
+    QuestionFormat,
+    SceneSpec,
+    SelectionDecision,
+    as_serializable,
+)
 from selfsight.showo_adapter import ShowoAdapter, ShowoReplayBatch, ShowoSFTBatch
 from selfsight.training.checkpoint import load_checkpoint, save_checkpoint
 from selfsight.training.paired import PromptScheduleEntry, build_paired_schedule
@@ -127,10 +134,17 @@ def _training_records(manifest_path: str | Path) -> tuple[dict[str, Any], list[s
     order = []
     for record in read_jsonl(manifest_path):
         scene = SceneSpec.from_dict(record["scene"])
+        serialized_questions = tuple(record.get("questions", ()))
+        open_questions = tuple(
+            AtomicQuestion.from_dict(value)
+            for value in serialized_questions
+            if value.get("question_format", "open") == QuestionFormat.OPEN.value
+        )
+        question = open_questions[0] if open_questions else build_question(build_primary_atom(scene))
         records[scene.scene_id] = {
             "scene": scene,
             "reference_image": str(Path(record["reference_image"]).resolve()),
-            "question": build_question(build_primary_atom(scene)),
+            "question": question,
         }
         order.append(scene.scene_id)
     return records, order
