@@ -1,0 +1,41 @@
+schema_version: 1
+observer_id: Qwen/Qwen3-VL-8B-Instruct
+# Directory-sourced weights (ModelScope layout) outside SELFSIGHT_MODEL_ROOT, so
+# there is no HF revision to pin. The digest binds config.json, the safetensors
+# index, and every shard's (name, size). Recompute with
+# selfsight.observers.transformers_vlm.directory_model_digest.
+revision: dir-sha256:fbc4cfaada8955cfd3079d9db7a18db8637133750f59e3576c9f52a2de084ea0
+backend: qwen3vl
+external_model_dir_env: SELFSIGHT_EXTERNAL_MODEL_DIR
+external_model_dir: H:\Xiyao_Wang\001_models\Qwen3-VL-8B-Instruct
+role:
+  - public_observer
+  - g_rfo_detector
+trainable: false
+service:
+  protocol: blind-jsonl-v1
+  device: cuda:1
+  temperature: 0.0
+  max_new_tokens: 16
+  context_allowlist:
+    - rgb_image
+    - atomic_question
+capability_audit:
+  # MUST clear its own reference-observation audit before constructing g_rfo.
+  # The frozen v2.1 audit covers Qwen2-VL-2B only and is not inherited.
+  report: runs/v3/gate-b/qwen3vl-8b-reference-120.json
+  status: not_yet_run
+  thresholds:
+    family_open_accuracy_min: 0.80
+    yes_bias_points_max: 10.0
+    repeat_agreement_min: 0.90
+    abstain_rate_max: 0.20
+notes:
+  vram_bf16_gib: ~17
+  instruct_only: >
+    Thinking variants are rejected by the backend: atomic answers must be short
+    enough for normalize_answer and repeatable enough for the >=90% agreement
+    threshold.
+  vram_plan: >
+    L2 runs Show-o2 gradients on GPU0 (~10 GiB) and this observer on GPU1
+    (~17 GiB). L3 (Naive vs RFO-Gold) needs no heterogeneous observer at all.

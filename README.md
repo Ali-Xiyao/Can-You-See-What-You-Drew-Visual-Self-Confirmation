@@ -1,490 +1,119 @@
 # SelfSight
 
-Research implementation for **Can You See What You Drew? Visual Self-Confirmation in Unified Multimodal Models**.
+**Can You See What You Drew? Visual Self-Confirmation in Unified Multimodal Models** 的研究实现。
 
-The repository is gate-first: exact controlled scenes and measurement audits precede every phenomenon claim. Local dual-RTX-3090 runs are one-seed engineering evidence only; formal inference requires the locked single-A800 80GB, three-seed configuration.
+## 文档地图
 
-The active `experiment/v2.2-joint-readiness` branch implements the approved conditional design.
-The frozen Show-o v1 red result is preserved at tag `v2.1-showo-gate-red`; none of its manifests,
-reports, or figures are recalculated by v2.2.
+| 文件 | 内容 |
+|---|---|
+| **`STATUS.md`** | **从这里开始。** 现状、锁定选择、决策树、成立/作废的结论、Hard Stops |
+| `Can You See What You Drew Visual Self-Confirmation.md` | **Proposal v3.0，唯一规范来源**（含 Gate A–D 判据） |
+| `docs/EVIDENCE_LOG.md` | 全部实测证据（只读，不重新解释）。开头有逐节状态表 |
+| `docs/RUNBOOK.md` | 2×3090 + 2×A800 操作手册 |
+| `docs/source-notes/` | 改变过设计的用户输入原件 |
 
-## v2.2 Joint Readiness quick start
+四份文档各有一个职责，互不重复：**规范**（proposal）/ **现状**（STATUS）/ **证据**（EVIDENCE_LOG）/ **操作**（RUNBOOK）。
+不要再新增计划类文档——`task_plan.md`、`docs/EXPERIMENT_PLAN.md`、`docs/archive/*` 已于
+2026-08-30 删除，它们的内容要么过期、要么与 proposal 重复且已开始互相矛盾。
 
-Candidate order is fixed: Show-o2-1.5B, then 1.5B-HQ only after a hashed rank-1 failure, then 7B
-only after both smaller candidates fail. The commands below therefore download and run rank 1 only.
+## 当前状态
 
-```powershell
-. .\scripts\set_h_env.ps1
-$core = Join-Path $env:SELFSIGHT_ENV_ROOT "core\python.exe"
-$showo2 = Join-Path $env:SELFSIGHT_ENV_ROOT "showo2\python.exe"
-$root = Join-Path $env:SELFSIGHT_RUN_ROOT "readiness\showo2-1p5b"
+见 **`STATUS.md`** —— 正在跑什么、哪些结论还成立、哪些已作废，只在那一页维护，避免多处副本
+互相矛盾。
 
-# Dedicated native-Windows environment; omits FlashAttention/DeepSpeed/xFormers/TF/ONNX/W&B.
-.\scripts\bootstrap_showo2_windows.ps1
+已冻结的红色结论保留为不可变证据，不覆盖、不重新决策。发现仪器缺陷时的正确做法是：旧记录原样
+保留 + 缺陷作为新证据登记 + 重新测量并注明来源。
 
-# Inspect the exact 12.78 GB candidate-1 plan, then download only that group.
-& $core .\scripts\download_models.py --group readiness_candidate_1 --plan
-& $core .\scripts\download_models.py --group readiness_candidate_1
+## 硬件与路径
 
-# Isolated v2.2 namespace: 6 canary + 120 reference + 60 generated-domain records.
-& $core .\scripts\build_readiness_data.py
+| | 本地 | 服务器 |
+|---|---|---|
+| GPU | 2 × RTX 3090 24GB，无 NVLink | 2 × A800 80GB |
+| 系统 | Windows（原生） | Linux |
+| 入口 | `scripts/set_h_env.ps1` | `scripts/set_a800_env.sh` |
+| 角色 | 数据/候选库、观察者服务、E1、E5、图表 | E2 / E3 / E4 |
 
-# A1 and A2 use the same locked checkpoint for generation and RGB atomic QA.
-& $showo2 .\scripts\run_backbone_readiness.py canary `
-  --backbone-config configs\backbones\showo2_1p5b.yaml `
-  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v2.2\manifests\canary.jsonl" `
-  --output "$root\a1-canary.json"
+两张卡都是**独立 worker，不是显存池**；单模型不跨卡切分。HQ 的 LoRA backward/resume 实测峰值
+约 10.15 GiB，两种卡都不受显存约束。
 
-& $showo2 .\scripts\run_backbone_readiness.py reference `
-  --backbone-config configs\backbones\showo2_1p5b.yaml `
-  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v2.2\manifests\reference.jsonl" `
-  --output "$root\a2-reference.json"
+除模型权重外，所有状态都在本 checkout 内。环境脚本从仓库位置推导路径，因此 checkout 可以整体
+移动而无需改配置。
 
-# A3 runs K=1 for all families and K=4 only for A2-retained families.
-& $showo2 .\scripts\audit_generated_precision.py generate `
-  --backbone-config configs\backbones\showo2_1p5b.yaml `
-  --reference-report "$root\a2-reference.json" `
-  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v2.2\manifests\generated.jsonl" `
-  --output "$root\a3-generated.json"
-
-# If A3's automatic coverage/Oracle/seed-stability checks are red, freeze the red decision here.
-# Human precision and A4 are then recorded as preregistered skips, never fabricated as failures.
-& $showo2 .\scripts\finalize_joint_readiness.py `
-  --backbone-config configs\backbones\showo2_1p5b.yaml `
-  --canary-report "$root\a1-canary.json" `
-  --reference-report "$root\a2-reference.json" `
-  --generated-report "$root\a3-generated.json" `
-  --stop-before-human-a4 `
-  --output "$root\decision-red.json"
-
-& $core .\scripts\render_readiness_matrix.py `
-  --decision "$root\decision-red.json" `
-  --evidence-status "local one-seed upstream stop" `
-  --output "$root\figure-readiness-red"
-
-# Continue below only if A3's automatic checks are green. The packet shows only RGB plus an
-# atomic question. Fill review_blinded.csv before score.
-& $showo2 .\scripts\audit_generated_precision.py export `
-  --generated-report "$root\a3-generated.json" `
-  --output "$root\a3-blind-packet"
-
-& $showo2 .\scripts\audit_generated_precision.py score `
-  --review-csv "$root\a3-blind-packet\review_blinded.csv" `
-  --answer-key "$root\a3-blind-packet\answer_key.json" `
-  --output "$root\a3-human.json"
-
-# If the complete blind-human audit is red, freeze that measured failure and skip A4.
-# The decision binds the exact review CSV and answer-key hashes.
-& $showo2 .\scripts\finalize_joint_readiness.py `
-  --backbone-config configs\backbones\showo2_1p5b.yaml `
-  --canary-report "$root\a1-canary.json" `
-  --reference-report "$root\a2-reference.json" `
-  --generated-report "$root\a3-generated.json" `
-  --human-report "$root\a3-human.json" `
-  --stop-after-human-before-a4 `
-  --output "$root\decision-human-red.json"
-```
-
-Blind-review rules are fail-closed. Review the contact sheets without opening `answer_key.json` or
-searching for the generating prompt. Every CSV row requires: (1) `human_answer`, containing only the
-answer visible in the pixels; (2) `parseable_yes_no=yes` when the image supports a definite atomic
-answer, otherwise `no` and a non-empty placeholder such as `abstain` in `human_answer`; and (3) a
-non-empty pseudonymous `reviewer_id`. `notes` is optional. All rows must be completed by a human;
-model-generated annotations are not admissible evidence.
-
-A1 writes `a1-canary-lora-module-tree.json`. Inspect it before selecting suffixes; there is
-intentionally no default copied from Show-o v1. The `select` command expands explicit suffixes to
-the exact shared-transformer module names and binds them to the A1/tree hashes:
-
-```powershell
-& $showo2 .\scripts\run_showo2_lora_canary.py select `
-  --canary-report "$root\a1-canary.json" `
-  --suffix SELECT_AFTER_TREE_AUDIT `
-  --output "$root\a4-lora-targets.json"
-
-& $showo2 .\scripts\run_showo2_lora_canary.py run `
-  --backbone-config configs\backbones\showo2_1p5b.yaml `
-  --canary-report "$root\a1-canary.json" `
-  --reference-report "$root\a2-reference.json" `
-  --generated-report "$root\a3-generated.json" `
-  --human-report "$root\a3-human.json" `
-  --target-config "$root\a4-lora-targets.json" `
-  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v2.2\manifests\reference.jsonl" `
-  --output "$root\a4-lora.json"
-
-& $showo2 .\scripts\finalize_joint_readiness.py `
-  --backbone-config configs\backbones\showo2_1p5b.yaml `
-  --canary-report "$root\a1-canary.json" `
-  --reference-report "$root\a2-reference.json" `
-  --generated-report "$root\a3-generated.json" `
-  --human-report "$root\a3-human.json" `
-  --lora-report "$root\a4-lora.json" `
-  --output "$root\decision.json"
-
-& $core .\scripts\render_readiness_matrix.py `
-  --decision "$root\decision.json" `
-  --evidence-status "local one-seed engineering evidence" `
-  --output "$root\figure-readiness"
-```
-
-A red decision stops E1/E2 and names only the preregistered next candidate. An automatic A3 failure
-stops before human review and A4 because neither can repair failed coverage, Oracle@4, or seed
-stability. A completed red human audit stops after human review but before A4 because backward/resume
-evidence cannot repair verifier precision. Each decision distinguishes measured failure from skipped
-evidence. HQ/7B configs and download groups exist for that route, but fallback downloads require
-`--predecessor-decision` pointing to the immediately preceding immutable red decision (fallback
-finalization later uses `--predecessor`).
-Readiness figures encode absent measurements as gray dotted `N/T`
-cells, never as orange failures. Full rules are in
-[`docs/PROPOSAL_V2.2_AMENDMENT.md`](docs/PROPOSAL_V2.2_AMENDMENT.md).
-
-For example, after rank 1 has produced `decision-red.json`, rank 2 is the only authorized download:
-
-```powershell
-& $core .\scripts\download_models.py --group readiness_fallback_hq --plan
-& $core .\scripts\download_models.py --group readiness_fallback_hq `
-  --predecessor-decision "$root\decision-red.json"
-
-# After an immutable rank-2 red decision, rank 3 is the only authorized next download.
-& $core .\scripts\download_models.py --group readiness_fallback_7b --plan
-& $core .\scripts\download_models.py --group readiness_fallback_7b `
-  --predecessor-decision "$env:SELFSIGHT_RUN_ROOT\readiness\showo2-1p5b-hq\decision-hq-red.json"
-```
-
-## Storage and processes
-
-All non-model state is inside this checkout. The environment script derives these paths from the
-repository location, so the checkout may be moved without editing configs. Model weights are the
-single external exception and remain under the dedicated H-drive model root:
-
-| Variable | Path |
+| 变量 | 路径 |
 |---|---|
 | `SELFSIGHT_PROJECT_ROOT` | `<repo>` |
-| `SELFSIGHT_CACHE_ROOT` | `<repo>\cache` |
-| `SELFSIGHT_DATA_ROOT` | `<repo>\data` |
-| `SELFSIGHT_RUN_ROOT` | `<repo>\runs` |
-| `SELFSIGHT_MODEL_ROOT` | `H:\selfsight-models` |
-| `SELFSIGHT_ENV_ROOT` | `<repo>\envs` |
-| `SELFSIGHT_TMP_ROOT` | `<repo>\tmp` |
+| `SELFSIGHT_CACHE_ROOT` | `<repo>/cache` |
+| `SELFSIGHT_DATA_ROOT` | `<repo>/data` |
+| `SELFSIGHT_RUN_ROOT` | `<repo>/runs` |
+| `SELFSIGHT_ENV_ROOT` | `<repo>/envs` |
+| `SELFSIGHT_TMP_ROOT` | `<repo>/tmp` |
+| `SELFSIGHT_MODEL_ROOT` | `H:\selfsight-models`（唯一外部例外） |
 
-Start every PowerShell session from the repository root with:
+## 本地快速开始
 
 ```powershell
 . .\scripts\set_h_env.ps1
-$core = Join-Path $env:SELFSIGHT_ENV_ROOT "core\python.exe"
-$observer = Join-Path $env:SELFSIGHT_ENV_ROOT "observer\python.exe"
-$janus = Join-Path $env:SELFSIGHT_ENV_ROOT "janus\Scripts\python.exe"
-```
-
-The script also disables the unreliable Xet route seen on this Windows host. Large locked LFS files
-use resumable aria2 transfer, bounded parallel shards, stalled-connection recycling, and exact
-size/SHA-256 verification; small files still use Hugging Face Hub.
-The downloader ignores unrelated ONNX/OpenVINO/CoreML/GGUF/TF/Flax exports unless a model lock
-explicitly asks for them.
-
-Existing immutable reports still contain their original legacy data/run evidence paths. The one-time
-`scripts/migrate_project_roots.ps1` migration keeps those bytes unchanged and creates NTFS
-compatibility junctions whose targets are the project-local directories. New commands must use the
-environment variables above, not the legacy junction names. The physical location and mapping are
-recorded in `runs/manifests/project-root-relocation.json`.
-
-GPU0 owns Show-o generation/training/backward. GPU1 owns frozen observers and parallel evaluation. The two 24GB cards are never treated as pooled 48GB memory.
-
-## 1. Environment and immutable assets
-
-The current local core environment was cloned from a working CUDA 12.1 environment and therefore uses Torch 2.5.1+cu121. This is a recorded local deviation; the A800 lock remains Torch 2.2.1.
-
-```powershell
-# Core plus figure dependencies. Omit CloneCudaEnv if installing CUDA wheels afresh.
-.\scripts\bootstrap_windows.ps1 -InstallFigure `
-  -CloneCudaEnv C:\Users\Admin\anaconda3\envs\quest-zero-p0
-
-# Sync exact Show-o and Janus commits to H:.
-& $core .\scripts\sync_repositories.py
-
-# Create the isolated observer environment.
-.\scripts\bootstrap_windows.ps1 -InstallObservers `
-  -CloneObserverCudaEnv C:\Users\Admin\anaconda3\envs\bind
-
-# Janus .bin loading requires Torch >=2.6; keep it out of the Qwen/Intern environment.
-.\scripts\bootstrap_windows.ps1 -InstallJanusObserver
-
-# Inspect size/revision plan, then obtain core weights.
-& $core .\scripts\download_models.py --group core --plan
-& $core .\scripts\download_models.py --group core --large-file-transport auto
-```
-
-Downloads are registered under `H:\selfsight-models`; `configs/models.lock.yaml` is authoritative. Never replace a locked revision with `main`.
-The complete local `core`, `observers`, and `audit` inventories are materialized at their locked
-revisions. `late_eval` remains intentionally absent until its upstream Gate is green.
-
-## 2. Deterministic data and Gate 0 smoke evidence
-
-```powershell
-& $core -m selfsight.cli doctor --config configs\local_3090.yaml `
-  --output "$env:SELFSIGHT_RUN_ROOT\manifests\local-host.json"
-
-& $core -m selfsight.cli build-data --config configs\local_3090.yaml `
-  --output "$env:SELFSIGHT_DATA_ROOT\selfsight-v1"
-
-& $core -m selfsight.cli audit-data "$env:SELFSIGHT_DATA_ROOT\selfsight-v1" `
-  --output "$env:SELFSIGHT_RUN_ROOT\audits\data-audit.json"
-
-& $core -m selfsight.cli audit-tier-b `
-  "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_b.jsonl" `
-  --output "$env:SELFSIGHT_RUN_ROOT\audits\tier-b-audit.json"
-
-# Deterministic 600-image E4 subset: 300 Tier-A images + 150 complete Tier-B pairs.
-& $core -m selfsight.cli build-tier-d "$env:SELFSIGHT_DATA_ROOT\selfsight-v1" --seed 20260827
-& $core -m selfsight.cli audit-tier-d `
-  "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_d.jsonl" `
-  --output "$env:SELFSIGHT_RUN_ROOT\audits\tier-d-audit.json"
-
-# Export the blinded 120-image manual packet (six families x 20).
-& $core .\scripts\manual_reference_audit.py export `
-  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_a_outcome.jsonl" `
-  --output "$env:SELFSIGHT_RUN_ROOT\audits\manual-reference"
+$core   = Join-Path $env:SELFSIGHT_ENV_ROOT "core\python.exe"
+$showo2 = Join-Path $env:SELFSIGHT_ENV_ROOT "showo2\python.exe"
 
 & $core -m pytest -q
-& $core -m selfsight.cli mock-pilot --config configs\local_3090.yaml `
-  --output "$env:SELFSIGHT_RUN_ROOT\mock-pilot"
+& $core -m selfsight.cli doctor --config configs\local_3090_showo2.yaml
 ```
 
-The mock output is stamped `synthetic_smoke_only` and must never be cited as scientific evidence.
-The programmatic reference gate currently passes 3,200/3,200 scenes, 400/400 Tier-B pairs, and
-600/600 registered Tier-D images; manual stratified agreement remains a separate pending audit.
-
-After a blinded reviewer fills `review_blinded.csv`, score it without modifying the separate answer key:
+环境自举（首次）：
 
 ```powershell
-& $core .\scripts\manual_reference_audit.py score `
-  --review-csv "$env:SELFSIGHT_RUN_ROOT\audits\manual-reference\review_blinded.csv" `
-  --answer-key "$env:SELFSIGHT_RUN_ROOT\audits\manual-reference\answer_key.json" `
-  --output "$env:SELFSIGHT_RUN_ROOT\audits\manual-reference\manual-audit-report.json"
+.\scripts\bootstrap_windows.ps1 -InstallFigure
+.\scripts\bootstrap_showo2_windows.ps1
+& $core .\scripts\sync_repositories.py
+& $core .\scripts\download_models.py --group readiness_candidate_2 --plan
 ```
 
-Exact Windows package/CUDA inventories are captured in `<repo>\envs\locks` by the bootstrap script.
+> 下载器对本机不可靠的 Xet 路由做了禁用；大 LFS 文件走可续传 aria2、有界并行分片、
+> 停滞连接回收与精确 size/SHA-256 校验。无关的 ONNX/OpenVINO/CoreML/GGUF/TF/Flax 导出会被忽略。
 
-## 3. Real model canaries and Gate -1
+服务器流程见 `docs/RUNBOOK.md`。
 
-```powershell
-# Show-o: generation, RGB reload/MMU, T2I+replay LoRA step, save/corrupt/exact restore.
-& $core .\scripts\canary_showo.py --config configs\local_3090.yaml `
-  --output "$env:SELFSIGHT_RUN_ROOT\canaries\showo-local"
+## 科学不变量
 
-# Train-only, six-family generated-RGB parseability audit; no Tier-A held-out prompt is used.
-& $core .\scripts\canary_generated_domain.py --config configs\local_3090.yaml `
-  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\train.jsonl" `
-  --limit 60 --verifier generated_cv_v2 `
-  --output "$env:SELFSIGHT_RUN_ROOT\canaries\generated-domain-cv2-dev60-20260827"
+这些约束在任何阶段都不放松：
 
-# Example isolated observer canary; repeat for the locked capability ladder.
-& $core .\scripts\canary_observer.py --python $observer --backend smolvlm `
-  --model-id HuggingFaceTB/SmolVLM-500M-Instruct `
-  --revision a7da5b986cb59b408707209984f360a5f4ad7e47 `
-  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_a_probe.jsonl" `
-  --output "$env:SELFSIGHT_RUN_ROOT\canaries\smolvlm"
-```
+1. **观察者只收到 RGB 路径/字节 + 原子问题。** 不传 prompt、生成 latent/image token、KV cache
+   或来源标签。观察器在独立进程与独立会话中运行。
+2. **检测器与训练器解耦。** 构造 `g_rfo` 的冻结异构观察者全程不参与任何训练样本选择。
+3. **候选库平衡池只用于梯度探针**；训练与 external correctness 曲线用自然采样池，论文中显式区分。
+4. **SCFR 必须伴随观察者准确率与原始分母**报告；梯度余弦必须伴随同 checkpoint 的配对
+   bootstrap CI 报告。
+5. **不得把单 seed 描述性轨迹写成显著性结论**，不得引用 mock 结果。
+6. **红色/不完整报告保留为不可变证据。** 缺失的测量记为 N/T，不伪造为失败值。
+7. Qwen2-VL 的输出永远不是「统一 backbone 能看见自己的画」的证据。
 
-Run `selfsight.cli audit-observer` for Show-o and every candidate on program-rendered truth, then finalize the matched detector:
+## 归档与回收
 
-```powershell
-& $core -m selfsight.cli finalize-gate-minus-1 `
-  --reference-audit "$env:SELFSIGHT_RUN_ROOT\audits\data-audit.json" `
-  --showo-report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\showo-local120.json" `
-  --candidate-report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\smolvlm-local120.json" `
-  --candidate-report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\internvl-local120.json" `
-  --candidate-report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\qwen2vl-local120.json" `
-  --output "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\decision.json"
-```
+2026-08-30 已整理（路径变更逐条记录在 `docs/EVIDENCE_LOG.md` §12.3）：
 
-Gate -1 is a hard stop: Show-o needs at least four question families at 80% or above, and the frozen heterogeneous observer must be within 3 percentage points of Show-o macro accuracy after forced-choice/yes-bias auditing.
+- **已删除**：`tmp/`（5.78 GB，失败 venv 与 pip/pytest 临时文件）、`cache/pip`（2.73 GB，可再生）。
+  两者都会由 `scripts/set_h_env.ps1` 在下次激活时重建。
+- **已归档到 `runs/_archive/` 与 `data/_archive/`**：`mock-pilot*`、`audits`、`host`、
+  `manifests`、`wandb`、`selfsight-v1`、v2.3 失败模板。
 
-When this Gate is red, render the preregistered capability-floor fallback artifact instead of
-running E1/E2:
+已物理删除的代码（都在 git 历史里，但不再维护）：
 
-```powershell
-& $core .\scripts\render_capability_floor.py `
-  --report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\showo-local120.json" `
-  --report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\showo-discrete-local120.json" `
-  --report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\janus-local120.json" `
-  --report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\smolvlm-local120.json" `
-  --report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\internvl-local120.json" `
-  --report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\qwen2vl-local120.json" `
-  --evidence-status "local diagnostic; Gate -1 decision frozen" `
-  --output "$env:SELFSIGHT_RUN_ROOT\gate-minus-1\figure2-all-backbones-local"
-```
+| 删除 | 原因 |
+|---|---|
+| `scripts/migrate_project_roots.ps1` | 一次性迁移，目标状态已达成并由 `tests/test_project_path_policy.py` 守住 |
+| `src/selfsight/data/eligible_e2.py` + `scripts/build_eligible_e2_data.py` | v2.2 E2 数据构建器，被 `build_v3_scenes.py` + `build_v3_readiness_decision.py` 取代 |
+| `src/selfsight/pilot/mock_loop.py` + CLI `mock-pilot` | 非科学烟雾测试；proposal 明令不得引用 mock 结果 |
+| `src/selfsight/backbones/showo_v1.py` | 冻结负对照，不再需要可运行实现 |
 
-The figure exports PNG/PDF/SVG/grayscale plus tidy CSV and a QA manifest. Accuracy is redundantly
-encoded by cell text and a bold outline at the 80% threshold; yes-bias uses a separate axis.
+`src/selfsight/observers/mock.py` **保留**——它是「观察者只读 RGB」这条不变量的实现后端
+（`tests/test_questions_and_isolation.py`），不是 mock 实验产物。
 
-There is an earlier generated-domain stop rule as well: deterministic primary-answer coverage on
-generated RGBs must be at least 95%. The exact-palette verifier remains authoritative for
-program-rendered references; `generated_cv_v2` is a deterministic contour candidate for approximate
-model output and must receive its own blinded human-agreement audit before adoption. Current
-train-only canaries are below 95%, so E1, Gate -1b, and real self-training remain blocked even while
-the independent reference-image observer ladder is audited.
+`runs/readiness`、`runs/v2.3-rfo-gold`、`runs/exploratory-post-gate`、`runs/v3` 是
+`docs/EVIDENCE_LOG.md` 引用的证据，**不要删除**。
 
-## 4. E1, Gate -1b, and local one-seed loop
+> `runs/` 与 `data/` 都在 `.gitignore` 里，**删了不可恢复**。就绪审计的 49 张盲审图就是这么
+> 丢的（§12.2），标注还在但已无法复用。整理时一律归档到 `_archive/`，不要 `rm`。
 
-The active v2.2 E1 entry point accepts only a complete green Gate -2 decision. It restricts Tier B
-to `selected_eligible_families`, verifies every Gate -2 evidence hash, binds the exact Show-o2
-checkpoint and frozen public-observer revision, and rechecks the observer's per-family accuracy,
-yes-bias, and abstention floors before loading either model:
-
-```powershell
-. .\scripts\set_h_env.ps1
-$showo2 = Join-Path $env:SELFSIGHT_ENV_ROOT "showo2\python.exe"
-$observer = Join-Path $env:SELFSIGHT_ENV_ROOT "observer\python.exe"
-$root = Join-Path $env:SELFSIGHT_RUN_ROOT "readiness\showo2-1p5b"
-$observerAudit = Join-Path $env:SELFSIGHT_RUN_ROOT "gate-minus-1\qwen2vl-local120.json"
-
-& $showo2 .\scripts\run_e1.py --config configs\local_3090_showo2.yaml `
-  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_b.jsonl" `
-  --joint-readiness-decision "$root\decision.json" `
-  --backbone-config configs\backbones\showo2_1p5b.yaml `
-  --observer-config configs\observers\qwen2vl_2b.yaml `
-  --detector-audit-report $observerAudit `
-  --detector-python $observer --detector-backend qwen2vl `
-  --detector-model-id Qwen/Qwen2-VL-2B-Instruct `
-  --detector-revision 895c3a49bc3fa70a340399125c650a463535e71c `
-  --output "$env:SELFSIGHT_RUN_ROOT\e1\showo2-1p5b"
-
-& $showo2 .\scripts\run_gradient_gate.py `
-  --config configs\local_3090_showo2.yaml `
-  --probe-manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_a_probe.jsonl" `
-  --joint-readiness-decision "$root\decision.json" `
-  --backbone-config configs\backbones\showo2_1p5b.yaml `
-  --observer-config configs\observers\qwen2vl_2b.yaml `
-  --lora-target-config "$root\a4-lora-targets.json" `
-  --detector-audit-report $observerAudit `
-  --detector-python $observer --detector-backend qwen2vl `
-  --detector-model-id Qwen/Qwen2-VL-2B-Instruct `
-  --detector-revision 895c3a49bc3fa70a340399125c650a463535e71c `
-  --device cuda:1 --output "$env:SELFSIGHT_RUN_ROOT\gate-minus-1b\showo2-1p5b"
-
-& $showo2 .\scripts\run_local_pilot.py `
-  --config configs\local_3090_showo2.yaml `
-  --train-manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\train.jsonl" `
-  --joint-readiness-decision "$root\decision.json" `
-  --backbone-config configs\backbones\showo2_1p5b.yaml `
-  --lora-target-config "$root\a4-lora-targets.json" `
-  --gradient-gate-report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1b\showo2-1p5b\gate_minus_1b.json" `
-  --frozen-observer-python $showo2 `
-  --output "$env:SELFSIGHT_RUN_ROOT\local-pilot\showo2-1p5b" --resume
-
-& $showo2 .\scripts\evaluate_pilot.py `
-  --config configs\local_3090_showo2.yaml `
-  --run-root "$env:SELFSIGHT_RUN_ROOT\local-pilot\showo2-1p5b" `
-  --outcome-manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_a_outcome.jsonl" `
-  --probe-manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_a_probe.jsonl" `
-  --joint-readiness-decision "$root\decision.json" `
-  --backbone-config configs\backbones\showo2_1p5b.yaml `
-  --observer-config configs\observers\qwen2vl_2b.yaml `
-  --lora-target-config "$root\a4-lora-targets.json" `
-  --detector-audit-report $observerAudit `
-  --detector-python $observer --detector-backend qwen2vl `
-  --detector-model-id Qwen/Qwen2-VL-2B-Instruct `
-  --detector-revision 895c3a49bc3fa70a340399125c650a463535e71c `
-  --device cuda:1
-```
-
-These commands must not be run while Gate -2 is red or incomplete. E2 filters the training pool to
-the same eligible-family set, launches a frozen step-0 Show-o2 observer on GPU1 through the blind
-JSONL boundary, and binds checkpoint resume to the Gate, backbone, and exact LoRA target digest.
-The evaluator repeats those bindings, excludes non-eligible outcome/probe families before stable
-sampling, and loads every adapter with the training contract digest rather than the base YAML alone.
-
-The following commands are retained only to reproduce the frozen v2.1 Show-o experiment. Its
-current `decision.json` is red, so they also remain blocked unless supplied a distinct, immutable
-green v2.1 decision; they are not a route around Gate -2:
-
-```powershell
-$gate = Join-Path $env:SELFSIGHT_RUN_ROOT "gate-minus-1\NEW-GREEN-decision.json"
-$domain = Join-Path $env:SELFSIGHT_RUN_ROOT "canaries\NEW-GREEN-generated-domain\generated_domain_report.json"
-$detectorAudit = Join-Path $env:SELFSIGHT_RUN_ROOT "gate-minus-1\SELECTED-detector-audit.json"
-$detectorBackend = "SELECTED_BACKEND"
-$detectorModel = "SELECTED_MODEL_ID"
-$detectorRevision = "SELECTED_REVISION"
-
-& $core .\scripts\run_e1.py --config configs\local_3090.yaml `
-  --manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_b.jsonl" `
-  --gate-minus-1-report $gate --generated-domain-report $domain `
-  --detector-audit-report $detectorAudit `
-  --detector-python $observer --detector-backend $detectorBackend `
-  --detector-model-id $detectorModel --detector-revision $detectorRevision `
-  --output "$env:SELFSIGHT_RUN_ROOT\e1"
-
-& $core .\scripts\run_gradient_gate.py --config configs\local_3090.yaml `
-  --probe-manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\tier_a_probe.jsonl" `
-  --gate-minus-1-report $gate --generated-domain-report $domain `
-  --detector-audit-report $detectorAudit `
-  --detector-python $observer --detector-backend $detectorBackend `
-  --detector-model-id $detectorModel --detector-revision $detectorRevision `
-  --output "$env:SELFSIGHT_RUN_ROOT\gate-minus-1b"
-
-& $core .\scripts\run_local_pilot.py --config configs\local_3090.yaml `
-  --train-manifest "$env:SELFSIGHT_DATA_ROOT\selfsight-v1\manifests\train.jsonl" `
-  --gate-report $gate `
-  --gradient-gate-report "$env:SELFSIGHT_RUN_ROOT\gate-minus-1b\gate_minus_1b.json" `
-  --generated-domain-report $domain `
-  --frozen-observer-python $core --output "$env:SELFSIGHT_RUN_ROOT\local-pilot" --resume
-```
-
-The legacy entry points validate the locked Gate identity, selected detector model/revision, exact
-SHA-256 of its capability audit, internal consistency, sample basis, and 95% coverage threshold.
-A red, mismatched, or malformed report fails closed rather than becoming an accidental training
-override.
-
-If Gate -1b fails, E2 remains allowed but GDA reporting is disabled and the preregistered entropy/public-view fallback is activated. Checkpoints are adapter-only and each round is atomically committed, so rerunning with `--resume` is safe.
-
-Evaluate every checkpoint with `scripts/evaluate_pilot.py`. This produces internal/external correctness, SCFR@competent, entropy/public-view signals, optional GDA-free/GDA-gold/noise-floor trajectories, exploratory D*/Dg, and Figure 1 in PNG/PDF/SVG/grayscale. Local nonappearance of D* does not block migration if engineering, stability, gradients, and resume all pass.
-
-## 5. A800 migration and formal E2
-
-The operator-facing, fail-closed handoff procedure is in
-[`docs/A800_RUNBOOK.md`](docs/A800_RUNBOOK.md). It includes storage setup, immutable asset checks,
-the paired 32-prompt canary, exact acceptance thresholds, restart behavior, and the formal command.
-
-On the Linux A800 host, place the checkout at a short data mount, then:
-
-```bash
-export SELFSIGHT_ROOT=/data/selfsight
-source scripts/set_a800_env.sh
-bash scripts/bootstrap_a800.sh
-CORE="${SELFSIGHT_ENV_ROOT}/core/bin/python"
-SHOWO2="${SELFSIGHT_ENV_ROOT}/showo2/bin/python"
-"${CORE}" scripts/sync_repositories.py
-"${CORE}" scripts/download_models.py --group readiness_candidate_1
-"${CORE}" scripts/download_models.py --group observers
-"${CORE}" scripts/materialize_a800_seed_configs.py --output "${SELFSIGHT_RUN_ROOT}/formal-configs"
-```
-
-Run the fixed 32-prompt canary locally and on A800, then compare them with `scripts/compare_migration_canaries.py`. Formal E2 is blocked unless answer/verifier agreement is at least 95% and metric drift is at most 1 point.
-
-After a green Gate -2, `scripts/build_eligible_e2_data.py` creates the decision-bound 2400/200/600
-train/probe/outcome splits using only eligible families and excluding readiness signatures. Because
-their manifests contain host-absolute RGB paths, run
-`scripts/rebase_dataset_manifests.py` after copying data to Linux. It writes a new manifest view and
-verifies every original file/RGB SHA-256; it never edits the Windows manifests. The A800 runbook
-uses only this rebased view.
-
-`scripts/run_formal_e2.py` executes the three locked seeds resumably. `scripts/aggregate_formal_e2.py` performs paired seed bootstrap, Gate 2/2b decisions, GDA-free versus entropy/public-view comparison, and multi-seed Figure 1. E3, E4, Tier C, and human evaluation remain blocked until their preregistered upstream Gates pass.
-
-## Scientific invariants
-
-- The 200-prompt gradient probe and 600-prompt outcome set never enter training or selector tuning.
-- Blind observer subprocesses receive only a hard-reloaded RGB path, atomic questions, and request metadata—never prompt, expected answer, generator state, or source label.
-- RFO training uses a frozen step-0 copy of the selected Show-o2 backbone; `g_rfo` detection uses the fixed frozen Qwen2-VL-2B public observer.
-- Candidate IDs, prompt IDs, K, and random seeds are paired between Naive and RFO arms; common non-abstained counts are enforced.
-- Formal conclusions require three A800 seeds. Local one-seed curves are exploratory regardless of apparent effect size.
-
-Current gate state and exact evidence are tracked in `task_plan.md`, `findings.md`, and `progress.md`.
-
-As of the latest local evidence, Show-o2-1.5B passes A1 and retains five A2 reference families:
-existence, count, color, spatial, and binding. Absolute size is excluded. A3-r1 was automatically
-red and additionally invalidated by a candidate-path collision discovered during artifact audit.
-Collision-safe A3-r2 is running under the same manifest, seeds, revision, and verifier. Until r2
-finishes, no blind-human packet, A4, Gate -2 decision, fallback download, E1, or E2 is authorized.
-The frozen Show-o v1 negative result remains available at tag `v2.1-showo-gate-red` and is not
-recalculated by this branch.
+唯一的例外已强制入库：`runs/readiness/showo2-1p5b-hq/a3-human-r1-review.csv`（49 条人工标注，
+`git add -f`）。图已丢，标注是仅存的不可再生人工产物，不能再留在 gitignore 的目录里。

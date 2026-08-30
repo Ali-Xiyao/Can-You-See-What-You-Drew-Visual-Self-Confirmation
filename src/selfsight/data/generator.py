@@ -78,8 +78,32 @@ def _scene_signature(objects: Iterable[SceneObject]) -> str:
     return sha256_json(canonical)
 
 
-def _make_objects(family: QuestionFamily, rng: random.Random) -> tuple[SceneObject, ...]:
+def _make_objects(
+    family: QuestionFamily,
+    rng: random.Random,
+    *,
+    objects_per_scene: int | None = None,
+) -> tuple[SceneObject, ...]:
+    """Build one scene.
+
+    `objects_per_scene` overrides the default population for the primary
+    families. It exists because Gate A measured Show-o2-1.5B-HQ at per-candidate
+    verifier accuracy 0.949 on two-object color scenes: the model is almost never
+    wrong, so a bounded bank cannot supply two verifier-incorrect candidates and
+    selection-based training has no variance to exploit. Raising the object count
+    lowers accuracy into a measurable regime.
+
+    Capped at len(SHAPES) so every object keeps a unique shape and the frozen
+    question templates ("what color is the {shape}?") stay unambiguous.
+    """
+
     count = 3 if family in {QuestionFamily.COUNT, QuestionFamily.BINDING} else 2
+    if objects_per_scene is not None and family not in {QuestionFamily.COUNT, QuestionFamily.BINDING}:
+        if not 2 <= objects_per_scene <= len(SHAPES):
+            raise ValueError(
+                f"objects_per_scene must be between 2 and {len(SHAPES)} so shapes stay unique"
+            )
+        count = objects_per_scene
     positions = rng.sample(ANCHORS, count)
     shapes = list(rng.sample(SHAPES, count)) if count <= len(SHAPES) else [rng.choice(SHAPES) for _ in range(count)]
 
@@ -154,6 +178,7 @@ def generate_split(
     seed: int,
     forbidden_signatures: set[str] | None = None,
     families: Sequence[QuestionFamily] | None = None,
+    objects_per_scene: int | None = None,
 ) -> list[SceneSpec]:
     if split not in TEMPLATES:
         raise ValueError(f"Unknown split: {split}")
@@ -174,7 +199,7 @@ def generate_split(
     for family in selected_families:
         for family_index in range(family_counts[family]):
             for attempt in range(10_000):
-                objects = _make_objects(family, rng)
+                objects = _make_objects(family, rng, objects_per_scene=objects_per_scene)
                 signature = _scene_signature(objects)
                 if signature not in forbidden and signature not in local_signatures:
                     break

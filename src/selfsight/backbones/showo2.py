@@ -58,6 +58,16 @@ class Showo2ReplayBatch:
     latent_seed: int = 20260828
 
 
+CYCLE_INSTRUCTION = "Describe this image."
+"""Neutral captioning instruction for the cycle-consistency score.
+
+Frozen before any cycle measurement. It must not name the target attributes or
+ask whether the image satisfies anything -- an evaluative instruction would make
+the Naive arm a same-context judge (proposal 7.1 lists that separately) instead
+of the `prompt -> image -> recover prompt` criterion.
+"""
+
+
 class Showo2Adapter(ModelAdapter):
     """Lazy, local-only wrapper around the locked official Show-o2 implementation."""
 
@@ -824,6 +834,57 @@ class Showo2Adapter(ModelAdapter):
             device=self.device,
         )
         return loss_ntp
+
+    def cycle_consistency_score(
+        self,
+        image_path: str | Path,
+        prompt: str,
+        *,
+        instruction: str = CYCLE_INSTRUCTION,
+    ) -> float:
+        """Score `log p(prompt | image)` -- the naive cycle-consistency criterion.
+
+        Proposal 7.1 specifies the Naive arm as `prompt -> image -> recover
+        prompt`, but the v2.3 implementation asked it the *atomic* question
+        instead, which is the RFO question form. Naive and RFO-Self therefore
+        received identical inputs and were the same function at step 0 (measured
+        selection agreement 1.000, EVIDENCE_LOG 4.2). This restores the
+        registered criterion.
+
+        Recovering the prompt by decoding and string-matching is noisy, so the
+        score is the mean per-token log-likelihood the model assigns to the
+        original prompt when it is teacher-forced as the answer to a neutral
+        captioning instruction. Ranking is always within one prompt, so the
+        model's language prior over the target text is a constant offset across
+        the pool and cancels.
+
+        This reuses `understanding_replay_loss` with a batch of one, so the score
+        is exactly the negative of the loss the training path would compute on
+        the same (image, text) pair. The latent seed is derived from the image
+        hash, so the score is a deterministic function of the rendered RGB.
+        """
+
+        self._load()
+        import torch
+
+        with Image.open(image_path) as opened:
+            image = opened.convert("RGB")
+        latent_seed = int(rgb_sha256(image)[:16], 16) % (2**31)
+        batch = Showo2ReplayBatch(
+            images=(image,),
+            questions=(instruction,),
+            answers=(prompt,),
+            sample_ids=(f"cycle-{Path(image_path).stem}",),
+            latent_seed=latent_seed,
+        )
+        was_training = self.model.training
+        self.model.eval()
+        try:
+            with torch.no_grad():
+                loss = self.understanding_replay_loss(batch)
+        finally:
+            self.model.train(was_training)
+        return -float(loss)
 
     def compute_lora_gradient(
         self,

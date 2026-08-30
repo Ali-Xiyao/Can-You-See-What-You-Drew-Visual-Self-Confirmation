@@ -1,0 +1,32 @@
+schema_version: 1
+observer_id: Qwen/Qwen2.5-VL-7B-Instruct
+revision: cc594898137f460bfe9f0759e9844b3ce807cfb5
+backend: qwen2vl          # the backend branches to Qwen2_5_VLForConditionalGeneration
+role:
+  - public_observer
+  - g_rfo_detector
+trainable: false
+service:
+  protocol: blind-jsonl-v1
+  device: cuda:1
+  temperature: 0.0
+  max_new_tokens: 16
+  context_allowlist:
+    - rgb_image
+    - atomic_question
+capability_audit:
+  # MUST be re-run before this observer may construct g_rfo. The frozen v2.1
+  # audit covers Qwen2-VL-2B only; a new detector inherits nothing.
+  report: runs/v3/gate-b/qwen2p5vl-7b-reference-120.json
+  status: not_yet_run
+  thresholds:
+    family_open_accuracy_min: 0.80
+    yes_bias_points_max: 10.0
+    repeat_agreement_min: 0.90
+    abstain_rate_max: 0.20
+notes:
+  vram_bf16_gib: ~15
+  # No VRAM conflict with the local short run: L3 (Naive vs RFO-Gold) needs no
+  # heterogeneous observer at all -- Gold uses the deterministic verifier and
+  # Naive uses the trainable model's own observation. This observer is required
+  # only for the L2 gradient probe (g_rfo) and E1.

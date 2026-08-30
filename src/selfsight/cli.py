@@ -57,14 +57,6 @@ def _cmd_audit_data(args: argparse.Namespace) -> int:
     return 0 if report["gate_reference_pass"] else 2
 
 
-def _cmd_mock_pilot(args: argparse.Namespace) -> int:
-    from selfsight.pilot.mock_loop import run_mock_pilot
-
-    outputs = run_mock_pilot(args.config, args.output)
-    print(json.dumps(outputs, indent=2))
-    return 0
-
-
 def _cmd_audit_tier_b(args: argparse.Namespace) -> int:
     from selfsight.data.audit import audit_tier_b_manifest
 
@@ -210,11 +202,6 @@ def build_parser() -> argparse.ArgumentParser:
     finalize.add_argument("--delta-max", type=float, default=0.03)
     finalize.add_argument("--output", type=Path, required=True)
     finalize.set_defaults(function=_cmd_finalize_gate_minus_1)
-
-    mock = subparsers.add_parser("mock-pilot", help="run a non-scientific full pipeline smoke test")
-    mock.add_argument("--config", type=Path, default=Path("configs/local_3090.yaml"))
-    mock.add_argument("--output", type=Path)
-    mock.set_defaults(function=_cmd_mock_pilot)
 
     figure = subparsers.add_parser("figure1", help="render registered Figure 1")
     figure.add_argument("metrics", type=Path)

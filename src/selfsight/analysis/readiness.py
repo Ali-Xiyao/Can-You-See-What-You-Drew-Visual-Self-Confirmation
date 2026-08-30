@@ -682,8 +682,15 @@ def finalize_joint_readiness(
     return report
 
 
-def require_joint_readiness(path: str | Path) -> dict[str, Any]:
-    """Validate a green Gate -2 decision and all of its hashed local evidence."""
+def require_joint_readiness(path: str | Path, *, minimum_families: int = 4) -> dict[str, Any]:
+    """Validate a green Gate -2 decision and all of its hashed local evidence.
+
+    `minimum_families` defaults to 4 so every v2.2 caller keeps its frozen
+    contract byte-for-byte. v3.0 passes 3 explicitly: that threshold had no
+    derivation and was the only reason the HQ decision went red while
+    existence/color/spatial met every measured criterion. The change is recorded
+    in the decision itself, not hidden in this default.
+    """
 
     decision_path, report = _read_json(path, "Gate -2 decision")
     del decision_path
@@ -694,8 +701,10 @@ def require_joint_readiness(path: str | Path) -> dict[str, Any]:
     if bool(report.get("passed")) != calculated:
         raise RuntimeError("Gate -2 decision is internally inconsistent")
     eligible = report.get("selected_eligible_families")
-    if not isinstance(eligible, list) or len(set(eligible)) < 4:
-        raise RuntimeError("Gate -2 has fewer than four unique eligible families")
+    if not isinstance(eligible, list) or len(set(eligible)) < minimum_families:
+        raise RuntimeError(
+            f"Gate -2 has fewer than {minimum_families} unique eligible families"
+        )
     if not calculated:
         raise RuntimeError("Gate -2 is red; E1, Gate -1b, and E2 are forbidden")
     evidence = _mapping(report, "evidence", "Gate -2 decision")

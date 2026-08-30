@@ -1,0 +1,152 @@
+profile: v3_main_seed
+benchmark_version: "3.0"
+
+# Single main seed first. Seeds 2/3 are materialized only when Gate C and Gate D
+# are both green AND the Naive/RFO external-correctness gap exceeds within-checkpoint
+# variance. See proposal section 9 (Gate D) and STATUS.md.
+seed: 20260901
+seeds: [20260901]
+conditional_seeds: [20260902, 20260903]
+
+paths:
+  cache_root: ${SELFSIGHT_CACHE_ROOT}
+  data_root: ${SELFSIGHT_DATA_ROOT}
+  run_root: ${SELFSIGHT_RUN_ROOT}
+  model_root: ${SELFSIGHT_MODEL_ROOT}
+  tmp_root: ${SELFSIGHT_TMP_ROOT}
+
+hardware:
+  # Local 3090 pair uses cuda:0 trainable / cuda:1 frozen observer.
+  # On the A800 server each arm gets one whole card via CUDA_VISIBLE_DEVICES.
+  generator_device: cuda:0
+  observer_device: cuda:1
+  precision: bf16
+  attention: sdpa
+  distributed: false
+
+model:
+  trainable_id: showlab/show-o2-1.5B-HQ
+  revision: d3a220ec55feaacbdfcb053847edee14edd4e69a
+  backbone_config: configs/backbones/showo2_1p5b_hq.yaml
+  language_base_id: Qwen/Qwen2.5-1.5B-Instruct
+  vision_tower_id: google/siglip-so400m-patch14-384
+  image_autoencoder_id: Wan-AI/Wan2.1-T2V-14B
+  image_resolution: 512
+  generation_timesteps: 20
+  guidance_scale: 5.0
+  temperature: 1.0
+
+vocabulary:
+  square_display_name: box
+  quadrilateral_aspect_ratio_min: 0.50
+  quadrilateral_aspect_ratio_max: 2.00
+  human_verifier_agreement_min: 0.95
+
+data:
+  # Main-family floor is 3, not 4. The v2.2 value of 4 had no derivation and is
+  # the single threshold that produced the HQ red decision, while existence/color/
+  # spatial met every measured criterion. See docs/EVIDENCE_LOG.md section 1.2.
+  primary_families: [existence, color, spatial]
+  hard_families: [count, binding]
+  excluded_families: [size]
+  primary_families_min: 3
+  tier_a_prompts: 800
+  tier_b_pairs: 300
+  tier_c_prompts: 300
+  hard_outcome_prompts: 60
+  images_per_prompt: 4
+
+# Gate A: bounded candidate-bank search.
+# Natural K=4 sampling was informative for only 21% of prompts (9/42) on this
+# backbone. The bank cap and the search budget are fixed here, before any
+# gradient output is inspected, and must not be raised afterwards.
+candidate_bank:
+  bank_size: 16
+  candidate_k: 4
+  min_per_side: 2
+  search_seed_base: 700000000
+  min_balanced_rate: 0.40
+  min_informative_pools: 128
+  # Natural (non-bank) pools are generated alongside and drive training and the
+  # external-correctness curve. The bank drives the gradient probe only.
+  natural_pool_sampling: true
+
+# Gate B: paired gradient instrument.
+# The v2.x disjoint split-half floor is demoted to a reported diagnostic; it
+# measured per-sample gradient SNR, not the paired cross-criterion contrast.
+gradient_probe:
+  informative_pools: 128
+  criteria: [naive, rfo, gold]
+  identical_cosine_min: 0.999
+  paired_bootstrap_resamples: 5000
+  paired_bootstrap_seed: 20260901
+  max_paired_ci_width: 0.10
+  ema_alpha: 0.35
+  store_dtype: float16
+  gram_chunk_elements: 4194304
+  # Reported, never gating.
+  sample_noise_splits: 8
+
+training:
+  arms: [naive, rfo_gold, rfo_self]
+  # Mechanism-first: pass 1 is Naive vs RFO-Gold (Gate C). RFO-Self only runs
+  # after a perfect selector is shown to win.
+  pass_1_arms: [naive, rfo_gold]
+  pass_2_arms: [rfo_self]
+  rounds: 12
+  search_prompts_per_round: 96
+  accepted_prompts_per_round: 32
+  candidate_k: 4
+  informative_gold_gap_min: 1.0
+  optimizer_steps_per_round: 24
+  micro_batch_size: 1
+  gradient_accumulation_steps: 8
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  warmup_ratio: 0.10
+  max_grad_norm: 1.0
+  understanding_replay_ratio: 0.25
+  gradient_checkpointing: true
+  # Reserved so bank search can never share randomness with the measurement.
+  gradient_seed_base: 900000000
+  lora:
+    rank: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: []
+    target_selection_required: true
+    forbidden_trainable: [embed_tokens, lm_head, image_embedder_und, und_trans, fusion_proj]
+
+# Detector/trainer decoupling is a hard requirement, not a preference.
+# Training selects with the frozen step-0 self copy; g_rfo is built from a frozen
+# heterogeneous VLM that never participates in training-sample selection.
+observers:
+  training_selector: frozen_step0_self
+  # Detector: Qwen3-VL-8B-Instruct, already on this machine, natively supported
+  # by transformers 4.57.6, zero download. It must clear its own
+  # reference-observation audit first -- the frozen v2.1 audit covers
+  # Qwen2-VL-2B only and is not inherited.
+  detector: qwen3vl_8b_instruct
+  detector_config: configs/observers/qwen3vl_8b_instruct.yaml
+  detector_participates_in_training: false
+  # Weak-observer arm of the ablation in proposal 7.6: does the detector still
+  # lead when the observer is weaker than the generator? Qwen2-VL-2B is already
+  # audited, so this contrast is nearly free.
+  weak_observer: qwen2vl_2b
+  weak_observer_config: configs/observers/qwen2vl_2b.yaml
+  # Mid-strength reference, available if the 2B/8B gap needs an interior point.
+  alternate_observer: qwen2p5vl_7b
+  alternate_observer_config: configs/observers/qwen2p5vl_7b.yaml
+
+gates:
+  # Gate B
+  verifier_agreement_min: 0.95
+  observer_family_accuracy_min: 0.80
+  forced_choice_bias_max: 0.10
+  observer_abstain_max: 0.20
+  # Gate C: mechanism positive control. This is the project failure condition.
+  gold_beats_naive_required: true
+  # Gate D
+  min_external_gain_points: 3.0
+  min_gda_gold_spearman: 0.70
+  d_star_fallback_to_t_max: true

@@ -15,12 +15,10 @@ def test_active_files_do_not_hardcode_external_non_model_roots() -> None:
         root = PROJECT_ROOT / relative_root
         candidates.extend(path for path in root.rglob("*") if path.is_file())
 
-    allowed = {PROJECT_ROOT / "scripts" / "migrate_project_roots.ps1"}
     violations: list[str] = []
     for path in candidates:
         if (
-            path in allowed
-            or any(part.endswith(".egg-info") for part in path.parts)
+            any(part.endswith(".egg-info") for part in path.parts)
             or path.suffix.lower() in {".png", ".pdf", ".pyc"}
         ):
             continue

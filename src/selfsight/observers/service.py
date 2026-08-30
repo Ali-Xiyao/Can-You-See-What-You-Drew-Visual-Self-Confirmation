@@ -65,6 +65,7 @@ def main() -> None:
             "janus",
             "smolvlm",
             "qwen2vl",
+            "qwen3vl",
             "internvl",
         ),
         required=True,

@@ -26,6 +26,16 @@ MAX_HUE_DISTANCE = 32.0
 MIN_COMPONENT_AREA = 220.0
 SIZE_BOUNDARY_PX = 95
 
+QUADRILATERAL_ASPECT_RANGE = (0.50, 2.0)
+"""Bounding-box aspect ratios this verifier accepts as `Shape.SQUARE`.
+
+This module owns the tolerance, and anything that names the category in text a
+model or reviewer reads must derive its wording from here rather than restate the
+range (`selfsight.v3.vocabulary`). A 2:1 rectangle is verifier-correct and
+"square"-incorrect, so a second copy of this range that silently drifts is the
+exact defect recorded in EVIDENCE_LOG section 11.
+"""
+
 
 def _circular_hue_distance(values: np.ndarray, target: float) -> np.ndarray:
     direct = np.abs(values - target)
@@ -47,9 +57,10 @@ def _shape_from_contour(contour: np.ndarray) -> tuple[Shape, float]:
     circularity = float(np.clip(4.0 * np.pi * area / (perimeter * perimeter), 0.0, 1.0))
     aspect = width / height
 
+    low, high = QUADRILATERAL_ASPECT_RANGE
     if vertices == 3:
         return Shape.TRIANGLE, 0.95
-    if vertices == 4 and 0.50 <= aspect <= 2.0:
+    if vertices == 4 and low <= aspect <= high:
         # Rotated squares have a fill ratio near 0.5, so vertices carry more weight here.
         return Shape.SQUARE, 0.90
     if circularity >= 0.72 and 0.65 <= aspect <= 1.55:
