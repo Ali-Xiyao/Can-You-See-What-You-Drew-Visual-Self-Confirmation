@@ -22,10 +22,6 @@ def _load_backend(
     device: str,
     backbone_config: Path | None = None,
 ):
-    if name == "mock":
-        from selfsight.observers.mock import MockPixelObserver
-
-        return MockPixelObserver()
     if not model_id or not revision:
         raise ValueError("A pinned --model-id and --revision are required for a real observer")
     if name == "showo2":

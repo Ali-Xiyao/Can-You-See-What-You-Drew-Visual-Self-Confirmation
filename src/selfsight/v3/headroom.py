@@ -97,7 +97,7 @@ def load_natural_pools(
     """Read the natural K-draw of every bank packet.
 
     The bank probe writes M=16 candidates per prompt and treats the first
-    `candidate_k` as the unfiltered natural draw (`v3.supply.run_bank_probe`).
+    `candidate_k` as the unfiltered natural draw (the unfiltered bank probe).
     Using the same slice keeps this measurement on the same pools as Gate A
     rather than on a differently-sampled set.
     """

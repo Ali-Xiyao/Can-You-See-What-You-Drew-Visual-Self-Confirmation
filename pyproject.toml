@@ -65,7 +65,6 @@ showo2 = [
 ]
 
 [project.scripts]
-selfsight = "selfsight.cli:main"
 selfsight-observer = "selfsight.observers.service:main"
 
 [tool.setuptools]

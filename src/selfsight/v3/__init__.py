@@ -44,13 +44,6 @@ from selfsight.v3.selectors import (
     select_by_score,
     selection_agreement,
 )
-from selfsight.v3.supply import run_bank_probe
-from selfsight.v3.vocabulary import (
-    assert_display_vocabulary,
-    audit_rows,
-    display_text,
-    scene_vocabulary_metadata,
-)
 
 __all__ = [
     "LADDER",
@@ -61,7 +54,6 @@ __all__ = [
     "ObservationCondition",
     "PerPromptGradientStore",
     "assert_disjoint_seed_domains",
-    "assert_display_vocabulary",
     "audit_rows",
     "bank_supply_report",
     "build_balanced_pool",
@@ -74,9 +66,7 @@ __all__ = [
     "gram_matrices",
     "paired_bootstrap_cosine",
     "paired_bootstrap_difference",
-    "run_bank_probe",
     "sample_noise_diagnostic",
-    "scene_vocabulary_metadata",
     "select_by_score",
     "selection_agreement",
 ]
