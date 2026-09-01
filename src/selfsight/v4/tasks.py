@@ -30,6 +30,33 @@ from selfsight.v4.spec import SceneSpec, SpecObject
 
 RELATIONS = ("left_of", "right_of")
 
+TOTAL_OBJECTS = 3
+"""How many things a scene may contain in total, summed over its entries.
+
+Measured, not chosen. 48 prompts x 4 candidates through Show-o2-1.5B-HQ, scored
+by Qwen3-VL-8B under the scene-match rule, gives a cliff rather than a slope:
+
+    objects in scene    n    p       C(p) at K=4
+    2                   8    0.500   0.438
+    3                  12    0.417   0.468
+    4                  52    0.154   0.334
+    5                  20    0.000   0
+    6 or more         100    0.010   ~0
+
+The selection ceiling C(p) = (1-(1-p)^4) - p needs p roughly in [0.13, 0.70], so
+five objects or more leaves the experiment with no headroom at all: every
+candidate is wrong and there is nothing to select between. Three is the widest
+scene that stays in the band.
+
+The per-entry counts matter separately. Asked for one of something the generator
+drew the right number 75.4% of the time; asked for two, 31.2%; asked for three,
+21.3%. Counts above two are therefore excluded -- not because a miscount is
+uninteresting, but because at three the miss is near-certain and the trial stops
+discriminating. A count of two is kept precisely because it misses often enough
+to supply the trials where the drawn count differs from the requested one, which
+is where `gold_source="image_differs_from_spec"` comes from.
+"""
+
 INSTRUCTION = """You are writing test scenes for an image-generation benchmark.
 
 Write {n} scenes. Each scene is a photograph of ordinary objects resting on a
@@ -49,12 +76,13 @@ Hard requirements:
   scene then measures the wrong thing.
 - Never describe mood, style, lighting or quality ("cosy", "rustic", "beautiful").
   Nothing in the prompt may be unjudgeable.
-- counts must be between 1 and 3.
+- counts must be between 1 and 2, and the counts in one scene must sum to
+  exactly 3. So a scene is either three entries of one, or two entries where one
+  asks for two. Nothing wider.
 - {items} distinct object entries per scene.
 - Vary the surface: wooden table, marble counter, white cloth, metal tray, desk.
 
 Target distribution across the {n} scenes, spread them evenly:
-- counts: roughly equal numbers of 1, 2 and 3.
 - colours: do not let any one colour exceed a quarter of all entries.
 
 {relations_clause}"""
@@ -89,6 +117,9 @@ def _check(scene: dict[str, Any], expect_items: int | None) -> None:
         raise SpecRejected("no objects")
     if expect_items is not None and len(objects) != expect_items:
         raise SpecRejected(f"expected {expect_items} entries, got {len(objects)}")
+    total = sum(item.get("count") or 0 for item in objects if isinstance(item, dict))
+    if total != TOTAL_OBJECTS:
+        raise SpecRejected(f"scene holds {total} objects, want {TOTAL_OBJECTS}")
     lowered = prompt.lower()
     seen = set()
     for item in objects:
@@ -99,7 +130,7 @@ def _check(scene: dict[str, Any], expect_items: int | None) -> None:
         if noun in seen:
             raise SpecRejected(f"duplicate entry for {noun}")
         seen.add(noun)
-        if not isinstance(count, int) or not 1 <= count <= 5:
+        if not isinstance(count, int) or not 1 <= count <= 2:
             raise SpecRejected(f"count out of range for {noun}: {count!r}")
         # The defining property of a verifiable scene: the prompt must actually
         # say what the spec claims. A spec the prompt does not state cannot be
