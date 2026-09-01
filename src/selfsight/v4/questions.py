@@ -27,7 +27,12 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
-from selfsight.v4.spec import SceneSpec, canonical_noun, detected_multiset
+from selfsight.v4.spec import (
+    SceneSpec,
+    canonical_noun,
+    countable,
+    detected_multiset,
+)
 
 
 class Family(str, Enum):
@@ -116,7 +121,7 @@ def _place(rng: random.Random, correct: str, wrong: str) -> tuple[str, str, str]
 
 def _detected_counts(detections: list[dict[str, Any]]) -> collections.Counter:
     counter: collections.Counter = collections.Counter()
-    for item in detections:
+    for item in countable(detections):
         counter[canonical_noun(item["object"])] += 1
     return counter
 
@@ -270,7 +275,7 @@ def build_binding(
     """
     counts = _detected_counts(detections)
     colours: dict[str, set[str]] = collections.defaultdict(set)
-    for item in detections:
+    for item in countable(detections):
         colour = item.get("color")
         colours[canonical_noun(item["object"])].add(
             str(colour).strip().lower() if colour else ""
@@ -350,7 +355,7 @@ def build_spatial(
     needs no change here.
     """
     positions: dict[str, list[float]] = collections.defaultdict(list)
-    for item in detections:
+    for item in countable(detections):
         x = _centre_x(item)
         if x is not None:
             positions[canonical_noun(item["object"])].append(x)

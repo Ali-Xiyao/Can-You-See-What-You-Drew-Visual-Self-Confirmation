@@ -36,6 +36,8 @@ Multiset = collections.Counter
 SYNONYMS: dict[str, str] = {
     "cup": "mug",
     "notebook": "book",
+    "saucer": "plate",
+    "dish": "plate",
 }
 """Nouns this instrument cannot tell apart, mapped to one name.
 
@@ -55,6 +57,34 @@ convention. The better fix is upstream -- do not put both "cup" and "mug" in the
 authoring vocabulary -- and that is done for future corpora; this map exists
 because the corpus that already ran contains both.
 """
+
+
+SURFACE_WORDS = frozenset({
+    "table", "desk", "counter", "countertop", "worktop", "cloth", "tablecloth",
+    "mat", "placemat", "napkin", "tray", "board", "surface", "stool", "shelf",
+    "background", "wall", "floor", "shadow", "reflection",
+})
+"""What the objects rest on, never counted as one of them.
+
+The instruction already asks the detector to skip these, and asking is not
+enough -- the same lesson as the colour whitelist. A tray under three apples was
+reported as a fourth object on 20 of 468 images, and every one of those scored
+as the generator drawing something it was not asked for.
+
+Getting this list wrong in the other direction is what it replaced: the
+instruction used to exclude "the surface the objects rest on (table, tray,
+counter, cloth)", a plate is both, and 21% of the corpus asks for a plate. So
+plate, bowl and dish are emphatically *not* here, and the instruction now names
+them as objects.
+"""
+
+
+def countable(detections: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Detections minus the surfaces, which is what every count runs on."""
+    return [
+        item for item in detections
+        if canonical_noun(item.get("object", "")) not in SURFACE_WORDS
+    ]
 
 
 def canonical_noun(noun: str) -> str:
@@ -198,7 +228,7 @@ class SceneSpec:
 def detected_multiset(detections: list[dict[str, Any]]) -> Multiset:
     """The (object, colour) multiset a verifier reported for an image."""
     counter: Multiset = collections.Counter()
-    for item in detections:
+    for item in countable(detections):
         colour = item.get("color")
         counter[
             (

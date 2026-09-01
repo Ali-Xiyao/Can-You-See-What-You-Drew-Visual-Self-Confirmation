@@ -44,11 +44,11 @@ def _obj(noun, colour, x=100.0):
 
 
 def test_a_dispute_that_cannot_change_the_verdict_is_settled_without_a_human():
-    """Asked for two blue mugs; one model sees three and a saucer, one sees
+    """Asked for two blue mugs; one model sees three and a candle, one sees
     three. The image is wrong on either reading and no person is needed."""
     spec = _spec([("mug", "blue", 2)])
     primary = _Fixed("a", [_obj("mug", "blue", 10), _obj("mug", "blue", 80),
-                           _obj("mug", "blue", 150), _obj("saucer", "white", 220)])
+                           _obj("mug", "blue", 150), _obj("candle", "white", 220)])
     secondary = _Fixed("b", [_obj("mug", "blue", 10), _obj("mug", "blue", 80),
                              _obj("mug", "blue", 150)])
     result = verify("img.png", spec, primary, secondary)
@@ -65,12 +65,12 @@ def test_the_settled_list_drops_the_object_only_one_model_saw():
     """
     spec = _spec([("mug", "blue", 2)])
     primary = _Fixed("a", [_obj("mug", "blue", 10), _obj("mug", "blue", 80),
-                           _obj("mug", "blue", 150), _obj("saucer", "white", 220)])
+                           _obj("mug", "blue", 150), _obj("candle", "white", 220)])
     secondary = _Fixed("b", [_obj("mug", "blue", 10), _obj("mug", "blue", 80),
                              _obj("mug", "blue", 150)])
     result = verify("img.png", spec, primary, secondary)
     assert [d["object"] for d in result.detections] == ["mug", "mug", "mug"]
-    assert [d["object"] for d in result.disputed] == ["saucer"]
+    assert [d["object"] for d in result.disputed] == ["candle"]
 
 
 def test_the_verdict_is_not_recomputed_from_the_agreed_core():

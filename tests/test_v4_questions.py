@@ -251,3 +251,64 @@ def test_relations_survive_the_spec_round_trip():
                  relations=[("mug", "left_of", "apple")])
     assert spec.relations == (SpecRelation("mug", "left_of", "apple"),)
     assert SceneSpec.from_dict(spec.to_dict()).relations == spec.relations
+
+
+# ------------------------------------------------------- naming and surfaces
+
+
+def test_the_surface_is_never_counted_as_an_object():
+    """A tray under three apples was a fourth object on 20 of 468 images.
+
+    The instruction asks the detector to skip surfaces and asking is not enough,
+    so the filter is applied at the comparison too.
+    """
+    from selfsight.v4.spec import countable
+
+    kept = countable([
+        {"object": "tray"}, {"object": "Apples"}, {"object": "tablecloth"},
+        {"object": "mug"},
+    ])
+    assert [item["object"] for item in kept] == ["Apples", "mug"]
+
+
+def test_a_plate_is_an_object_and_not_a_surface():
+    """The defect this replaced: 21% of the corpus asks for a plate, and the
+    instruction told the detector to skip the surface things rest on."""
+    from selfsight.v4.spec import SURFACE_WORDS, canonical_noun
+
+    for noun in ("plate", "bowl", "dish", "saucer"):
+        assert canonical_noun(noun) not in SURFACE_WORDS
+
+
+def test_two_names_for_one_object_are_one_object():
+    from selfsight.v4.spec import canonical_noun
+
+    assert canonical_noun("cup") == canonical_noun("mugs") == "mug"
+    assert canonical_noun("notebook") == canonical_noun("Books") == "book"
+    assert canonical_noun("bell pepper") == canonical_noun("peppers") == "pepper"
+
+
+def test_objects_a_photograph_can_tell_apart_are_not_merged():
+    """The map must stay small. A detector confusing a lemon with a lime is a
+    detector error worth measuring, not a naming convention to paper over."""
+    from selfsight.v4.spec import canonical_noun
+
+    for a, b in (("lemon", "lime"), ("spoon", "fork"), ("apple", "orange"),
+                 ("jar", "bottle"), ("mug", "bowl")):
+        assert canonical_noun(a) != canonical_noun(b)
+
+
+def test_a_spec_whose_entries_collide_after_canonicalisation_is_rejected():
+    """Asking for a cup and a mug is unverifiable, not merely awkward."""
+    from selfsight.v4.tasks import parse_scenes
+
+    scenes = [{
+        "prompt": "one blue cup, one red mug and one green pear on a table",
+        "objects": [{"object": "cup", "color": "blue", "count": 1},
+                    {"object": "mug", "color": "red", "count": 1},
+                    {"object": "pear", "color": "green", "count": 1}],
+        "relations": [], "surface": "table",
+    }]
+    accepted, rejected = parse_scenes(str(scenes).replace("'", '"'), prefix="t")
+    assert not accepted
+    assert "collides" in rejected[0]["reason"]
