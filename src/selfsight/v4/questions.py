@@ -389,3 +389,34 @@ def grade(reply: str, question: ForcedChoice) -> bool | None:
     if picked is None:
         return None
     return picked == question.gold
+
+
+def to_atomic(question: ForcedChoice) -> "AtomicQuestion":
+    """Present a v4 trial through the frozen observer protocol.
+
+    The generation backbone answers questions via `observe_atoms`, which enforces
+    the RFO isolation contract: the image is re-read from disk as RGB, hashed,
+    embedded fresh, and the model put in eval mode, with no state carried from
+    generation. Reaching past that to a raw text call would re-implement the one
+    part of the pipeline that must not be re-implemented, so the v4 question is
+    converted rather than the protocol bypassed.
+
+    `choices` carries the two option strings, so `normalize_answer` maps a reply
+    of "B" back to the option text and `expected_answer` compares directly. The
+    legacy `family` field is set to EXISTENCE for every trial: it selects the
+    fallback vocabulary used only when no choice letter is found, and in that
+    case the answer is unparseable and should abstain, which is what the fallback
+    then does. The v4 family lives on the `ForcedChoice` and in the output rows;
+    it is not lost.
+    """
+    from selfsight.schemas import AtomicQuestion, QuestionFamily, QuestionFormat
+
+    return AtomicQuestion(
+        question_id=question.question_id,
+        atom_id=f"{question.spec_id}:{question.family.value}",
+        family=QuestionFamily.EXISTENCE,
+        text=question.prompt_text,
+        expected_answer=question.option_a if question.gold == "A" else question.option_b,
+        question_format=QuestionFormat.FORCED_CHOICE,
+        choices=(question.option_a, question.option_b),
+    )
