@@ -63,11 +63,13 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run", required=True, type=Path)
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--answers", default="answers.jsonl",
+                        help="which observation condition to analyse")
     args = parser.parse_args()
 
     rows = [
         json.loads(line)
-        for line in (args.run / "answers.jsonl").read_text(encoding="utf-8").splitlines()
+        for line in (args.run / args.answers).read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
     if not rows:
@@ -160,8 +162,11 @@ def main() -> None:
         ),
     }
 
+    report["condition"] = rows[0].get("condition", "image_only")
     text = json.dumps(report, indent=2, ensure_ascii=False)
-    (args.out or args.run / "analysis.json").write_text(text, encoding="utf-8")
+    default = args.run / args.answers.replace("answers", "analysis").replace(
+        ".jsonl", ".json")
+    (args.out or default).write_text(text, encoding="utf-8")
     print(text)
 
 

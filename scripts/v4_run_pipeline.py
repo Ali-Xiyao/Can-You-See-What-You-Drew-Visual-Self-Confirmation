@@ -42,6 +42,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -368,6 +369,27 @@ def _ceiling(results: list[dict[str, Any]]) -> dict[str, Any]:
 # ----------------------------------------------------------------- observe
 
 
+PROMPTED_PREAMBLE = """You were asked to draw a picture from this description:
+"{prompt}"
+
+Here is the picture you drew. Answer about what is actually in the picture.
+
+{question}"""
+"""The prompted observation condition.
+
+Without this the model never sees the description it drew from, and then the
+"answers from the prompt rather than the pixels" hypothesis has nothing to
+answer from: observe_atoms hands it an image and a question and no state carries
+over from generation. The image-only condition measures how well the model reads
+its own picture, and the gap between an on-spec and an off-spec image is real,
+but it is a fact about difficulty until this condition is run beside it.
+
+The wording puts the description first and then says outright to answer about
+the picture, so a model that goes with the description is going against an
+explicit instruction rather than filling a gap in an ambiguous one.
+"""
+
+
 def stage_observe(args: argparse.Namespace) -> None:
     from selfsight.backbones.showo2 import Showo2Adapter
 
@@ -375,7 +397,8 @@ def stage_observe(args: argparse.Namespace) -> None:
     verified = {r["image_path"]: r for r in read_jsonl(run / "verified.jsonl")}
     manifest = read_jsonl(run / "manifest.jsonl")
 
-    out = run / "answers.jsonl"
+    prompted = args.condition == "prompted"
+    out = run / ("answers.prompted.jsonl" if prompted else "answers.jsonl")
     done: set[str] = set()
     if out.exists() and not args.overwrite:
         done = {r["image_path"] for r in read_jsonl(out)}
@@ -400,13 +423,19 @@ def stage_observe(args: argparse.Namespace) -> None:
             )
             if not questions:
                 continue
-            observation = backbone.observe_atoms(
-                image, [to_atomic(question) for question in questions]
-            )
+            atoms = [to_atomic(question) for question in questions]
+            if prompted:
+                atoms = [
+                    replace(atom, text=PROMPTED_PREAMBLE.format(
+                        prompt=spec.prompt, question=atom.text))
+                    for atom in atoms
+                ]
+            observation = backbone.observe_atoms(image, atoms)
             for question, answer in zip(questions, observation.answers):
                 raw = answer.raw_answer
                 correct = grade(raw, question)
                 handle.write(json.dumps({
+                    "condition": args.condition,
                     "spec_id": spec.spec_id,
                     "image_path": image,
                     "candidate_index": row["candidate_index"],
@@ -478,6 +507,8 @@ def main() -> None:
     # own: drop those images from answers.jsonl and run the stage again, rather
     # than paying for all 468 to recover 36.
     o.add_argument("--overwrite", action="store_true")
+    o.add_argument("--condition", choices=["image_only", "prompted"],
+                   default="image_only")
     o.set_defaults(func=stage_observe)
 
     args = parser.parse_args()
