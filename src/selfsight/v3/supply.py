@@ -42,22 +42,30 @@ class GenerationAdapter(Protocol):
     ) -> Sequence[CandidateRecord]: ...
 
 
-def _gold_score(image_path: str, atom: Atom) -> tuple[float, bool]:
-    """Primary-atom verifier score. Binary by construction; abstention is explicit."""
+def _gold_score(image_path: str, atoms: Sequence[Atom]) -> tuple[float, bool]:
+    """Verifier score over the gold atoms. Binary; abstention is explicit.
 
-    answer = verify_generated_image(image_path, (atom,)).answers[atom.atom_id]
-    if answer is None:
+    A conjunction: the candidate is correct only if every gold atom holds. Any
+    single abstention makes the whole candidate unscoreable rather than wrong,
+    so an atom set that abstains stays visible in the pool statistics instead of
+    being silently counted as a failure.
+    """
+
+    result = verify_generated_image(image_path, atoms)
+    answers = [result.answers[atom.atom_id] for atom in atoms]
+    if any(answer is None for answer in answers):
         return (float("nan"), True)
-    return (1.0 if answer == atom.answer else 0.0, False)
+    correct = all(answer == atom.answer for answer, atom in zip(answers, atoms, strict=True))
+    return (1.0 if correct else 0.0, False)
 
 
 def _score_bank(
     candidates: Sequence[CandidateRecord],
-    atom: Atom,
+    atoms: Sequence[Atom],
 ) -> list[BankCandidate]:
     scored = []
     for candidate in candidates:
-        score, abstained = _gold_score(candidate.image_path, atom)
+        score, abstained = _gold_score(candidate.image_path, atoms)
         scored.append(
             BankCandidate(
                 candidate_id=candidate.candidate_id,
@@ -103,6 +111,10 @@ def run_bank_probe(
     for index, record in enumerate(records):
         scene = SceneSpec.from_dict(dict(record["scene"]))
         atom = Atom.from_dict(dict(record["atom"]))
+        # Manifests built before gold atoms existed score on the question atom.
+        gold_atoms = tuple(
+            Atom.from_dict(dict(item)) for item in record.get("gold_atoms", ())
+        ) or (atom,)
         family = str(record.get("family", scene.family.value))
         seeds = search_seeds(scene.scene_id, bank_size)
         assert_disjoint_seed_domains(seeds, reserved_seeds)
@@ -131,7 +143,7 @@ def run_bank_probe(
                 replace(item, prompt_id=scene.scene_id, scene_id=scene.scene_id)
                 for item in generated
             ]
-            scored = _score_bank(candidates, atom)
+            scored = _score_bank(candidates, gold_atoms)
             atomic_write_json(
                 packet_path,
                 {

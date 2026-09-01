@@ -97,6 +97,19 @@ def _matches(detections: Iterable[DetectedObject], fields: dict[str, str]) -> li
     return output
 
 
+RELATIONS = ("left_of", "above", "larger_than")
+
+
+def _relation_holds(first: DetectedObject, second: DetectedObject, relation: str) -> bool:
+    if relation == "left_of":
+        return first.center[0] < second.center[0]
+    if relation == "above":
+        return first.center[1] < second.center[1]
+    if relation == "larger_than":
+        return first.size == Size.LARGE and second.size == Size.SMALL
+    raise ValueError(f"unknown relation: {relation}")
+
+
 def evaluate_atom(detections: tuple[DetectedObject, ...], atom: Atom) -> str | None:
     subjects = parse_subject(atom.subject)
     first = _matches(detections, subjects[0])
@@ -111,17 +124,30 @@ def evaluate_atom(detections: tuple[DetectedObject, ...], atom: Atom) -> str | N
     if len(subjects) != 2:
         return None
     second = _matches(detections, subjects[1])
+    # Existential relations are total: "no such pair" is an answer, not an
+    # abstention. The strict relations below abstain unless both sides resolve
+    # to exactly one detection, which holds on every reference render and on
+    # only 12-16% of Show-o2 generations -- the v3 calibration sweep abstained
+    # on 84-89% of spatial candidates for exactly this reason.
+    if atom.predicate.startswith("exists_"):
+        relation = atom.predicate[len("exists_") :]
+        if relation not in RELATIONS:
+            return None
+        return (
+            "yes"
+            if any(
+                _relation_holds(a, b, relation)
+                for a in first
+                for b in second
+                if a is not b
+            )
+            else "no"
+        )
     if len(first) != 1 or len(second) != 1:
         return None
-    if atom.predicate == "left_of":
-        truth = first[0].center[0] < second[0].center[0]
-    elif atom.predicate == "above":
-        truth = first[0].center[1] < second[0].center[1]
-    elif atom.predicate == "larger_than":
-        truth = first[0].size == Size.LARGE and second[0].size == Size.SMALL
-    else:
+    if atom.predicate not in RELATIONS:
         return None
-    return "yes" if truth else "no"
+    return "yes" if _relation_holds(first[0], second[0], atom.predicate) else "no"
 
 
 def verify_image(image_or_path: Image.Image | str | Path, atoms: Iterable[Atom]) -> VerificationResult:

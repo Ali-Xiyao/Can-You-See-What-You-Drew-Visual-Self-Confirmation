@@ -25,6 +25,71 @@ ANCHORS = (
     (400, 392),
 )
 
+# Reference uniqueness, not global shape uniqueness, is what the verifier needs:
+# `_matches` resolves an atom subject by (shape, color, size) and `evaluate_atom`
+# abstains unless a subject resolves to exactly one detection. Only the objects a
+# question actually references must be unique under their reference key, so
+# distractors may repeat shapes. That is what turns object count into a usable
+# difficulty knob instead of capping it at len(SHAPES)=3. The ceiling of 6 keeps
+# every shape group inside the 4-colour palette, since (shape, colour) is kept
+# unique within a scene.
+MAX_OBJECTS_PER_SCENE = 6
+
+
+def _assign_shapes(family: QuestionFamily, count: int, rng: random.Random) -> list[Shape]:
+    """Assign shapes so every shape a question references occurs exactly once."""
+
+    if family == QuestionFamily.COUNT:
+        repeated_shape = rng.choice(SHAPES)
+        shapes = [repeated_shape] * min(rng.choice((1, 2, 3)), count)
+        others = [shape for shape in SHAPES if shape != repeated_shape]
+        while len(shapes) < count:
+            shapes.append(others[len(shapes) % len(others)])
+        rng.shuffle(shapes)
+        return shapes
+    if family == QuestionFamily.BINDING:
+        # Two competitors deliberately share a shape: the question cannot be
+        # answered from shape alone, which is what makes this a binding task
+        # rather than a second colour family.
+        bound = rng.choice(SHAPES)
+        others = [shape for shape in SHAPES if shape != bound]
+        return [bound, bound] + [others[index % len(others)] for index in range(count - 2)]
+    if family == QuestionFamily.SPATIAL:
+        # Both referenced shapes must resolve uniquely; the remaining shape is
+        # never referenced, so distractors may repeat it freely.
+        subjects = list(rng.sample(SHAPES, 2))
+        filler = next(shape for shape in SHAPES if shape not in subjects)
+        return subjects + [filler] * (count - 2)
+    if family in {QuestionFamily.COLOR, QuestionFamily.SIZE}:
+        target = rng.choice(SHAPES)
+        others = [shape for shape in SHAPES if shape != target]
+        return [target] + [others[index % len(others)] for index in range(count - 1)]
+    # EXISTENCE references a (shape, colour) pair and only asks whether it is
+    # present, so it carries no uniqueness requirement at all. Shapes are still
+    # dealt from a rotating offset rather than drawn independently: an all-one-shape
+    # scene would exhaust that shape's colour slots, and a fixed offset would make
+    # some shape unreachable at small counts.
+    offset = rng.randrange(len(SHAPES))
+    shapes = [SHAPES[(offset + index) % len(SHAPES)] for index in range(count)]
+    rng.shuffle(shapes)
+    return shapes
+
+
+def _assign_colors(shapes: list[Shape], rng: random.Random) -> list[Color]:
+    """Keep (shape, colour) unique so no two objects in a scene are identical."""
+
+    used: set[tuple[Shape, Color]] = set()
+    colors: list[Color] = []
+    for shape in shapes:
+        available = [color for color in COLORS if (shape, color) not in used]
+        if not available:
+            raise ValueError(f"scene exhausts the {len(COLORS)}-colour palette for {shape}")
+        color = rng.choice(available)
+        used.add((shape, color))
+        colors.append(color)
+    return colors
+
+
 TEMPLATES: dict[str, tuple[str, ...]] = {
     "train": (
         "Create a clean image containing {objects} on a white background.",
@@ -98,27 +163,22 @@ def _make_objects(
     """
 
     count = 3 if family in {QuestionFamily.COUNT, QuestionFamily.BINDING} else 2
-    if objects_per_scene is not None and family not in {QuestionFamily.COUNT, QuestionFamily.BINDING}:
-        if not 2 <= objects_per_scene <= len(SHAPES):
-            raise ValueError(
-                f"objects_per_scene must be between 2 and {len(SHAPES)} so shapes stay unique"
-            )
+    if objects_per_scene is not None and family != QuestionFamily.COUNT:
+        if not 2 <= objects_per_scene <= MAX_OBJECTS_PER_SCENE:
+            raise ValueError(f"objects_per_scene must be between 2 and {MAX_OBJECTS_PER_SCENE}")
         count = objects_per_scene
+    if family == QuestionFamily.BINDING and count < 3:
+        raise ValueError("binding needs >= 3 objects: two same-shape competitors plus a distractor")
     positions = rng.sample(ANCHORS, count)
-    shapes = list(rng.sample(SHAPES, count)) if count <= len(SHAPES) else [rng.choice(SHAPES) for _ in range(count)]
-
-    if family == QuestionFamily.COUNT:
-        repeated_shape = rng.choice(SHAPES)
-        repeated_count = rng.choice((1, 2, 3))
-        shapes = [repeated_shape] * repeated_count
-        while len(shapes) < count:
-            other = rng.choice([shape for shape in SHAPES if shape != repeated_shape])
-            shapes.append(other)
-        rng.shuffle(shapes)
-
-    colors = list(rng.sample(COLORS, count))
+    shapes = _assign_shapes(family, count, rng)
+    colors = _assign_colors(shapes, rng)
     sizes = [rng.choice(SIZES) for _ in range(count)]
     if family == QuestionFamily.SPATIAL and sizes[0] == sizes[1]:
+        sizes[1] = Size.LARGE if sizes[0] == Size.SMALL else Size.SMALL
+    if family == QuestionFamily.BINDING and sizes[0] == sizes[1]:
+        # The two competitors share a shape, so size is the only thing that can
+        # single one out. Equal sizes would make the subject resolve to two
+        # detections and the verifier would abstain on every binding scene.
         sizes[1] = Size.LARGE if sizes[0] == Size.SMALL else Size.SMALL
     return tuple(
         SceneObject(
@@ -146,7 +206,18 @@ def _primary_metadata(family: QuestionFamily, objects: tuple[SceneObject, ...], 
         counts = Counter(item.shape for item in objects)
         target_shape = rng.choice(tuple(counts))
         return {"target_shape": target_shape.value, "count": counts[target_shape]}
-    if family in {QuestionFamily.COLOR, QuestionFamily.SIZE, QuestionFamily.BINDING}:
+    if family == QuestionFamily.BINDING:
+        # Exactly two objects share this shape and they differ in size, so the
+        # subject `shape=X;size=Y` singles one out while `shape=X` alone cannot.
+        bound_shape = objects[0].shape
+        competitors = [item for item in objects if item.shape == bound_shape]
+        target = rng.choice(competitors)
+        return {
+            "target_shape": bound_shape.value,
+            "target_size": target.size.value,
+            "target_object_id": target.object_id,
+        }
+    if family in {QuestionFamily.COLOR, QuestionFamily.SIZE}:
         target = rng.choice(objects)
         return {"target_shape": target.shape.value, "target_object_id": target.object_id}
     first, second = objects[:2]

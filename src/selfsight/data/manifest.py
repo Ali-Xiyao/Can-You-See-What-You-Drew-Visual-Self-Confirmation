@@ -9,7 +9,7 @@ from typing import Any
 
 from selfsight.data.counterfactuals import CounterfactualPair, build_tier_b
 from selfsight.data.generator import build_splits
-from selfsight.data.questions import build_primary_atom, build_question
+from selfsight.data.questions import build_gold_atoms, build_primary_atom, build_question
 from selfsight.data.renderer import render_scene
 from selfsight.data.subsets import stable_stratified_sample
 from selfsight.schemas import QuestionFormat, SceneSpec, as_serializable
@@ -26,6 +26,9 @@ def _scene_record(scene: SceneSpec, image_path: Path) -> dict[str, object]:
         "schema_version": 1,
         "scene": as_serializable(scene),
         "atom": as_serializable(atom),
+        # Scored against generated pixels; see build_gold_atoms for why this is
+        # not the same atom as the question.
+        "gold_atoms": [as_serializable(item) for item in build_gold_atoms(scene)],
         "questions": [
             as_serializable(open_question),
             as_serializable(forced_question_a),

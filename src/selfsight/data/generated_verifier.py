@@ -1,5 +1,21 @@
 """Deterministic contour verifier for approximate geometric model generations.
 
+SUPERSEDED by `selfsight.v4.verifier` (2026-08-31). Do not use on the live path.
+
+Audited against 72 blind human-labelled images in STATUS 11: object-level F1
+0.754, whole-image object list correct on only 48.6% of images, and agreement
+with human verdicts of 0.708. Every number in STATUS 10 rested on it. Three
+independent causes, only the first of which is repairable by threshold tuning:
+a rendered 3D cube projects to a hexagon whose circularity is about 0.91 and so
+classifies as a circle; a background hue that collides with the palette merges
+with same-coloured objects and the whole blob is then discarded by the
+80%-of-canvas rule; 18.9% of candidates carry a sub-fragment detection.
+
+It is retained, unmodified, because the frozen v2.3 evidence path imports it
+(`selfsight.v23.selection`) and Hard Stops forbid rewriting frozen evidence.
+New work must go through `selfsight.v4.verifier`, which uses Qwen3-VL-8B plus
+InternVL3.5-8B with a human escalation ladder (F1 0.986 / 0.978).
+
 The exact-palette verifier remains authoritative for program-rendered references. This
 variant tolerates antialiasing, gradients, rotation, and hollow/nested shapes, but it does
 not use the prompt, intended answer, scene graph, or a learned model.

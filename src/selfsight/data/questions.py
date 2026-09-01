@@ -36,7 +36,26 @@ def build_primary_atom(scene: SceneSpec) -> Atom:
     if family == QuestionFamily.COUNT:
         shape = str(metadata["target_shape"])
         return Atom(atom_id, family, f"shape={shape}", "count", str(metadata["count"]))
-    if family in {QuestionFamily.COLOR, QuestionFamily.BINDING}:
+    if family == QuestionFamily.BINDING:
+        # Size is part of the reference, not decoration: two objects share the
+        # shape, so `shape=X` alone would resolve to two detections and the
+        # verifier would abstain. Size is read off the target object rather than
+        # the metadata so scenes built before binding carried `target_size`
+        # still resolve to a single detection.
+        shape = str(metadata["target_shape"])
+        target = next(
+            item for item in scene.objects if item.object_id == metadata["target_object_id"]
+        )
+        size = target.size.value
+        return Atom(
+            atom_id,
+            family,
+            f"shape={shape};size={size}",
+            "color",
+            target.color.value,
+            (target.object_id,),
+        )
+    if family == QuestionFamily.COLOR:
         shape = str(metadata["target_shape"])
         target = next(
             item for item in scene.objects if item.object_id == metadata["target_object_id"]
@@ -65,7 +84,9 @@ def _question_text(atom: Atom) -> str:
     if atom.predicate == "count":
         return f"How many {shape}s are in the image? Answer with one number."
     if atom.predicate == "color":
-        return f"What color is the {shape}? Answer with one color word."
+        size = fields[0].get("size")
+        qualifier = f"{size} " if size else ""
+        return f"What color is the {qualifier}{shape}? Answer with one color word."
     if atom.predicate == "size":
         return f"Is the {shape} small or large? Answer with one word."
     other = fields[1].get("shape", "object")
@@ -110,6 +131,125 @@ def build_question(
         choices=choices,
         choice_order_seed=choice_order_seed,
     )
+
+
+def build_gold_atoms(scene: SceneSpec) -> tuple[Atom, ...]:
+    """Atoms that score a *generated* image, as opposed to questioning the model.
+
+    SUPERSEDED by `selfsight.v4.spec.image_correct` (2026-08-31). Retained only
+    because the frozen v2.3 path imports this module; not for new work.
+
+    The defect is structural, not a bug in any one branch: each family's gold is
+    the *minimal* claim the old geometric detector could still resolve, and a
+    minimal claim is cheap to satisfy by drawing less. Measured on the v3 natural
+    pool, the share of "correct" verdicts that came from omission was 15%
+    (existence: a single atom about one of three objects), 37.4% (spatial: the
+    docstring below claims grounding closes the loophole, but only the subject is
+    grounded, never the object) and 44.8% (binding: the competitor is a negative
+    claim, satisfied by not drawing it). Worse, the same image was held to a
+    different standard depending on which question happened to be asked of it.
+
+    v4 replaces all of it with one family-independent rule -- the detected
+    (object, colour) multiset must equal the spec's -- which contains no negative
+    claim and therefore has no omission loophole to close.
+
+    `build_primary_atom` produces the question put to the model and must stay
+    balanced over yes/no. Gold scoring has two different requirements, both
+    established by the v3 calibration sweep:
+
+    * **Total.** `color` and the strict relations abstain unless the subject
+      resolves to exactly one detection. That holds on every reference render
+      and on 12-40% of generated ones, so 60-85% of binding and spatial
+      candidates came back unscoreable -- not wrong, unscoreable. The sweep was
+      measuring verifier resolvability rather than task difficulty.
+    * **Positive.** A negative claim is close to free here, because a model that
+      simply omits an object satisfies it. Existence negatives scored p=0.82-0.93
+      against 0.25-0.42 for positives, pulling the family above the productive
+      band and emptying its pools.
+
+    Families not listed fall back to the primary atom, so pre-v3 manifests keep
+    their existing semantics.
+    """
+
+    family = scene.family
+    metadata = scene.metadata
+
+    def gold_id(index: int) -> str:
+        return f"{scene.scene_id}:gold{index}"
+
+    if family == QuestionFamily.EXISTENCE:
+        # A "no" scene has no target to assert, so the gold claim is that a real
+        # object of the scene is present. The question keeps its "no" answer.
+        shape = str(metadata["target_shape"])
+        color = str(metadata["target_color"])
+        anchor_object = next(
+            (
+                item
+                for item in scene.objects
+                if item.shape.value == shape and item.color.value == color
+            ),
+            scene.objects[0],
+        )
+        return (
+            Atom(
+                gold_id(0),
+                family,
+                f"shape={anchor_object.shape.value};color={anchor_object.color.value}",
+                "exists",
+                "yes",
+                (anchor_object.object_id,),
+            ),
+        )
+
+    if family == QuestionFamily.BINDING:
+        target = next(
+            item for item in scene.objects if item.object_id == metadata["target_object_id"]
+        )
+        competitor = next(
+            item
+            for item in scene.objects
+            if item.shape == target.shape and item.object_id != target.object_id
+        )
+        reference = f"shape={target.shape.value};size={target.size.value}"
+        return (
+            Atom(
+                gold_id(0),
+                family,
+                f"{reference};color={target.color.value}",
+                "exists",
+                "yes",
+                (target.object_id,),
+            ),
+            # The miscombination check: the target's shape and size carrying the
+            # *other* same-shape object's colour must not appear.
+            Atom(
+                gold_id(1),
+                family,
+                f"{reference};color={competitor.color.value}",
+                "exists",
+                "no",
+                (competitor.object_id,),
+            ),
+        )
+
+    if family == QuestionFamily.SPATIAL:
+        relation = str(metadata["relation"])
+        subject_shape = str(metadata["subject_shape"])
+        object_shape = str(metadata["object_shape"])
+        return (
+            Atom(
+                gold_id(0),
+                family,
+                f"shape={subject_shape}|shape={object_shape}",
+                f"exists_{relation}",
+                "yes" if metadata["truth"] else "no",
+            ),
+            # Grounding. Without it an image missing the subject satisfies every
+            # relation whose truth is "no", which is the omission loophole.
+            Atom(gold_id(1), family, f"shape={subject_shape}", "exists", "yes"),
+        )
+
+    return (build_primary_atom(scene),)
 
 
 def parse_subject(subject: str) -> list[dict[str, str]]:

@@ -8,6 +8,14 @@ larger object population to move accuracy into a measurable regime.
 The difficulty setting is calibrated on a dedicated `calibration` split and only
 then frozen for the held-out probe/train/outcome splits, so the Gate A
 measurement is never taken on the split used to choose the difficulty.
+
+Object count turned out to be a weak knob, and the first sweep over {3,5,6}
+mostly moved something else. The detected-object histogram on the calibration
+banks is flat: asked for six objects Show-o2 most often renders three or four,
+asked for three it most often renders two. What actually moves per-candidate
+accuracy is the atom design -- see `build_gold_atoms`, which the rows below carry
+as `gold_atoms` so a candidate is scored on a total, positive claim rather than
+on the question put to the model.
 """
 
 from __future__ import annotations
@@ -18,7 +26,7 @@ from dataclasses import replace
 from pathlib import Path
 
 from selfsight.data.generator import generate_split, with_scene_id
-from selfsight.data.questions import build_primary_atom, build_question
+from selfsight.data.questions import build_gold_atoms, build_primary_atom, build_question
 from selfsight.schemas import QuestionFamily, QuestionFormat, as_serializable
 from selfsight.utils.hashing import sha256_json
 from selfsight.utils.jsonl import atomic_write_json, atomic_write_jsonl
@@ -30,7 +38,9 @@ from selfsight.v3.vocabulary import (
     scene_vocabulary_metadata,
 )
 
-PRIMARY = (QuestionFamily.EXISTENCE, QuestionFamily.COLOR, QuestionFamily.SPATIAL)
+# color is retired: its only difficulty knob is object count, and binding already
+# applies that knob while additionally requiring a shape+size -> colour binding.
+PRIMARY = (QuestionFamily.EXISTENCE, QuestionFamily.SPATIAL, QuestionFamily.BINDING)
 SPLIT_SEEDS = {"calibration": 0, "tier_a_probe": 1, "train": 2, "tier_a_outcome": 3}
 
 
@@ -57,6 +67,9 @@ def build(split, total, seed, objects_per_scene, forbidden, families=PRIMARY):
         # verifier keeps looking up the internal geometry code; only text a
         # model or a reviewer can read is rewritten.
         atom = build_primary_atom(scene)
+        # Also from the untransformed scene: gold atoms are matched against
+        # detector output, which speaks the internal geometry code.
+        gold_atoms = build_gold_atoms(scene)
         question = build_question(atom, question_format=QuestionFormat.OPEN)
         displayed = replace(
             scene,
@@ -69,6 +82,9 @@ def build(split, total, seed, objects_per_scene, forbidden, families=PRIMARY):
                 "schema_version": 3,
                 "scene": as_serializable(displayed),
                 "atom": as_serializable(atom),
+                # Scored against generated pixels, unlike "atom", which is the
+                # question asked of the model.
+                "gold_atoms": [as_serializable(item) for item in gold_atoms],
                 "questions": [
                     as_serializable(replace(question, text=display_text(question.text))),
                 ],
@@ -96,6 +112,15 @@ def main() -> int:
         "--split", action="append", required=True, metavar="NAME=TOTAL",
         help="e.g. --split calibration=24 --split tier_a_probe=96",
     )
+    parser.add_argument(
+        "--forbid", action="append", default=None, metavar="MANIFEST",
+        help=(
+            "Exclude every scene signature in this manifest. Splits are only "
+            "disjoint within one invocation, so the calibration split -- built "
+            "separately, at a different object count -- has to be named here or "
+            "the difficulty ends up chosen on prompts that also appear held out."
+        ),
+    )
     args = parser.parse_args()
 
     families = PRIMARY
@@ -110,6 +135,22 @@ def main() -> int:
     manifests.mkdir(parents=True, exist_ok=True)
 
     forbidden: set[str] = set()
+    forbidden_sources: list[str] = []
+    for manifest_path in args.forbid or ():
+        path = Path(manifest_path).resolve()
+        if not path.is_file():
+            raise SystemExit(f"--forbid manifest not found: {path}")
+        signatures = {
+            str(json.loads(line)["scene"]["signature"])
+            for line in path.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        }
+        if "" in signatures:
+            raise SystemExit(f"--forbid manifest has unsignatured scenes: {path}")
+        forbidden.update(signatures)
+        forbidden_sources.append(str(path))
+        print(f"forbidding {len(signatures):>4} signatures from {path}")
+
     registry: dict[str, object] = {
         "benchmark_version": "3.0",
         "objects_per_scene": args.objects_per_scene,
@@ -138,6 +179,7 @@ def main() -> int:
         print(f"{name:<16} {len(rows):>4} rows -> {path}")
 
     registry["zero_overlap_verified"] = True
+    registry["forbidden_manifests"] = forbidden_sources
     atomic_write_json(manifests / "registry.json", registry)
     print(json.dumps(registry["splits"], indent=2))
     return 0
