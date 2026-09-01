@@ -348,14 +348,14 @@ def stage_verify(args: argparse.Namespace) -> None:
 def _ceiling(results: list[dict[str, Any]]) -> dict[str, Any]:
     """p, C(p), and the balanced-pool rate the selection experiment needs.
 
-    Images a reviewer marked unusable carry `image_correct: null` and are left
-    out entirely rather than counted as failures. `bool(None)` is False and
-    would have folded them silently into the wrong half of p.
+    Every generated image is in here, including the ones holding something no
+    one could name. Those are failures like any other mismatch: a candidate that
+    came out unreadable is a candidate the selector cannot use, and excusing it
+    from p would raise the measured generation rate by deleting the generator's
+    worst output from its own score.
     """
     by_spec: dict[str, list[bool]] = {}
     for row in results:
-        if row["image_correct"] is None:
-            continue
         by_spec.setdefault(row["spec_id"], []).append(bool(row["image_correct"]))
     n = sum(len(v) for v in by_spec.values()) or 1
     correct = sum(sum(v) for v in by_spec.values())
@@ -427,11 +427,11 @@ def stage_observe(args: argparse.Namespace) -> None:
                 continue
             spec = SceneSpec.from_dict(row["spec"])
             settled = verified[image]["detections"]
-            # An image containing something nobody could name has a verdict but
-            # no answerable questions: "how many pears" has no answer when one
-            # candidate is half a pear. It counts toward p and supplies no
-            # trials. See v4.spec.UNNAMEABLE.
-            if has_unnameable(settled) or verified[image]["image_correct"] is None:
+            # An image containing something nobody could name has a verdict --
+            # a miss -- but no answerable questions: "how many pears" has no
+            # answer when one candidate is half a pear. It counts toward p and
+            # supplies no trials. See v4.spec.UNNAMEABLE.
+            if has_unnameable(settled):
                 skipped_unnameable += 1
                 continue
             questions = build_questions(spec, settled, seed=row["seed"])

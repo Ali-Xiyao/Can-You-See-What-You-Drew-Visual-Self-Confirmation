@@ -5,22 +5,22 @@ that fuses two objects into one body (nothing in the frame is a mug, and nothing
 is a pear either), and a picture that cannot be read at all. Both used to be
 forced into a noun, which put a fabricated object into the gold list.
 
-They are not the same case and must not collapse into one. `unnameable` names one
-bad object among readable ones: the verdict survives, because whatever that thing
-is it is not what the spec asked for, so the image is a miss and belongs in p.
-`unusable` says nothing in the frame can be read, so there is no verdict to have
-and the image leaves the denominator instead of counting as a miss.
+Both are the same case at different scales and use one word. An unreadable image
+briefly had its own -- `unusable` -- which took it out of p's denominator instead
+of counting it as a miss. These tests pin down that it does not: p is the share
+of generations that drew what was asked, an unreadable one demonstrably did not,
+and exempting it deletes the generator's worst output from its own score.
 
-Both are barred from supplying trials. A question needs a defensible answer, and
-"how many pears did you draw" has none when one candidate is half a pear.
+What such an image cannot do is supply a trial. A question needs a defensible
+answer, and "how many pears did you draw" has none when one candidate is half a
+pear. So: inside p, outside the trials, and reported on its own line.
 """
 
 from __future__ import annotations
 
 from typing import Any
 
-from selfsight.v4.spec import (SceneSpec, has_unnameable, image_correct,
-                               is_unusable)
+from selfsight.v4.spec import SceneSpec, has_unnameable, image_correct
 from selfsight.v4.verifier import Resolution, ladder_summary, verify
 
 
@@ -62,11 +62,13 @@ def test_unnameable_survives_the_plural_and_case_folding_in_canonical_noun():
     assert has_unnameable([{"object": "unnameables"}])
 
 
-def test_unusable_is_a_separate_word_from_unnameable():
-    """The stronger claim must not be reachable by writing the weaker one."""
-    assert is_unusable([{"object": "unusable"}])
-    assert not is_unusable([{"object": "unnameable"}])
-    assert not has_unnameable([{"object": "unusable"}])
+def test_a_whole_image_that_cannot_be_read_is_the_same_word():
+    """The reviewer writes the one word and enumerates nothing else.
+
+    A list that is only `unnameable` says "there is something here and it is not
+    any object", which is exactly the claim, and it needs no second vocabulary.
+    """
+    assert has_unnameable([{"object": "unnameable", "color": ""}])
 
 
 def test_an_unnameable_object_makes_the_image_a_miss_rather_than_a_match():
@@ -83,14 +85,18 @@ def test_an_unnameable_object_makes_the_image_a_miss_rather_than_a_match():
         spec, [_obj("mug", "blue"), {"object": "unnameable", "color": ""}]) is False
 
 
-def test_a_human_label_of_unusable_leaves_the_image_without_a_verdict():
+def test_an_unreadable_image_is_scored_a_miss_not_excused():
+    """The case the user pushed back on: this is a generation error too.
+
+    Taking it out of the denominator would have raised p by removing exactly the
+    generations that failed hardest.
+    """
     spec = _spec([("mug", "blue", 2)])
     detector = _Fixed("a", [_obj("mug", "blue", 10)])
     result = verify("img.png", spec, detector, _Fixed("b", []),
-                    human_labels={"img.png": [{"object": "unusable", "color": ""}]})
-    assert result.resolution is Resolution.UNUSABLE
-    assert result.image_correct is None
-    assert result.report == {}
+                    human_labels={"img.png": [{"object": "unnameable", "color": ""}]})
+    assert result.resolution is Resolution.HUMAN
+    assert result.image_correct is False
 
 
 def test_a_human_label_of_unnameable_still_produces_a_verdict():
@@ -104,12 +110,12 @@ def test_a_human_label_of_unnameable_still_produces_a_verdict():
     assert has_unnameable(list(result.detections))
 
 
-def test_p_is_computed_over_the_images_that_have_a_verdict():
-    """One unusable image among three must not be counted as a failure.
+def test_p_counts_the_unreadable_image_as_a_failure_and_reports_it_separately():
+    """One correct, one wrong objects, one unreadable: p is 1/3, not 1/2.
 
-    Two of the three scored images are correct, so p is 1/2 over the verdicts and
-    would be 1/3 if the unusable one were folded in as wrong -- a 17-point move
-    invented by a picture nobody could read.
+    Both failures are in p because both are the generator missing its spec, and
+    the unnameable count is on its own line because "drew the wrong objects" and
+    "drew non-objects" are different failures that p sums into one number.
     """
     spec = _spec([("mug", "blue", 1)])
     good = _Fixed("a", [_obj("mug", "blue")])
@@ -118,10 +124,9 @@ def test_p_is_computed_over_the_images_that_have_a_verdict():
         verify("a.png", spec, good, _Fixed("b", [_obj("mug", "blue")])),
         verify("b.png", spec, bad, _Fixed("b", [_obj("pear", "green")])),
         verify("c.png", spec, good, _Fixed("b", []),
-               human_labels={"c.png": [{"object": "unusable"}]}),
+               human_labels={"c.png": [{"object": "unnameable"}]}),
     ]
     summary = ladder_summary(results)
     assert summary["n"] == 3
-    assert summary["n_with_verdict"] == 2
-    assert summary["unusable"] == 1
-    assert summary["p"] == 0.5
+    assert summary["unnameable"] == 1
+    assert summary["p"] == 1 / 3

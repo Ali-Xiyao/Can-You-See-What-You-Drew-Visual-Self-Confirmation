@@ -1,4 +1,4 @@
-"""Build a review sheet for the images the two detectors could not settle.
+"""Build the review sheets for the images the two detectors could not settle.
 
 This is level 3 of the ladder, and it is the reason the ladder is allowed to keep
 every image instead of filtering. Filtering to the agreeing subset would drop the
@@ -7,22 +7,39 @@ hard images stay in and a person settles them here.
 
 The sheet shows what is in dispute and nothing else. It does not show the prompt,
 the spec, or either detector's verdict on whether the image is correct, because a
-human told "this was supposed to be two pears" will see two pears. The question
-put to the reviewer is the same one put to the detectors: what objects are in
-this picture. Their answer overrides both models.
+human told "this was supposed to be two pears" will see two pears.
 
-    python scripts/v4_human_review.py --run runs/v4/main
+    python scripts/v4_human_review.py --run runs/v4/main --chunk 10 --inline-images
 
-The page is a form. Type each answer, press Download, and drop the file into the
-run directory as `human_labels.jsonl`, then rerun verify: those rows resolve as
-HUMAN. The earlier version emitted a `review.template.jsonl` to be edited by hand
-in a text editor, which meant transcribing seventy JSON objects and getting the
-image paths right; the form writes the same file from the same fields.
+**Three choices, not free text.** The reviewer picks one of:
 
-The answer boxes start empty and are never pre-filled from a detector. There are
-buttons to copy either detector's list in, because retyping a five-object scene
-to change one word is a waste, but agreeing with a model has to be something the
-reviewer does rather than something they leave alone.
+    Q  the qwen3vl list is right
+    I  the internvl list is right
+    X  something in this picture is not any object -- two things fused into one
+       body, or a shape that cannot be named -- so neither list is right and no
+       list would be
+
+The earlier version asked the reviewer to type the object list. Typing is the
+right interface when the answer is a list nobody has written down yet; here two
+lists are already on screen and one of them is almost always correct, so typing
+mostly re-enters what is already there and invites transcription errors. `X` is
+not an escape hatch from the two lists, it is the third real outcome, and it
+carries a verdict of its own: see v4.spec.UNNAMEABLE.
+
+The fourth case -- both lists wrong and the picture readable -- is rare but real,
+so `other` still takes a typed list. It is deliberately the least prominent
+control on the card: it should cost more than clicking, because a reviewer who
+finds it easier to retype than to compare will retype.
+
+Which list sits on the left is randomised per card. Both buttons name their
+detector, so "pick qwen's" is still one click, but a reviewer working quickly
+down forty cards cannot fall into always taking the top one.
+
+**Pages are chunked and self-contained.** Every image is re-encoded as a small
+JPEG and inlined, so a page opens anywhere -- in a chat client, on a phone, from
+a copy on the desktop -- with no sibling `images/` directory to lose. One page of
+all 42 came to 10.6 MB and would not open at all; `--chunk 10` puts it at about
+400 KB a page. The re-encode is display-only and never touches the corpus.
 """
 
 from __future__ import annotations
@@ -30,215 +47,185 @@ from __future__ import annotations
 import argparse
 import base64
 import html
+import io
 import json
-import os
+import random
 from pathlib import Path
 from typing import Any
 
 PAGE = """<!doctype html>
 <meta charset="utf-8">
-<title>v4 human adjudication - {n} images</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>人工裁定 {part} — 第 {lo}–{hi} 张</title>
 <style>
-  body {{ font: 15px/1.5 system-ui, sans-serif; margin: 0 auto; max-width: 980px;
-         padding: 24px 24px 110px; color: #111; }}
-  h1 {{ font-size: 20px; }}
+  body {{ font: 15px/1.6 system-ui, "Microsoft YaHei", sans-serif;
+          margin: 0 auto; max-width: 900px; padding: 20px 20px 60px; color: #111; }}
+  h1 {{ font-size: 19px; margin-bottom: 4px; }}
   .intro {{ background: #f6f6f4; padding: 14px 18px; border-radius: 8px;
-            margin-bottom: 28px; }}
-  .card {{ display: grid; grid-template-columns: 340px 1fr; gap: 22px;
-           padding: 20px 0; border-top: 1px solid #ddd; align-items: start; }}
-  img {{ width: 320px; height: auto; border-radius: 6px; background: #eee; }}
-  .id {{ font: 12px ui-monospace, monospace; color: #666; }}
-  .dispute {{ font-weight: 600; color: #b03030; }}
-  table {{ border-collapse: collapse; margin-top: 10px; font-size: 14px; }}
-  td, th {{ padding: 3px 12px 3px 0; text-align: left; vertical-align: top; }}
-  th {{ color: #666; font-weight: 500; }}
-  code {{ background: #f2f2f0; padding: 1px 5px; border-radius: 3px; }}
-  input.answer {{ width: 100%; box-sizing: border-box; margin-top: 12px;
-                  font: 15px ui-monospace, monospace; padding: 8px 10px;
+            margin-bottom: 24px; font-size: 14px; }}
+  .intro p {{ margin: 8px 0; }}
+  .card {{ padding: 22px 0; border-top: 1px solid #ddd; }}
+  .head {{ display: flex; align-items: baseline; gap: 12px; }}
+  .num {{ font-size: 22px; font-weight: 700; }}
+  .id {{ font: 11px ui-monospace, monospace; color: #888; }}
+  .body {{ display: grid; grid-template-columns: 300px 1fr; gap: 20px;
+           margin-top: 10px; align-items: start; }}
+  img {{ width: 300px; height: auto; border-radius: 6px; background: #eee;
+         display: block; }}
+  .dispute {{ font-size: 13px; color: #b03030; margin-bottom: 10px; }}
+  .opts {{ display: flex; flex-direction: column; gap: 8px; }}
+  .opt {{ display: block; width: 100%; text-align: left; cursor: pointer;
+          border: 2px solid #ccc; border-radius: 8px; background: #fff;
+          padding: 9px 13px; font: inherit; }}
+  .opt:hover {{ border-color: #888; }}
+  .opt .tag {{ font: 12px ui-monospace, monospace; color: #666; display: block; }}
+  .opt .list {{ font-size: 14px; }}
+  .opt.on {{ border-color: #2f7d3b; background: #eef8f0; }}
+  .opt.on .tag {{ color: #2f7d3b; font-weight: 700; }}
+  .opt.x {{ border-style: dashed; }}
+  .opt.x.on {{ border-color: #b06a10; background: #fdf4e6; }}
+  .opt.x.on .tag {{ color: #b06a10; }}
+  .other {{ margin-top: 6px; font-size: 12px; }}
+  .other summary {{ color: #777; cursor: pointer; }}
+  .other input {{ width: 100%; box-sizing: border-box; margin-top: 6px;
+                  font: 14px ui-monospace, monospace; padding: 6px 8px;
                   border: 2px solid #ccc; border-radius: 6px; }}
-  input.answer:focus {{ border-color: #3b6ea5; outline: none; }}
-  .card.done input.answer {{ border-color: #3a8a4a; background: #f4fbf5; }}
-  .parsed {{ font-size: 13px; color: #444; min-height: 20px; margin-top: 6px; }}
+  .parsed {{ font-size: 12px; color: #555; margin-top: 4px; }}
   .parsed.bad {{ color: #b03030; }}
-  .fill button {{ font-size: 12px; margin: 6px 8px 0 0; padding: 3px 9px;
-                  border: 1px solid #bbb; background: #fafafa; border-radius: 5px;
-                  cursor: pointer; }}
-  #bar {{ position: fixed; left: 0; right: 0; bottom: 0; background: #111;
-          color: #fff; padding: 12px 24px; display: flex; gap: 18px;
-          align-items: center; justify-content: center; }}
-  #bar button {{ font-size: 15px; padding: 8px 16px; border-radius: 6px;
-                 border: 0; cursor: pointer; }}
-  #save {{ background: #3a8a4a; color: #fff; }}
-  #save[disabled] {{ background: #555; cursor: not-allowed; }}
+  #out {{ position: sticky; bottom: 0; background: #111; color: #fff;
+          padding: 12px 16px; margin-top: 24px; border-radius: 8px; }}
+  #out textarea {{ width: 100%; box-sizing: border-box; height: 74px;
+                   font: 13px ui-monospace, monospace; margin-top: 8px;
+                   border-radius: 6px; border: 0; padding: 8px; }}
+  #count {{ font-size: 14px; }}
 </style>
-<h1>Human adjudication &mdash; {n} images</h1>
+<h1>人工裁定：第 {lo}–{hi} 张（共 {total} 张，本页 {n} 张）</h1>
 <div class="intro">
-  <p>The two detectors disagree about these images and the crop pass did not
-  settle it. For each one: <strong>what objects are actually in the picture?</strong>
-  Give a common noun and a colour for every object, counting each separately.</p>
-  <p>Do not list the surface, background, shadows or reflections. The disputed
-  object is named in red, but check the whole list &mdash; your answer replaces
-  both models&rsquo;, it does not just arbitrate the one disagreement.</p>
-  <p><strong>When the thing has no name.</strong> The generator sometimes fuses
-  two objects into one body, or draws something with no consistent shape &mdash;
-  neither detector is right and neither are you. Write that object as
-  <code>unnameable</code>, with no colour, in its place in the list:
-  <code>blue mug, unnameable</code>. Do not leave it out and do not force a
-  noun onto it. The image still gets a verdict &mdash; whatever that thing is, it
-  is not what was asked for, so the image counts as not matching its prompt
-  &mdash; but no question is asked about it, because &ldquo;how many pears&rdquo;
-  has no answer when one candidate is half a pear.</p>
-  <p>If the <em>whole</em> picture is unreadable, write <code>unusable</code> on
-  its own. That is a stronger claim than <code>unnameable</code>: the image drops
-  out of the accuracy denominator entirely instead of counting as a miss, and is
-  reported as its own rate. Use it only when nothing in the frame can be
-  identified, not when the picture is merely wrong or ugly.</p>
-  <p>Neither the prompt nor what the image was supposed to contain is shown, on
-  purpose: knowing that two pears were requested makes two pears easier to see.</p>
-  <p><strong>How to write it.</strong> Comma-separated, one entry per kind, as
-  <code>count colour noun</code>; the count may be left off when it is one. So
-  <code>2 blue mug, white plate, green pear</code>. A picture with nothing in it
-  is <code>none</code>; a picture you cannot read at all is
-  <code>unusable</code>. What you typed is parsed back underneath &mdash; read that
-  line, not the box, to check it understood you.</p>
-  <p>The buttons under each box copy a detector&rsquo;s list into the field so you
-  can edit rather than retype. The box starts empty on purpose: if it came
-  pre-filled, agreeing with a model would be the option that takes no effort.</p>
-  <p>Answers are kept in this browser as you type, so you can close the page and
-  come back. When the counter reads {n} of {n}, press <strong>Download</strong>
-  and save the file into <code>{run}</code> as <code>human_labels.jsonl</code>.</p>
+  <p>两个检测器在这些图上分歧，裁切重问也没能解决。每张图三选一：</p>
+  <p><strong>Q</strong> 千问的列表对　·　<strong>I</strong> InternVL 的列表对　·
+     <strong>X</strong> 这张图里有东西不是任何东西（两个物体粘成一块、或形状根本认不出来）</p>
+  <p><strong>X 不是「跳过」。</strong>它自己就是一个结论：那东西无论是什么，都不是
+     prompt 要的东西，所以这张图算生成失败、计入 p；只是不能拿来出题——
+     「你画了几个梨」在候选是半个梨时没有正确答案。整张图都读不了也选 X。</p>
+  <p>图画得丑、但东西都认得出来 —— 不选 X，按哪个列表对选。</p>
+  <p>不要把桌面、背景、阴影、倒影算作物体（盘子和碗算）。红字是两个模型具体吵在哪里，
+     但请看整个列表 —— 你的选择替掉的是整份列表，不只是仲裁那一处。</p>
+  <p>不显示 prompt，也不显示这张图本来该画什么——知道「要的是两个梨」会让人看出两个梨。</p>
+  <p>两个列表都不对、但图能读 —— 展开卡片下方的「都不对」自己写，
+     格式 <code>2 blue mug, white plate</code>。</p>
+  <p>选完后把最下方框里的那一行发回聊天窗口即可。</p>
 </div>
 {cards}
-<div id="bar">
+<div id="out">
   <span id="count"></span>
-  <button id="save" disabled>Download human_labels.jsonl</button>
-  <button id="clear">Clear all</button>
+  <textarea readonly id="codes"></textarea>
 </div>
 <script>
-const KEY = "selfsight-review:{run_key}";
+const PART = "{part}";
 const cards = Array.from(document.querySelectorAll(".card"));
 
-function parse(text) {{
+function parseList(text) {{
   const s = text.trim();
   if (!s) return null;
   if (s.toLowerCase() === "none") return [];
-  if (s.toLowerCase() === "unusable") return [{{object: "unusable", color: ""}}];
   const out = [];
   for (const chunk of s.split(",")) {{
     const words = chunk.trim().split(/\\s+/).filter(Boolean);
     if (!words.length) continue;
     let count = 1;
     if (/^[0-9]+$/.test(words[0])) count = parseInt(words.shift(), 10);
-    if (words.length === 1 && words[0].toLowerCase() === "unnameable") {{
-      for (let i = 0; i < count; i++) out.push({{object: "unnameable", color: ""}});
-      continue;
-    }}
-    if (words.length === 1 && words[0].toLowerCase() === "unusable") {{
-      return "write unusable on its own, not as one item in a list";
-    }}
-    if (words.length < 2) return "needs a colour and a noun: " + chunk.trim();
-    if (count < 1 || count > 12) return "odd count in: " + chunk.trim();
+    if (words.length < 2) return "要颜色加名词：" + chunk.trim();
+    if (count < 1 || count > 12) return "个数不对：" + chunk.trim();
     const noun = words.pop();
-    const colour = words.join(" ");
-    for (let i = 0; i < count; i++) out.push({{object: noun, color: colour}});
+    for (let i = 0; i < count; i++)
+      out.push({{object: noun, color: words.join(" ")}});
   }}
-  return out.length ? out : "nothing understood";
+  return out.length ? out : "没读懂";
 }}
 
-function describe(list) {{
-  if (!list.length) return "nothing in the picture";
-  if (list.length === 1 && list[0].object === "unusable")
-    return "unreadable \u2014 dropped from the corpus, not scored as wrong";
-  const seen = new Map();
-  for (const d of list) {{
-    const k = (d.color ? d.color + " " : "") + d.object;
-    seen.set(k, (seen.get(k) || 0) + 1);
-  }}
-  return Array.from(seen, ([k, n]) => (n > 1 ? n + " x " + k : k)).join(", ");
+function choose(card, code) {{
+  card.dataset.choice = code;
+  card.querySelectorAll(".opt").forEach(function (b) {{
+    b.classList.toggle("on", b.dataset.code === code);
+  }});
+  refresh();
 }}
 
 function refresh() {{
+  const bits = [];
   let done = 0;
   for (const card of cards) {{
-    const input = card.querySelector("input.answer");
-    const out = card.querySelector(".parsed");
-    const result = parse(input.value);
-    if (result === null) {{
-      out.textContent = ""; out.className = "parsed";
-      card.classList.remove("done");
-    }} else if (typeof result === "string") {{
-      out.textContent = result; out.className = "parsed bad";
-      card.classList.remove("done");
-    }} else {{
-      out.textContent = "\\u2192 " + describe(result);
-      out.className = "parsed"; card.classList.add("done"); done++;
+    const n = card.dataset.num;
+    const box = card.querySelector(".other input");
+    const parsed = card.querySelector(".parsed");
+    const typed = box.value.trim() ? parseList(box.value) : null;
+    if (typed !== null && typeof typed !== "string") {{
+      card.querySelectorAll(".opt").forEach(function (b) {{
+        b.classList.remove("on");
+      }});
+      card.dataset.choice = "O";
+      parsed.textContent = "→ " + box.value.trim();
+      parsed.className = "parsed";
+      // Quoted, because a typed list holds spaces and commas while the code
+      // line is space-separated. Unquoted, `4=2 blue mug, white plate` cannot
+      // be told from `4=2 blue mug` followed by a card called `white`.
+      bits.push(n + '="' + box.value.trim().replace(/\\s+/g, " ") + '"');
+      done++;
+      continue;
+    }}
+    parsed.textContent = typeof typed === "string" ? typed : "";
+    parsed.className = typeof typed === "string" ? "parsed bad" : "parsed";
+    if (card.dataset.choice && card.dataset.choice !== "O") {{
+      bits.push(n + card.dataset.choice);
+      done++;
     }}
   }}
   document.getElementById("count").textContent =
-      done + " of " + cards.length + " done";
-  document.getElementById("save").disabled = done !== cards.length;
-  const state = {{}};
-  for (const card of cards) {{
-    state[card.dataset.path] = card.querySelector("input.answer").value;
-  }}
-  localStorage.setItem(KEY, JSON.stringify(state));
+      "已选 " + done + " / " + cards.length +
+      (done === cards.length ? " — 全部选完，把下面这行发给我" : "");
+  document.getElementById("codes").value = PART + ": " + bits.join(" ");
 }}
 
-const saved = JSON.parse(localStorage.getItem(KEY) || "{{}}");
 for (const card of cards) {{
-  const input = card.querySelector("input.answer");
-  if (saved[card.dataset.path]) input.value = saved[card.dataset.path];
-  input.addEventListener("input", refresh);
-  card.querySelectorAll(".fill button").forEach(function (b) {{
+  card.querySelectorAll(".opt").forEach(function (b) {{
     b.addEventListener("click", function () {{
-      input.value = b.dataset.list; input.focus(); refresh();
+      card.querySelector(".other input").value = "";
+      choose(card, b.dataset.code);
     }});
   }});
+  card.querySelector(".other input").addEventListener("input", refresh);
 }}
 refresh();
-
-document.getElementById("save").addEventListener("click", function () {{
-  const lines = cards.map(function (card, i) {{
-    return JSON.stringify({{
-      image_path: card.dataset.path,
-      index: i + 1,
-      detections: parse(card.querySelector("input.answer").value),
-    }});
-  }});
-  const blob = new Blob([lines.join("\\n") + "\\n"], {{type: "application/jsonl"}});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "human_labels.jsonl";
-  a.click();
-}});
-
-document.getElementById("clear").addEventListener("click", function () {{
-  if (!confirm("Clear every answer on this page?")) return;
-  localStorage.removeItem(KEY);
-  for (const card of cards) card.querySelector("input.answer").value = "";
-  refresh();
-}});
 </script>
 """
 
-CARD = """<div class="card" data-path="{path}">
-  <div><a href="{src}" target="_blank"><img src="{src}" alt="" loading="lazy"></a></div>
-  <div>
-    <div class="id">{index}. {name}</div>
-    <p>in dispute: <span class="dispute">{disputed}</span></p>
-    <table>
-      <tr><th>{primary}</th><td>{primary_list}</td></tr>
-      <tr><th>{secondary}</th><td>{secondary_list}</td></tr>
-    </table>
-    <input class="answer" placeholder="2 blue mug, white plate" spellcheck="false">
-    <div class="parsed"></div>
-    <div class="fill">
-      <button data-list="{primary_fill}">use {primary}</button>
-      <button data-list="{secondary_fill}">use {secondary}</button>
+CARD = """<div class="card" data-num="{index}" data-path="{path}">
+  <div class="head"><span class="num">{index}</span><span class="id">{name}</span></div>
+  <div class="body">
+    <div><img src="{src}" alt=""></div>
+    <div>
+      <div class="dispute">分歧：{disputed}</div>
+      <div class="opts">
+        {options}
+        <button class="opt x" data-code="X">
+          <span class="tag">X</span>
+          <span class="list">有东西不是任何东西（粘连 / 认不出）</span>
+        </button>
+      </div>
+      <details class="other">
+        <summary>都不对，我自己写</summary>
+        <input placeholder="2 blue mug, white plate" spellcheck="false">
+        <div class="parsed"></div>
+      </details>
     </div>
   </div>
 </div>
 """
+
+OPTION = """<button class="opt" data-code="{code}">
+          <span class="tag">{code} · {label}</span>
+          <span class="list">{list}</span>
+        </button>"""
 
 
 def _counts(detections: list[dict[str, Any]]) -> dict[str, int]:
@@ -252,39 +239,55 @@ def _counts(detections: list[dict[str, Any]]) -> dict[str, int]:
 def _fmt(detections: list[dict[str, Any]]) -> str:
     counts = _counts(detections)
     if not counts:
-        return "<em>nothing</em>"
-    return ", ".join(
-        f"{n}&times; {html.escape(k)}" if n > 1 else html.escape(k)
+        return "<em>什么都没有</em>"
+    return "，".join(
+        f"{n}× {html.escape(k)}" if n > 1 else html.escape(k)
         for k, n in sorted(counts.items())
     )
 
 
-def _fill(detections: list[dict[str, Any]]) -> str:
-    """The same list in the syntax the box accepts, for the copy buttons."""
-    counts = _counts(detections)
-    if not counts:
-        return "none"
-    return html.escape(", ".join(
-        f"{n} {k}" if n > 1 else k for k, n in sorted(counts.items())
-    ), quote=True)
+def _thumb(path: Path, max_width: int, quality: int) -> str:
+    """A display-only JPEG, inlined. Never written back over the corpus."""
+    from PIL import Image
+
+    with Image.open(path) as handle:
+        image = handle.convert("RGB")
+    if image.width > max_width:
+        height = round(image.height * max_width / image.width)
+        image = image.resize((max_width, height), Image.LANCZOS)
+    buffer = io.BytesIO()
+    image.save(buffer, format="JPEG", quality=quality, optimize=True)
+    return "data:image/jpeg;base64," + base64.b64encode(
+        buffer.getvalue()).decode("ascii")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run", required=True, type=Path)
-    parser.add_argument("--out", type=Path)
+    parser.add_argument("--out-dir", type=Path, help="defaults to the run directory")
+    parser.add_argument("--stem", default="review")
     parser.add_argument("--primary", default="qwen3vl")
     parser.add_argument("--secondary", default="internvl")
+    parser.add_argument("--primary-code", default="Q")
+    parser.add_argument("--secondary-code", default="I")
+    parser.add_argument("--primary-label", default="千问")
+    parser.add_argument("--secondary-label", default="InternVL")
     parser.add_argument("--limit", type=int, default=200)
+    parser.add_argument("--chunk", type=int, default=0,
+                        help="images per page; 0 puts them all on one. Ten "
+                             "inlined JPEGs is about 400 KB, which opens "
+                             "anywhere; all 42 as PNGs was 10.6 MB, which did "
+                             "not open at all.")
     parser.add_argument("--inline-images", action="store_true",
-                        help="embed the PNGs as base64 so the page travels as "
-                             "one file. Off by default: 42 images came to "
-                             "10.6 MB of markup and the browser would not open "
-                             "it. Referenced from images/ instead, the page is "
-                             "a few kilobytes and the pictures still zoom.")
+                        help="re-encode each image small and embed it, so the "
+                             "page is one self-contained file")
+    parser.add_argument("--max-width", type=int, default=360)
+    parser.add_argument("--quality", type=int, default=78)
+    parser.add_argument("--seed", default="review",
+                        help="seeds which detector's list is shown first")
     args = parser.parse_args()
-    out = args.out or args.run / "review.html"
-    out_dir = out.resolve().parent
+    out_dir = (args.out_dir or args.run).resolve()
+    out_dir.mkdir(parents=True, exist_ok=True)
 
     from selfsight.v4.detectors import cached_detections
 
@@ -302,52 +305,77 @@ def main() -> None:
     secondary_path = args.run / f"detections.{args.secondary}.jsonl"
     secondary = cached_detections(secondary_path) if secondary_path.exists() else {}
 
-    cards = []
-    for index, row in enumerate(pending[: args.limit], start=1):
+    rows = pending[: args.limit]
+    cards: list[str] = []
+    kept: list[str] = []
+    for index, row in enumerate(rows, start=1):
         image_path = Path(row["image_path"])
-        if args.inline_images:
-            try:
-                src = "data:image/png;base64," + base64.b64encode(
-                    image_path.read_bytes()).decode("ascii")
-            except OSError:
-                continue
-        else:
-            src = html.escape(
-                os.path.relpath(image_path, out_dir).replace("\\", "/"),
-                quote=True)
-        disputed = ", ".join(
-            f"{d.get('color') or '?'} {d.get('object')} ({d.get('reason', '')})"
+        try:
+            src = (_thumb(image_path, args.max_width, args.quality)
+                   if args.inline_images
+                   else html.escape(image_path.as_posix(), quote=True))
+        except OSError:
+            continue
+        disputed = "，".join(
+            f"{d.get('color') or '?'} {d.get('object')}"
             for d in row.get("disputed", ())
         ) or "n/a"
-        first = primary.get(row["image_path"], [])
-        second = secondary.get(row["image_path"], [])
+        options = [
+            OPTION.format(code=args.primary_code, label=args.primary_label,
+                          list=_fmt(primary.get(row["image_path"], []))),
+            OPTION.format(code=args.secondary_code, label=args.secondary_label,
+                          list=_fmt(secondary.get(row["image_path"], []))),
+        ]
+        # Which detector is on top is decided per card. Both buttons are
+        # labelled, so picking one by name is still a single click; what this
+        # removes is the reviewer who works down forty cards and takes whatever
+        # is first.
+        if random.Random(f"{args.seed}:{row['image_path']}").random() < 0.5:
+            options.reverse()
         cards.append(CARD.format(
             src=src,
             path=html.escape(row["image_path"], quote=True),
             index=index,
             name=html.escape(image_path.name),
             disputed=html.escape(disputed),
-            primary=html.escape(args.primary),
-            secondary=html.escape(args.secondary),
-            primary_list=_fmt(first),
-            secondary_list=_fmt(second),
-            primary_fill=_fill(first),
-            secondary_fill=_fill(second),
+            options="\n        ".join(options),
         ))
+        kept.append(row["image_path"])
 
-    out.write_text(
-        PAGE.format(
-            n=len(cards),
-            cards="\n".join(cards),
-            run=html.escape(str(args.run)),
-            run_key=html.escape(args.run.name, quote=True),
-        ),
-        encoding="utf-8",
-    )
-    print(f"{len(pending)} pending, {len(cards)} in the sheet -> {out}")
-    if len(pending) > args.limit:
-        print(f"note: {len(pending) - args.limit} beyond --limit not included")
-    print(f"adjudication rate: {len(pending) / max(1, len(verified)):.1%} "
+    size = args.chunk if args.chunk > 0 else len(cards)
+    written = []
+    for start in range(0, len(cards), size):
+        group = cards[start:start + size]
+        part = (f"{args.stem}{start // size + 1}" if args.chunk > 0
+                else args.stem)
+        out = out_dir / f"{part}.html"
+        out.write_text(PAGE.format(
+            cards="\n".join(group),
+            n=len(group),
+            lo=start + 1,
+            hi=start + len(group),
+            total=len(cards),
+            part=part,
+        ), encoding="utf-8")
+        written.append(out)
+        print(f"{out.name}  {len(group)} images  {out.stat().st_size // 1024} KB")
+
+    # The pages carry card numbers, not paths. This is what turns "3X 4Q" back
+    # into image paths, and it is written next to the pages so the mapping
+    # cannot drift from the sheet the reviewer actually saw.
+    index_path = out_dir / f"{args.stem}.index.json"
+    index_path.write_text(json.dumps({
+        "run": str(args.run),
+        "chunk": size,
+        "codes": {args.primary_code: args.primary,
+                  args.secondary_code: args.secondary,
+                  "X": "unnameable",
+                  "O": "typed by the reviewer"},
+        "pages": [p.name for p in written],
+        "images": kept,
+    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"{index_path.name}  maps card numbers back to image paths")
+    print(f"adjudication rate: {len(pending) / len(verified):.1%} "
           f"(locked criterion: report it, must be <= 10%)")
 
 

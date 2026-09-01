@@ -60,7 +60,7 @@ because the corpus that already ran contains both.
 
 
 UNNAMEABLE = "unnameable"
-"""One object in the picture that is not any nameable thing.
+"""Something in the picture that is not any nameable thing.
 
 The generator sometimes fuses two objects into a single body, or produces
 something with no consistent shape. Both detectors then return confident and
@@ -71,22 +71,24 @@ Written into the settled list as an object rather than left out. The picture
 does contain a thing, and whatever it is it is not the mug that was asked for,
 so the multiset differs from the spec and `image_correct` is False. Dropping it
 would make the image score as if that region were empty, which is a different
-and false claim.
+and false claim: a one-mug spec drawn as one fused blob would come out a match.
 
-Questions are never built on such an image: "how many pears did you draw" has no
-answer when one of the candidates is half a pear. So these images count toward p
-and toward the balanced-pool rate, where the verdict is well defined, and supply
-no trials, where it is not.
-"""
+An unreadable picture is the same case at image scale, not a different one, and
+uses the same word. It was briefly given its own -- `unusable` -- which took the
+image out of p's denominator instead of counting it as a miss. That was wrong.
+p is the share of generations that drew what was asked; a picture no one can
+read demonstrably did not, and dropping it deletes exactly the generator's worst
+output from its own score. The reviewer's inability to name the thing is
+evidence about the generation, not a gap in the instrument. The one case that
+genuinely has no verdict is a broken file or a missing render, which is not
+something a reviewer reports.
 
-UNUSABLE = "unusable"
-"""The reviewer could not read the picture at all.
-
-Distinct from UNNAMEABLE, which names one bad object among readable ones. This
-one says nothing about the image is trustworthy, so it has no verdict either: it
-is excluded from p as well as from the trials, and reported as its own rate.
-Forcing a verdict here would put a guess into the denominator of the headline
-number.
+What such an image cannot do is supply trials: "how many pears did you draw" has
+no answer when one candidate is half a pear. So these images count toward p and
+toward the balanced-pool rate, where the verdict is well defined, and supply no
+trials, where it is not. The rate is reported on its own line, because "the
+generator drew the wrong objects" and "the generator drew non-objects" are
+different failures and the headline p sums them.
 """
 
 SURFACE_WORDS = frozenset({
@@ -124,12 +126,6 @@ def has_unnameable(detections: list[dict[str, Any]]) -> bool:
     it is not what the spec asked for -- but no question can be built on it.
     """
     return any(canonical_noun(item.get("object", "")) == UNNAMEABLE
-               for item in detections)
-
-
-def is_unusable(detections: list[dict[str, Any]]) -> bool:
-    """Did the reviewer decline to read the picture at all?"""
-    return any(canonical_noun(item.get("object", "")) == UNUSABLE
                for item in detections)
 
 
