@@ -85,10 +85,19 @@ def main() -> None:
     matches = [r for r in rows if r["gold_source"] != "image_differs_from_spec"]
     report["gold_source"] = {
         "image_differs_from_spec": rate(differs),
-        "image_matches_spec": rate(matches),
+        "not_diagnostic": rate(matches),
+        "by_tag": {
+            tag: rate(group)
+            for tag, group in _group(rows, lambda r: r["gold_source"]).items()
+        },
         "note": (
-            "Only the first is diagnostic. Where the image matches the spec, a "
-            "prompt-reciter and a picture-reader give the same answer."
+            "Only image_differs_from_spec is diagnostic: there the correct answer "
+            "contradicts the prompt, so a prompt-reciter is wrong and a "
+            "picture-reader is right. spec_matches_image means the two give the "
+            "same answer. The bare `image` tag is the middle case -- the spec was "
+            "not met, but both options appear in the prompt, so a prompt-reciter "
+            "is at chance rather than wrong; it is reported but not counted as "
+            "diagnostic."
         ),
     }
     if differs:

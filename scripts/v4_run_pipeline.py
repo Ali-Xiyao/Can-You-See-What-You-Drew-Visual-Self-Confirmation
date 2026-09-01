@@ -279,6 +279,13 @@ def stage_observe(args: argparse.Namespace) -> None:
                     "question": question.prompt_text,
                     "gold": question.gold,
                     "gold_source": question.gold_source,
+                    # The builders' bookkeeping travels with the trial. Without
+                    # it the analysis cannot split the existence family into the
+                    # substitution trials, where a prompt-reciter is wrong, and
+                    # the rest, where it is merely at chance.
+                    "metadata": dict(question.metadata),
+                    "option_a": question.option_a,
+                    "option_b": question.option_b,
                     "raw_answer": raw,
                     "correct": correct,
                     "abstain": correct is None,
