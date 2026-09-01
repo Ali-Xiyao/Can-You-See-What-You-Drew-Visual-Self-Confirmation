@@ -1,0 +1,124 @@
+{
+  "n_specs": 120,
+  "n_entries": 360,
+  "items_per_spec": {
+    "3": 120
+  },
+  "count_distribution": {
+    "1": 360
+  },
+  "objects_per_scene_mean": 3.0,
+  "distinct_objects": 33,
+  "top_objects": [
+    [
+      "apple",
+      33
+    ],
+    [
+      "bottle",
+      27
+    ],
+    [
+      "banana",
+      23
+    ],
+    [
+      "mug",
+      22
+    ],
+    [
+      "notebook",
+      21
+    ],
+    [
+      "book",
+      19
+    ],
+    [
+      "spoon",
+      17
+    ],
+    [
+      "pear",
+      15
+    ]
+  ],
+  "distinct_colors": 12,
+  "top_colors": [
+    [
+      "red",
+      90
+    ],
+    [
+      "green",
+      56
+    ],
+    [
+      "yellow",
+      45
+    ],
+    [
+      "blue",
+      44
+    ],
+    [
+      "white",
+      39
+    ],
+    [
+      "brown",
+      26
+    ],
+    [
+      "black",
+      22
+    ],
+    [
+      "silver",
+      20
+    ]
+  ],
+  "max_color_share": 0.25,
+  "with_relations": 0,
+  "rejected": 620,
+  "reject_reasons": {
+    "scene holds 4 objects, want 3": 139,
+    "implausible colour": 41,
+    "duplicate prompt": 142,
+    "expected 3 entries, got 2": 90,
+    "duplicate entry for apple": 48,
+    "duplicate entry for banana": 1,
+    "duplicate entry for tomato": 10,
+    "duplicate entry for pear": 2,
+    "scene holds 5 objects, want 3": 8,
+    "duplicate entry for mug": 19,
+    "duplicate entry for book": 10,
+    "duplicate entry for candle": 9,
+    "duplicate entry for bottle": 14,
+    "duplicate entry for box": 7,
+    "duplicate entry for hat": 6,
+    "duplicate entry for ball": 6,
+    "duplicate entry for brush": 7,
+    "duplicate entry for clock": 3,
+    "duplicate entry for key": 5,
+    "duplicate entry for sock": 4,
+    "duplicate entry for shell": 3,
+    "duplicate entry for stone": 3,
+    "duplicate entry for flower": 2,
+    "duplicate entry for leaf": 2,
+    "duplicate entry for plate": 4,
+    "duplicate entry for spoon": 6,
+    "duplicate entry for fork": 3,
+    "expected 3 entries, got 1": 6,
+    "prompt does not mention colour yellow": 1,
+    "duplicate entry for cup": 8,
+    "duplicate entry for notebook": 2,
+    "duplicate entry for bowl": 4,
+    "duplicate entry for egg": 1,
+    "duplicate entry for jar": 3,
+    "duplicate entry for lemon": 1
+  },
+  "elapsed_s": 10069.0,
+  "author_model": "H:\\Xiyao_Wang\\001_models\\Qwen3-VL-8B-Instruct",
+  "temperature": 0.9
+}

@@ -174,21 +174,59 @@ def build_counting(
     )
 
 
+def _plausible_colours(noun: str) -> set[str]:
+    """Colours a distractor may use for this category.
+
+    A distractor has to be a colour the object could actually be. "Is the banana
+    yellow or purple" is answerable from the noun alone and would score as
+    picture-reading without a picture.
+    """
+    from selfsight.v4.tasks import COLOR_WORDS, PLAUSIBLE_COLORS
+
+    allowed = PLAUSIBLE_COLORS.get(noun) or PLAUSIBLE_COLORS.get(noun.rstrip("s"))
+    return set(allowed) if allowed else set(COLOR_WORDS)
+
+
 def build_existence(
     spec: SceneSpec,
     detections: list[dict[str, Any]],
     rng: random.Random,
     index: int,
 ) -> ForcedChoice | None:
-    """Which of two categories is in the picture -- one drawn, one not."""
-    drawn = sorted(_detected_counts(detections))
-    if not drawn:
+    """Which of two categories is in the picture -- one drawn, one not.
+
+    The pairing is chosen so the correct answer contradicts the prompt whenever
+    the image allows it. The strongest form is a substitution: the generator drew
+    a category the prompt never asked for and skipped one it did, so naming the
+    drawn category means reading the picture and naming the requested one means
+    reciting the prompt.
+
+    Only that pairing is tagged diagnostic. When the present option is itself in
+    the spec, a prompt-reciter sees both options in its own instruction and
+    answers at chance rather than wrong -- a weaker contrast, and counting it as
+    the same thing would inflate the diagnostic set with trials that cannot
+    separate the two hypotheses.
+    """
+    counts = _detected_counts(detections)
+    if not counts:
         return None
-    present = rng.choice(drawn)
-    pool = [x for x in DISTRACTOR_POOL if x not in drawn]
-    if not pool:
-        return None
-    absent = rng.choice(pool)
+    requested = {item.object for item in spec.objects}
+    unmet = sorted(name for name in requested if not counts.get(name))
+    extra = sorted(name for name in counts if name not in requested)
+
+    if unmet and extra:
+        present, absent = rng.choice(extra), rng.choice(unmet)
+        source = "image_differs_from_spec"
+    elif unmet:
+        present, absent = rng.choice(sorted(counts)), rng.choice(unmet)
+        source = "image"
+    else:
+        pool = [name for name in DISTRACTOR_POOL if name not in counts]
+        if not pool:
+            return None
+        present, absent = rng.choice(sorted(counts)), rng.choice(pool)
+        source = "spec_matches_image"
+
     correct, wrong, gold = _place(rng, present, absent)
     return ForcedChoice(
         question_id=f"{spec.spec_id}:existence:{index}",
@@ -201,8 +239,13 @@ def build_existence(
         option_a=correct,
         option_b=wrong,
         gold=gold,
-        gold_source="image",
-        metadata={"present": present, "absent": absent},
+        gold_source=source,
+        metadata={
+            "present": present,
+            "absent": absent,
+            "present_in_spec": present in requested,
+            "absent_requested": absent in requested,
+        },
     )
 
 
@@ -212,39 +255,73 @@ def build_binding(
     rng: random.Random,
     index: int,
 ) -> ForcedChoice | None:
-    """Which object carries a given colour.
+    """What colour one category was drawn in.
 
-    Needs at least two categories with distinct detected colours, otherwise the
-    colour does not pick anything out and the question is not about binding.
+    This replaced an earlier "which object is green" phrasing. Both are colour-
+    object binding, but only this one admits a distractor taken from the spec:
+    asked for a green pear the generator often draws a red one, and then the
+    drawn colour and the requested colour are the two options. The earlier form
+    had no spec-derived distractor available and so produced no diagnostic trial
+    on any image in the corpus.
+
+    The one phrasing is used whether or not the spec was met, so the diagnostic
+    and non-diagnostic subsets do not also differ in wording -- otherwise a gap
+    between them could be read as a wording effect.
     """
-    by_colour: dict[str, set[str]] = collections.defaultdict(set)
+    counts = _detected_counts(detections)
+    colours: dict[str, set[str]] = collections.defaultdict(set)
     for item in detections:
         colour = item.get("color")
-        if colour:
-            by_colour[str(colour).lower()].add(str(item["object"]).lower())
-    unique = {c: next(iter(o)) for c, o in by_colour.items() if len(o) == 1}
-    if len(unique) < 2:
+        colours[str(item["object"]).strip().lower()].add(
+            str(colour).strip().lower() if colour else ""
+        )
+    # A category drawn twice in two colours has no single answer; skip it.
+    stable = {
+        noun: next(iter(found))
+        for noun, found in colours.items()
+        if len(found) == 1 and next(iter(found))
+    }
+    if not stable:
         return None
-    colour = rng.choice(sorted(unique))
-    correct_object = unique[colour]
-    others = sorted({o for o in unique.values() if o != correct_object})
-    if not others:
-        return None
-    wrong_object = rng.choice(others)
-    correct, wrong, gold = _place(rng, correct_object, wrong_object)
+    requested = {item.object: item.color for item in spec.objects}
+
+    mismatched = sorted(
+        noun
+        for noun, drawn in stable.items()
+        if requested.get(noun) and requested[noun] != drawn
+    )
+    if mismatched:
+        noun = rng.choice(mismatched)
+        wrong_colour = requested[noun]
+        source = "image_differs_from_spec"
+    else:
+        noun = rng.choice(sorted(stable))
+        pool = sorted(_plausible_colours(noun) - {stable[noun]})
+        if not pool:
+            return None
+        wrong_colour = rng.choice(pool)
+        source = "spec_matches_image" if noun in requested else "image"
+
+    correct, wrong, gold = _place(rng, stable[noun], wrong_colour)
+    n = counts.get(noun, 1)
+    verb = "is" if n == 1 else "are"
     return ForcedChoice(
         question_id=f"{spec.spec_id}:binding:{index}",
         spec_id=spec.spec_id,
         family=Family.BINDING,
         prompt_text=(
-            f"In this picture, which object is {colour}? Answer A or B only.\n"
-            f"A. {correct}\nB. {wrong}"
+            f"What colour {verb} the {_plural(noun, n)} in this picture? "
+            f"Answer A or B only.\nA. {correct}\nB. {wrong}"
         ),
         option_a=correct,
         option_b=wrong,
         gold=gold,
-        gold_source="image",
-        metadata={"color": colour, "bound_to": correct_object},
+        gold_source=source,
+        metadata={
+            "object": noun,
+            "drawn": stable[noun],
+            "requested": requested.get(noun),
+        },
     )
 
 
@@ -261,20 +338,46 @@ def build_spatial(
     from the detected box centres, so this question is available whether or not
     the spec carried a relation -- which is what makes spatial trials free of any
     cost in p when the relation is not requested.
+
+    A pair the spec constrained is preferred, because a requested relation is the
+    only way this family can produce a diagnostic trial: asked for the mug left
+    of the apple and having drawn it right, the picture's answer contradicts the
+    prompt's. The corpus as shipped carries no relations, so in practice spatial
+    measures whether the model can read its own layout rather than whether it
+    defers to the prompt. That is a deliberate trade and not an oversight: a
+    requested relation is one more thing the generator has to get right, and p is
+    the scarce resource. The path is implemented so a relation-carrying corpus
+    needs no change here.
     """
     positions: dict[str, list[float]] = collections.defaultdict(list)
     for item in detections:
         x = _centre_x(item)
         if x is not None:
-            positions[str(item["object"]).lower()].append(x)
+            positions[str(item["object"]).strip().lower()].append(x)
     singles = {k: v[0] for k, v in positions.items() if len(v) == 1}
     if len(singles) < 2:
         return None
-    first, second = rng.sample(sorted(singles), 2)
+
+    constrained = [
+        (r.subject, r.object, r.relation)
+        for r in spec.relations
+        if r.subject in singles and r.object in singles
+    ]
+    if constrained:
+        first, second, relation = rng.choice(constrained)
+    else:
+        first, second = rng.sample(sorted(singles), 2)
+        relation = None
     # A near tie is not a fact about the image; skip rather than coin-flip it.
     if abs(singles[first] - singles[second]) < 24.0:
         return None
     truth = "left" if singles[first] < singles[second] else "right"
+    if relation is None:
+        source = "image"
+    elif relation.replace("_of", "") != truth:
+        source = "image_differs_from_spec"
+    else:
+        source = "spec_matches_image"
     correct, wrong, gold = _place(rng, truth, "right" if truth == "left" else "left")
     return ForcedChoice(
         question_id=f"{spec.spec_id}:spatial:{index}",
@@ -288,10 +391,8 @@ def build_spatial(
         option_a=correct,
         option_b=wrong,
         gold=gold,
-        gold_source="image",
-        metadata={"subject": first, "object": second,
-                  "requested": any(r.subject == first and r.object == second
-                                   for r in spec.relations)},
+        gold_source=source,
+        metadata={"subject": first, "object": second, "requested": relation},
     )
 
 
@@ -307,12 +408,26 @@ def build_absence(
     drawn something it did not is not reading its own image. Both options name a
     concrete category, so "no" is not a safe default the way it is in a yes/no
     phrasing.
+
+    The named category is preferentially one the prompt asked for and the image
+    does not contain. That is the cleanest diagnostic trial in the set: the spec
+    says the thing is there, the pixels say it is not, and the two hypotheses
+    give opposite answers with nothing in between. When every requested category
+    was drawn, the name comes from the distractor pool and the trial measures
+    ordinary recognition instead.
     """
-    drawn = set(_detected_counts(detections))
-    pool = [x for x in DISTRACTOR_POOL if x not in drawn]
-    if not pool or not drawn:
+    counts = _detected_counts(detections)
+    if not counts:
         return None
-    absent = rng.choice(pool)
+    requested = {item.object for item in spec.objects}
+    unmet = sorted(name for name in requested if not counts.get(name))
+    if unmet:
+        absent, source = rng.choice(unmet), "image_differs_from_spec"
+    else:
+        pool = [name for name in DISTRACTOR_POOL if name not in counts]
+        if not pool:
+            return None
+        absent, source = rng.choice(pool), "spec_matches_image"
     correct, wrong, gold = _place(
         rng, f"no {_plural(absent, 2)}", f"at least one {absent}"
     )
@@ -327,8 +442,8 @@ def build_absence(
         option_a=correct,
         option_b=wrong,
         gold=gold,
-        gold_source="image",
-        metadata={"absent": absent},
+        gold_source=source,
+        metadata={"absent": absent, "absent_requested": absent in requested},
     )
 
 

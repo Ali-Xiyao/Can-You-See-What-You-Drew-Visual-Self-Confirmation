@@ -1,0 +1,119 @@
+{
+  "n_specs": 120,
+  "n_entries": 240,
+  "items_per_spec": {
+    "2": 120
+  },
+  "count_distribution": {
+    "1": 120,
+    "2": 120
+  },
+  "objects_per_scene_mean": 3.0,
+  "distinct_objects": 33,
+  "top_objects": [
+    [
+      "apple",
+      31
+    ],
+    [
+      "mug",
+      22
+    ],
+    [
+      "banana",
+      18
+    ],
+    [
+      "plate",
+      15
+    ],
+    [
+      "bottle",
+      15
+    ],
+    [
+      "pear",
+      15
+    ],
+    [
+      "lemon",
+      14
+    ],
+    [
+      "carrot",
+      12
+    ]
+  ],
+  "distinct_colors": 9,
+  "top_colors": [
+    [
+      "red",
+      49
+    ],
+    [
+      "green",
+      41
+    ],
+    [
+      "yellow",
+      34
+    ],
+    [
+      "blue",
+      33
+    ],
+    [
+      "white",
+      29
+    ],
+    [
+      "black",
+      20
+    ],
+    [
+      "brown",
+      19
+    ],
+    [
+      "orange",
+      12
+    ]
+  ],
+  "max_color_share": 0.20416666666666666,
+  "with_relations": 0,
+  "rejected": 420,
+  "reject_reasons": {
+    "expected 2 entries, got 3": 270,
+    "duplicate entry for apple": 6,
+    "duplicate entry for mug": 11,
+    "implausible colour": 12,
+    "duplicate prompt": 52,
+    "duplicate entry for banana": 3,
+    "duplicate entry for tomato": 1,
+    "duplicate entry for egg": 6,
+    "duplicate entry for cup": 1,
+    "duplicate entry for bowl": 2,
+    "duplicate entry for plate": 2,
+    "duplicate entry for book": 3,
+    "duplicate entry for notebook": 2,
+    "duplicate entry for candle": 2,
+    "duplicate entry for bottle": 9,
+    "duplicate entry for jar": 1,
+    "duplicate entry for box": 2,
+    "duplicate entry for hat": 2,
+    "duplicate entry for ball": 2,
+    "duplicate entry for brush": 3,
+    "duplicate entry for key": 2,
+    "duplicate entry for sock": 2,
+    "duplicate entry for shell": 3,
+    "duplicate entry for spoon": 4,
+    "duplicate entry for leaf": 1,
+    "expected 2 entries, got 1": 12,
+    "duplicate entry for fork": 2,
+    "prompt does not mention leaf": 1,
+    "scene holds 4 objects, want 3": 1
+  },
+  "elapsed_s": 1875.1,
+  "author_model": "H:\\Xiyao_Wang\\001_models\\Qwen3-VL-8B-Instruct",
+  "temperature": 0.9
+}
