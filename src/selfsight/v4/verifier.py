@@ -69,7 +69,13 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Protocol
 
-from selfsight.v4.spec import SceneSpec, detected_multiset, image_correct, match_report
+from selfsight.v4.spec import (
+    SceneSpec,
+    canonical_noun,
+    detected_multiset,
+    image_correct,
+    match_report,
+)
 
 
 class Resolution(str, Enum):
@@ -124,7 +130,7 @@ class Detector(Protocol):
 def _key(item: dict[str, Any]) -> tuple[str, str | None]:
     colour = item.get("color")
     return (
-        str(item["object"]).strip().lower(),
+        canonical_noun(item["object"]),
         str(colour).strip().lower() if colour else None,
     )
 

@@ -33,6 +33,49 @@ from typing import Any
 Multiset = collections.Counter
 
 
+SYNONYMS: dict[str, str] = {
+    "cup": "mug",
+    "notebook": "book",
+}
+"""Nouns this instrument cannot tell apart, mapped to one name.
+
+Not a convenience. The gold rule compares (object, colour) multisets by exact
+noun, and on 468 images the two detectors and the corpus crossed cup with mug 30
+times and notebook with book 21 times -- naming the same object two ways. Every
+one of those scored as "the generator drew the wrong thing", and then the absence
+family asked whether the picture contained a cup, was told no, and marked the
+model wrong for saying yes about a mug that was plainly there. 50 of 468 images
+failed for this reason alone.
+
+The map is kept deliberately tiny and only merges pairs where no photograph could
+settle the distinction either. lemon and lime are not merged, nor orange and
+lemon, nor spoon and fork: those are different objects that a detector sometimes
+confuses, and confusing them is a detector error worth measuring, not a naming
+convention. The better fix is upstream -- do not put both "cup" and "mug" in the
+authoring vocabulary -- and that is done for future corpora; this map exists
+because the corpus that already ran contains both.
+"""
+
+
+def canonical_noun(noun: str) -> str:
+    """One name per object category, for the multiset comparison.
+
+    Also reduces a compound to its head noun, which is the last word in English:
+    "bell pepper" and "pepper", or "glass bottle" and "bottle", are the same
+    object described at two levels of detail. A detector asked for a single
+    common noun still sometimes returns two.
+    """
+    text = str(noun).strip().lower()
+    if not text:
+        return text
+    head = text.split()[-1]
+    if head.endswith("es") and head[:-2] and head[-3:] in {"hes", "ses", "xes"}:
+        head = head[:-2]
+    elif head.endswith("s") and not head.endswith("ss") and len(head) > 3:
+        head = head[:-1]
+    return SYNONYMS.get(head, head)
+
+
 @dataclass(frozen=True)
 class SpecObject:
     """One requested group of identical objects."""
@@ -45,7 +88,7 @@ class SpecObject:
     def from_dict(cls, value: dict[str, Any]) -> SpecObject:
         colour = value.get("color")
         return cls(
-            object=str(value["object"]).strip().lower(),
+            object=canonical_noun(value["object"]),
             color=str(colour).strip().lower() if colour else None,
             count=int(value["count"]),
         )
@@ -159,7 +202,7 @@ def detected_multiset(detections: list[dict[str, Any]]) -> Multiset:
         colour = item.get("color")
         counter[
             (
-                str(item["object"]).strip().lower(),
+                canonical_noun(item["object"]),
                 str(colour).strip().lower() if colour else None,
             )
         ] += 1

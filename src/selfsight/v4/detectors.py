@@ -25,6 +25,13 @@ simply the field omitted, on some images and not others. Nothing failed loudly.
 The boxes are what the spatial family and the ladder's crop step run on, so those
 two silently ran on the 41% of rows that happened to carry geometry. Six of six
 box-less images returned boxes once the sentence was added.
+
+The instruction also used to exclude "the surface the objects rest on (table,
+tray, counter, cloth)". A plate is both an object and a surface, and 21% of the
+corpus asks for one, so those images were guaranteed to score as missing an
+object no matter what the generator drew: 57 of 468 failed for that reason
+alone. The exclusion now names only table, desk, counter, cloth and mat, and
+says outright that a plate, bowl, tray or dish is an object.
 """
 
 from __future__ import annotations
@@ -45,8 +52,10 @@ Rules:
 - Name each object with a single common noun: apple, mug, book, candle, hat.
 - Count each object separately. Three apples are three entries, not one.
 - Give each object's dominant colour as a plain colour word.
-- Do NOT list the surface the objects rest on (table, tray, counter, cloth),
-  the background, the wall, shadows, or reflections.
+- Do NOT list the table, desk, counter, cloth or mat the objects rest on, the
+  background, the wall, shadows, or reflections.
+- A plate, bowl, tray, dish or saucer IS an object. List it, including when other
+  objects are resting on it.
 - If an object is partly hidden behind another, still list it.
 
 Return ONLY a JSON array, no other text. Every element must carry all three
@@ -61,7 +70,8 @@ CROP_INSTRUCTION = """This is a close crop of one part of a photograph.
 List every distinct physical object you can see in it, using the same format: a
 single common noun, a plain colour word, and a bounding box in this crop.
 
-Do NOT list the surface, background, shadows or reflections.
+Do NOT list the table, desk, counter or cloth, the background, shadows or
+reflections. A plate, bowl, tray or dish IS an object -- list it.
 
 Return ONLY a JSON array of {"object": <noun>, "color": <colour>,
 "box": [x0, y0, x1, y1]}. If you see no object, return []."""

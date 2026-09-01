@@ -26,7 +26,7 @@ import re
 from collections import Counter
 from typing import Any, Callable, Iterable
 
-from selfsight.v4.spec import SceneSpec, SpecObject
+from selfsight.v4.spec import SceneSpec, SpecObject, canonical_noun
 
 RELATIONS = ("left_of", "right_of")
 
@@ -71,9 +71,12 @@ Hard requirements:
   that could be judged right or wrong. It is the plain-English form of "objects".
 - Use concrete, countable, nameable categories. Draw widely from this list and do
   not lean on the first few: apple, banana, lemon, pear, orange, tomato, carrot,
-  egg, mug, cup, bowl, plate, spoon, fork, book, notebook, candle, bottle, jar,
-  box, hat, ball, brush, clock, key, sock, shell, stone, flower, leaf. Never use
-  vague nouns like "items", "decor", "some things".
+  egg, mug, bowl, plate, spoon, fork, book, candle, bottle, jar, box, hat, ball,
+  brush, clock, key, sock, shell, stone, flower, leaf. Never use vague nouns like
+  "items", "decor", "some things".
+- Use exactly these words. Do not substitute a near synonym: write "mug", never
+  "cup"; write "book", never "notebook". A detector calls the same object by
+  either name, so a scene mixing them cannot be scored.
 - Do not repeat the same pair of object categories in more than a few scenes.
 - Colours must be plain colour words and must be plausible for that object. Never
   write a blue banana or a black apple: the generator's object prior fights the
@@ -184,6 +187,12 @@ def _check(scene: dict[str, Any], expect_items: int | None) -> None:
             raise SpecRejected("object with no name")
         if noun in seen:
             raise SpecRejected(f"duplicate entry for {noun}")
+        # Two entries the instrument cannot tell apart are one entry with a
+        # broken count. A scene asking for a cup and a mug is unverifiable, not
+        # merely awkward, because the gold rule compares canonical nouns.
+        if canonical_noun(noun) in {canonical_noun(s) for s in seen}:
+            raise SpecRejected(f"entry {noun} collides with another after"
+                               f" canonicalisation")
         seen.add(noun)
         if not isinstance(count, int) or not 1 <= count <= 2:
             raise SpecRejected(f"count out of range for {noun}: {count!r}")
