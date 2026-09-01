@@ -78,6 +78,7 @@ def main() -> None:
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--temperature", type=float, default=0.9)
     parser.add_argument("--batch", type=int, default=20)
+    parser.add_argument("--max-batches", type=int, default=40)
     parser.add_argument("--prefix", default="v4")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
@@ -91,6 +92,7 @@ def main() -> None:
         with_relations=args.with_relations,
         prefix=args.prefix,
         batch=args.batch,
+        max_batches=args.max_batches,
     )
 
     args.out.parent.mkdir(parents=True, exist_ok=True)

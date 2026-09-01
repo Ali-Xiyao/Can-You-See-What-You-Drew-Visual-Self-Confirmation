@@ -181,3 +181,43 @@ def test_to_atomic_leaves_an_unreadable_reply_as_an_abstention():
 
     atomic = to_atomic(build_questions(SPEC, EXACT, seed=7)[0])
     assert normalize_answer("I am not sure", atomic) is None
+
+
+def test_implausible_colour_on_a_natural_kind_is_rejected():
+    """Asking was not enough; the check has to enforce it.
+
+    The instruction has said "never write a blue banana" since the first draft.
+    The first authored corpus still came back with blue apples x10, black x4,
+    brown x3 and white x2 out of 55 apple entries. A generator's object prior
+    fights a prompt like that, so the image fails for a reason unrelated to the
+    capability being measured -- and by a different amount per object, which
+    makes object identity a confound of the difficulty tiers.
+    """
+    scenes = [
+        _scene(
+            [{"object": "apple", "color": "blue", "count": 2},
+             {"object": "mug", "color": "red", "count": 1}],
+            "two blue apples and one red mug on a table",
+        )
+    ]
+    accepted, rejected = parse_scenes(str(scenes).replace("'", '"'), prefix="t")
+    assert not accepted
+    assert rejected[0]["reason"] == "implausible colour: blue apple"
+
+
+def test_a_manufactured_object_may_be_any_colour():
+    """Constraining these would remove variation the corpus needs.
+
+    A mug really does come in blue; an apple does not. Only natural kinds are
+    listed, and a category absent from the table is unconstrained.
+    """
+    scenes = [
+        _scene(
+            [{"object": "mug", "color": "blue", "count": 2},
+             {"object": "book", "color": "purple", "count": 1}],
+            "two blue mugs and one purple book on a table",
+        )
+    ]
+    accepted, rejected = parse_scenes(str(scenes).replace("'", '"'), prefix="t")
+    assert not rejected
+    assert len(accepted) == 1

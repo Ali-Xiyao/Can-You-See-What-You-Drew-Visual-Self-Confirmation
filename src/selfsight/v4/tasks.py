@@ -69,11 +69,17 @@ Each element must be exactly:
 Hard requirements:
 - "prompt" must state every object, its colour and its count, and nothing else
   that could be judged right or wrong. It is the plain-English form of "objects".
-- Use concrete, countable, nameable categories (apple, mug, book, candle). Never
-  use vague nouns like "items", "decor", "some things".
+- Use concrete, countable, nameable categories. Draw widely from this list and do
+  not lean on the first few: apple, banana, lemon, pear, orange, tomato, carrot,
+  egg, mug, cup, bowl, plate, spoon, fork, book, notebook, candle, bottle, jar,
+  box, hat, ball, brush, clock, key, sock, shell, stone, flower, leaf. Never use
+  vague nouns like "items", "decor", "some things".
+- Do not repeat the same pair of object categories in more than a few scenes.
 - Colours must be plain colour words and must be plausible for that object. Never
-  write a blue banana: the generator's object prior fights the prompt and the
-  scene then measures the wrong thing.
+  write a blue banana or a black apple: the generator's object prior fights the
+  prompt and the scene then measures the wrong thing. Fruit and vegetables may
+  only take colours they actually occur in. Manufactured objects (mug, book,
+  candle, bowl, plate, hat, notebook, bottle, box) may take any colour.
 - Never describe mood, style, lighting or quality ("cosy", "rustic", "beautiful").
   Nothing in the prompt may be unjudgeable.
 - counts must be between 1 and 2, and the counts in one scene must sum to
@@ -102,6 +108,41 @@ def build_instruction(n: int, items: int, with_relations: bool) -> str:
         items=items,
         relations_clause=RELATIONS_ON if with_relations else RELATIONS_OFF,
     )
+
+
+PLAUSIBLE_COLORS: dict[str, frozenset[str]] = {
+    "apple": frozenset({"red", "green", "yellow"}),
+    "banana": frozenset({"yellow", "green"}),
+    "pear": frozenset({"green", "yellow", "brown"}),
+    "orange": frozenset({"orange"}),
+    "lemon": frozenset({"yellow", "green"}),
+    "tomato": frozenset({"red", "green"}),
+    "carrot": frozenset({"orange"}),
+    "egg": frozenset({"white", "brown"}),
+    "bread": frozenset({"brown", "white"}),
+    "strawberry": frozenset({"red"}),
+    "grape": frozenset({"green", "purple", "black"}),
+    "peach": frozenset({"orange", "pink", "yellow"}),
+    "lime": frozenset({"green"}),
+}
+"""Colours a natural kind may plausibly be, enforced rather than merely asked for.
+
+Only natural kinds are listed. A mug, book or candle genuinely comes in any
+colour, so constraining those would remove variation the corpus needs; an apple
+does not, and asking for a blue one changes what the trial measures.
+
+This is enforced in `_check` because asking was tried and did not work. The
+instruction has said "never write a blue banana" from the first version, and the
+authored corpus still came back 35% implausible on apples alone -- blue x10,
+black x4, brown x3, white x2 out of 55. The generator's object prior fights a
+prompt like that, so the image fails for a reason unrelated to the capability
+under test, and it fails by a different amount for each object, which quietly
+turns the object identity into a confound of the difficulty tiers.
+
+A category absent from this table is unconstrained. That is deliberate: the list
+should grow when a natural kind actually turns up in a corpus, not be guessed at
+in advance.
+"""
 
 
 class SpecRejected(ValueError):
@@ -140,6 +181,9 @@ def _check(scene: dict[str, Any], expect_items: int | None) -> None:
         colour = item.get("color")
         if colour and str(colour).strip().lower() not in lowered:
             raise SpecRejected(f"prompt does not mention colour {colour}")
+        allowed = PLAUSIBLE_COLORS.get(noun) or PLAUSIBLE_COLORS.get(noun.rstrip("s"))
+        if allowed and colour and str(colour).strip().lower() not in allowed:
+            raise SpecRejected(f"implausible colour: {colour} {noun}")
     for relation in scene.get("relations") or ():
         names = {str(relation.get("subject", "")).lower(),
                  str(relation.get("object", "")).lower()}
