@@ -31,6 +31,7 @@ import argparse
 import base64
 import html
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -78,12 +79,27 @@ PAGE = """<!doctype html>
   <p>Do not list the surface, background, shadows or reflections. The disputed
   object is named in red, but check the whole list &mdash; your answer replaces
   both models&rsquo;, it does not just arbitrate the one disagreement.</p>
+  <p><strong>When the thing has no name.</strong> The generator sometimes fuses
+  two objects into one body, or draws something with no consistent shape &mdash;
+  neither detector is right and neither are you. Write that object as
+  <code>unnameable</code>, with no colour, in its place in the list:
+  <code>blue mug, unnameable</code>. Do not leave it out and do not force a
+  noun onto it. The image still gets a verdict &mdash; whatever that thing is, it
+  is not what was asked for, so the image counts as not matching its prompt
+  &mdash; but no question is asked about it, because &ldquo;how many pears&rdquo;
+  has no answer when one candidate is half a pear.</p>
+  <p>If the <em>whole</em> picture is unreadable, write <code>unusable</code> on
+  its own. That is a stronger claim than <code>unnameable</code>: the image drops
+  out of the accuracy denominator entirely instead of counting as a miss, and is
+  reported as its own rate. Use it only when nothing in the frame can be
+  identified, not when the picture is merely wrong or ugly.</p>
   <p>Neither the prompt nor what the image was supposed to contain is shown, on
   purpose: knowing that two pears were requested makes two pears easier to see.</p>
   <p><strong>How to write it.</strong> Comma-separated, one entry per kind, as
   <code>count colour noun</code>; the count may be left off when it is one. So
   <code>2 blue mug, white plate, green pear</code>. A picture with nothing in it
-  is <code>none</code>. What you typed is parsed back underneath &mdash; read that
+  is <code>none</code>; a picture you cannot read at all is
+  <code>unusable</code>. What you typed is parsed back underneath &mdash; read that
   line, not the box, to check it understood you.</p>
   <p>The buttons under each box copy a detector&rsquo;s list into the field so you
   can edit rather than retype. The box starts empty on purpose: if it came
@@ -106,12 +122,20 @@ function parse(text) {{
   const s = text.trim();
   if (!s) return null;
   if (s.toLowerCase() === "none") return [];
+  if (s.toLowerCase() === "unusable") return [{{object: "unusable", color: ""}}];
   const out = [];
   for (const chunk of s.split(",")) {{
     const words = chunk.trim().split(/\\s+/).filter(Boolean);
     if (!words.length) continue;
     let count = 1;
     if (/^[0-9]+$/.test(words[0])) count = parseInt(words.shift(), 10);
+    if (words.length === 1 && words[0].toLowerCase() === "unnameable") {{
+      for (let i = 0; i < count; i++) out.push({{object: "unnameable", color: ""}});
+      continue;
+    }}
+    if (words.length === 1 && words[0].toLowerCase() === "unusable") {{
+      return "write unusable on its own, not as one item in a list";
+    }}
     if (words.length < 2) return "needs a colour and a noun: " + chunk.trim();
     if (count < 1 || count > 12) return "odd count in: " + chunk.trim();
     const noun = words.pop();
@@ -123,9 +147,11 @@ function parse(text) {{
 
 function describe(list) {{
   if (!list.length) return "nothing in the picture";
+  if (list.length === 1 && list[0].object === "unusable")
+    return "unreadable \u2014 dropped from the corpus, not scored as wrong";
   const seen = new Map();
   for (const d of list) {{
-    const k = d.color + " " + d.object;
+    const k = (d.color ? d.color + " " : "") + d.object;
     seen.set(k, (seen.get(k) || 0) + 1);
   }}
   return Array.from(seen, ([k, n]) => (n > 1 ? n + " x " + k : k)).join(", ");
@@ -196,7 +222,7 @@ document.getElementById("clear").addEventListener("click", function () {{
 """
 
 CARD = """<div class="card" data-path="{path}">
-  <div><img src="data:image/png;base64,{b64}" alt=""></div>
+  <div><a href="{src}" target="_blank"><img src="{src}" alt="" loading="lazy"></a></div>
   <div>
     <div class="id">{index}. {name}</div>
     <p>in dispute: <span class="dispute">{disputed}</span></p>
@@ -250,7 +276,15 @@ def main() -> None:
     parser.add_argument("--primary", default="qwen3vl")
     parser.add_argument("--secondary", default="internvl")
     parser.add_argument("--limit", type=int, default=200)
+    parser.add_argument("--inline-images", action="store_true",
+                        help="embed the PNGs as base64 so the page travels as "
+                             "one file. Off by default: 42 images came to "
+                             "10.6 MB of markup and the browser would not open "
+                             "it. Referenced from images/ instead, the page is "
+                             "a few kilobytes and the pictures still zoom.")
     args = parser.parse_args()
+    out = args.out or args.run / "review.html"
+    out_dir = out.resolve().parent
 
     from selfsight.v4.detectors import cached_detections
 
@@ -271,10 +305,16 @@ def main() -> None:
     cards = []
     for index, row in enumerate(pending[: args.limit], start=1):
         image_path = Path(row["image_path"])
-        try:
-            b64 = base64.b64encode(image_path.read_bytes()).decode("ascii")
-        except OSError:
-            continue
+        if args.inline_images:
+            try:
+                src = "data:image/png;base64," + base64.b64encode(
+                    image_path.read_bytes()).decode("ascii")
+            except OSError:
+                continue
+        else:
+            src = html.escape(
+                os.path.relpath(image_path, out_dir).replace("\\", "/"),
+                quote=True)
         disputed = ", ".join(
             f"{d.get('color') or '?'} {d.get('object')} ({d.get('reason', '')})"
             for d in row.get("disputed", ())
@@ -282,7 +322,7 @@ def main() -> None:
         first = primary.get(row["image_path"], [])
         second = secondary.get(row["image_path"], [])
         cards.append(CARD.format(
-            b64=b64,
+            src=src,
             path=html.escape(row["image_path"], quote=True),
             index=index,
             name=html.escape(image_path.name),
@@ -295,7 +335,6 @@ def main() -> None:
             secondary_fill=_fill(second),
         ))
 
-    out = args.out or args.run / "review.html"
     out.write_text(
         PAGE.format(
             n=len(cards),

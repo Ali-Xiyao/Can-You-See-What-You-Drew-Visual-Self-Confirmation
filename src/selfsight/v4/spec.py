@@ -59,6 +59,36 @@ because the corpus that already ran contains both.
 """
 
 
+UNNAMEABLE = "unnameable"
+"""One object in the picture that is not any nameable thing.
+
+The generator sometimes fuses two objects into a single body, or produces
+something with no consistent shape. Both detectors then return confident and
+different guesses -- that is a large share of why an image reaches a human at
+all -- and the reviewer cannot honestly write a noun either.
+
+Written into the settled list as an object rather than left out. The picture
+does contain a thing, and whatever it is it is not the mug that was asked for,
+so the multiset differs from the spec and `image_correct` is False. Dropping it
+would make the image score as if that region were empty, which is a different
+and false claim.
+
+Questions are never built on such an image: "how many pears did you draw" has no
+answer when one of the candidates is half a pear. So these images count toward p
+and toward the balanced-pool rate, where the verdict is well defined, and supply
+no trials, where it is not.
+"""
+
+UNUSABLE = "unusable"
+"""The reviewer could not read the picture at all.
+
+Distinct from UNNAMEABLE, which names one bad object among readable ones. This
+one says nothing about the image is trustworthy, so it has no verdict either: it
+is excluded from p as well as from the trials, and reported as its own rate.
+Forcing a verdict here would put a guess into the denominator of the headline
+number.
+"""
+
 SURFACE_WORDS = frozenset({
     "table", "desk", "counter", "countertop", "worktop", "cloth", "tablecloth",
     "mat", "placemat", "napkin", "tray", "board", "surface", "stool", "shelf",
@@ -85,6 +115,22 @@ def countable(detections: list[dict[str, Any]]) -> list[dict[str, Any]]:
         item for item in detections
         if canonical_noun(item.get("object", "")) not in SURFACE_WORDS
     ]
+
+
+def has_unnameable(detections: list[dict[str, Any]]) -> bool:
+    """Does the settled list contain something no one could name?
+
+    The verdict on such an image is still well defined -- whatever that thing is,
+    it is not what the spec asked for -- but no question can be built on it.
+    """
+    return any(canonical_noun(item.get("object", "")) == UNNAMEABLE
+               for item in detections)
+
+
+def is_unusable(detections: list[dict[str, Any]]) -> bool:
+    """Did the reviewer decline to read the picture at all?"""
+    return any(canonical_noun(item.get("object", "")) == UNUSABLE
+               for item in detections)
 
 
 def canonical_noun(noun: str) -> str:

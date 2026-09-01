@@ -74,6 +74,7 @@ from selfsight.v4.spec import (
     canonical_noun,
     detected_multiset,
     image_correct,
+    is_unusable,
     match_report,
 )
 
@@ -86,6 +87,8 @@ class Resolution(str, Enum):
     RESOLVED_BY_CROP = "resolved_by_crop"
     HUMAN = "human"
     PENDING_HUMAN = "pending_human"
+    UNUSABLE = "unusable"
+    """The reviewer could not read the picture. No verdict, no trials, counted."""
 
 
 @dataclass(frozen=True)
@@ -93,7 +96,10 @@ class VerificationResult:
     image_path: str
     spec_id: str
     detections: tuple[dict[str, Any], ...]
-    image_correct: bool
+    image_correct: bool | None
+    """None only for UNUSABLE images, which have no verdict rather than a
+    negative one. Every consumer either filters those out or must say what it
+    does with them."""
     resolution: Resolution
     verifier_agreement: bool
     disputed: tuple[dict[str, Any], ...] = ()
@@ -177,6 +183,18 @@ def verify(
 
     if human_labels is not None and image_path in human_labels:
         settled = human_labels[image_path]
+        if is_unusable(settled):
+            # No verdict at all. Scoring it False would put a guess into p's
+            # numerator; scoring it True would do worse.
+            return VerificationResult(
+                image_path=image_path,
+                spec_id=spec.spec_id,
+                detections=tuple(settled),
+                image_correct=None,
+                resolution=Resolution.UNUSABLE,
+                verifier_agreement=False,
+                report={},
+            )
         return VerificationResult(
             image_path=image_path,
             spec_id=spec.spec_id,
@@ -289,6 +307,7 @@ def ladder_summary(results: list[VerificationResult]) -> dict[str, Any]:
     """
     counts = collections.Counter(r.resolution.value for r in results)
     n = len(results) or 1
+    scored = [r for r in results if r.image_correct is not None]
     return {
         "n": len(results),
         "by_resolution": dict(counts),
@@ -306,5 +325,10 @@ def ladder_summary(results: list[VerificationResult]) -> dict[str, Any]:
             counts[Resolution.HUMAN.value] + counts[Resolution.PENDING_HUMAN.value]
         ) / n,
         "pending_human": counts[Resolution.PENDING_HUMAN.value],
-        "p": sum(r.image_correct for r in results) / n,
+        "unusable": counts[Resolution.UNUSABLE.value],
+        # p is over the images that have a verdict. Unusable ones are reported
+        # beside it rather than folded in either direction.
+        "n_with_verdict": len(scored),
+        "p": (sum(1 for r in scored if r.image_correct) / len(scored)
+              if scored else 0.0),
     }

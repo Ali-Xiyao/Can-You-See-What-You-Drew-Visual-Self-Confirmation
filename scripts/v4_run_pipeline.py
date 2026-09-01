@@ -47,7 +47,7 @@ from pathlib import Path
 from typing import Any
 
 from selfsight.v4.questions import build_questions, grade, to_atomic
-from selfsight.v4.spec import SceneSpec
+from selfsight.v4.spec import SceneSpec, has_unnameable
 from selfsight.v4.verifier import Resolution, ladder_summary, verify
 
 BASE_SEED = 20260901
@@ -346,9 +346,16 @@ def stage_verify(args: argparse.Namespace) -> None:
 
 
 def _ceiling(results: list[dict[str, Any]]) -> dict[str, Any]:
-    """p, C(p), and the balanced-pool rate the selection experiment needs."""
+    """p, C(p), and the balanced-pool rate the selection experiment needs.
+
+    Images a reviewer marked unusable carry `image_correct: null` and are left
+    out entirely rather than counted as failures. `bool(None)` is False and
+    would have folded them silently into the wrong half of p.
+    """
     by_spec: dict[str, list[bool]] = {}
     for row in results:
+        if row["image_correct"] is None:
+            continue
         by_spec.setdefault(row["spec_id"], []).append(bool(row["image_correct"]))
     n = sum(len(v) for v in by_spec.values()) or 1
     correct = sum(sum(v) for v in by_spec.values())
@@ -412,15 +419,22 @@ def stage_observe(args: argparse.Namespace) -> None:
     backbone = Showo2Adapter(device=args.device, lazy=False)
     started = time.time()
     written = 0
+    skipped_unnameable = 0
     with out.open("a" if done else "w", encoding="utf-8") as handle:
         for index, row in enumerate(manifest):
             image = row["image_path"]
             if image not in verified or image in done:
                 continue
             spec = SceneSpec.from_dict(row["spec"])
-            questions = build_questions(
-                spec, verified[image]["detections"], seed=row["seed"]
-            )
+            settled = verified[image]["detections"]
+            # An image containing something nobody could name has a verdict but
+            # no answerable questions: "how many pears" has no answer when one
+            # candidate is half a pear. It counts toward p and supplies no
+            # trials. See v4.spec.UNNAMEABLE.
+            if has_unnameable(settled) or verified[image]["image_correct"] is None:
+                skipped_unnameable += 1
+                continue
+            questions = build_questions(spec, settled, seed=row["seed"])
             if not questions:
                 continue
             atoms = [to_atomic(question) for question in questions]
@@ -461,6 +475,9 @@ def stage_observe(args: argparse.Namespace) -> None:
             if index % 20 == 0:
                 print(f"{index + 1}/{len(manifest)} images, {written} answers, "
                       f"{(time.time() - started) / max(1, index + 1):.1f}s/img", flush=True)
+    if skipped_unnameable:
+        print(f"{skipped_unnameable} images supplied no trials: unnameable or "
+              f"unusable by human adjudication")
     print(f"wrote {written} answers to {out}")
 
 
