@@ -17,6 +17,14 @@ way would agree confidently and be wrong together.
 Qwen3-VL-4B is deliberately not offered. Its F1 of 0.943 is respectable, but 12
 of its errors are missing objects, and a detector that misses an object cannot
 be told apart from a generator that did not draw one.
+
+The instruction states that an element without "box" is invalid. That sentence is
+load-bearing and was added after the fact: without it Qwen3-VL-8B returned no box
+at all on 276 of 468 images -- not a malformed box, and not a different key name,
+simply the field omitted, on some images and not others. Nothing failed loudly.
+The boxes are what the spatial family and the ladder's crop step run on, so those
+two silently ran on the 41% of rows that happened to carry geometry. Six of six
+box-less images returned boxes once the sentence was added.
 """
 
 from __future__ import annotations
@@ -41,7 +49,8 @@ Rules:
   the background, the wall, shadows, or reflections.
 - If an object is partly hidden behind another, still list it.
 
-Return ONLY a JSON array, no other text. Each element must be:
+Return ONLY a JSON array, no other text. Every element must carry all three
+keys; an element without "box" is invalid. Each element must be:
 {"object": <noun>, "color": <colour>, "box": [x0, y0, x1, y1]}
 
 where the box is that object's bounding box, with (0,0) at the top-left of the
@@ -114,9 +123,14 @@ class VlmDetector:
     def __init__(self, detector_id: str, run: Callable[[Image.Image, str], str]):
         self.detector_id = detector_id
         self._run = run
+        self.last_reply: str = ""
 
     def _ask(self, image: Image.Image, instruction: str) -> list[dict[str, Any]]:
         reply = self._run(image, instruction)
+        # Kept so a caller can write the reply next to the parse. Without it,
+        # "why are 59% of these rows missing boxes" could not be answered without
+        # re-running the model, which is how that defect survived a whole pass.
+        self.last_reply = reply
         detections, error = parse_reply(reply, image.width, image.height)
         if error:
             # An unparseable reply is not an empty scene. Returning [] here would

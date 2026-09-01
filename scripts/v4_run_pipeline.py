@@ -5,6 +5,7 @@ the one before it. The order matters and is not arbitrary:
 
     generate   spec  -> K candidate images
     detect     image -> object list, from one or two frozen external models
+    crop       disputed object -> a second look with more pixels on it
     verify     object list + spec -> image_correct, via the escalation ladder
     observe    image -> the generator's own 2AFC answers -> graded
 
@@ -25,10 +26,13 @@ prompt-recall test and the most informative trials would disappear.
     envs/observer/python.exe scripts/v4_run_pipeline.py detect \
         --manifest runs/v4/main/manifest.jsonl --detector internvl --device cuda:1
 
-    # stage 3, no GPU
+    # stage 3, on the observer env: ladder level 2, only the disputed objects
+    envs/observer/python.exe scripts/v4_run_pipeline.py crop         --run runs/v4/main --device cuda:0
+
+    # stage 4, no GPU
     python scripts/v4_run_pipeline.py verify --run runs/v4/main
 
-    # stage 4, on the generation env: the generator answers about its own images
+    # stage 5, on the generation env: the generator answers about its own images
     envs/showo2/python.exe scripts/v4_run_pipeline.py observe \
         --run runs/v4/main --device cuda:0
 """
@@ -127,7 +131,8 @@ def stage_detect(args: argparse.Namespace) -> None:
                 continue
             try:
                 detections = detector.detect(row["image_path"])
-                record = {"image_path": row["image_path"], "detections": detections}
+                record = {"image_path": row["image_path"], "detections": detections,
+                          "reply": getattr(detector, "last_reply", "")}
             except (ValueError, OSError) as exc:
                 # Recorded as an error row with no `detections` key, so the
                 # verify stage sees it as absent rather than as an empty scene.
@@ -138,6 +143,101 @@ def stage_detect(args: argparse.Namespace) -> None:
                 print(f"{index + 1}/{len(rows)} "
                       f"{(time.time() - started) / max(1, index + 1):.1f}s/img", flush=True)
     print(f"wrote {out}")
+
+
+# ------------------------------------------------------------------- crop
+
+
+def crop_key(image_path: str, bbox: Any) -> str:
+    """Cache key for one crop query: the image and the exact region asked about.
+
+    Keying by image alone would pool every crop taken from it, and a hit found in
+    one region would then settle a dispute about another. That is not what the
+    ladder claims -- level 2 says "looked closely at this object and saw it", not
+    "looked closely somewhere and saw it".
+    """
+    return "{}||{}".format(
+        image_path, ",".join(f"{float(v):.1f}" for v in bbox)
+    )
+
+
+def stage_crop(args: argparse.Namespace) -> None:
+    """Level 2 of the ladder: re-ask the primary about each disputed object.
+
+    Run between `detect` and `verify`. Without it every disagreement falls
+    straight through to a human, which both blows the adjudication budget and
+    wastes the cheaper evidence: most disputes are one small or occluded object
+    that more pixels settle.
+    """
+    from selfsight.v4.detectors import cached_detections, load
+    from selfsight.v4.verifier import _bbox_of, _pad, disputed_keys
+
+    run = Path(args.run)
+    primary = cached_detections(run / f"detections.{args.primary}.jsonl")
+    secondary = cached_detections(run / f"detections.{args.secondary}.jsonl")
+
+    jobs: list[tuple[str, tuple[float, ...], tuple[str, str | None]]] = []
+    no_bbox = 0
+    for image, first in primary.items():
+        second = secondary.get(image)
+        if second is None:
+            continue
+        for key in disputed_keys(first, second):
+            bbox = _bbox_of(first, key) or _bbox_of(second, key)
+            if bbox is None:
+                # Neither detector located it, so there is no region to enlarge.
+                # Counted, not silently skipped: these are the rows the ladder
+                # cannot help and that must reach a human.
+                no_bbox += 1
+                continue
+            jobs.append((image, _pad(bbox), key))
+
+    out = run / "detections.crops.jsonl"
+    done: set[str] = set()
+    if out.exists() and not args.overwrite:
+        done = {r["key"] for r in read_jsonl(out) if "detections" in r}
+        print(f"resuming: {len(done)} crops already done")
+    todo = [j for j in jobs if crop_key(j[0], j[1]) not in done]
+    print(f"{len(jobs)} disputed objects, {len(todo)} to query, "
+          f"{no_bbox} with no box from either detector")
+    if not todo:
+        return
+
+    detector = load(args.primary, device=args.device)
+    started = time.time()
+    with out.open("a" if done else "w", encoding="utf-8") as handle:
+        for index, (image, bbox, key) in enumerate(todo):
+            record: dict[str, Any] = {
+                "key": crop_key(image, bbox),
+                "image_path": image,
+                "bbox": list(bbox),
+                "disputed": [key[0], key[1]],
+            }
+            try:
+                record["detections"] = detector.detect_crop(image, bbox)
+            except (ValueError, OSError) as exc:
+                # No `detections` key, so verify treats the crop as having
+                # settled nothing and the row escalates rather than resolving
+                # against the object by default.
+                record["error"] = str(exc)[:300]
+            handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+            handle.flush()
+            if index % 25 == 0:
+                print(f"{index + 1}/{len(todo)} "
+                      f"{(time.time() - started) / max(1, index + 1):.1f}s/crop",
+                      flush=True)
+    print(f"wrote {out}")
+
+
+def cached_crops(path: Path) -> dict[str, list[dict[str, Any]]]:
+    """Crop results keyed by `crop_key`, skipping the rows that errored."""
+    if not path.exists():
+        return {}
+    return {
+        row["key"]: list(row["detections"])
+        for row in read_jsonl(path)
+        if "detections" in row
+    }
 
 
 # ------------------------------------------------------------------ verify
@@ -160,7 +260,7 @@ class _Replay:
         # row escalates to PENDING_HUMAN. That is the honest outcome: pretending
         # the crop confirmed nothing would silently resolve disputes against the
         # object, which is a decision, not a default.
-        return list(self._crops.get(image_path, []))
+        return list(self._crops.get(crop_key(image_path, bbox), []))
 
 
 def stage_verify(args: argparse.Namespace) -> None:
@@ -171,8 +271,7 @@ def stage_verify(args: argparse.Namespace) -> None:
     primary = cached_detections(run / f"detections.{args.primary}.jsonl")
     secondary_path = run / f"detections.{args.secondary}.jsonl"
     secondary = cached_detections(secondary_path) if secondary_path.exists() else {}
-    crops_path = run / "detections.crops.jsonl"
-    crops = cached_detections(crops_path) if crops_path.exists() else {}
+    crops = cached_crops(run / "detections.crops.jsonl")
 
     human_path = run / "human_labels.jsonl"
     human = cached_detections(human_path) if human_path.exists() else None
@@ -326,6 +425,14 @@ def main() -> None:
     v.add_argument("--run", required=True)
     v.add_argument("--primary", default="qwen3vl")
     v.add_argument("--secondary", default="internvl")
+
+    c = sub.add_parser("crop", help="ladder level 2: re-ask about disputed objects")
+    c.add_argument("--run", required=True, type=Path)
+    c.add_argument("--primary", default="qwen3vl")
+    c.add_argument("--secondary", default="internvl")
+    c.add_argument("--device", default="cuda:0")
+    c.add_argument("--overwrite", action="store_true")
+    c.set_defaults(func=stage_crop)
     v.set_defaults(func=stage_verify)
 
     o = sub.add_parser("observe")
