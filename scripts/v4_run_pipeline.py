@@ -170,18 +170,32 @@ def stage_crop(args: argparse.Namespace) -> None:
     that more pixels settle.
     """
     from selfsight.v4.detectors import cached_detections, load
+    from selfsight.v4.spec import image_correct
     from selfsight.v4.verifier import _bbox_of, _pad, disputed_keys
 
     run = Path(args.run)
     primary = cached_detections(run / f"detections.{args.primary}.jsonl")
     secondary = cached_detections(run / f"detections.{args.secondary}.jsonl")
+    specs = {
+        row["image_path"]: SceneSpec.from_dict(row["spec"])
+        for row in read_jsonl(run / "manifest.jsonl")
+    }
 
     jobs: list[tuple[str, tuple[float, ...], tuple[str, str | None]]] = []
     no_bbox = 0
+    same_verdict = 0
     for image, first in primary.items():
         second = secondary.get(image)
         if second is None:
             continue
+        spec = specs.get(image)
+        # A dispute that cannot change image_correct does not need a second look.
+        # Querying it anyway spent three quarters of this pass on images whose
+        # verdict was never in doubt.
+        if spec is not None and disputed_keys(first, second):
+            if image_correct(spec, first) == image_correct(spec, second):
+                same_verdict += 1
+                continue
         for key in disputed_keys(first, second):
             bbox = _bbox_of(first, key) or _bbox_of(second, key)
             if bbox is None:
@@ -199,7 +213,8 @@ def stage_crop(args: argparse.Namespace) -> None:
         print(f"resuming: {len(done)} crops already done")
     todo = [j for j in jobs if crop_key(j[0], j[1]) not in done]
     print(f"{len(jobs)} disputed objects, {len(todo)} to query, "
-          f"{no_bbox} with no box from either detector")
+          f"{no_bbox} with no box from either detector, "
+          f"{same_verdict} images skipped because the verdict agrees anyway")
     if not todo:
         return
 

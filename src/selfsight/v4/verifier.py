@@ -27,15 +27,39 @@ only place a selection experiment has any headroom.
 
 So every image is resolved instead:
 
-    1. the two agree                       -> accept          (~89%)
-    2. they disagree                       -> re-query just the disputed object,
+    1. the two report the same object list -> accept
+    2. the lists differ but the verdict is
+       the same either way                 -> accept the verdict; ask no
+                                              question about a disputed object
+    3. the verdict itself differs          -> re-query just the disputed object,
                                               cropped and enlarged
-    3. still disagree                      -> human adjudication (~3-5%)
+    4. still differs                       -> human adjudication
 
-Level 2 works because the disagreements are about one object, not the whole
-image: in the measured sample all eight were a single object over- or
-under-reported, or one object's category. Cropping to it supplies more pixels,
-which is new information; a third model would only be another correlated vote.
+Level 2 is the one that makes the ladder affordable, and it is not a relaxation.
+What this verifier outputs is `image_correct`, and on a 468-image run the two
+models produced the same object list on 49.6% of images but the same *verdict*
+on 86.9%. The gap is disagreements that cannot change the answer: asked for two
+blue mugs, one model sees three mugs and a saucer and the other sees three mugs,
+and the image is wrong on either reading. Sending those to a person buys nothing
+about the measured quantity -- it spent 121 of 157 adjudications on images whose
+verdict was never in doubt.
+
+Both agreement numbers are reported, because they answer different questions:
+0.496 is how well two strong detectors agree about what is in a generated image,
+which is a fact about these images worth stating; 0.869 is how reliable the gold
+standard is for what it is used for.
+
+Where the verdict agrees but the lists do not, the settled list is the agreed
+core -- the objects both models saw -- and the disputed object is dropped rather
+than attributed to either. Questions are then never asked about an object whose
+existence two strong detectors disagree on, which would score the model against a
+coin flip. The verdict is *not* recomputed from that core: two models can call an
+image wrong for different reasons, and the intersection of their lists can match
+the spec when neither of them did.
+
+Level 3 works because the remaining disagreements are about one object, not the
+whole image. Cropping to it supplies more pixels, which is new information; a
+third model would only be another correlated vote.
 """
 
 from __future__ import annotations
@@ -52,6 +76,7 @@ class Resolution(str, Enum):
     """How an image's object list was settled."""
 
     AGREED = "agreed"
+    AGREED_VERDICT = "agreed_verdict"
     RESOLVED_BY_CROP = "resolved_by_crop"
     HUMAN = "human"
     PENDING_HUMAN = "pending_human"
@@ -180,7 +205,28 @@ def verify(
             report=match_report(spec, detections),
         )
 
-    # Level 2: re-ask about the disputed object only, with more pixels on it.
+    # Level 2: the lists differ, but do they differ in a way that changes the
+    # answer? If both readings give the same verdict, the verdict stands and no
+    # human is needed. The settled list is the agreed core, so nothing downstream
+    # asks a question about an object only one model saw; the verdict is taken
+    # from the two models rather than recomputed from that core, because two
+    # models can call an image wrong for different reasons and the intersection
+    # of their lists can then match the spec when neither of them did.
+    verdict = image_correct(spec, detections)
+    if verdict == image_correct(spec, other):
+        core = [item for item in detections if _key(item) not in set(disputes)]
+        return VerificationResult(
+            image_path=image_path,
+            spec_id=spec.spec_id,
+            detections=tuple(core),
+            image_correct=verdict,
+            resolution=Resolution.AGREED_VERDICT,
+            verifier_agreement=False,
+            disputed=tuple({"object": k[0], "color": k[1]} for k in disputes),
+            report=match_report(spec, detections),
+        )
+
+    # Level 3: re-ask about the disputed object only, with more pixels on it.
     resolved: list[dict[str, Any]] = []
     unresolved: list[dict[str, Any]] = []
     for key in disputes:
@@ -197,7 +243,7 @@ def verify(
                                "reason": "not_confirmed_in_crop"})
 
     if unresolved:
-        # Level 3. The list is left as the primary's so downstream code has
+        # Level 4. The list is left as the primary's so downstream code has
         # something well formed, but the row is flagged and must not enter the
         # main analysis until a human has settled it.
         return VerificationResult(
@@ -240,6 +286,14 @@ def ladder_summary(results: list[VerificationResult]) -> dict[str, Any]:
     return {
         "n": len(results),
         "by_resolution": dict(counts),
+        # Two agreement numbers, reported separately on purpose. The first is
+        # how often the two detectors returned the same object list; the second
+        # is how often they reached the same verdict, which is what the gold
+        # standard is actually used for.
+        "list_agreement_rate": counts[Resolution.AGREED.value] / n,
+        "verdict_agreement_rate": (
+            counts[Resolution.AGREED.value] + counts[Resolution.AGREED_VERDICT.value]
+        ) / n,
         "agreement_rate": counts[Resolution.AGREED.value] / n,
         "crop_resolved_rate": counts[Resolution.RESOLVED_BY_CROP.value] / n,
         "human_rate": (
