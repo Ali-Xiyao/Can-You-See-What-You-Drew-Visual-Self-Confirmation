@@ -375,14 +375,24 @@ def stage_observe(args: argparse.Namespace) -> None:
     verified = {r["image_path"]: r for r in read_jsonl(run / "verified.jsonl")}
     manifest = read_jsonl(run / "manifest.jsonl")
 
-    backbone = Showo2Adapter(device=args.device, lazy=False)
     out = run / "answers.jsonl"
+    done: set[str] = set()
+    if out.exists() and not args.overwrite:
+        done = {r["image_path"] for r in read_jsonl(out)}
+        print(f"resuming: {len(done)} images already answered")
+    todo = sum(1 for row in manifest
+               if row["image_path"] in verified and row["image_path"] not in done)
+    if not todo:
+        print("nothing to do")
+        return
+
+    backbone = Showo2Adapter(device=args.device, lazy=False)
     started = time.time()
     written = 0
-    with out.open("w", encoding="utf-8") as handle:
+    with out.open("a" if done else "w", encoding="utf-8") as handle:
         for index, row in enumerate(manifest):
             image = row["image_path"]
-            if image not in verified:
+            if image not in verified or image in done:
                 continue
             spec = SceneSpec.from_dict(row["spec"])
             questions = build_questions(
@@ -464,6 +474,10 @@ def main() -> None:
     o = sub.add_parser("observe")
     o.add_argument("--run", required=True)
     o.add_argument("--device", default="cuda:0")
+    # Resumable so the rows a human later re-labels can be re-answered on their
+    # own: drop those images from answers.jsonl and run the stage again, rather
+    # than paying for all 468 to recover 36.
+    o.add_argument("--overwrite", action="store_true")
     o.set_defaults(func=stage_observe)
 
     args = parser.parse_args()
