@@ -184,9 +184,23 @@ function refresh() {{
       "已选 " + done + " / " + cards.length +
       (done === cards.length ? " — 全部选完，把下面这行发给我" : "");
   document.getElementById("codes").value = PART + ": " + bits.join(" ");
+  // Kept in the browser, keyed on the page. Forty cards is half an hour of
+  // someone's attention and a reload or a stray navigation should not cost it.
+  const state = {{}};
+  for (const card of cards) {{
+    state[card.dataset.num] = [card.dataset.choice || "",
+                               card.querySelector(".other input").value];
+  }}
+  localStorage.setItem("selfsight-review:" + PART, JSON.stringify(state));
 }}
 
+const saved = JSON.parse(localStorage.getItem("selfsight-review:" + PART) || "{{}}");
 for (const card of cards) {{
+  const previous = saved[card.dataset.num];
+  if (previous) {{
+    card.querySelector(".other input").value = previous[1] || "";
+    if (previous[0] && previous[0] !== "O") choose(card, previous[0]);
+  }}
   card.querySelectorAll(".opt").forEach(function (b) {{
     b.addEventListener("click", function () {{
       card.querySelector(".other input").value = "";
