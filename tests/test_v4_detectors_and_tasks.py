@@ -221,3 +221,22 @@ def test_a_manufactured_object_may_be_any_colour():
     accepted, rejected = parse_scenes(str(scenes).replace("'", '"'), prefix="t")
     assert not rejected
     assert len(accepted) == 1
+
+
+def test_transparency_is_not_accepted_as_a_colour():
+    """"clear" is the absence of a colour, not one of them.
+
+    Three entries of the first clean corpus asked for clear jars. A detector
+    asked for an object's dominant colour will never answer "clear", so the entry
+    is a guaranteed mismatch that says nothing about the generator.
+    """
+    scenes = [
+        _scene(
+            [{"object": "jar", "color": "clear", "count": 2},
+             {"object": "bottle", "color": "red", "count": 1}],
+            "two clear jars and one red bottle on a table",
+        )
+    ]
+    accepted, rejected = parse_scenes(str(scenes).replace("'", '"'), prefix="t")
+    assert not accepted
+    assert rejected[0]["reason"] == "not a colour word: clear"

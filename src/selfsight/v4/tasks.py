@@ -110,6 +110,20 @@ def build_instruction(n: int, items: int, with_relations: bool) -> str:
     )
 
 
+COLOR_WORDS = frozenset({
+    "red", "orange", "yellow", "green", "blue", "purple", "pink",
+    "brown", "black", "white", "grey", "gray", "silver", "gold", "beige",
+})
+"""Colour words a spec may use.
+
+"clear" and "transparent" are excluded on purpose, and they did turn up: three
+entries of the first clean corpus asked for clear jars. A detector asked for an
+object's dominant colour will never answer "clear" -- transparency is the absence
+of a colour, not one of them -- so such an entry is a guaranteed mismatch that
+says nothing about the generator. Silver and gold stay, because a detector does
+return them for metal.
+"""
+
 PLAUSIBLE_COLORS: dict[str, frozenset[str]] = {
     "apple": frozenset({"red", "green", "yellow"}),
     "banana": frozenset({"yellow", "green"}),
@@ -181,6 +195,8 @@ def _check(scene: dict[str, Any], expect_items: int | None) -> None:
         colour = item.get("color")
         if colour and str(colour).strip().lower() not in lowered:
             raise SpecRejected(f"prompt does not mention colour {colour}")
+        if colour and str(colour).strip().lower() not in COLOR_WORDS:
+            raise SpecRejected(f"not a colour word: {colour}")
         allowed = PLAUSIBLE_COLORS.get(noun) or PLAUSIBLE_COLORS.get(noun.rstrip("s"))
         if allowed and colour and str(colour).strip().lower() not in allowed:
             raise SpecRejected(f"implausible colour: {colour} {noun}")
