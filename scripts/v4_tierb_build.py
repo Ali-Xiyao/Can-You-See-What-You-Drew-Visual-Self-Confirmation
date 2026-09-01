@@ -1,0 +1,485 @@
+"""Build and run Tier B: matched pairs that differ in one atomic fact.
+
+    plan       pick the edits, write the edited PNGs, emit plan.jsonl
+    check      re-detect the recoloured images and accept or reject each edit
+    questions  emit the 2AFC trials, gold from the edit
+    observe    ask the generator, one condition at a time
+    analyze    accuracy per member, and the paired flip rate
+
+Stages are separate processes because they need different environments and
+different amounts of GPU, and because `check` is the one that can reject work:
+running it inside `plan` would mean regenerating images to re-run a gate.
+
+Sources are only images the main pipeline verified as matching their spec and
+that are not awaiting human adjudication. Editing an image whose contents are
+already in doubt would give a pair whose "before" label is a guess and whose
+"after" label inherits the guess.
+"""
+
+from __future__ import annotations
+
+import argparse
+import collections
+import json
+import random
+import time
+from dataclasses import replace
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+from PIL import Image
+
+from selfsight.v4.questions import Family, ForcedChoice, grade, to_atomic
+from selfsight.v4.spec import SceneSpec, canonical_noun, countable
+from selfsight.v4.tasks import PLAUSIBLE_COLORS
+from selfsight.v4.tierb import (
+    COLOUR_HUES,
+    MAX_MASK_SHARE,
+    MIN_CENTRE_COVERAGE,
+    MIN_MASK_SHARE,
+    RecolourPlan,
+    edit_accepted,
+    flip,
+    flip_question,
+    recolour,
+    recolour_question,
+    target_colours,
+)
+
+PROMPTED_PREAMBLE = """You were asked to draw a picture from this description:
+"{prompt}"
+
+Here is the picture you drew. Answer about what is actually in the picture.
+
+{question}"""
+"""Identical to the main pipeline's, deliberately. The two-condition contrast is
+only comparable across Tier A and Tier B if the wording is the same string."""
+
+
+def read_jsonl(path: Path) -> list[dict[str, Any]]:
+    with path.open(encoding="utf-8") as handle:
+        return [json.loads(line) for line in handle if line.strip()]
+
+
+def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
+    with path.open("w", encoding="utf-8") as handle:
+        for row in rows:
+            handle.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
+def _plausible(noun: str) -> set[str] | None:
+    allowed = PLAUSIBLE_COLORS.get(noun) or PLAUSIBLE_COLORS.get(noun.rstrip("s"))
+    return set(allowed) if allowed else None
+
+
+def _sources(runs: list[Path]) -> list[dict[str, Any]]:
+    """Verified-correct, not-pending images with their detections and spec."""
+    out = []
+    for run in runs:
+        manifest = {r["image_path"]: r for r in read_jsonl(run / "manifest.jsonl")}
+        for row in read_jsonl(run / "verified.jsonl"):
+            if not row["image_correct"] or row["resolution"] == "pending_human":
+                continue
+            entry = manifest.get(row["image_path"])
+            if entry is None:
+                continue
+            out.append({
+                "run": str(run),
+                "image_path": row["image_path"],
+                "spec": entry["spec"],
+                "seed": entry["seed"],
+                "detections": countable(row["detections"]),
+            })
+    return out
+
+
+# -------------------------------------------------------------------- plan
+
+
+def stage_plan(args: argparse.Namespace) -> None:
+    out_dir = Path(args.outdir)
+    (out_dir / "images").mkdir(parents=True, exist_ok=True)
+    rng = random.Random(args.seed)
+    sources = _sources([Path(run) for run in args.run])
+    print(f"{len(sources)} verified-correct source images")
+
+    rows: list[dict[str, Any]] = []
+    skipped: collections.Counter = collections.Counter()
+
+    for source in sources:
+        image_path = source["image_path"]
+        stem = Path(image_path).stem
+        detections = source["detections"]
+        image = np.asarray(Image.open(image_path).convert("RGB"))
+
+        # ---- flip: needs two categories at distinguishable x positions
+        positions: dict[str, list[float]] = collections.defaultdict(list)
+        for item in detections:
+            centre = item.get("center")
+            if centre:
+                positions[canonical_noun(item["object"])].append(float(centre[0]))
+        singles = {k: v[0] for k, v in positions.items() if len(v) == 1}
+        if len(singles) >= 2:
+            first, second = rng.sample(sorted(singles), 2)
+            # The same 24px floor the natural-pool spatial builder uses. A near
+            # tie is not a fact about the image, and mirroring it is not either.
+            if abs(singles[first] - singles[second]) >= 24.0:
+                edited_path = out_dir / "images" / f"{stem}.flip.png"
+                Image.fromarray(flip(image)).save(edited_path)
+                rows.append({
+                    "pair_id": f"{stem}:flip",
+                    "edit": "flip",
+                    "original_path": image_path,
+                    "edited_path": str(edited_path),
+                    "spec": source["spec"],
+                    "subject": first,
+                    "other": second,
+                    "subject_left": singles[first] < singles[second],
+                    "needs_check": False,
+                })
+            else:
+                skipped["flip_near_tie"] += 1
+        else:
+            skipped["flip_needs_two_singletons"] += 1
+
+        # ---- recolour: one whole category per image
+        # Every instance of the noun is recoloured together. The atom this
+        # experiment is built on is (object, colour) at the category level --
+        # that is what the spec states and what the gold rule compares -- so
+        # "the mugs are blue" becoming "the mugs are red" is one fact changed.
+        # Recolouring one of two mugs instead would leave a question with no
+        # answer, which is the case the natural-pool binding builder skips.
+        by_noun: dict[str, list[dict[str, Any]]] = collections.defaultdict(list)
+        for item in detections:
+            by_noun[canonical_noun(item["object"])].append(item)
+
+        candidates = []
+        for noun, items in sorted(by_noun.items()):
+            colours = {str(d.get("color", "")).strip().lower() for d in items}
+            if len(colours) != 1:
+                skipped["recolour_category_has_two_colours"] += 1
+                continue
+            colour = colours.pop()
+            if colour not in COLOUR_HUES or any(not d.get("bbox") for d in items):
+                continue
+            others = [str(d.get("color", "")).strip().lower()
+                      for d in detections
+                      if canonical_noun(d["object"]) != noun]
+            targets = target_colours(noun, colour, others, _plausible(noun))
+            if targets:
+                candidates.append((noun, items, colour, targets))
+        if not candidates:
+            skipped["recolour_no_candidate"] += 1
+            continue
+        # Candidates are tried in random order and the first that survives the
+        # mask tests is used. Drawing one and giving up on the image if it fails
+        # threw away a third of the supply: whether a mask can be built is a
+        # property of that object against that background, not of the image.
+        rng.shuffle(candidates)
+        chosen = None
+        for noun, items, colour, targets in candidates:
+            target = rng.choice(targets)
+            attempt, shares, centres, failed = image, [], [], None
+            for item in items:
+                attempt, share, centre = recolour(
+                    attempt, item["bbox"], colour, target)
+                shares.append(share)
+                centres.append(centre)
+                if not MIN_MASK_SHARE <= share <= MAX_MASK_SHARE:
+                    failed = "recolour_mask_share"
+                elif centre < MIN_CENTRE_COVERAGE:
+                    failed = "recolour_mask_missed_the_object"
+            # All or nothing: a category half recoloured is worse than none,
+            # because the question about it then has two right answers.
+            if failed:
+                skipped[failed] += 1
+                continue
+            chosen = (noun, items, colour, target, attempt, shares, centres)
+            break
+        if chosen is None:
+            continue
+        noun, items, colour, target, edited, shares, centres = chosen
+        edited_path = out_dir / "images" / f"{stem}.recolour.png"
+        Image.fromarray(edited).save(edited_path)
+        rows.append({
+            "pair_id": f"{stem}:recolour",
+            "edit": "recolour",
+            "original_path": image_path,
+            "edited_path": str(edited_path),
+            "spec": source["spec"],
+            "noun": noun,
+            "bbox": [list(d["bbox"]) for d in items],
+            "source_colour": colour,
+            "target_colour": target,
+            "colour_constrained": _plausible(noun) is not None,
+            "count": len(items),
+            "mask_share": [round(v, 4) for v in shares],
+            "centre_coverage": [round(v, 4) for v in centres],
+            "detections_before": detections,
+            "needs_check": True,
+        })
+
+    write_jsonl(out_dir / "plan.jsonl", rows)
+    kinds = collections.Counter(r["edit"] for r in rows)
+    print(f"planned {len(rows)} pairs: {dict(kinds)}")
+    print(f"skipped: {dict(skipped)}")
+    print(f"wrote {out_dir / 'plan.jsonl'}")
+
+
+# ------------------------------------------------------------------- check
+
+
+def stage_check(args: argparse.Namespace) -> None:
+    """Both detectors read the edited image; only exact single-change is kept.
+
+    Flips are not checked. A mirror is exact -- there is no synthesis to verify
+    and no way for it to have changed something else -- so sending them through
+    a detector would spend GPU to re-derive a fact that is true by construction,
+    and would let a detector error reject a correct pair.
+    """
+    from selfsight.v4.detectors import load
+
+    out_dir = Path(args.outdir)
+    plan = read_jsonl(out_dir / "plan.jsonl")
+    todo = [row for row in plan if row["needs_check"]]
+    out = out_dir / "checks.jsonl"
+    done: set[str] = set()
+    if out.exists() and not args.overwrite:
+        done = {r["pair_id"] for r in read_jsonl(out)}
+        print(f"resuming: {len(done)} already checked")
+    todo = [row for row in todo if row["pair_id"] not in done]
+    print(f"{len(todo)} edited images to re-detect with {args.detector}")
+    if not todo:
+        return
+
+    detector = load(args.detector, device=args.device)
+    started = time.time()
+    with out.open("a" if done else "w", encoding="utf-8") as handle:
+        for index, row in enumerate(todo):
+            record = {"pair_id": row["pair_id"], "detector": args.detector}
+            try:
+                record["detections"] = detector.detect(row["edited_path"])
+            except (ValueError, OSError, RuntimeError) as exc:
+                record["error"] = str(exc)[:300]
+            handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+            handle.flush()
+            if index % 25 == 0:
+                print(f"{index + 1}/{len(todo)} "
+                      f"{(time.time() - started) / max(1, index + 1):.1f}s/img",
+                      flush=True)
+    print(f"wrote {out}")
+
+
+def stage_accept(args: argparse.Namespace) -> None:
+    """Apply the gate. Both detectors must see the single intended change."""
+    out_dir = Path(args.outdir)
+    plan = {row["pair_id"]: row for row in read_jsonl(out_dir / "plan.jsonl")}
+    checks: dict[str, dict[str, list]] = collections.defaultdict(dict)
+    for row in read_jsonl(out_dir / "checks.jsonl"):
+        if "detections" in row:
+            checks[row["pair_id"]][row["detector"]] = row["detections"]
+
+    accepted: list[dict[str, Any]] = []
+    reasons: collections.Counter = collections.Counter()
+    for pair_id, row in plan.items():
+        if not row["needs_check"]:
+            accepted.append(row)
+            reasons["flip_no_check_needed"] += 1
+            continue
+        seen = checks.get(pair_id, {})
+        if len(seen) < 2:
+            reasons["not_checked_by_both"] += 1
+            continue
+        plan_obj = RecolourPlan(
+            row["original_path"], row["noun"], tuple(row["bbox"][0]),
+            row["source_colour"], row["target_colour"], row["colour_constrained"],
+        )
+        verdicts = [edit_accepted(plan_obj, row["detections_before"], after)
+                    for after in seen.values()]
+        if all(ok for ok, _ in verdicts):
+            accepted.append(row)
+            reasons["recolour_accepted"] += 1
+        else:
+            reasons["recolour_" + next(why for ok, why in verdicts if not ok)] += 1
+
+    write_jsonl(out_dir / "accepted.jsonl", accepted)
+    kinds = collections.Counter(r["edit"] for r in accepted)
+    n_recolour_planned = sum(1 for r in plan.values() if r["needs_check"])
+    yield_rate = (reasons["recolour_accepted"] / n_recolour_planned
+                  if n_recolour_planned else 0.0)
+    print(f"accepted {len(accepted)}: {dict(kinds)}")
+    print(f"recolour yield {yield_rate:.3f} ({reasons['recolour_accepted']}"
+          f"/{n_recolour_planned})")
+    print(f"outcomes: {dict(reasons)}")
+
+
+# --------------------------------------------------------------- questions
+
+
+def _forced_choice(pair: dict[str, Any], built: dict[str, Any],
+                   member: str) -> ForcedChoice:
+    gold = built["gold_original"] if member == "original" else built["gold_edited"]
+    return ForcedChoice(
+        question_id=f"{pair['pair_id']}:{member}",
+        spec_id=pair["spec"]["spec_id"],
+        family=Family.BINDING if built["family"] == "binding" else Family.SPATIAL,
+        prompt_text=built["question"],
+        option_a=built["option_a"],
+        option_b=built["option_b"],
+        gold=gold,
+        # The tag the analysis splits on. On a recoloured image the picture
+        # contradicts the description by construction; on its original it agrees.
+        # A flip pair is neither: the specs carry no relations, so both members
+        # are equally consistent with the description and there is no deference
+        # to measure -- calling them diagnostic would inflate the count with
+        # trials that cannot separate the two hypotheses.
+        gold_source=(
+            "no_spec_claim" if pair["edit"] == "flip"
+            else ("image_differs_from_spec" if member == "edited"
+                  else "spec_matches_image")
+        ),
+        metadata={"pair_id": pair["pair_id"], "edit": pair["edit"],
+                  "member": member,
+                  "colour_constrained": pair.get("colour_constrained")},
+    )
+
+
+def stage_questions(args: argparse.Namespace) -> None:
+    out_dir = Path(args.outdir)
+    rng = random.Random(args.seed)
+    rows: list[dict[str, Any]] = []
+    for pair in read_jsonl(out_dir / "accepted.jsonl"):
+        # Which option is A is drawn per pair, not per member, so the two
+        # members share one question string and differ only in gold.
+        gold_first = rng.random() < 0.5
+        if pair["edit"] == "flip":
+            built = flip_question(pair["subject"], pair["other"],
+                                  pair["subject_left"], gold_first)
+        else:
+            built = recolour_question(pair["noun"], pair["source_colour"],
+                                      pair["target_colour"], pair["count"],
+                                      gold_first)
+        for member, path in (("original", pair["original_path"]),
+                             ("edited", pair["edited_path"])):
+            question = _forced_choice(pair, built, member)
+            rows.append({"image_path": path, "prompt": pair["spec"]["prompt"],
+                         **question.to_dict()})
+    write_jsonl(out_dir / "questions.jsonl", rows)
+    print(f"{len(rows)} trials ({len(rows) // 2} pairs) -> "
+          f"{out_dir / 'questions.jsonl'}")
+
+
+# ----------------------------------------------------------------- observe
+
+
+def stage_observe(args: argparse.Namespace) -> None:
+    from selfsight.backbones.showo2 import Showo2Adapter
+
+    out_dir = Path(args.outdir)
+    questions = read_jsonl(out_dir / "questions.jsonl")
+    prompted = args.condition == "prompted"
+    out = out_dir / ("answers.prompted.jsonl" if prompted else "answers.jsonl")
+    done: set[str] = set()
+    if out.exists() and not args.overwrite:
+        done = {r["question_id"] for r in read_jsonl(out)}
+        print(f"resuming: {len(done)} already answered")
+    todo = [row for row in questions if row["question_id"] not in done]
+    print(f"{len(todo)} trials to answer, condition={args.condition}")
+    if not todo:
+        return
+
+    by_image: dict[str, list[dict[str, Any]]] = collections.defaultdict(list)
+    for row in todo:
+        by_image[row["image_path"]].append(row)
+
+    backbone = Showo2Adapter(device=args.device, lazy=False)
+    started = time.time()
+    with out.open("a" if done else "w", encoding="utf-8") as handle:
+        for index, (image, rows) in enumerate(sorted(by_image.items())):
+            choices = [
+                ForcedChoice(
+                    question_id=r["question_id"], spec_id=r["spec_id"],
+                    family=Family(r["family"]), prompt_text=r["prompt_text"],
+                    option_a=r["option_a"], option_b=r["option_b"],
+                    gold=r["gold"], gold_source=r["gold_source"],
+                    metadata=r["metadata"],
+                )
+                for r in rows
+            ]
+            atoms = [to_atomic(choice) for choice in choices]
+            if prompted:
+                atoms = [
+                    replace(atom, text=PROMPTED_PREAMBLE.format(
+                        prompt=rows[0]["prompt"], question=atom.text))
+                    for atom in atoms
+                ]
+            observation = backbone.observe_atoms(image, atoms)
+            for row, choice, answer in zip(rows, choices, observation.answers):
+                correct = grade(answer.raw_answer, choice)
+                handle.write(json.dumps({
+                    "condition": args.condition,
+                    "question_id": row["question_id"],
+                    "image_path": image,
+                    "family": row["family"],
+                    "question": row["prompt_text"],
+                    "gold": row["gold"],
+                    "gold_source": row["gold_source"],
+                    "metadata": row["metadata"],
+                    "option_a": row["option_a"],
+                    "option_b": row["option_b"],
+                    "raw_answer": answer.raw_answer,
+                    "correct": correct,
+                    "abstain": correct is None,
+                }, ensure_ascii=False) + "\n")
+            handle.flush()
+            if index % 25 == 0:
+                print(f"{index + 1}/{len(by_image)} images "
+                      f"{(time.time() - started) / max(1, index + 1):.1f}s/img",
+                      flush=True)
+    print(f"wrote {out}")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = parser.add_subparsers(dest="stage", required=True)
+
+    p = sub.add_parser("plan")
+    p.add_argument("--run", required=True, action="append",
+                   help="a main-pipeline run directory; repeat for both halves")
+    p.add_argument("--outdir", required=True)
+    p.add_argument("--seed", type=int, default=20260901)
+    p.set_defaults(func=stage_plan)
+
+    c = sub.add_parser("check")
+    c.add_argument("--outdir", required=True)
+    c.add_argument("--detector", choices=["qwen3vl", "internvl"], required=True)
+    c.add_argument("--device", default="cuda:0")
+    c.add_argument("--overwrite", action="store_true")
+    c.set_defaults(func=stage_check)
+
+    a = sub.add_parser("accept")
+    a.add_argument("--outdir", required=True)
+    a.set_defaults(func=stage_accept)
+
+    q = sub.add_parser("questions")
+    q.add_argument("--outdir", required=True)
+    q.add_argument("--seed", type=int, default=20260901)
+    q.set_defaults(func=stage_questions)
+
+    o = sub.add_parser("observe")
+    o.add_argument("--outdir", required=True)
+    o.add_argument("--device", default="cuda:0")
+    o.add_argument("--condition", choices=["image_only", "prompted"],
+                   default="image_only")
+    o.add_argument("--overwrite", action="store_true")
+    o.set_defaults(func=stage_observe)
+
+    args = parser.parse_args()
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()
