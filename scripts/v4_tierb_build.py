@@ -40,6 +40,7 @@ from selfsight.v4.tierb import (
     MIN_MASK_SHARE,
     RecolourPlan,
     edit_accepted,
+    edit_confirmed,
     flip,
     flip_question,
     recolour,
@@ -244,11 +245,16 @@ def stage_check(args: argparse.Namespace) -> None:
     plan = read_jsonl(out_dir / "plan.jsonl")
     todo = [row for row in plan if row["needs_check"]]
     out = out_dir / "checks.jsonl"
-    done: set[str] = set()
+    # Keyed by detector as well as pair: both detectors append to this one file,
+    # so resuming on pair alone let the second detector see the first one's rows
+    # and skip every image, which then failed the gate as "not checked by both"
+    # and rejected all 80 recolours at a yield of exactly zero.
+    done: set[tuple[str, str]] = set()
     if out.exists() and not args.overwrite:
-        done = {r["pair_id"] for r in read_jsonl(out)}
-        print(f"resuming: {len(done)} already checked")
-    todo = [row for row in todo if row["pair_id"] not in done]
+        done = {(r["pair_id"], r["detector"]) for r in read_jsonl(out)}
+        print(f"resuming: {len(done)} pair-detector rows already checked")
+    todo = [row for row in todo
+            if (row["pair_id"], args.detector) not in done]
     print(f"{len(todo)} edited images to re-detect with {args.detector}")
     if not todo:
         return
@@ -297,20 +303,28 @@ def stage_accept(args: argparse.Namespace) -> None:
         )
         verdicts = [edit_accepted(plan_obj, row["detections_before"], after)
                     for after in seen.values()]
-        if all(ok for ok, _ in verdicts):
+        strict = all(ok for ok, _ in verdicts)
+        # Both must see the edited fact; only one need see nothing else move.
+        # See `edit_confirmed` for why the second half is not "both".
+        ladder = (all(edit_confirmed(plan_obj, after) for after in seen.values())
+                  and any(ok for ok, _ in verdicts))
+        if strict or (args.gate == "ladder" and ladder):
+            row = dict(row, gate="strict" if strict else "ladder")
             accepted.append(row)
-            reasons["recolour_accepted"] += 1
+            reasons["recolour_accepted" if strict
+                    else "recolour_accepted_on_the_edited_fact"] += 1
         else:
             reasons["recolour_" + next(why for ok, why in verdicts if not ok)] += 1
 
     write_jsonl(out_dir / "accepted.jsonl", accepted)
     kinds = collections.Counter(r["edit"] for r in accepted)
     n_recolour_planned = sum(1 for r in plan.values() if r["needs_check"])
-    yield_rate = (reasons["recolour_accepted"] / n_recolour_planned
-                  if n_recolour_planned else 0.0)
+    strict_n = reasons["recolour_accepted"]
+    total_n = strict_n + reasons["recolour_accepted_on_the_edited_fact"]
     print(f"accepted {len(accepted)}: {dict(kinds)}")
-    print(f"recolour yield {yield_rate:.3f} ({reasons['recolour_accepted']}"
-          f"/{n_recolour_planned})")
+    print(f"recolour yield {total_n / n_recolour_planned:.3f} "
+          f"({total_n}/{n_recolour_planned}), of which {strict_n} pass the "
+          f"strict whole-list gate")
     print(f"outcomes: {dict(reasons)}")
 
 
@@ -347,12 +361,17 @@ def _forced_choice(pair: dict[str, Any], built: dict[str, Any],
 
 def stage_questions(args: argparse.Namespace) -> None:
     out_dir = Path(args.outdir)
-    rng = random.Random(args.seed)
     rows: list[dict[str, Any]] = []
     for pair in read_jsonl(out_dir / "accepted.jsonl"):
         # Which option is A is drawn per pair, not per member, so the two
         # members share one question string and differ only in gold.
-        gold_first = rng.random() < 0.5
+        #
+        # Seeded from the pair id rather than taken from a running generator, so
+        # this stage is idempotent. It was not: accepting twelve more pairs
+        # after a gate change shifted the stream and silently re-lettered 136 of
+        # 254 already-answered trials, whose stored answers were then being
+        # matched against options in the other order.
+        gold_first = random.Random(f"{args.seed}:{pair['pair_id']}").random() < 0.5
         if pair["edit"] == "flip":
             built = flip_question(pair["subject"], pair["other"],
                                   pair["subject_left"], gold_first)
@@ -462,6 +481,11 @@ def main() -> None:
 
     a = sub.add_parser("accept")
     a.add_argument("--outdir", required=True)
+    a.add_argument("--gate", choices=["strict", "ladder"], default="ladder",
+                   help="strict: the whole detected list must move by exactly "
+                        "one pair, for both detectors. ladder: both must see "
+                        "the edited fact and one must see nothing else move, "
+                        "which is the rule the main pipeline settled on.")
     a.set_defaults(func=stage_accept)
 
     q = sub.add_parser("questions")

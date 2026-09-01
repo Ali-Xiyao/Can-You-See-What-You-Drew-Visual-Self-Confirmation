@@ -371,3 +371,35 @@ def edit_accepted(
     if (plan.noun, plan.target_colour) not in got_after:
         return False, "target_not_recoloured"
     return False, "collateral_change"
+
+
+def edit_confirmed(
+    plan: RecolourPlan, after: list[dict[str, Any]]
+) -> bool:
+    """Did this detector see the edited fact, ignoring the rest of the list?
+
+    The strict gate above asks whether the whole list moved by exactly one pair,
+    and on the first run it threw away 19 of 80 recolours because the two
+    detectors disagreed about some *other* object -- an object neither of them
+    was asked about and neither edit touched.
+
+    That is the same mistake the main pipeline already made and corrected: two
+    strong detectors disagree about the object list roughly half the time and
+    about the verdict rarely, so escalating on the list spends the budget on
+    images whose answer was never in doubt (STATUS 19). The fact this gate is
+    protecting is "the mug is now red", and that is what this function checks.
+
+    Used together with the strict gate, not instead of it: an edit is a trial
+    when both detectors confirm the edited fact AND at least one of them sees
+    nothing else changed. Pre-existing disagreement about an untouched object is
+    noise; both detectors reporting a second change is not.
+    """
+    from selfsight.v4.spec import canonical_noun, countable
+
+    seen = {
+        (canonical_noun(row.get("object", "")),
+         str(row.get("color", "")).strip().lower())
+        for row in countable(after)
+    }
+    return ((plan.noun, plan.target_colour) in seen
+            and (plan.noun, plan.source_colour) not in seen)
