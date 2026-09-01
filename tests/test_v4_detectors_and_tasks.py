@@ -240,3 +240,56 @@ def test_transparency_is_not_accepted_as_a_colour():
     accepted, rejected = parse_scenes(str(scenes).replace("'", '"'), prefix="t")
     assert not accepted
     assert rejected[0]["reason"] == "not a colour word: clear"
+
+# ------------------------------------------------------------- crop scaling
+
+
+def test_a_sliver_of_a_box_is_not_scaled_into_an_out_of_memory_error(tmp_path):
+    """Short-side-only upsampling ran away on the shapes the ladder gets most.
+
+    A padded box around a spoon or a book spine is a strip. Scaling 500x40 to a
+    448 short side gives 4200x450, and a model that tokenises by area then OOMs
+    -- which killed a 412-query crop pass at query 50. Both the long side and
+    the factor are capped now, and the crop still gets more pixels than it had.
+    """
+    from PIL import Image
+
+    from selfsight.v4.detectors import VlmDetector
+
+    path = tmp_path / "wide.png"
+    Image.new("RGB", (512, 512), "white").save(path)
+
+    seen: list[tuple[int, int]] = []
+
+    def run(image, instruction):
+        seen.append((image.width, image.height))
+        return '[{"object":"spoon","color":"silver"}]'
+
+    detector = VlmDetector("probe", run)
+    detector.detect_crop(str(path), (0, 200, 500, 240))
+    width, height = seen[0]
+    assert max(width, height) <= 1344
+    assert (width, height) != (500, 40)  # it was enlarged, just not without limit
+
+
+def test_crop_boxes_are_stripped_because_the_caller_has_no_crop_frame():
+    """A box in crop coordinates would be read as a box in image coordinates."""
+    from PIL import Image
+
+    from selfsight.v4.detectors import VlmDetector
+
+    import tempfile, os
+
+    handle, name = tempfile.mkstemp(suffix=".png")
+    os.close(handle)
+    Image.new("RGB", (512, 512), "white").save(name)
+    try:
+        detector = VlmDetector(
+            "probe",
+            lambda image, instruction:
+                '[{"object":"mug","color":"blue","box":[0,0,100,100]}]',
+        )
+        found = detector.detect_crop(name, (100, 100, 300, 300))
+        assert found and "bbox" not in found[0] and "center" not in found[0]
+    finally:
+        os.unlink(name)

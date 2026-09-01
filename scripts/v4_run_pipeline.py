@@ -215,11 +215,22 @@ def stage_crop(args: argparse.Namespace) -> None:
             }
             try:
                 record["detections"] = detector.detect_crop(image, bbox)
-            except (ValueError, OSError) as exc:
+            except (ValueError, OSError, RuntimeError) as exc:
                 # No `detections` key, so verify treats the crop as having
                 # settled nothing and the row escalates rather than resolving
                 # against the object by default.
+                #
+                # RuntimeError covers CUDA OOM, which is a property of one crop's
+                # shape rather than of the run. Killing 400 queries because the
+                # 50th was a sliver is the wrong trade; the row is recorded as
+                # unsettled and the image goes to a human.
                 record["error"] = str(exc)[:300]
+                try:
+                    import torch
+
+                    torch.cuda.empty_cache()
+                except Exception:  # pragma: no cover - diagnostics only
+                    pass
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
             handle.flush()
             if index % 25 == 0:

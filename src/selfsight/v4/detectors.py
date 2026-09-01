@@ -148,10 +148,16 @@ class VlmDetector:
     ) -> list[dict[str, Any]]:
         """Re-read one region, enlarged. This is the ladder's second level.
 
-        The crop is upsampled to 448px on its short side: the point of the step
-        is to put more pixels on the disputed object than the whole-image pass
-        had, and handing back a 40x40 patch would just repeat the first question
-        with less context.
+        The crop is upsampled toward 448px on its short side: the point of the
+        step is to put more pixels on the disputed object than the whole-image
+        pass had, and handing back a 40x40 patch would just repeat the first
+        question with less context.
+
+        The long side and the factor itself are both capped. Scaling only by the
+        short side runs away on a sliver of a box -- a 500x40 strip becomes
+        4200x450, and a vision model that tokenises by area then runs out of
+        memory. That is not a rare shape: it is what a padded box around a
+        spoon, a book spine or a partly occluded object looks like.
         """
         with Image.open(image_path) as handle:
             image = handle.convert("RGB")
@@ -162,11 +168,15 @@ class VlmDetector:
             if x1 <= x0 or y1 <= y0:
                 return []
             crop = image.crop((x0, y0, x1, y1))
-        short = min(crop.width, crop.height)
-        if short < 448:
-            factor = 448 / short
+        factor = min(
+            448 / max(1, min(crop.width, crop.height)),
+            1344 / max(1, max(crop.width, crop.height)),
+            4.0,
+        )
+        if factor > 1.0:
             crop = crop.resize(
-                (int(crop.width * factor), int(crop.height * factor)), Image.LANCZOS
+                (max(1, int(crop.width * factor)), max(1, int(crop.height * factor))),
+                Image.LANCZOS,
             )
         found = self._ask(crop, CROP_INSTRUCTION)
         for item in found:  # boxes are in crop coordinates; the caller has none
