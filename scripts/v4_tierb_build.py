@@ -345,8 +345,17 @@ def _plan_deletions(args, out_dir, sources, rng, rows, skipped) -> None:
 
         image = np.asarray(Image.open(image_path).convert("RGB"))
         rng.shuffle(candidates)
-        chosen = None
+        # `--per-image` is 1 for the §23 arm, where one deletion per image keeps
+        # the pairs independent. The §25 confirmatory run raises it: the split
+        # variable is a property of the (spec, object), so an image holding one
+        # object the generator omits elsewhere and one it never omits carries
+        # both strata at once, and taking only one of them throws away the
+        # comparison this run exists to make. Pairs from one image are not
+        # independent and the analysis clusters on the image.
+        built = []
         for noun, item, colour in candidates:
+            if len(built) >= args.per_image:
+                break
             others = [(o["bbox"], str(o.get("color", "")).strip().lower())
                       for o in detections if o is not item and o.get("bbox")]
             mask, centre = deletion_mask(image, item["bbox"], colour, others)
@@ -358,30 +367,34 @@ def _plan_deletions(args, out_dir, sources, rng, rows, skipped) -> None:
                 continue
             edited, mask, centre = delete(image, item["bbox"], colour,
                                           filler, others)
-            chosen = (noun, item, colour, edited, mask, centre)
-            break
-        if chosen is None:
+            built.append((noun, item, colour, edited, mask, centre))
+        if not built:
             continue
-        noun, item, colour, edited, mask, centre = chosen
-        edited_path = out_dir / "images" / f"{stem}.delete.png"
-        Image.fromarray(edited).save(edited_path)
-        rows.append({
-            "pair_id": f"{stem}:delete",
-            "edit": "delete",
-            "original_path": image_path,
-            "edited_path": str(edited_path),
-            "spec": source["spec"],
-            "noun": noun,
-            "colour": colour,
-            "bbox": [list(item["bbox"])],
-            "hole_share": round(float(mask.mean()), 4),
-            "centre_coverage": round(centre, 4),
-            "detections_before": detections,
-            "needs_check": True,
-        })
-        planned += 1
+        for noun, item, colour, edited, mask, centre in built:
+            suffix = "delete" if args.per_image == 1 else f"delete-{noun}"
+            edited_path = out_dir / "images" / f"{stem}.{suffix}.png"
+            Image.fromarray(edited).save(edited_path)
+            rows.append({
+                "pair_id": f"{stem}:{suffix}",
+                "edit": "delete",
+                "original_path": image_path,
+                "edited_path": str(edited_path),
+                "spec": source["spec"],
+                "noun": noun,
+                "colour": colour,
+                "bbox": [list(item["bbox"])],
+                "hole_share": round(float(mask.mean()), 4),
+                "centre_coverage": round(centre, 4),
+                "detections_before": detections,
+                "needs_check": True,
+            })
+            planned += 1
 
         # ---- the sham: same filler, same area, no object touched
+        if not args.sham:
+            continue
+        # One sham per image, matched to the first deletion's hole.
+        noun, item, colour, edited, mask, centre = built[0]
         window = sham_box(image.shape[:2],
                           [d["bbox"] for d in detections if d.get("bbox")],
                           int(mask.sum()),
@@ -824,6 +837,12 @@ def main() -> None:
                    help="a main-pipeline run directory; repeat for both halves")
     p.add_argument("--outdir", required=True)
     p.add_argument("--seed", type=int, default=20260901)
+    p.add_argument("--per-image", type=int, default=1,
+                   help="deletions planned per image; >1 for the §25 run")
+    p.add_argument("--sham", action="store_true",
+                   # §23 already ruled the filler's fingerprint out, so the
+                   # confirmatory run does not pay for it a second time.
+                   help="also build the matched null edit")
     p.add_argument("--edits", default="flip,recolour",
                    # "origin" is the §23 follow-up: same absence, different
                    # author. It reuses the deletion editor and gate.

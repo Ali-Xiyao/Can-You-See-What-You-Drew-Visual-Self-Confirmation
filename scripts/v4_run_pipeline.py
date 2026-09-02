@@ -89,7 +89,8 @@ def stage_generate(args: argparse.Namespace) -> None:
             # Seeds are derived from the spec index, not drawn: the same corpus
             # must give the same images on a rerun, and the K candidates for one
             # spec must differ from each other.
-            seeds = [BASE_SEED + index * args.k + j for j in range(args.k)]
+            seeds = [BASE_SEED + args.seed_offset + index * args.k + j
+                     for j in range(args.k)]
             records = backbone.generate_images(
                 [spec.prompt] * args.k, seeds, str(images), checkpoint_id="v4-main"
             )
@@ -491,6 +492,13 @@ def main() -> None:
     g.add_argument("--outdir", required=True)
     g.add_argument("--device", default="cuda:0")
     g.add_argument("--k", type=int, default=4)
+    g.add_argument("--seed-offset", type=int, default=0,
+                   # A second batch over the same corpus must not redraw the
+                   # first batch's images. The confirmatory run in STATUS §25
+                   # needs its seeds disjoint from the ones its split variable
+                   # was estimated on, and an offset larger than the first
+                   # batch's span (specs x k) guarantees that by construction.
+                   help="added to every seed; keeps a second batch disjoint")
     g.add_argument("--shard", type=int, default=0)
     g.add_argument("--shards", type=int, default=1)
     g.set_defaults(func=stage_generate)
