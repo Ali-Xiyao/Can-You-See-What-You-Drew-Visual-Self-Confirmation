@@ -41,7 +41,7 @@ gate the main pool uses puts the burden on the same instrument.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Iterable, Sequence
+from typing import Any, Callable, Iterable, Sequence
 
 import numpy as np
 
@@ -83,6 +83,77 @@ MIN_CENTRE_COVERAGE = 0.30
 CENTRE_FRACTION = 0.5
 PAD_FRACTION = 0.15
 
+ACHROMATIC: dict[str, tuple[float, float, float]] = {
+    # colour: (max saturation, min value, max value)
+    "white": (0.18, 0.70, 1.01),
+    "silver": (0.16, 0.45, 0.92),
+    "grey": (0.16, 0.22, 0.72),
+    "gray": (0.16, 0.22, 0.72),
+    "black": (0.45, 0.00, 0.22),
+}
+"""Objects with no hue, segmented by saturation and value instead.
+
+`COLOUR_HUES` cannot describe these and the first deletion pass fell back to
+protecting a neighbour's whole bounding box whenever it met one. That box
+overlaps the target in a still life, so it carved a hole out of the deletion and
+left a stub of the removed object standing in it -- half a red bottle on the
+white block it stood on, a green ghost between two black buckets. Segmenting
+them properly is what makes the fallback rare instead of routine.
+
+Black is allowed more saturation than the others because a black object in a
+coloured scene picks up the surround; at 0.16 it lost its own edges.
+"""
+
+DELETE_BOX_PAD = 0.12
+"""How far the deletion box reaches past the detection, as a share of its side.
+
+Wider than it looks like it needs to be, because parts of an object routinely
+fall outside its detection box: a candle's flame, a bottle's neck highlight, the
+shadow it casts. At 0.05 those survived the deletion and left a flame burning in
+mid-air. The neighbours are protected by pixel mask, so widening the box costs
+coverage against them rather than safety.
+"""
+
+DELETE_PROTECT_GROW = 2
+"""Pixels a neighbour's mask grows before it is subtracted from the target's box.
+
+Covers the neighbour's antialiased edge. Without it the deletion nicks a one
+pixel outline off whatever it was standing next to.
+"""
+
+MAX_DELETE_SHARE = 0.20
+"""Largest share of the frame the hole may cover.
+
+Not a taste threshold -- it is where the filler stops working. These are close
+up still lifes and one object routinely owns a third of the frame; the eight
+pilot deletions came out clean at 0.16 and 0.17, smeared at 0.67, and at 0.90
+the inpainter replaced a dinner plate with a dark wall and left the spoons
+floating on it. Cropping a window around the hole was tried first and changed
+nothing, because at these hole sizes the window is the whole image anyway.
+
+At 0.20, 292 of 690 candidates survive across 188 images, which is supply
+enough. The cap is applied before the detectors so the GPU is not spent on
+edits already known to be unusable.
+"""
+
+MIN_DELETE_CENTRE = 0.80
+"""How much of the target's own box the deletion must reach.
+
+Low means a neighbour's protected pixels sit in the middle of the target, so
+the target cannot be removed without taking the neighbour with it -- a spoon
+lying on the plate being deleted. Rejecting is right: the alternative is an
+image with half an object still in it.
+"""
+
+DELETE_GROW = 3
+"""Pixels the deletion mask grows past the object.
+
+The antialiased rim and the contact shadow are not the object's own colour, so
+they survive a pixel-exact mask and read as a halo where something used to be --
+the most visible tell that the image was edited, and edit artifacts are one of
+the three explanations this experiment exists to separate.
+"""
+
 
 @dataclass(frozen=True)
 class RecolourPlan:
@@ -97,6 +168,17 @@ class RecolourPlan:
     a recoloured pear could be deferring to the prompt or leaning on a prior
     about pears, and those are separable only if the constrained and free nouns
     are tagged and compared."""
+
+
+@dataclass(frozen=True)
+class DeletePlan:
+    image_path: str
+    noun: str
+    colour: str
+    bbox: tuple[float, float, float, float]
+    sham: bool = False
+    """A null edit: the same filler over the same area of background, with the
+    object list left alone. Carries the artifact without the fact."""
 
 
 def hue_distance(first: float, second: float) -> float:
@@ -200,6 +282,66 @@ def centre_coverage(mask: np.ndarray, fraction: float = CENTRE_FRACTION) -> floa
     return float(centre.mean()) if centre.size else 0.0
 
 
+def object_mask(
+    image: np.ndarray,
+    bbox: Sequence[float],
+    colour: str,
+) -> tuple[np.ndarray, float, float]:
+    """The object's own pixels inside `bbox`, not the box.
+
+    Returns a full-image boolean mask, the share of the detection box it covers,
+    and the share of that box's centre. Both edits that need to know where an
+    object *is* -- rotating its hue, and removing it -- go through here, so the
+    two cannot drift apart in what they consider "the object".
+
+    Extracted from `recolour`, which is why the padding logic reads the way it
+    does: the mask is built on a box padded beyond the detection so that the
+    background, which continues past the object, reaches the patch border and
+    can be told apart from the object, which cannot. See `_object_components`.
+    """
+    if colour not in COLOUR_HUES and colour not in ACHROMATIC:
+        raise ValueError(f"not a segmentable colour: {colour}")
+    height, width = image.shape[:2]
+    bx0, by0, bx1, by1 = (int(round(v)) for v in bbox)
+    pad_x = max(4, int(PAD_FRACTION * (bx1 - bx0)))
+    pad_y = max(4, int(PAD_FRACTION * (by1 - by0)))
+    x0, y0 = max(0, bx0 - pad_x), max(0, by0 - pad_y)
+    x1, y1 = min(width, bx1 + pad_x), min(height, by1 + pad_y)
+    empty = np.zeros((height, width), dtype=bool)
+    if x1 <= x0 or y1 <= y0:
+        return empty, 0.0, 0.0
+
+    patch = image[y0:y1, x0:x1].astype(np.float32) / 255.0
+    hsv = _hsv_array(patch)
+    if colour in COLOUR_HUES:
+        hue = COLOUR_HUES[colour]
+        mask = (
+            (np.abs(((hsv[..., 0] - hue + 0.5) % 1.0) - 0.5) <= HUE_WINDOW)
+            & (hsv[..., 1] >= MIN_SATURATION)
+            & (hsv[..., 2] >= MIN_VALUE)
+        )
+    else:
+        max_saturation, min_value, max_value = ACHROMATIC[colour]
+        mask = (
+            (hsv[..., 1] <= max_saturation)
+            & (hsv[..., 2] >= min_value)
+            & (hsv[..., 2] <= max_value)
+        )
+    if not mask.any():
+        return empty, 0.0, 0.0
+    mask = _object_components(mask)
+    if not mask.any():
+        return empty, 0.0, 0.0
+    # Reported against the detection box, not the padded patch, so the numbers
+    # mean the same thing they did before the padding was introduced.
+    inner = mask[by0 - y0:by1 - y0, bx0 - x0:bx1 - x0]
+    share = float(inner.mean()) if inner.size else 0.0
+    centre = centre_coverage(inner) if inner.size else 0.0
+    full = empty.copy()
+    full[y0:y1, x0:x1] = mask
+    return full, share, centre
+
+
 def recolour(
     image: np.ndarray,
     bbox: Sequence[float],
@@ -213,47 +355,134 @@ def recolour(
     function does not silently refuse, because a refusal that looks like a
     successful edit is the worst outcome available.
     """
-    if source_colour not in COLOUR_HUES or target_colour not in COLOUR_HUES:
+    if target_colour not in COLOUR_HUES:
         raise ValueError(f"not a rotatable colour: {source_colour}->{target_colour}")
-    height, width = image.shape[:2]
-    bx0, by0, bx1, by1 = (int(round(v)) for v in bbox)
-    # The mask is built on a padded box so that the background, which continues
-    # past the object's own box, reaches the border of the patch and can be
-    # told apart from the object, which cannot.
-    pad_x = max(4, int(PAD_FRACTION * (bx1 - bx0)))
-    pad_y = max(4, int(PAD_FRACTION * (by1 - by0)))
-    x0, y0 = max(0, bx0 - pad_x), max(0, by0 - pad_y)
-    x1, y1 = min(width, bx1 + pad_x), min(height, by1 + pad_y)
-    if x1 <= x0 or y1 <= y0:
-        return image, 0.0, 0.0
-
-    patch = image[y0:y1, x0:x1].astype(np.float32) / 255.0
-    hsv = _hsv_array(patch)
-    source_hue = COLOUR_HUES[source_colour]
-    mask = (
-        (np.abs(((hsv[..., 0] - source_hue + 0.5) % 1.0) - 0.5) <= HUE_WINDOW)
-        & (hsv[..., 1] >= MIN_SATURATION)
-        & (hsv[..., 2] >= MIN_VALUE)
-    )
-    if not mask.any():
-        return image, 0.0, 0.0
-    mask = _object_components(mask)
-    if not mask.any():
-        return image, 0.0, 0.0
-    # Reported against the detection box, not the padded patch, so the numbers
-    # mean the same thing they did before the padding was introduced.
-    inner = mask[by0 - y0:by1 - y0, bx0 - x0:bx1 - x0]
-    share = float(inner.mean()) if inner.size else 0.0
-    centre = centre_coverage(inner) if inner.size else 0.0
+    mask, share, centre = object_mask(image, bbox, source_colour)
     if share == 0.0:
         return image, 0.0, 0.0
 
-    delta = (COLOUR_HUES[target_colour] - source_hue) % 1.0
+    height, width = image.shape[:2]
+    delta = (COLOUR_HUES[target_colour] - COLOUR_HUES[source_colour]) % 1.0
+    hsv = _hsv_array(image.astype(np.float32) / 255.0)
     hsv[..., 0] = np.where(mask, (hsv[..., 0] + delta) % 1.0, hsv[..., 0])
-    edited_patch = np.clip(_rgb_array(hsv) * 255.0, 0, 255).astype(np.uint8)
-    out = image.copy()
-    out[y0:y1, x0:x1] = np.where(mask[..., None], edited_patch, image[y0:y1, x0:x1])
-    return out, share, centre
+    edited = np.clip(_rgb_array(hsv) * 255.0, 0, 255).astype(np.uint8)
+    out = np.where(mask[..., None], edited, image)
+    return out.astype(np.uint8), share, centre
+
+
+def deletion_mask(
+    image: np.ndarray,
+    bbox: Sequence[float],
+    colour: str,
+    others: Iterable[tuple[Sequence[float], str]] = (),
+    box_pad: float = DELETE_BOX_PAD,
+    protect_grow: int = DELETE_PROTECT_GROW,
+) -> tuple[np.ndarray, float]:
+    """Everything inside the target's box except the neighbours' own pixels.
+
+    Two masks were tried first and both failed, in opposite directions, on the
+    same eight pilot images -- these are compact still lifes and the objects
+    touch:
+
+    * The **bounding box** takes the neighbour with it. A bottle came out sliced
+      flat and a red book vanished along with the candle beside it, because the
+      candle's box covered them. Four of eight edits were unusable.
+    * The **object's own colour mask** (`object_mask`) leaves the object's
+      remains behind: the stem, the specular highlight, the contact shadow and
+      any second-coloured part are not the body's hue, so an apple was removed
+      and left a white blob with a stem floating over it, and a carrot was
+      removed from under its own green top.
+
+    The union of the two failure sets is most of the corpus, so neither is a
+    filter that could be tightened. What is wanted is the box -- so nothing of
+    the target survives -- minus whatever inside it belongs to something else,
+    which is exactly what `object_mask` finds for the neighbours. The target's
+    own pixels are added back afterwards in case it shares a hue with a
+    neighbour whose mask spilled onto it.
+
+    Returns the mask and the share of the box's centre it covers. A low centre
+    share means a neighbour sits in the middle of the target's box and the
+    deletion cannot be made cleanly; the caller rejects on it.
+    """
+    from scipy import ndimage
+
+    height, width = image.shape[:2]
+    bx0, by0, bx1, by1 = (int(round(v)) for v in bbox)
+    pad_x = max(3, int(box_pad * (bx1 - bx0)))
+    pad_y = max(3, int(box_pad * (by1 - by0)))
+    x0, y0 = max(0, bx0 - pad_x), max(0, by0 - pad_y)
+    x1, y1 = min(width, bx1 + pad_x), min(height, by1 + pad_y)
+    box = np.zeros((height, width), dtype=bool)
+    if x1 <= x0 or y1 <= y0:
+        return box, 0.0
+    box[y0:y1, x0:x1] = True
+
+    protect = np.zeros((height, width), dtype=bool)
+    for other_bbox, other_colour in others:
+        mask, share = np.zeros((height, width), dtype=bool), 0.0
+        if other_colour in COLOUR_HUES or other_colour in ACHROMATIC:
+            mask, share, _ = object_mask(image, other_bbox, other_colour)
+        if share > 0.0:
+            protect |= mask
+        else:
+            # Either the colour is not one this module can segment at all, or
+            # `object_mask` refused, which it does when the neighbour reaches
+            # the border of its own padded patch. Refusing is right for editing
+            # an object and wrong for protecting one: a banana lying across a
+            # plate got no mask and was deleted along with the plate. So fall
+            # back to the neighbour's whole box, which costs deletion coverage
+            # and is rejected later on centre coverage. Losing a candidate is
+            # the safe error; losing a bystander is not.
+            ox0, oy0, ox1, oy1 = (int(round(v)) for v in other_bbox)
+            protect[max(0, oy0):oy1, max(0, ox0):ox1] = True
+    if protect.any() and protect_grow > 0:
+        protect = ndimage.binary_dilation(protect, iterations=protect_grow)
+
+    # The target's own pixels are added back in case a neighbour's mask spilled
+    # onto them.
+    if colour in COLOUR_HUES or colour in ACHROMATIC:
+        own, own_share, _ = object_mask(image, bbox, colour)
+    else:
+        own = np.zeros((height, width), dtype=bool)
+    mask = (box & ~protect) | (own & box)
+    inner = mask[by0:by1, bx0:bx1]
+    centre = centre_coverage(inner) if inner.size else 0.0
+    return mask, centre
+
+
+def delete(
+    image: np.ndarray,
+    bbox: Sequence[float],
+    colour: str,
+    inpaint: Callable[[np.ndarray, np.ndarray], np.ndarray],
+    others: Iterable[tuple[Sequence[float], str]] = (),
+    grow: int = DELETE_GROW,
+) -> tuple[np.ndarray, np.ndarray, float]:
+    """Remove the object at `bbox` and let `inpaint` fill what it stood on.
+
+    `inpaint` is passed in rather than imported so this module keeps no opinion
+    about which filler is used and needs no runtime for it; the acceptance gate,
+    not the filler's reputation, is what licenses the label.
+
+    Returns the edited image, the mask, and the mask's centre coverage.
+    """
+    from scipy import ndimage
+
+    mask, centre = deletion_mask(image, bbox, colour, others)
+    if not mask.any():
+        return image, mask, 0.0
+    if grow > 0:
+        # Only outward, and only where nothing else was protected: the rim and
+        # the contact shadow read as a halo where something used to be, which is
+        # the most visible tell that the image was edited -- and edit artifacts
+        # are one of the three explanations this experiment exists to separate.
+        mask = ndimage.binary_dilation(mask, iterations=grow)
+    filled = inpaint(image, mask)
+    # Only masked pixels move. The rest of the image is bit-identical, so
+    # "nothing else changed" is true by construction and the detectors are
+    # asked only whether the object is gone.
+    out = np.where(mask[..., None], filled, image)
+    return out.astype(np.uint8), mask, centre
 
 
 def flip(image: np.ndarray) -> np.ndarray:
@@ -332,6 +561,136 @@ def flip_question(
         "gold_original": "A" if gold_first else "B",
         "gold_edited": "B" if gold_first else "A",
     }
+
+
+def delete_question(noun: str, colour: str, gold_first: bool) -> dict[str, Any]:
+    """The existence 2AFC for a deletion pair.
+
+    The natural pool words existence as a contrast between two nouns, one drawn
+    and one not. That form cannot carry a deletion pair: the deleted noun is
+    present in one member and absent in the other, so whichever second noun is
+    offered, one of the two members has either both options present or neither.
+
+    A yes/no about the deleted object is the form that stays answerable on both
+    members and changes its answer on exactly the fact that was edited. Yes/no
+    invites acquiescence, and the wording does nothing to prevent it -- what
+    does is that the comparison is *paired* and within-image: a constant lean
+    toward "yes" shifts both members equally and cancels in the difference.
+    Which of yes and no is option A is randomised per pair as well, so the lean
+    cannot align with a position preference.
+    """
+    truth, lie = "yes", "no"
+    option_a, option_b = (truth, lie) if gold_first else (lie, truth)
+    # Agrees with whatever word actually comes next, which is the colour.
+    article = "an" if (colour or noun)[:1] in "aeiou" else "a"
+    return {
+        "family": "existence",
+        "question": (
+            f"Is there {article} {colour} {noun} in this picture? "
+            f"Answer A or B only.\nA. {option_a}\nB. {option_b}"
+        ),
+        "option_a": option_a,
+        "option_b": option_b,
+        "gold_original": "A" if gold_first else "B",
+        "gold_edited": "B" if gold_first else "A",
+    }
+
+
+def sham_box(
+    shape: tuple[int, int],
+    boxes: Iterable[Sequence[float]],
+    area: float,
+    rng: Any,
+    pad: float = 0.06,
+    tries: int = 400,
+) -> tuple[int, int, int, int] | None:
+    """A square of `area` pixels on the background, touching no detection.
+
+    The null edit. It runs the same filler over the same amount of image and
+    leaves the object list alone, so whatever the inpainter does to an image --
+    the softened texture, the seam, the faint halo -- appears on both arms while
+    only the deletion arm changes a fact. Without it a difference between the
+    members of a deletion pair could be the missing object or could be that one
+    member has been through a network and the other has not, and those are two
+    of the three explanations this experiment exists to separate.
+
+    Matched on area rather than on shape, because area is what governs how badly
+    the filler struggles; matching the outline as well would require putting the
+    hole where the object was, which is the thing being controlled for.
+    """
+    height, width = shape
+    side = int(round(area ** 0.5))
+    if side < 8 or side >= min(height, width):
+        return None
+    blocked = []
+    for box in boxes:
+        bx0, by0, bx1, by1 = (float(v) for v in box)
+        px, py = pad * (bx1 - bx0), pad * (by1 - by0)
+        blocked.append((bx0 - px, by0 - py, bx1 + px, by1 + py))
+    for _ in range(tries):
+        x0 = rng.randrange(0, width - side)
+        y0 = rng.randrange(0, height - side)
+        x1, y1 = x0 + side, y0 + side
+        if all(x1 <= bx0 or x0 >= bx1 or y1 <= by0 or y0 >= by1
+               for bx0, by0, bx1, by1 in blocked):
+            return x0, y0, x1, y1
+    return None
+
+
+def delete_accepted(
+    plan: "DeletePlan",
+    before: list[dict[str, Any]],
+    after: list[dict[str, Any]],
+) -> tuple[bool, str]:
+    """Did the deletion remove exactly the one object and nothing else?
+
+    The failure the filler actually commits is not leaving the object behind --
+    the mask is the whole box, so it cannot -- but inventing a replacement. In
+    the pilot a red mug came out as a beige egg and a white bowl beside the
+    target lost its right half. Both are collateral changes and both are caught
+    here, which is why the editor is allowed to be crude.
+
+    For a sham the expectation is the opposite: the list must not move at all.
+    """
+    from selfsight.v4.spec import canonical_noun, countable
+
+    def pairs(rows: list[dict[str, Any]]) -> list[tuple[str, str]]:
+        return sorted(
+            (canonical_noun(row.get("object", "")),
+             str(row.get("color", "")).strip().lower())
+            for row in countable(rows)
+        )
+
+    got_before, got_after = pairs(before), pairs(after)
+    target = (plan.noun, plan.colour)
+    if plan.sham:
+        if got_after == got_before:
+            return True, "ok"
+        return False, "sham_changed_the_list"
+    if target not in got_before:
+        return False, "target_absent_before"
+    expected = sorted(got_before)
+    expected.remove(target)
+    if got_after == got_before:
+        return False, "unchanged"
+    if target in got_after:
+        return False, "target_still_there"
+    if got_after == expected:
+        return True, "ok"
+    return False, "collateral_change"
+
+
+def delete_confirmed(plan: "DeletePlan", after: list[dict[str, Any]]) -> bool:
+    """Did this detector see the edited fact alone? See `edit_confirmed`."""
+    from selfsight.v4.spec import canonical_noun, countable
+
+    seen = {
+        (canonical_noun(row.get("object", "")),
+         str(row.get("color", "")).strip().lower())
+        for row in countable(after)
+    }
+    target = (plan.noun, plan.colour)
+    return target in seen if plan.sham else target not in seen
 
 
 def edit_accepted(

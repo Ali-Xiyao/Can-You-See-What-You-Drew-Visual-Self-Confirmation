@@ -12,8 +12,16 @@ import pytest
 
 from selfsight.v4.tierb import (
     COLOUR_HUES,
+    DeletePlan,
     RecolourPlan,
+    delete,
+    delete_accepted,
+    delete_confirmed,
+    delete_question,
+    deletion_mask,
     edit_accepted,
+    object_mask,
+    sham_box,
     flip,
     flip_question,
     hue_distance,
@@ -21,6 +29,8 @@ from selfsight.v4.tierb import (
     recolour_question,
     target_colours,
 )
+
+import random
 
 
 def _solid(colour: tuple[int, int, int], size: int = 40) -> np.ndarray:
@@ -202,3 +212,142 @@ def test_the_table_is_not_counted_as_collateral():
     before = [{"object": "mug", "color": "blue"}, {"object": "table", "color": "brown"}]
     after = [{"object": "mug", "color": "red"}]
     assert edit_accepted(_plan(), before, after) == (True, "ok")
+
+
+# ------------------------------------------------------------------ deletion
+
+
+def _still_life() -> np.ndarray:
+    """A grey field with a blue square touching a white square."""
+    image = np.full((60, 100, 3), 120, dtype=np.uint8)
+    image[15:45, 10:40] = (30, 60, 200)
+    image[15:45, 40:70] = (250, 250, 250)
+    return image
+
+
+def _fill_black(image: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    """A stand-in inpainter, so the tests do not need the real one."""
+    out = image.copy()
+    out[mask] = 0
+    return out
+
+
+def test_a_white_object_is_segmented_by_value_not_hue():
+    """The bug that left half a bottle standing: white has no hue, so the old
+    code refused it and fell back to protecting its whole box."""
+    mask, share, _ = object_mask(_still_life(), (40, 15, 70, 45), "white")
+    assert share > 0.8
+    assert mask[30, 55] and not mask[30, 20]
+
+
+def test_the_deletion_covers_the_whole_target_box():
+    image = _still_life()
+    mask, centre = deletion_mask(image, (10, 15, 40, 45), "blue",
+                                 [((40, 15, 70, 45), "white")])
+    assert centre > 0.95
+    assert mask[20:40, 15:35].all()
+
+
+def test_the_deletion_spares_the_neighbour_it_touches():
+    image = _still_life()
+    mask, _ = deletion_mask(image, (10, 15, 40, 45), "blue",
+                            [((40, 15, 70, 45), "white")])
+    assert not mask[30, 55]
+
+
+def test_only_masked_pixels_move():
+    """`nothing else changed` has to be true by construction, not by hope: the
+    detectors are asked whether one object is gone, and a filler that quietly
+    resampled the rest of the frame would make that question unanswerable."""
+    image = _still_life()
+    out, mask, _ = delete(image, (10, 15, 40, 45), "blue", _fill_black,
+                          [((40, 15, 70, 45), "white")])
+    assert (out[~mask] == image[~mask]).all()
+    assert not (out[mask] == image[mask]).all()
+
+
+def test_a_neighbour_sitting_in_the_target_scores_low_centre_coverage():
+    """A spoon lying on the plate being deleted. Rejecting is right: the
+    alternative is an image with half an object still in it."""
+    image = np.full((60, 100, 3), 120, dtype=np.uint8)
+    image[10:50, 10:60] = (250, 250, 250)      # a white plate
+    image[20:40, 20:50] = (30, 60, 200)        # a blue spoon lying on it
+    _, centre = deletion_mask(image, (10, 10, 60, 50), "white",
+                              [((20, 20, 50, 40), "blue")])
+    assert centre < 0.8
+
+
+def _delete_plan(sham: bool = False) -> DeletePlan:
+    return DeletePlan("a.png", "apple", "red", (0.0, 0.0, 1.0, 1.0), sham)
+
+
+def test_a_deletion_the_detectors_confirm_is_accepted():
+    before = [{"object": "apple", "color": "red"},
+              {"object": "mug", "color": "blue"}]
+    after = [{"object": "mug", "color": "blue"}]
+    assert delete_accepted(_delete_plan(), before, after) == (True, "ok")
+
+
+def test_a_deletion_that_invented_a_replacement_is_rejected():
+    """The pilot's red mug came out as a beige egg. The mask cannot leave the
+    object behind -- it is the whole box -- so this is the failure that matters,
+    and catching it here is what licenses a crude editor."""
+    before = [{"object": "apple", "color": "red"},
+              {"object": "mug", "color": "blue"}]
+    after = [{"object": "mug", "color": "blue"},
+             {"object": "egg", "color": "white"}]
+    assert delete_accepted(_delete_plan(), before, after)[1] == "collateral_change"
+
+
+def test_a_deletion_that_took_the_neighbour_with_it_is_rejected():
+    before = [{"object": "apple", "color": "red"},
+              {"object": "mug", "color": "blue"}]
+    assert delete_accepted(_delete_plan(), before, [])[1] == "collateral_change"
+
+
+def test_an_object_the_filler_left_standing_is_rejected():
+    before = [{"object": "apple", "color": "red"},
+              {"object": "mug", "color": "blue"}]
+    assert delete_accepted(_delete_plan(), before, before)[1] == "unchanged"
+
+
+def test_a_sham_is_accepted_only_when_the_list_did_not_move():
+    before = [{"object": "apple", "color": "red"}]
+    assert delete_accepted(_delete_plan(sham=True), before, before) == (True, "ok")
+    assert not delete_accepted(_delete_plan(sham=True), before, [])[0]
+
+
+def test_confirmation_asks_the_opposite_question_of_a_sham():
+    gone = [{"object": "mug", "color": "blue"}]
+    assert delete_confirmed(_delete_plan(), gone)
+    assert not delete_confirmed(_delete_plan(sham=True), gone)
+
+
+@pytest.mark.parametrize("gold_first", [True, False])
+def test_the_deletion_pair_carries_opposite_gold(gold_first):
+    built = delete_question("apple", "red", gold_first)
+    assert built["gold_original"] != built["gold_edited"]
+
+
+def test_both_members_of_a_deletion_pair_are_asked_the_same_question():
+    """A gap between the members has to be about the picture, so the wording
+    cannot differ between them."""
+    first = delete_question("apple", "red", True)
+    assert first["question"] == delete_question("apple", "red", True)["question"]
+    assert "red apple" in first["question"]
+
+
+def test_the_article_agrees_with_the_colour_not_the_noun():
+    assert "an orange mug" in delete_question("mug", "orange", True)["question"]
+    assert "a red apple" in delete_question("apple", "red", True)["question"]
+
+
+def test_the_sham_window_avoids_every_detection():
+    box = sham_box((200, 200), [(0, 0, 100, 100)], 30 * 30, random.Random(0))
+    assert box is not None
+    x0, y0, x1, y1 = box
+    assert x0 >= 100 or y0 >= 100
+
+
+def test_a_sham_window_that_cannot_fit_is_refused():
+    assert sham_box((40, 40), [(0, 0, 40, 40)], 30 * 30, random.Random(0)) is None

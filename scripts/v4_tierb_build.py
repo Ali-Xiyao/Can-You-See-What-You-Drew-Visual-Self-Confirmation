@@ -34,6 +34,16 @@ from selfsight.v4.questions import Family, ForcedChoice, grade, to_atomic
 from selfsight.v4.spec import SceneSpec, canonical_noun, countable
 from selfsight.v4.tasks import PLAUSIBLE_COLORS
 from selfsight.v4.tierb import (
+    MAX_DELETE_SHARE,
+    MIN_DELETE_CENTRE,
+    ACHROMATIC,
+    DeletePlan,
+    delete,
+    delete_accepted,
+    delete_confirmed,
+    delete_question,
+    deletion_mask,
+    sham_box,
     COLOUR_HUES,
     MAX_MASK_SHARE,
     MIN_CENTRE_COVERAGE,
@@ -114,6 +124,9 @@ def stage_plan(args: argparse.Namespace) -> None:
         detections = source["detections"]
         image = np.asarray(Image.open(image_path).convert("RGB"))
 
+        if "flip" not in args.edits and "recolour" not in args.edits:
+            continue
+
         # ---- flip: needs two categories at distinguishable x positions
         positions: dict[str, list[float]] = collections.defaultdict(list)
         for item in detections:
@@ -121,7 +134,7 @@ def stage_plan(args: argparse.Namespace) -> None:
             if centre:
                 positions[canonical_noun(item["object"])].append(float(centre[0]))
         singles = {k: v[0] for k, v in positions.items() if len(v) == 1}
-        if len(singles) >= 2:
+        if "flip" in args.edits and len(singles) >= 2:
             first, second = rng.sample(sorted(singles), 2)
             # The same 24px floor the natural-pool spatial builder uses. A near
             # tie is not a fact about the image, and mirroring it is not either.
@@ -154,6 +167,9 @@ def stage_plan(args: argparse.Namespace) -> None:
         by_noun: dict[str, list[dict[str, Any]]] = collections.defaultdict(list)
         for item in detections:
             by_noun[canonical_noun(item["object"])].append(item)
+
+        if "recolour" not in args.edits:
+            continue
 
         candidates = []
         for noun, items in sorted(by_noun.items()):
@@ -221,11 +237,124 @@ def stage_plan(args: argparse.Namespace) -> None:
             "needs_check": True,
         })
 
+    if "delete" in args.edits:
+        _plan_deletions(args, out_dir, sources, rng, rows, skipped)
+
     write_jsonl(out_dir / "plan.jsonl", rows)
     kinds = collections.Counter(r["edit"] for r in rows)
     print(f"planned {len(rows)} pairs: {dict(kinds)}")
     print(f"skipped: {dict(skipped)}")
     print(f"wrote {out_dir / 'plan.jsonl'}")
+
+
+def _plan_deletions(args, out_dir, sources, rng, rows, skipped) -> None:
+    """One deletion and one matched sham per image, where one will build.
+
+    Only nouns the scene holds exactly one of. Deleting one of two apples
+    changes a count, which is a different family and a weaker contrast -- the
+    picture still holds an apple, so a model reciting the prompt is not
+    contradicted by the object being gone. Deleting the only apple is the atom
+    this arm is for.
+
+    The sham is planned from the same image and given the same area, so the two
+    arms differ in what the edit means and not in how much of the image went
+    through the filler.
+    """
+    from selfsight.v4.inpaint import LamaInpainter
+
+    filler = LamaInpainter()
+    started = time.time()
+    planned = 0
+    for number, source in enumerate(sources):
+        image_path = source["image_path"]
+        stem = Path(image_path).stem
+        detections = source["detections"]
+        by_noun: dict[str, list[dict[str, Any]]] = collections.defaultdict(list)
+        for item in detections:
+            by_noun[canonical_noun(item["object"])].append(item)
+
+        candidates = []
+        for noun, items in sorted(by_noun.items()):
+            if len(items) != 1 or not items[0].get("bbox"):
+                continue
+            colour = str(items[0].get("color", "")).strip().lower()
+            if colour not in COLOUR_HUES and colour not in ACHROMATIC:
+                continue
+            candidates.append((noun, items[0], colour))
+        if not candidates:
+            skipped["delete_no_singleton_object"] += 1
+            continue
+
+        image = np.asarray(Image.open(image_path).convert("RGB"))
+        rng.shuffle(candidates)
+        chosen = None
+        for noun, item, colour in candidates:
+            others = [(o["bbox"], str(o.get("color", "")).strip().lower())
+                      for o in detections if o is not item and o.get("bbox")]
+            mask, centre = deletion_mask(image, item["bbox"], colour, others)
+            if centre < MIN_DELETE_CENTRE:
+                skipped["delete_neighbour_sits_in_the_target"] += 1
+                continue
+            if float(mask.mean()) > MAX_DELETE_SHARE:
+                skipped["delete_hole_too_large_to_fill"] += 1
+                continue
+            edited, mask, centre = delete(image, item["bbox"], colour,
+                                          filler, others)
+            chosen = (noun, item, colour, edited, mask, centre)
+            break
+        if chosen is None:
+            continue
+        noun, item, colour, edited, mask, centre = chosen
+        edited_path = out_dir / "images" / f"{stem}.delete.png"
+        Image.fromarray(edited).save(edited_path)
+        rows.append({
+            "pair_id": f"{stem}:delete",
+            "edit": "delete",
+            "original_path": image_path,
+            "edited_path": str(edited_path),
+            "spec": source["spec"],
+            "noun": noun,
+            "colour": colour,
+            "bbox": [list(item["bbox"])],
+            "hole_share": round(float(mask.mean()), 4),
+            "centre_coverage": round(centre, 4),
+            "detections_before": detections,
+            "needs_check": True,
+        })
+        planned += 1
+
+        # ---- the sham: same filler, same area, no object touched
+        window = sham_box(image.shape[:2],
+                          [d["bbox"] for d in detections if d.get("bbox")],
+                          int(mask.sum()), rng)
+        if window is None:
+            skipped["sham_no_clear_background"] += 1
+        else:
+            sx0, sy0, sx1, sy1 = window
+            sham_mask = np.zeros(image.shape[:2], dtype=bool)
+            sham_mask[sy0:sy1, sx0:sx1] = True
+            filled = np.where(sham_mask[..., None], filler(image, sham_mask),
+                              image).astype(np.uint8)
+            sham_path = out_dir / "images" / f"{stem}.sham.png"
+            Image.fromarray(filled).save(sham_path)
+            rows.append({
+                "pair_id": f"{stem}:sham",
+                "edit": "sham",
+                "original_path": image_path,
+                "edited_path": str(sham_path),
+                "spec": source["spec"],
+                "noun": noun,
+                "colour": colour,
+                "bbox": [list(item["bbox"])],
+                "sham_box": [sx0, sy0, sx1, sy1],
+                "hole_share": round(float(sham_mask.mean()), 4),
+                "detections_before": detections,
+                "needs_check": True,
+            })
+        if number % 20 == 0:
+            print(f"delete {number + 1}/{len(sources)} planned={planned} "
+                  f"{(time.time() - started) / max(1, number + 1):.1f}s/img",
+                  flush=True)
 
 
 # ------------------------------------------------------------------- check
@@ -297,6 +426,24 @@ def stage_accept(args: argparse.Namespace) -> None:
         if len(seen) < 2:
             reasons["not_checked_by_both"] += 1
             continue
+        if row["edit"] in {"delete", "sham"}:
+            plan_obj = DeletePlan(
+                row["original_path"], row["noun"], row["colour"],
+                tuple(row["bbox"][0]), row["edit"] == "sham")
+            verdicts = [delete_accepted(plan_obj, row["detections_before"], after)
+                        for after in seen.values()]
+            strict = all(ok for ok, _ in verdicts)
+            ladder = (all(delete_confirmed(plan_obj, after)
+                          for after in seen.values())
+                      and any(ok for ok, _ in verdicts))
+            if strict or (args.gate == "ladder" and ladder):
+                accepted.append(dict(row, gate="strict" if strict else "ladder"))
+                reasons[row["edit"] + ("_accepted" if strict
+                                       else "_accepted_on_the_edited_fact")] += 1
+            else:
+                reasons[row["edit"] + "_"
+                        + next(why for ok, why in verdicts if not ok)] += 1
+            continue
         plan_obj = RecolourPlan(
             row["original_path"], row["noun"], tuple(row["bbox"][0]),
             row["source_colour"], row["target_colour"], row["colour_constrained"],
@@ -318,10 +465,14 @@ def stage_accept(args: argparse.Namespace) -> None:
 
     write_jsonl(out_dir / "accepted.jsonl", accepted)
     kinds = collections.Counter(r["edit"] for r in accepted)
-    n_recolour_planned = sum(1 for r in plan.values() if r["needs_check"])
+    n_recolour_planned = sum(1 for r in plan.values()
+                             if r["needs_check"] and r["edit"] == "recolour")
     strict_n = reasons["recolour_accepted"]
     total_n = strict_n + reasons["recolour_accepted_on_the_edited_fact"]
     print(f"accepted {len(accepted)}: {dict(kinds)}")
+    if not n_recolour_planned:
+        print(f"outcomes: {dict(reasons)}")
+        return
     print(f"recolour yield {total_n / n_recolour_planned:.3f} "
           f"({total_n}/{n_recolour_planned}), of which {strict_n} pass the "
           f"strict whole-list gate")
@@ -337,7 +488,8 @@ def _forced_choice(pair: dict[str, Any], built: dict[str, Any],
     return ForcedChoice(
         question_id=f"{pair['pair_id']}:{member}",
         spec_id=pair["spec"]["spec_id"],
-        family=Family.BINDING if built["family"] == "binding" else Family.SPATIAL,
+        family={"binding": Family.BINDING, "spatial": Family.SPATIAL,
+                "existence": Family.EXISTENCE}[built["family"]],
         prompt_text=built["question"],
         option_a=built["option_a"],
         option_b=built["option_b"],
@@ -349,7 +501,10 @@ def _forced_choice(pair: dict[str, Any], built: dict[str, Any],
         # to measure -- calling them diagnostic would inflate the count with
         # trials that cannot separate the two hypotheses.
         gold_source=(
-            "no_spec_claim" if pair["edit"] == "flip"
+            # A sham changes no fact, so neither member contradicts the
+            # description and neither is diagnostic: it is a control on the
+            # artifact, not a trial.
+            "no_spec_claim" if pair["edit"] in {"flip", "sham"}
             else ("image_differs_from_spec" if member == "edited"
                   else "spec_matches_image")
         ),
@@ -372,7 +527,14 @@ def stage_questions(args: argparse.Namespace) -> None:
         # 254 already-answered trials, whose stored answers were then being
         # matched against options in the other order.
         gold_first = random.Random(f"{args.seed}:{pair['pair_id']}").random() < 0.5
-        if pair["edit"] == "flip":
+        if pair["edit"] in {"delete", "sham"}:
+            built = delete_question(pair["noun"], pair["colour"], gold_first)
+            if pair["edit"] == "sham":
+                # Nothing was removed, so the answer does not move. That is the
+                # measurement: whatever the filler does to an image it does
+                # here too, and here the right answer is the same on both sides.
+                built = dict(built, gold_edited=built["gold_original"])
+        elif pair["edit"] == "flip":
             built = flip_question(pair["subject"], pair["other"],
                                   pair["subject_left"], gold_first)
         else:
@@ -470,6 +632,11 @@ def main() -> None:
                    help="a main-pipeline run directory; repeat for both halves")
     p.add_argument("--outdir", required=True)
     p.add_argument("--seed", type=int, default=20260901)
+    p.add_argument("--edits", default="flip,recolour",
+                   type=lambda s: [x.strip() for x in s.split(",") if x.strip()],
+                   help="which edits to plan. The deletion arm is built into a "
+                        "separate outdir so the frozen recolour arm is not "
+                        "replanned underneath its answers.")
     p.set_defaults(func=stage_plan)
 
     c = sub.add_parser("check")
