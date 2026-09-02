@@ -380,7 +380,14 @@ def stage_check(args: argparse.Namespace) -> None:
     # and skip every image, which then failed the gate as "not checked by both"
     # and rejected all 80 recolours at a yield of exactly zero.
     done: set[tuple[str, str]] = set()
-    if out.exists() and not args.overwrite:
+    # `--overwrite` drops this detector's rows and keeps the other's. It used to
+    # truncate the file, which silently destroyed a finished 206-image pass by
+    # the first detector when the second one was started with the same flag.
+    if out.exists() and args.overwrite:
+        kept = [r for r in read_jsonl(out) if r["detector"] != args.detector]
+        write_jsonl(out, kept)
+        print(f"overwriting {args.detector}, keeping {len(kept)} rows from the other")
+    if out.exists():
         done = {(r["pair_id"], r["detector"]) for r in read_jsonl(out)}
         print(f"resuming: {len(done)} pair-detector rows already checked")
     todo = [row for row in todo
