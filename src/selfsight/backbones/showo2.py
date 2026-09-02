@@ -422,7 +422,21 @@ class Showo2Adapter(ModelAdapter):
         seeds: Sequence[int],
         output_dir: str | Path,
         checkpoint_id: str,
+        skip_existing: bool = False,
     ) -> list[CandidateRecord]:
+        """Generate one image per (prompt, seed) and hard-render each to disk.
+
+        `skip_existing` re-adopts an image already on disk instead of drawing it
+        again. The path is a function of the prompt and the seed, and both are
+        fixed by the corpus, so a file sitting at that path is the image this
+        call would have produced. It is still reopened, decoded and hashed --
+        the evidence comes from the file either way, never from memory -- so a
+        truncated PNG from a killed run fails here rather than being trusted.
+
+        This exists because a nine hour generation died three hours in with a
+        CUDA error on a shared card, and without it the only way to continue was
+        to redraw everything.
+        """
         if len(prompts) != len(seeds):
             raise ValueError("prompts and seeds must have equal length")
         self._load()
@@ -435,7 +449,11 @@ class Showo2Adapter(ModelAdapter):
                 prompt_id = sha256_json({"benchmark": "2.2", "prompt": prompt})[:20]
                 candidate_id = f"{checkpoint_id}-{prompt_id}-{int(seed)}-{index}"
                 image_path = output_dir / f"{candidate_id}.png"
-                evidence = hard_render(self._generate_one(prompt, int(seed)), image_path)
+                if skip_existing and image_path.is_file():
+                    evidence = hard_render(image_path, image_path)
+                else:
+                    evidence = hard_render(
+                        self._generate_one(prompt, int(seed)), image_path)
                 records.append(
                     CandidateRecord(
                         candidate_id=candidate_id,
