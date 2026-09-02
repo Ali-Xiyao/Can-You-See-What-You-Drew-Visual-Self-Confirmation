@@ -31,7 +31,8 @@ import numpy as np
 from PIL import Image
 
 from selfsight.v4.questions import Family, ForcedChoice, grade, to_atomic
-from selfsight.v4.spec import SceneSpec, canonical_noun, countable
+from selfsight.v4.spec import (SceneSpec, canonical_noun, countable,
+                               has_unnameable)
 from selfsight.v4.tasks import PLAUSIBLE_COLORS
 from selfsight.v4.tierb import (
     MAX_DELETE_SHARE,
@@ -101,6 +102,61 @@ def _sources(runs: list[Path]) -> list[dict[str, Any]]:
                 "spec": entry["spec"],
                 "seed": entry["seed"],
                 "detections": countable(row["detections"]),
+            })
+    return out
+
+
+def _omissions(runs: list[Path]) -> list[dict[str, Any]]:
+    """Images where the generator left out exactly one requested singleton.
+
+    The counterpart of `_sources` for the origin arm. Two conditions are hard:
+    the missing noun was asked for exactly once, and no *other* requested noun
+    is missing too -- a second absence would change what the rest of the picture
+    looks like, and the manufactured member has only one.
+
+    Other atoms are allowed to mismatch, on colour or on count, and the number
+    that do is recorded as `other_mismatches`. Requiring an exact match on
+    everything else is the cleaner comparison and it is what `strict` selects,
+    but it leaves 47 matched cells and 22 pairs after the deletion gates, which
+    cannot carry the contrast. The pairs where the generator only made this one
+    mistake are reported separately rather than being the whole arm.
+    """
+    out = []
+    for run in runs:
+        manifest = {r["image_path"]: r for r in read_jsonl(run / "manifest.jsonl")}
+        for row in read_jsonl(run / "verified.jsonl"):
+            entry = manifest.get(row["image_path"])
+            if entry is None or row["image_correct"]:
+                continue
+            if row["resolution"] == "pending_human":
+                continue
+            if has_unnameable(list(row["detections"])):
+                continue
+            want: collections.Counter = collections.Counter()
+            for item in entry["spec"]["objects"]:
+                want[(canonical_noun(item["object"]),
+                      str(item["color"]).strip().lower())] += item["count"]
+            got = collections.Counter(
+                (canonical_noun(d["object"]), str(d.get("color", "")).strip().lower())
+                for d in countable(row["detections"]))
+            missing = [k for k in want if got.get(k, 0) == 0]
+            if len(missing) != 1 or want[missing[0]] != 1:
+                continue
+            # A second noun missing entirely is a different picture, not a
+            # noisier one; those are excluded above by `len(missing) != 1`.
+            nouns_gone = {k[0] for k in missing}
+            if any(noun in nouns_gone for noun, _ in got):
+                # The noun is present in another colour, so it is not absent and
+                # the question "is there a red apple" has a green apple in view.
+                continue
+            rest = collections.Counter(want)
+            del rest[missing[0]]
+            out.append({
+                "image_path": row["image_path"],
+                "spec": entry["spec"],
+                "noun": missing[0][0],
+                "colour": missing[0][1],
+                "other_mismatches": sum((rest - got).values()) + sum((got - rest).values()),
             })
     return out
 
@@ -239,6 +295,8 @@ def stage_plan(args: argparse.Namespace) -> None:
 
     if "delete" in args.edits:
         _plan_deletions(args, out_dir, sources, rng, rows, skipped)
+    if "origin" in args.edits:
+        _plan_origin(args, out_dir, sources, rows, skipped)
 
     write_jsonl(out_dir / "plan.jsonl", rows)
     kinds = collections.Counter(r["edit"] for r in rows)
@@ -358,6 +416,117 @@ def _plan_deletions(args, out_dir, sources, rng, rows, skipped) -> None:
                   flush=True)
 
 
+def _plan_origin(args, out_dir, sources, rows, skipped) -> None:
+    """Pair the generator's own omission against one we made ourselves.
+
+    §23 left two explanations standing and could not separate them, because
+    deleting an object is at once a different kind of error from a recolour and
+    a more attributable one. This arm holds the error type fixed -- in both
+    members a requested object is simply not in the picture -- and varies only
+    who removed it.
+
+    A cell is a (spec, noun) the generator drew correctly under one seed and
+    left out entirely under another. From the correct seed we delete the noun
+    ourselves; the omitting seed is used as it came out. Same prompt, same
+    question, same family, same answer: the only difference is the origin of the
+    absence.
+
+    Both members contradict the description, so both are diagnostic and both
+    carry `image_differs_from_spec`. The contrast is not within the pair -- it
+    is the drop from image_only to prompted, compared across the two members.
+
+    One pair per cell. A spec with two omitting seeds could supply two, but they
+    are two draws from one prompt rather than two independent facts, and the
+    arm is small enough already that the temptation to inflate it should be
+    refused rather than managed.
+    """
+    from selfsight.v4.inpaint import LamaInpainter
+
+    by_spec: dict[str, list[dict[str, Any]]] = collections.defaultdict(list)
+    for source in sources:
+        by_spec[source["spec"]["spec_id"]].append(source)
+
+    # Every correct seed of the spec is a candidate to delete from, not just the
+    # first one. Fixing the source before testing whether it can be edited threw
+    # away a whole cell each time that one seed happened to put a neighbour in
+    # the middle of the target, which cost this small arm a third of its pairs.
+    cells: dict[tuple[str, str, str], dict[str, Any]] = {}
+    for omission in _omissions([Path(run) for run in args.run]):
+        spec_id = omission["spec"]["spec_id"]
+        key = (spec_id, omission["noun"], omission["colour"])
+        if key in cells:
+            continue
+        candidates = []
+        for source in sorted(by_spec.get(spec_id, []),
+                             key=lambda s: s["image_path"]):
+            match = [d for d in source["detections"]
+                     if canonical_noun(d["object"]) == omission["noun"]
+                     and str(d.get("color", "")).strip().lower() == omission["colour"]
+                     and d.get("bbox")]
+            if len(match) == 1:
+                candidates.append((source, match[0]))
+        if candidates:
+            cells[key] = {"omission": omission, "candidates": candidates}
+    print(f"{len(cells)} matched cells (same spec, one seed drew it, one did not), "
+          f"{sum(len(c['candidates']) for c in cells.values())} candidate sources")
+
+    filler = LamaInpainter()
+    started = time.time()
+    planned = 0
+    for number, (key, cell) in enumerate(sorted(cells.items())):
+        spec_id, noun, colour = key
+        if colour not in COLOUR_HUES and colour not in ACHROMATIC:
+            skipped["origin_colour_not_segmentable"] += 1
+            continue
+        chosen = None
+        for source, item in cell["candidates"]:
+            image = np.asarray(Image.open(source["image_path"]).convert("RGB"))
+            others = [(d["bbox"], str(d.get("color", "")).strip().lower())
+                      for d in source["detections"]
+                      if d is not item and d.get("bbox")]
+            mask, centre = deletion_mask(image, item["bbox"], colour, others)
+            if centre < MIN_DELETE_CENTRE:
+                skipped["origin_neighbour_sits_in_the_target"] += 1
+                continue
+            if float(mask.mean()) > MAX_DELETE_SHARE:
+                skipped["origin_hole_too_large_to_fill"] += 1
+                continue
+            chosen = (source, item, image, others)
+            break
+        if chosen is None:
+            skipped["origin_no_source_survived"] += 1
+            continue
+        source, item, image, others = chosen
+        edited, mask, centre = delete(image, item["bbox"], colour, filler, others)
+        stem = Path(source["image_path"]).stem
+        edited_path = out_dir / "images" / f"{stem}.origin.png"
+        Image.fromarray(edited).save(edited_path)
+        rows.append({
+            "pair_id": f"{spec_id}:{noun}:origin",
+            "edit": "origin",
+            # `original_path` is the generator's own omission and
+            # `edited_path` ours, so the member names the rest of the pipeline
+            # uses line up with which side of the comparison each image is on.
+            "original_path": cell["omission"]["image_path"],
+            "edited_path": str(edited_path),
+            "source_path": source["image_path"],
+            "spec": source["spec"],
+            "noun": noun,
+            "colour": colour,
+            "bbox": [list(item["bbox"])],
+            "hole_share": round(float(mask.mean()), 4),
+            "centre_coverage": round(centre, 4),
+            "other_mismatches": cell["omission"]["other_mismatches"],
+            "detections_before": source["detections"],
+            "needs_check": True,
+        })
+        planned += 1
+        if number % 10 == 0:
+            print(f"origin {number + 1}/{len(cells)} planned={planned} "
+                  f"{(time.time() - started) / max(1, number + 1):.1f}s/cell",
+                  flush=True)
+
+
 # ------------------------------------------------------------------- check
 
 
@@ -434,7 +603,11 @@ def stage_accept(args: argparse.Namespace) -> None:
         if len(seen) < 2:
             reasons["not_checked_by_both"] += 1
             continue
-        if row["edit"] in {"delete", "sham"}:
+        if row["edit"] in {"delete", "sham", "origin"}:
+            # The origin arm's manufactured member is the deletion arm's edit,
+            # so it faces the same gate. Its natural member needs no check --
+            # the main pipeline already settled that image, and re-detecting it
+            # here would let a second look overturn the pool's own verdict.
             plan_obj = DeletePlan(
                 row["original_path"], row["noun"], row["colour"],
                 tuple(row["bbox"][0]), row["edit"] == "sham")
@@ -513,6 +686,12 @@ def _forced_choice(pair: dict[str, Any], built: dict[str, Any],
             # description and neither is diagnostic: it is a control on the
             # artifact, not a trial.
             "no_spec_claim" if pair["edit"] in {"flip", "sham"}
+            # Both members of an origin pair are missing an object the prompt
+            # asked for, so both contradict the description and both are
+            # diagnostic. Which one the generator itself produced is carried in
+            # `member`, not in the gold source.
+            else "image_differs_from_spec"
+            if pair["edit"] == "origin"
             else ("image_differs_from_spec" if member == "edited"
                   else "spec_matches_image")
         ),
@@ -535,8 +714,13 @@ def stage_questions(args: argparse.Namespace) -> None:
         # 254 already-answered trials, whose stored answers were then being
         # matched against options in the other order.
         gold_first = random.Random(f"{args.seed}:{pair['pair_id']}").random() < 0.5
-        if pair["edit"] in {"delete", "sham"}:
+        if pair["edit"] in {"delete", "sham", "origin"}:
             built = delete_question(pair["noun"], pair["colour"], gold_first)
+            if pair["edit"] == "origin":
+                # The object is absent from both members. The pair is not a
+                # within-image contrast; the measurement is how far each member
+                # falls when the description is prepended.
+                built = dict(built, gold_original=built["gold_edited"])
             if pair["edit"] == "sham":
                 # Nothing was removed, so the answer does not move. That is the
                 # measurement: whatever the filler does to an image it does
@@ -641,6 +825,8 @@ def main() -> None:
     p.add_argument("--outdir", required=True)
     p.add_argument("--seed", type=int, default=20260901)
     p.add_argument("--edits", default="flip,recolour",
+                   # "origin" is the §23 follow-up: same absence, different
+                   # author. It reuses the deletion editor and gate.
                    type=lambda s: [x.strip() for x in s.split(",") if x.strip()],
                    help="which edits to plan. The deletion arm is built into a "
                         "separate outdir so the frozen recolour arm is not "

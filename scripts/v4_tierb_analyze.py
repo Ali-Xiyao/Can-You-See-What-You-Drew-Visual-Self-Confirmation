@@ -103,7 +103,11 @@ def main() -> None:
 
     # Pair-level, the unit the design is built on: a model that tracks pixels
     # answers the two members differently, and one reciting the prompt cannot.
+    origin_block(args.outdir, answers)
+
     for edit in edits:
+        if edit == "origin":
+            continue
         for condition in ("image_only", "prompted"):
             pairs: dict[str, dict[str, bool]] = collections.defaultdict(dict)
             for r in answers[condition]:
@@ -117,6 +121,65 @@ def main() -> None:
                   f"{both / max(1, len(full)):.3f}, one right "
                   f"{(len(full) - both - neither) / max(1, len(full)):.3f}, "
                   f"neither {neither / max(1, len(full)):.3f}")
+
+
+def origin_block(outdir: Path, answers: dict[str, list[dict[str, Any]]]) -> None:
+    """The contrast the origin arm exists for: same absence, different author.
+
+    `original` is the generator's own omission and `edited` is one we made. Both
+    members are missing a requested object, so the interesting number is not
+    either member's accuracy -- it is how far each falls when the description is
+    prepended, and whether those two falls differ.
+
+    Also reported paired within the condition, because the two members are
+    matched on spec, noun and question: on the same prompt, does the model hold
+    the line better on the absence it did not cause?
+    """
+    accepted = {r["pair_id"]: r for r in read_jsonl(outdir / "accepted.jsonl")}
+    if not any(r.get("edit") == "origin" for r in accepted.values()):
+        return
+    strict = {k for k, r in accepted.items() if r.get("other_mismatches", 0) == 0}
+
+    for label, keep in (("all pairs", set(accepted)),
+                        (f"only-this-mistake ({len(strict)})", strict)):
+        print()
+        print(f"=== origin, {label}")
+        drops = {}
+        for member, name in (("original", "the generator's own omission"),
+                             ("edited", "one we deleted ourselves")):
+            keyed = {
+                condition: {r["metadata"]["pair_id"]: r["correct"]
+                            for r in answers[condition]
+                            if r["metadata"]["edit"] == "origin"
+                            and r["metadata"]["member"] == member
+                            and r["metadata"]["pair_id"] in keep}
+                for condition in ("image_only", "prompted")
+            }
+            io, pr = keyed["image_only"], keyed["prompted"]
+            if not io:
+                continue
+            a_rate = sum(io.values()) / len(io)
+            b_rate = sum(pr.values()) / len(pr)
+            drops[member] = a_rate - b_rate
+            b, c, p = mcnemar(io, pr)
+            print(f"  {name:<32} image_only {a_rate:.3f}  prompted {b_rate:.3f}  "
+                  f"drop {a_rate - b_rate:+.3f}  ({b}->{c}, p={p:.3g})")
+        if len(drops) == 2:
+            print(f"  difference of drops (own minus ours): "
+                  f"{drops['original'] - drops['edited']:+.3f}")
+
+        for condition in ("image_only", "prompted"):
+            per = {}
+            for r in answers[condition]:
+                if (r["metadata"]["edit"] == "origin"
+                        and r["metadata"]["pair_id"] in keep):
+                    per.setdefault(r["metadata"]["pair_id"], {})[
+                        r["metadata"]["member"]] = r["correct"]
+            own = {k: v["original"] for k, v in per.items() if len(v) == 2}
+            ours = {k: v["edited"] for k, v in per.items() if len(v) == 2}
+            b, c, p = mcnemar(own, ours)
+            print(f"  {condition}: paired within cell, own-only right {b}, "
+                  f"ours-only right {c}, p={p:.3g}")
 
 
 if __name__ == "__main__":
