@@ -476,8 +476,8 @@ def stage_observe(args: argparse.Namespace) -> None:
                 print(f"{index + 1}/{len(manifest)} images, {written} answers, "
                       f"{(time.time() - started) / max(1, index + 1):.1f}s/img", flush=True)
     if skipped_unnameable:
-        print(f"{skipped_unnameable} images supplied no trials: unnameable or "
-              f"unusable by human adjudication")
+        print(f"{skipped_unnameable} images supplied no trials: something in "
+              f"them is not any object")
     print(f"wrote {written} answers to {out}")
 
 
