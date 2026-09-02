@@ -351,3 +351,27 @@ def test_the_sham_window_avoids_every_detection():
 
 def test_a_sham_window_that_cannot_fit_is_refused():
     assert sham_box((40, 40), [(0, 0, 40, 40)], 30 * 30, random.Random(0)) is None
+
+
+def test_the_sham_stretches_when_no_square_fits():
+    """A band of clear background is the usual shape, not a patch.
+
+    The objects fill the middle of the frame and leave a strip along the top,
+    which no square of the right area can occupy. Insisting on one lost the
+    control on two thirds of the images.
+    """
+    boxes = [(0, 40, 200, 200)]
+    box = sham_box((200, 200), boxes, 40 * 40, random.Random(0))
+    assert box is not None
+    x0, y0, x1, y1 = box
+    assert y1 <= 31
+    assert x1 - x0 != y1 - y0
+
+
+def test_the_sham_keeps_the_area_it_was_asked_for():
+    """Area is the matched quantity, so stretching must not shrink the hole."""
+    for area in (30 * 30, 40 * 40, 55 * 55):
+        box = sham_box((300, 300), [(0, 120, 300, 300)], area, random.Random(1))
+        assert box is not None
+        x0, y0, x1, y1 = box
+        assert abs((x1 - x0) * (y1 - y0) - area) <= 0.06 * area

@@ -326,7 +326,8 @@ def _plan_deletions(args, out_dir, sources, rng, rows, skipped) -> None:
         # ---- the sham: same filler, same area, no object touched
         window = sham_box(image.shape[:2],
                           [d["bbox"] for d in detections if d.get("bbox")],
-                          int(mask.sum()), rng)
+                          int(mask.sum()),
+                          random.Random(f"{args.seed}:{stem}:sham"))
         if window is None:
             skipped["sham_no_clear_background"] += 1
         else:

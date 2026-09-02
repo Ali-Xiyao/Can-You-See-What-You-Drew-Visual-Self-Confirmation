@@ -617,23 +617,38 @@ def sham_box(
     Matched on area rather than on shape, because area is what governs how badly
     the filler struggles; matching the outline as well would require putting the
     hole where the object was, which is the thing being controlled for.
+
+    A square is tried first and then progressively longer rectangles of the same
+    area. These are tight still lifes and the clear background is usually a band
+    above or beside the objects, not a patch: insisting on a square lost the
+    control on two thirds of the images, which would have left the sham arm too
+    small to rule anything out. The shapes are tried most-square first, so the
+    stretched ones are used only where nothing rounder fits.
     """
     height, width = shape
-    side = int(round(area ** 0.5))
-    if side < 8 or side >= min(height, width):
-        return None
     blocked = []
     for box in boxes:
         bx0, by0, bx1, by1 = (float(v) for v in box)
         px, py = pad * (bx1 - bx0), pad * (by1 - by0)
         blocked.append((bx0 - px, by0 - py, bx1 + px, by1 + py))
-    for _ in range(tries):
-        x0 = rng.randrange(0, width - side)
-        y0 = rng.randrange(0, height - side)
-        x1, y1 = x0 + side, y0 + side
-        if all(x1 <= bx0 or x0 >= bx1 or y1 <= by0 or y0 >= by1
-               for bx0, by0, bx1, by1 in blocked):
-            return x0, y0, x1, y1
+
+    for ratio in (1.0, 1.5, 2.0, 3.0, 4.0):
+        for long_side_is_x in (True, False):
+            long_side = int(round((area * ratio) ** 0.5))
+            short_side = max(1, int(round(area / max(1, long_side))))
+            w, h = ((long_side, short_side) if long_side_is_x
+                    else (short_side, long_side))
+            if min(w, h) < 8 or w >= width or h >= height:
+                continue
+            for _ in range(tries):
+                x0 = rng.randrange(0, width - w)
+                y0 = rng.randrange(0, height - h)
+                x1, y1 = x0 + w, y0 + h
+                if all(x1 <= bx0 or x0 >= bx1 or y1 <= by0 or y0 >= by1
+                       for bx0, by0, bx1, by1 in blocked):
+                    return x0, y0, x1, y1
+            if ratio == 1.0:
+                break
     return None
 
 
