@@ -130,7 +130,11 @@ def load_checkpoint(
     if bad_unexpected:
         raise ValueError(f"Unexpected LoRA keys on resume: {bad_unexpected[:20]}")
     state = torch.load(directory / "training_state.pt", map_location="cpu", weights_only=False)
-    optimizer.load_state_dict(state["optimizer"])
+    # Both may be None: evaluation reloads a checkpoint to draw from it, and has
+    # no optimiser to restore. The scheduler was already guarded; the optimiser
+    # was not, and an evaluation pass would have died on the attribute lookup.
+    if optimizer is not None:
+        optimizer.load_state_dict(state["optimizer"])
     if scheduler is not None and state["scheduler"] is not None:
         scheduler.load_state_dict(state["scheduler"])
     _restore_rng_state(state["rng"])
