@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-# Finish the Gate B probe on GPU1 once the naive arm is done.
+# Run the Gate B probe end to end on GPU1, for whatever probe set is frozen in
+# $OUT/pools.jsonl.
 #
-# GPU1 is the gen3 x4 card, 7.5x slower on per-image inference, so detect stays
-# on GPU0. The gradient stage is forward+backward on a 1.5B backbone -- compute
-# bound, the regime where generation measured GPU1 at only 7% behind -- so this
-# is the work that belongs here.
+# GPU1 is the gen3 x4 card: 7.5x slower than GPU0 on per-image inference, only
+# 7% slower on generation. Detect therefore stays on GPU0 and this stays here --
+# the gradient stage is forward+backward on a 1.5B backbone, which is the
+# compute-bound regime GPU1 handles fine, and the observation stages use small
+# models on a probe set two orders of magnitude smaller than the corpus.
 #
-# select and report are CPU-only and run from envs/core, which is the env that
-# has numpy/scipy; the GPU stages run from envs/showo2.
+# Both observe stages resume on (prompt_id, candidate_id), so enlarging the
+# probe set re-observes only the candidates that are new.
 set -u
 
 cd "$(dirname "$0")/.." || exit 1
@@ -18,41 +20,26 @@ export PYTHONPATH
 OUT=runs/v4/gate-b
 PROBE=scripts/v4_gate_b_probe.py
 
-# Wait on the output file rather than a process name: both arms run python from
-# the project's envs and a name match would catch the wrong one. Give up if the
-# count stops moving instead of spinning on a job that died.
-wait_for () {
-  local file="$1" target="$2" label="$3"
-  local last=-1 stalled=0 now
-  while :; do
-    now=$(wc -l < "$file" 2>/dev/null || echo 0)
-    [ "$now" -ge "$target" ] && break
-    if [ "$now" -eq "$last" ]; then
-      stalled=$((stalled + 1))
-      if [ "$stalled" -ge 10 ]; then
-        echo "=== $(date +%H:%M:%S) $label stalled at $now/$target, stopping ==="
-        exit 1
-      fi
-    else
-      stalled=0
-    fi
-    last=$now
-    sleep 60
-  done
-  echo "=== $(date +%H:%M:%S) $label finished at $now rows ==="
+step () {
+  echo "=== $(date +%H:%M:%S) $1 ==="
 }
 
-wait_for "$OUT/observations.naive.jsonl" 552 "naive observations"
+step "rfo observations"
+envs/observer/python.exe "$PROBE" observe --outdir "$OUT" --arm rfo --device cuda:1 \
+  >> "$OUT/observe.rfo.log" 2>&1 || { echo "rfo observe failed"; exit 1; }
 
-echo "=== $(date +%H:%M:%S) select ==="
-envs/core/python.exe "$PROBE" select --outdir "$OUT" 2>&1 || exit 1
+step "naive observations"
+envs/showo2/python.exe "$PROBE" observe --outdir "$OUT" --arm naive --device cuda:1 \
+  >> "$OUT/observe.naive.log" 2>&1 || { echo "naive observe failed"; exit 1; }
 
-echo "=== $(date +%H:%M:%S) gradients ==="
+step "select"
+envs/core/python.exe "$PROBE" select --outdir "$OUT" || exit 1
+
+step "gradients"
 envs/showo2/python.exe "$PROBE" gradients --outdir "$OUT" --device cuda:1 \
-  >> "$OUT/gradients.log" 2>&1
-echo "=== $(date +%H:%M:%S) gradients exited $? ==="
+  >> "$OUT/gradients.log" 2>&1 || { echo "gradients failed"; exit 1; }
 
-echo "=== $(date +%H:%M:%S) report ==="
-envs/core/python.exe "$PROBE" report --outdir "$OUT" 2>&1
+step "report"
+envs/core/python.exe "$PROBE" report --outdir "$OUT"
 
-echo "=== $(date +%H:%M:%S) Gate B probe done ==="
+step "Gate B probe done"

@@ -103,13 +103,28 @@ def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
                     encoding="utf-8")
 
 
+def probe_runs(out_dir: Path) -> tuple[str, ...]:
+    """Which corpora the frozen probe set was drawn from.
+
+    Recorded beside the probe set rather than hardcoded, because Gate B's
+    registered remedy for a wide CI is to add informative pools, and the later
+    corpora are where they come from. Every stage reads this, so an enlarged
+    probe set cannot be half-observed against the old run list.
+    """
+
+    path = out_dir / "runs.json"
+    if not path.exists():
+        return MAIN_RUNS
+    return tuple(json.loads(path.read_text(encoding="utf-8"))["runs"])
+
+
 def load_pools(out_dir: Path) -> list[Pool]:
     """Rebuild the pool objects from the frozen probe set, in its stored order."""
 
     order = [row["prompt_id"] for row in read_jsonl(out_dir / "pools.jsonl")]
     if not order:
         raise SystemExit("Run the pools stage first")
-    by_id = {pool.prompt_id: pool for pool in build_pools(MAIN_RUNS)}
+    by_id = {pool.prompt_id: pool for pool in build_pools(probe_runs(out_dir))}
     missing = [prompt_id for prompt_id in order if prompt_id not in by_id]
     if missing:
         raise SystemExit(f"Frozen probe set references pools that no longer build: {missing[:3]}")
@@ -120,7 +135,11 @@ def stage_pools(args: argparse.Namespace) -> None:
     """Freeze the probe set. Run once; every later stage reads this order."""
 
     out_dir = Path(args.outdir)
-    pools = [pool for pool in build_pools(MAIN_RUNS) if pool.balanced]
+    runs = tuple(args.runs)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "runs.json").write_text(json.dumps({"runs": list(runs)}, indent=2),
+                                       encoding="utf-8")
+    pools = [pool for pool in build_pools(runs) if pool.balanced]
     rows = [
         {
             "prompt_id": pool.prompt_id,
@@ -137,7 +156,7 @@ def stage_pools(args: argparse.Namespace) -> None:
         for pool in pools
     ]
     write_jsonl(out_dir / "pools.jsonl", rows)
-    print(f"{len(rows)} balanced pools, "
+    print(f"{len(rows)} balanced pools from {len(runs)} runs, "
           f"{sum(len(row['candidates']) for row in rows)} candidates, "
           f"{sum(len(row['questions']) for row in rows)} intent atoms")
 
@@ -425,6 +444,8 @@ def main() -> None:
 
     pools = sub.add_parser("pools")
     pools.add_argument("--outdir", required=True)
+    pools.add_argument("--runs", nargs="+", default=list(MAIN_RUNS),
+                       help="corpora to draw balanced pools from")
     pools.set_defaults(func=stage_pools)
 
     observe = sub.add_parser("observe")
