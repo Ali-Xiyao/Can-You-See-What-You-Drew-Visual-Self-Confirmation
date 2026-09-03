@@ -86,9 +86,9 @@ def test_a_count_atom_appears_only_when_more_than_one_was_requested():
     assert len(spec_questions(_spec(count=1))) == 2
     counted = spec_questions(_spec(count=2))
     assert len(counted) == 3
-    count_atom = next(q for q in counted if q.family is QuestionFamily.COUNT)
+    count_atom = next(q for q in counted if ":count:" in q.question_id)
     assert count_atom.expected_answer == "two"
-    assert count_atom.choices == ("two", "one")
+    assert set(count_atom.choices) == {"two", "one"}
 
 
 def test_every_atom_is_forced_choice():
@@ -97,6 +97,45 @@ def test_every_atom_is_forced_choice():
     for question in spec_questions(_spec(count=3)):
         assert question.question_format is QuestionFormat.FORCED_CHOICE
         assert len(question.choices) == 2
+
+
+def test_the_correct_option_is_not_always_the_same_letter():
+    """A model with a letter preference must not be able to score above chance.
+
+    With the correct answer pinned to A, every candidate in a pool scores alike,
+    all three criteria fall through to the same tie-break, and the Gate B cosine
+    reads 1.000 while measuring nothing.
+    """
+
+    first_letters = []
+    for index in range(40):
+        for question in spec_questions(_spec(f"s{index}", count=2)):
+            first_letters.append(question.choices[0] == question.expected_answer)
+    share = sum(first_letters) / len(first_letters)
+    assert 0.3 < share < 0.7, f"correct answer sat in A {share:.0%} of the time"
+
+
+def test_the_placement_is_identical_for_every_candidate_in_a_pool():
+    """The candidates are only comparable if they were asked the same thing."""
+
+    assert spec_questions(_spec("s1", count=2)) == spec_questions(_spec("s1", count=2))
+
+
+def test_counting_atoms_do_not_use_the_counting_fallback_vocabulary():
+    """`normalize_answer`'s counting branch rewrites "two" to "2".
+
+    An expected answer of "two" would then never match a reply that names the
+    word but not the letter, and the atom would score as wrong rather than
+    abstain.
+    """
+
+    from selfsight.data.questions import normalize_answer
+
+    count_atom = next(q for q in spec_questions(_spec(count=2)) if ":count:" in q.question_id)
+    assert count_atom.family is QuestionFamily.EXISTENCE
+    assert normalize_answer("two", count_atom) is None
+    letter = "A" if count_atom.choices[0] == "two" else "B"
+    assert normalize_answer(f"{letter}. two", count_atom) == "two"
 
 
 # ---------------------------------------------------------------------- pools

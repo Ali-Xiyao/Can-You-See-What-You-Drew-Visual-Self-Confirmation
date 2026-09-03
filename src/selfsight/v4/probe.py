@@ -15,7 +15,9 @@ in a pool must be asked the same thing or the scores are not comparable, and the
 v4 corpus questions are built per image from its own detections, so they cannot
 be reused here. The expected answer is what the prompt *asked for*, which is
 what makes the score a cycle-consistency score: a candidate scores high when the
-observer confirms the picture matches the request.
+observer confirms the picture matches the request. It borrows the corpus's
+`_place` so the correct option is not always A -- see its docstring for what a
+fixed position would do to the Gate B number.
 
 `build_pools` keeps only pools that are balanced under the adjudicated verdict
 -- at least one correct and at least one incorrect candidate. A pool where every
@@ -33,11 +35,13 @@ to break a tie the same way".
 from __future__ import annotations
 
 import json
+import random
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from selfsight.schemas import AtomicQuestion, QuestionFamily, QuestionFormat
+from selfsight.v4.questions import _place
 from selfsight.v4.spec import SceneSpec, canonical_noun
 
 UNADJUDICATED = {"pending_human", "unnameable"}
@@ -73,36 +77,59 @@ def spec_questions(spec: SceneSpec) -> tuple[AtomicQuestion, ...]:
     """The intent, as forced-choice atoms the observer can be asked about.
 
     One existence atom per requested object, plus a count atom for objects
-    requested more than once. Both are answered "yes"/the requested number by
-    construction, because the expected answer here is the *request*: the score
-    these produce is agreement between the picture and what was asked for.
+    requested more than once. The expected answer is always what the *request*
+    asked for, which is what makes the resulting score a cycle-consistency
+    score: a candidate scores high when the observer confirms the picture
+    matches what was asked.
+
+    Two details are load-bearing.
+
+    The correct option is placed in A or B by the same `_place` the v4 corpus
+    uses, seeded from the spec so the placement is identical for every candidate
+    in a pool and stable across reruns. Left in a fixed position, a model with a
+    letter preference would score above chance without looking at the picture,
+    every candidate would score alike, all three criteria would fall through to
+    the same tie-break, and the Gate B cosine would come out at 1.000 while
+    measuring nothing at all.
+
+    `family` is EXISTENCE on every atom, including the counting ones, for the
+    reason `v4.questions.to_atomic` gives: the family only chooses the fallback
+    vocabulary `normalize_answer` uses when no choice letter is found, and the
+    counting fallback rewrites "two" to "2", which would never match an expected
+    answer of "two". With EXISTENCE, a reply that names no letter abstains --
+    which is the right reading of an unparseable answer to a forced choice.
     """
+
+    rng = random.Random(f"v4-gate-b:{spec.spec_id}")
     questions: list[AtomicQuestion] = []
     for index, obj in enumerate(spec.objects):
         noun = canonical_noun(obj.object)
         phrase = _phrase(noun, obj.color)
+        option_a, option_b, gold = _place(rng, "yes", "no")
         questions.append(AtomicQuestion(
             question_id=f"{spec.spec_id}:exists:{index}",
             atom_id=f"{spec.spec_id}:exists:{noun}",
             family=QuestionFamily.EXISTENCE,
             text=(f"Is there a {phrase} in this picture? Answer A or B only.\n"
-                  "A. yes\nB. no"),
+                  f"A. {option_a}\nB. {option_b}"),
             expected_answer="yes",
             question_format=QuestionFormat.FORCED_CHOICE,
-            choices=("yes", "no"),
+            choices=(option_a, option_b),
+            choice_order_seed=ord(gold),
         ))
         if obj.count > 1:
             wanted = NUMBER_WORDS[obj.count]
-            other = NUMBER_WORDS[obj.count - 1]
+            option_a, option_b, gold = _place(rng, wanted, NUMBER_WORDS[obj.count - 1])
             questions.append(AtomicQuestion(
                 question_id=f"{spec.spec_id}:count:{index}",
                 atom_id=f"{spec.spec_id}:count:{noun}",
-                family=QuestionFamily.COUNT,
+                family=QuestionFamily.EXISTENCE,
                 text=(f"How many {noun}s are in this picture? Answer A or B "
-                      f"only.\nA. {wanted}\nB. {other}"),
+                      f"only.\nA. {option_a}\nB. {option_b}"),
                 expected_answer=wanted,
                 question_format=QuestionFormat.FORCED_CHOICE,
-                choices=(wanted, other),
+                choices=(option_a, option_b),
+                choice_order_seed=ord(gold),
             ))
     return tuple(questions)
 
