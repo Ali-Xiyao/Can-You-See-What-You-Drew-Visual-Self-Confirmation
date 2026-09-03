@@ -40,6 +40,16 @@ die  () { echo "!!! $(date +%H:%M:%S) $* -- stopping"; exit 1; }
 # --- wait for the detect chain -------------------------------------------
 # Watching the files, not a process name: the Gate B probe runs from the same
 # interpreter, and a stalled job should stop this rather than spin forever.
+# Counts processes whose command line is a detect stage. Matching on the stage
+# rather than the interpreter matters: the Gate B probe and the training loop
+# both run from envs/observer, and neither of them is this chain's detector.
+detect_running () {
+  powershell -NoProfile -Command     "@(Get-CimInstance Win32_Process -Filter \"Name like '%python%'\" |
+       Where-Object { \$_.CommandLine -like '*v4_run_pipeline.py detect*' }).Count" 2>/dev/null |
+  tr -d '
+' | grep -E '^[0-9]+$' || echo 0
+}
+
 step "waiting for four detection files"
 stalled=0
 last=""
@@ -49,18 +59,23 @@ while :; do
   for dir in "${RUNS[@]}"; do
     total=$(wc -l < "$dir/manifest.jsonl")
     for det in qwen3vl internvl; do
-      have=$(wc -l < "$dir/detections.$det.jsonl" 2>/dev/null || echo 0)
+      # the redirect fails in the shell, before wc runs, so the group is needed
+      have=$( { wc -l < "$dir/detections.$det.jsonl"; } 2>/dev/null || echo 0)
       now="$now $have"
       [ "$have" -ge "$total" ] || ready=0
     done
   done
   [ "$ready" -eq 1 ] && break
-  if [ "$now" = "$last" ]; then
+  # Row count alone cannot tell "loading" from "dead". safetensors is mmap
+  # lazy-load, so a detector can hold the GPU for half an hour with the output
+  # file not yet created while 16 GB faults in -- and on 2026-09-03 that is
+  # exactly what this guard killed the pipeline for, 13 minutes before the
+  # first row landed. Liveness comes from the process table instead; the row
+  # count only decides how long a *dead* chain may look alive.
+  alive=$(detect_running)
+  if [ "$now" = "$last" ] && [ "$alive" -eq 0 ]; then
     stalled=$((stalled + 1))
-    # 45 minutes: InternVL has not started writing yet, and priming 16 GB of
-    # safetensors plus the load can sit silent for well over twenty on a busy
-    # disk. A premature exit here would look exactly like a crashed detector.
-    [ "$stalled" -ge 45 ] && die "detections stalled at$now"
+    [ "$stalled" -ge 10 ] && die "no detect process and no new rows at$now"
   else
     stalled=0
   fi
