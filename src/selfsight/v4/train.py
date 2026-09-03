@@ -297,12 +297,14 @@ def generate_candidates(
     output_dir: str | Path,
     checkpoint_id: str,
 ) -> dict[str, list[CandidateRecord]]:
-    """This round's pool, per prompt. Identical for every arm by construction.
+    """This round's pool, per prompt, drawn by whichever checkpoint is loaded.
 
-    Both arms are handed the same objects rather than each drawing its own from
-    the same seeds. Equal seeds should give equal images, but "should" is a
-    claim about determinism across two separate generate calls on a shared card,
-    and the paired design does not need to rest on it.
+    Called once per arm. After round 0 the arms are different models, so they
+    must draw their own candidates: sharing one pool would turn the comparison
+    into "which selector picks better out of the naive arm's images" rather than
+    "which selector trains a better model". What the arms do share is the
+    schedule and the latent seeds, so a difference between their pools is a
+    difference in weights and nothing else.
     """
 
     output_dir = Path(output_dir)
