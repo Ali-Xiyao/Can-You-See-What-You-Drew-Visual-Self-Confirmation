@@ -230,8 +230,16 @@ def stage_train(args: argparse.Namespace) -> None:
     backbone = Showo2Adapter(device=args.device, lazy=False)
     targets = json.loads(Path(LORA_TARGETS).read_text(encoding="utf-8"))
     lora = training["lora"]
+    # The readiness artefact records which forbidden modules the selection let
+    # through. It is empty, and the run should stop rather than train through it
+    # if that ever changes: `forbidden_trainable` names the paths that would let
+    # gradients into the understanding tower, and a run that quietly trained
+    # them would answer a different question than the one being asked.
+    leaked = sorted(targets.get("forbidden_modules_selected", []))
+    if leaked:
+        raise SystemExit(f"{LORA_TARGETS} selects forbidden modules: {leaked}")
     backbone.attach_lora(
-        target_modules=targets["targets"],
+        target_modules=targets["target_modules"],
         rank=int(lora["rank"]),
         alpha=int(lora["alpha"]),
         dropout=float(lora["dropout"]),
@@ -243,7 +251,7 @@ def stage_train(args: argparse.Namespace) -> None:
         raise SystemExit("The RFO arm's observer must be frozen")
     observer = create_transformers_observer(
         args.backend, str(observer_config["observer_id"]),
-        str(observer_config["revision"]), args.device)
+        str(observer_config["revision"]), args.ladder_device)
 
     digest = sha256_json(config)
     parameters = [p for p in backbone.model.parameters() if p.requires_grad]
@@ -294,7 +302,8 @@ def stage_train(args: argparse.Namespace) -> None:
                 ladder_dir = round_dir / "ladder" / arm
                 write_candidate_manifest(ladder_dir, corpus=corpus, pools=pools[arm])
                 verified = adjudicate(ladder_dir, observer_python=args.observer_python,
-                                      core_python=args.core_python, device=args.device)
+                                      core_python=args.core_python,
+                                      device=args.ladder_device)
                 verdicts, unadjudicated = read_verdicts(verified, pools[arm])
                 decisions[arm] = select_gold(pools=pools[arm], verdicts=verdicts)
                 abstained = sum(1 for d in decisions[arm] if d.selected_candidate_id is None)
@@ -377,7 +386,7 @@ def stage_generate(args: argparse.Namespace) -> None:
     backbone = Showo2Adapter(device=args.device, lazy=False)
     targets = json.loads(Path(LORA_TARGETS).read_text(encoding="utf-8"))
     lora = config["training"]["lora"]
-    backbone.attach_lora(target_modules=targets["targets"], rank=int(lora["rank"]),
+    backbone.attach_lora(target_modules=targets["target_modules"], rank=int(lora["rank"]),
                          alpha=int(lora["alpha"]), dropout=float(lora["dropout"]),
                          gradient_checkpointing=False)
     load_checkpoint(checkpoint, model=backbone.model, optimizer=None, scheduler=None,
@@ -474,6 +483,17 @@ def stage_report(args: argparse.Namespace) -> None:
 # --------------------------------------------------------------------------
 
 
+def resolve_devices(args: argparse.Namespace) -> None:
+    """`--ladder-device` falls back to `--device`. split/score/report have neither."""
+
+    if not hasattr(args, "device"):
+        return
+    if getattr(args, "ladder_device", None) is None:
+        args.ladder_device = args.device
+    if args.ladder_device != args.device:
+        print(f"backbone on {args.device}, ladder on {args.ladder_device}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="stage", required=True)
@@ -490,7 +510,16 @@ def main() -> None:
 
     t = sub.add_parser("train", help="paired rounds, resumable")
     common(t)
-    t.add_argument("--device", default="cuda:0")
+    t.add_argument("--device", default="cuda:0",
+                   help="the card the backbone draws and trains on")
+    t.add_argument("--ladder-device", default=None,
+                   help="the card the detectors and the frozen observer run on; "
+                        "defaults to --device. Splitting the two is what lets "
+                        "generation and adjudication overlap instead of queueing, "
+                        "and on this machine it is the difference between a wall "
+                        "clock that is the slower of the two and one that is their "
+                        "sum. Generation is compute-bound and tolerates the gen3 x4 "
+                        "card; per-image detection does not (STATUS 32).")
     t.add_argument("--backend", default="qwen2vl")
     t.add_argument("--observer-python", default="envs/observer/python.exe",
                    help="the environment the detectors live in")
@@ -515,6 +544,7 @@ def main() -> None:
     r.set_defaults(func=stage_report)
 
     args = parser.parse_args()
+    resolve_devices(args)
     args.func(args)
 
 
