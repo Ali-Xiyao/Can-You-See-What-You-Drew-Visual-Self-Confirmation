@@ -1,11 +1,18 @@
 """The v4 paired training loop: two arms, one schedule, one difference.
 
 Both arms start from the same base weights, walk the same prompts in the same
-order, and draw candidates from the same latent seeds. The only thing that
-differs is which of those candidates each arm trains on: the naive arm keeps the
-one it judged best while being told what it was drawing, the RFO arm keeps the
-one a blind external observer judged best. If the arms diverge, this file is the
-only place the divergence could have entered.
+order, and train on the same pool of candidates. The only thing that differs is
+which candidate each arm keeps: the naive arm keeps the one it judged best while
+being told what it was drawing, and RFO-Gold keeps one the adjudication ladder
+called correct. If the arms diverge, this file is the only place the divergence
+could have entered.
+
+Pass 1 is Naive against RFO-Gold, not against RFO-Self, and the order is a
+design decision rather than convenience (proposal 7.2). RFO-Gold is a positive
+control: a perfect selector, the same candidate pool, the same update budget. If
+even that cannot open a measurable training advantage, the limiting factor is
+the correction objective or the sample weighting, and buying more compute or a
+different backbone would be spending on the wrong thing. RFO-Self is pass 2.
 
 This is a rewrite, not a restoration. `830cfa7` deleted the v3 loop along with
 the geometric stack because its data side -- reference renderer, manifest
@@ -21,6 +28,9 @@ skeleton that survived contact with a shared 3090 over three campaigns:
     guarantee that they saw identical candidates.
   * If either arm abstains on a prompt, the prompt is dropped from *both*. An
     arm training on a prompt its partner skipped is no longer a paired design.
+    The gold arm abstains whenever nothing in the pool was adjudicated correct,
+    so this is not a rare path -- at the measured p = 0.22 and K = 2 it is most
+    of them, and the pairing has to survive it rather than route around it.
   * Understanding replay is interleaved at a fixed ratio. Without it the
     backbone's ability to answer questions about images decays over training,
     which would corrupt the naive arm's selections and the internal-consistency
@@ -32,6 +42,13 @@ on the frozen corpus: images the adjudication ladder marked correct, asked the
 questions their spec generates. Restricting replay to correct images is what
 makes the spec's intended answer also the true answer; on an incorrect image the
 two differ and replay would teach the backbone to misread pictures.
+
+The gold arm also needs the ladder on freshly drawn candidates, which the
+detectors live in another environment to run. So selection is split: this module
+draws the pool and writes a manifest, the caller shells out to the same
+`detect` and `verify` stages the corpus used, and `select_gold` reads the
+verdicts back. One ladder, one definition of correct, shared with the external
+curve that Gate C is measured against.
 """
 
 from __future__ import annotations
@@ -39,7 +56,7 @@ from __future__ import annotations
 import json
 import random
 import os
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from fractions import Fraction
@@ -50,10 +67,28 @@ from selfsight.rfo.selection import select_candidate
 from selfsight.schemas import CandidateRecord, SelectionDecision
 from selfsight.training.paired import PromptScheduleEntry, _seed_from_parts
 from selfsight.v4.observe import observe_naive, observe_rfo
-from selfsight.v4.probe import build_pools, spec_questions
+from selfsight.v4.probe import UNADJUDICATED, build_pools, spec_questions
 from selfsight.v4.spec import SceneSpec
 
-ARMS = ("naive", "rfo_self")
+ARMS = ("naive", "rfo_gold")
+"""Pass 1, and the only pairing Gate C is defined over.
+
+Proposal 7.2 is explicit that RFO-Gold runs against Naive first, and why:
+RFO-Gold is the positive control. It uses a perfect selector on the same
+candidate pool under the same update budget, so if it cannot open a measurable
+training advantage, the limiting factor is the correction objective, the sample
+weighting or the gradient probe -- and more compute or a different backbone
+would be spent on the wrong thing.
+
+RFO-Self is pass 2 and feeds Gate D. `configs/local_3090_showo2.yaml` still
+lists `arms: [naive, rfo_self]`; that is a v3-era leftover from before the
+mechanism-first ordering was written down, and it is not the registered pairing.
+"""
+
+RFO_SELF = "rfo_self"
+"""Pass 2's arm. Selectable, never part of the default pairing."""
+
+SELECTORS = ("naive", "rfo_gold", RFO_SELF)
 NAMESPACE = "v4-train"
 
 
@@ -254,34 +289,26 @@ def write_done(round_dir: str | Path, payload: dict[str, Any]) -> Path:
 # --------------------------------------------------------------------------
 
 
-def generate_and_select(
+def generate_candidates(
     *,
-    arm: str,
-    backbone: Any,
-    observer: Any,
+    backbone,
     corpus: TrainingCorpus,
     entries: Sequence[PromptScheduleEntry],
     output_dir: str | Path,
     checkpoint_id: str,
-) -> tuple[list[CandidateRecord], list[SelectionDecision]]:
-    """Draw this round's candidates and pick one per prompt, this arm's way.
+) -> dict[str, list[CandidateRecord]]:
+    """This round's pool, per prompt. Identical for every arm by construction.
 
-    `observer` is used only by the RFO arm and must be `None` for the naive arm:
-    an observer sitting unused in the naive path is one refactor away from being
-    called there.
+    Both arms are handed the same objects rather than each drawing its own from
+    the same seeds. Equal seeds should give equal images, but "should" is a
+    claim about determinism across two separate generate calls on a shared card,
+    and the paired design does not need to rest on it.
     """
 
-    if arm not in ARMS:
-        raise ValueError(f"Unknown arm: {arm}")
-    if (arm == "rfo_self") != (observer is not None):
-        raise ValueError("The RFO arm needs a frozen observer; the naive arm must not have one")
-
     output_dir = Path(output_dir)
-    candidates_all: list[CandidateRecord] = []
-    decisions: list[SelectionDecision] = []
+    pools: dict[str, list[CandidateRecord]] = {}
     for entry in entries:
         spec = corpus.specs[entry.prompt_id]
-        questions = spec_questions(spec)
         drawn = backbone.generate_images(
             [spec.prompt] * len(entry.candidate_seeds),
             entry.candidate_seeds,
@@ -289,29 +316,52 @@ def generate_and_select(
             checkpoint_id,
             skip_existing=True,
         )
-        candidates = [replace(candidate, prompt_id=entry.prompt_id, scene_id=spec.spec_id)
-                      for candidate in drawn]
+        pools[entry.prompt_id] = [
+            replace(candidate, prompt_id=entry.prompt_id, scene_id=spec.spec_id)
+            for candidate in drawn
+        ]
+    return pools
+
+
+def select_by_observation(
+    *,
+    arm: str,
+    backbone,
+    observer,
+    corpus: TrainingCorpus,
+    pools: dict[str, list[CandidateRecord]],
+) -> list[SelectionDecision]:
+    """Naive and RFO-Self: pick by asking something to look at the picture.
+
+    `observer` is used only by the RFO arms and must be `None` for naive. An
+    observer sitting unused in the naive path is one refactor away from being
+    called there, and that call is the entire experiment.
+    """
+
+    if arm not in ("naive", RFO_SELF):
+        raise ValueError(f"{arm} does not select by observation")
+    if (arm == RFO_SELF) != (observer is not None):
+        raise ValueError("The RFO-Self arm needs a frozen observer; naive must not have one")
+
+    decisions = []
+    for prompt_id in sorted(pools):
+        candidates = pools[prompt_id]
+        spec = corpus.specs[prompt_id]
+        questions = spec_questions(spec)
         observations = {}
         for candidate in candidates:
             if arm == "naive":
                 observations[candidate.candidate_id] = observe_naive(
-                    backbone,
-                    prompt=spec.prompt,
-                    questions=questions,
-                    image_path=candidate.image_path,
-                )
+                    backbone, prompt=spec.prompt, questions=questions,
+                    image_path=candidate.image_path)
             else:
                 observations[candidate.candidate_id] = observe_rfo(
-                    observer,
-                    namespace=NAMESPACE,
-                    prompt_id=entry.prompt_id,
-                    candidate_id=candidate.candidate_id,
-                    questions=questions,
-                    image_path=candidate.image_path,
-                )
+                    observer, namespace=NAMESPACE, prompt_id=prompt_id,
+                    candidate_id=candidate.candidate_id, questions=questions,
+                    image_path=candidate.image_path)
         first = next(iter(observations.values()))
         decisions.append(select_candidate(
-            prompt_id=entry.prompt_id,
+            prompt_id=prompt_id,
             arm=arm,
             candidates=candidates,
             observations=observations,
@@ -319,8 +369,111 @@ def generate_and_select(
             selector_id=first.observer_id,
             observer_revision=first.observer_revision,
         ))
-        candidates_all.extend(candidates)
-    return candidates_all, decisions
+    return decisions
+
+
+def write_candidate_manifest(
+    directory: str | Path,
+    *,
+    corpus: TrainingCorpus,
+    pools: dict[str, list[CandidateRecord]],
+) -> Path:
+    """Hand this round's pool to the corpus's own detect/verify path.
+
+    The gold arm's selector is the adjudication ladder (proposal 6.2), and there
+    is exactly one implementation of that ladder. A cheap reimplementation
+    inside the training loop would make the positive control's notion of
+    "correct" differ from the external curve's, and then a Gate C result could
+    not be read against the very correctness it is supposed to move.
+    """
+
+    directory = Path(directory)
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / "manifest.jsonl"
+    rows = []
+    for prompt_id in sorted(pools):
+        spec = corpus.specs[prompt_id]
+        for index, candidate in enumerate(pools[prompt_id]):
+            rows.append({
+                "spec_id": spec.spec_id,
+                "candidate_index": index,
+                "seed": int(candidate.sampling_seed),
+                "prompt": spec.prompt,
+                "image_path": candidate.image_path,
+                "spec": spec.to_dict(),
+            })
+    path.write_text("".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
+    return path
+
+
+def read_verdicts(
+    verified_path: str | Path,
+    pools: dict[str, list[CandidateRecord]],
+) -> tuple[dict[str, bool], set[str]]:
+    """Map the ladder's per-image verdicts back onto candidate IDs."""
+
+    path = Path(verified_path)
+    if not path.exists():
+        raise FileNotFoundError(f"The gold arm needs {path}; run detect and verify first")
+    by_image: dict[str, bool] = {}
+    unadjudicated: set[str] = set()
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        if row["resolution"] in UNADJUDICATED:
+            unadjudicated.add(row["image_path"])
+            continue
+        by_image[row["image_path"]] = bool(row["image_correct"])
+    verdicts = {candidate.candidate_id: by_image[candidate.image_path]
+                for candidates in pools.values()
+                for candidate in candidates
+                if candidate.image_path in by_image}
+    return verdicts, unadjudicated
+
+
+def select_gold(
+    *,
+    pools: dict[str, list[CandidateRecord]],
+    verdicts: Mapping[str, bool],
+) -> list[SelectionDecision]:
+    """The positive control: pick a candidate the ladder called correct.
+
+    Tie-break is `(-seed, candidate_id)` among the correct ones, matching
+    `v4.probe.gold_selection`, so the gold criterion in the Gate B probe and the
+    gold arm here cannot drift apart.
+
+    A pool with nothing correct in it abstains rather than falling back to a
+    coin flip. Training the positive control on an image the verifier rejected
+    would make it something other than a perfect selector -- the one property
+    the mechanism-first ordering rests on -- and it would do so precisely on the
+    hard prompts, biasing the comparison toward Naive.
+    """
+
+    decisions = []
+    for prompt_id in sorted(pools):
+        candidates = pools[prompt_id]
+        pool_ids = tuple(candidate.candidate_id for candidate in candidates)
+        correct = [candidate for candidate in candidates
+                   if verdicts.get(candidate.candidate_id, False)]
+        if not correct:
+            decisions.append(SelectionDecision(
+                prompt_id=prompt_id, arm="rfo_gold", candidate_pool_ids=pool_ids,
+                selected_candidate_id=None, scores={},
+                selector_id="adjudication-ladder", observer_revision="v4",
+                abstain=True,
+                reason="no candidate in the pool was adjudicated correct",
+            ))
+            continue
+        best = max(correct, key=lambda candidate: (-int(candidate.sampling_seed), candidate.candidate_id))
+        decisions.append(SelectionDecision(
+            prompt_id=prompt_id, arm="rfo_gold", candidate_pool_ids=pool_ids,
+            selected_candidate_id=best.candidate_id,
+            scores={candidate.candidate_id: float(verdicts.get(candidate.candidate_id, False))
+                    for candidate in candidates},
+            selector_id="adjudication-ladder", observer_revision="v4",
+        ))
+    return decisions
 
 
 def replay_indices(*, count: int, cursor: int, total: int) -> list[int]:

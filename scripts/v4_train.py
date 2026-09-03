@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -48,14 +49,19 @@ from selfsight.v4.evaluate import (
 )
 from selfsight.v4.train import (
     ARMS,
+    RFO_SELF,
     abandon_incomplete,
     build_schedule,
     completed_rounds,
-    generate_and_select,
+    generate_candidates,
     load_training_corpus,
     pair_decisions,
+    read_verdicts,
     round_entries,
+    select_by_observation,
+    select_gold,
     train_arm,
+    write_candidate_manifest,
     write_done,
 )
 
@@ -139,6 +145,61 @@ def read_split(out_dir: Path, config: dict[str, Any], runs: tuple[str, ...]) -> 
 # --------------------------------------------------------------------------
 
 
+def run_stage(command: list[str], log_path: Path) -> None:
+    """Shell out, and keep the log even when it fails.
+
+    The gold arm's selector runs detectors that live in another environment, so
+    there is a process boundary here whether or not it is convenient. Capturing
+    each call's output to its own file is what makes a round that died at the
+    second detector distinguishable from one that died at the first.
+    """
+
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    with log_path.open("a", encoding="utf-8") as handle:
+        handle.write(f"\nCOMMAND {subprocess.list2cmdline(command)}\n")
+        handle.flush()
+        subprocess.run(command, stdout=handle, stderr=subprocess.STDOUT,
+                       text=True, check=True)
+
+
+def adjudicate(
+    directory: Path,
+    *,
+    observer_python: str,
+    core_python: str,
+    device: str,
+) -> Path:
+    """Run the corpus's own ladder over a manifest and return verified.jsonl.
+
+    Exactly the stages the corpus went through, in the order it went through
+    them: both detectors, then the crop level for disputed objects, then verify.
+    Skipping the crop level would make the gold arm's "correct" stricter than the
+    corpus's, and the positive control would then be measured against an
+    external curve built on a more forgiving rule than the one that trained it.
+    """
+
+    verified = directory / "verified.jsonl"
+    if verified.exists():
+        return verified
+    for detector in ("qwen3vl", "internvl"):
+        done = directory / f"detections.{detector}.jsonl"
+        expected = sum(1 for _ in (directory / "manifest.jsonl").open(encoding="utf-8"))
+        have = sum(1 for _ in done.open(encoding="utf-8")) if done.exists() else 0
+        if have >= expected:
+            continue
+        run_stage([observer_python, "scripts/v4_run_pipeline.py", "detect",
+                   "--manifest", str(directory / "manifest.jsonl"),
+                   "--detector", detector, "--device", device],
+                  directory / f"detect.{detector}.log")
+    run_stage([observer_python, "scripts/v4_run_pipeline.py", "crop",
+               "--run", str(directory), "--device", device],
+              directory / "crop.log")
+    run_stage([core_python, "scripts/v4_run_pipeline.py", "verify",
+               "--run", str(directory)],
+              directory / "verify.log")
+    return verified
+
+
 def stage_train(args: argparse.Namespace) -> None:
     """Rounds of paired selection and SFT. Resumable at round granularity."""
 
@@ -208,25 +269,49 @@ def stage_train(args: argparse.Namespace) -> None:
         entries = round_entries(schedule, round_index)
         print(f"=== {now()} round {round_index}: {len(entries)} prompts ===")
 
-        drawn: dict[str, Any] = {}
+        # One pool per arm, drawn by that arm's own checkpoint. The arms share
+        # the schedule and the latent seeds, not the weights -- after round 0
+        # they are different models and must draw their own candidates, or the
+        # comparison would be "which selector picks better from the naive arm's
+        # images" rather than "which selector trains a better model".
+        pools: dict[str, Any] = {}
         for arm in ARMS:
-            checkpoint = out / "checkpoints" / arm / f"round-{round_index:03d}"
             previous = out / "checkpoints" / arm / f"round-{round_index - 1:03d}"
             if previous.exists():
                 load_checkpoint(previous, model=backbone.model, optimizer=optimizers[arm],
                                 scheduler=schedulers[arm], expected_config_digest=digest)
-            candidates, decisions = generate_and_select(
-                arm=arm,
+            pools[arm] = generate_candidates(
                 backbone=backbone,
-                observer=observer if arm == "rfo_self" else None,
                 corpus=corpus,
                 entries=entries,
                 output_dir=round_dir / "candidates" / arm,
                 checkpoint_id=f"{arm}-r{round_index:03d}",
             )
-            drawn[arm] = (candidates, decisions)
 
-        paired = pair_decisions(entries, {arm: drawn[arm][1] for arm in ARMS})
+        decisions: dict[str, Any] = {}
+        for arm in ARMS:
+            if arm == "rfo_gold":
+                ladder_dir = round_dir / "ladder" / arm
+                write_candidate_manifest(ladder_dir, corpus=corpus, pools=pools[arm])
+                verified = adjudicate(ladder_dir, observer_python=args.observer_python,
+                                      core_python=args.core_python, device=args.device)
+                verdicts, unadjudicated = read_verdicts(verified, pools[arm])
+                decisions[arm] = select_gold(pools=pools[arm], verdicts=verdicts)
+                abstained = sum(1 for d in decisions[arm] if d.selected_candidate_id is None)
+                print(f"    gold: {abstained}/{len(decisions[arm])} pools had nothing "
+                      f"correct, {len(unadjudicated)} images unadjudicated")
+            else:
+                previous = out / "checkpoints" / arm / f"round-{round_index - 1:03d}"
+                if previous.exists():
+                    load_checkpoint(previous, model=backbone.model,
+                                    optimizer=optimizers[arm], scheduler=schedulers[arm],
+                                    expected_config_digest=digest)
+                decisions[arm] = select_by_observation(
+                    arm=arm, backbone=backbone,
+                    observer=observer if arm == RFO_SELF else None,
+                    corpus=corpus, pools=pools[arm])
+
+        paired = pair_decisions(entries, decisions)
         kept = len(next(iter(paired.values())))
         print(f"    {kept}/{len(entries)} prompts survived pairing")
 
@@ -243,7 +328,7 @@ def stage_train(args: argparse.Namespace) -> None:
                 optimizer=optimizers[arm],
                 scheduler=schedulers[arm],
                 decisions=paired[arm],
-                candidates=drawn[arm][0],
+                candidates=[c for pool in pools[arm].values() for c in pool],
                 corpus=corpus,
                 training=training,
                 seed=int(config["seed"]),
@@ -407,6 +492,9 @@ def main() -> None:
     common(t)
     t.add_argument("--device", default="cuda:0")
     t.add_argument("--backend", default="qwen2vl")
+    t.add_argument("--observer-python", default="envs/observer/python.exe",
+                   help="the environment the detectors live in")
+    t.add_argument("--core-python", default="envs/core/python.exe")
     t.add_argument("--max-epochs", type=int, default=1,
                    help="passes over the prompt bank; >1 mixes memorisation into the curve")
     t.set_defaults(func=stage_train)
