@@ -1,0 +1,437 @@
+"""Gate B on the v4 instrument: one LoRA gradient per prompt per criterion.
+
+Three of Gate B's criteria are already met (detector precision 0.981 / 0.985 on
+the blind labels, adjudication under 10%, identical-selection cosine 1.000). Two
+have never been measured, and both need this probe:
+
+  * the paired bootstrap CI on `cos(g_naive, g_rfo)` must be at most 0.10;
+  * that cosine must not degenerate to zero in the LoRA subspace.
+
+    python scripts/v4_gate_b_probe.py pools     --outdir runs/v4/gate-b
+    python scripts/v4_gate_b_probe.py observe   --outdir runs/v4/gate-b --arm naive
+    python scripts/v4_gate_b_probe.py observe   --outdir runs/v4/gate-b --arm rfo
+    python scripts/v4_gate_b_probe.py select    --outdir runs/v4/gate-b
+    python scripts/v4_gate_b_probe.py gradients --outdir runs/v4/gate-b
+    python scripts/v4_gate_b_probe.py report    --outdir runs/v4/gate-b
+
+Which observer plays which role is the one thing here that is easy to get
+subtly wrong, so it is spelled out:
+
+  naive  the backbone judging its own render **with the request in context**.
+         That context is the leak, and the leak is the point -- reusing the main
+         pipeline's `PROMPTED_PREAMBLE` verbatim, because the two measurements
+         are only comparable if the wording is identical.
+  rfo    Qwen2-VL-2B, frozen, pinned revision, and blind by construction: the
+         question travels over the allow-listed wire protocol, which refuses to
+         carry a prompt or an expected answer at all.
+  gold   the v4 adjudication ladder's verdict, read off `verified.jsonl`.
+
+`rfo` deliberately does **not** reuse the detectors the v4 gold standard is built
+from. In v3 gold came from a geometric verifier that shared nothing with the
+observers; in v4 gold *is* the qwen3vl + internvl ladder, so drawing `g_rfo`
+from those same detectors would make GDA-free and GDA-gold near-copies by
+construction, and the Spearman agreement Gate D asks for would be measuring that
+overlap instead of the mechanism.
+
+Only the selected *image* differs between the three criteria. The prompt, the
+loss, the latent seed and the LoRA state are identical, so a cosine below one is
+caused by the criteria disagreeing about which render to train on -- which is
+the quantity claim (1) rests on.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+from dataclasses import replace
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+import yaml
+
+from selfsight.observers.protocol import decode_request, encode_request, execute_request
+from selfsight.rfo.selection import select_candidate
+from selfsight.schemas import (
+    BlindObservationRequest,
+    CandidateRecord,
+    ObservationResult,
+    as_serializable,
+)
+from selfsight.utils.hashing import rgb_sha256, sha256_json
+from selfsight.v3.paired import (
+    PerPromptGradientStore,
+    gate_b_instrument_report,
+    gram_matrices,
+    paired_bootstrap_cosine,
+    sample_noise_diagnostic,
+)
+from selfsight.v4.probe import Pool, PoolCandidate, build_pools, gold_selection, spec_questions
+
+MAIN_RUNS = ("runs/v4/main-2plus1", "runs/v4/main-1plus1plus1")
+RFO_OBSERVER_CONFIG = "configs/observers/qwen2vl_2b.yaml"
+LORA_TARGETS = "runs/readiness/showo2-1p5b-hq/a4-lora-targets-r1.json"
+CRITERIA = ("naive", "rfo", "gold")
+ARMS = ("naive", "rfo")
+
+PROMPTED_PREAMBLE = """You were asked to draw a picture from this description:
+"{prompt}"
+
+Here is the picture you drew. Answer about what is actually in the picture.
+
+{question}"""
+"""Byte-identical to the main pipeline's and Tier B's. The leak in `g_naive` is
+this string; if it drifts, this stops measuring the leak the rest of the project
+measures."""
+
+
+def read_jsonl(path: Path) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    return [json.loads(line) for line in
+            path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
+def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rows),
+                    encoding="utf-8")
+
+
+def load_pools(out_dir: Path) -> list[Pool]:
+    """Rebuild the pool objects from the frozen probe set, in its stored order."""
+
+    order = [row["prompt_id"] for row in read_jsonl(out_dir / "pools.jsonl")]
+    if not order:
+        raise SystemExit("Run the pools stage first")
+    by_id = {pool.prompt_id: pool for pool in build_pools(MAIN_RUNS)}
+    missing = [prompt_id for prompt_id in order if prompt_id not in by_id]
+    if missing:
+        raise SystemExit(f"Frozen probe set references pools that no longer build: {missing[:3]}")
+    return [by_id[prompt_id] for prompt_id in order]
+
+
+def stage_pools(args: argparse.Namespace) -> None:
+    """Freeze the probe set. Run once; every later stage reads this order."""
+
+    out_dir = Path(args.outdir)
+    pools = [pool for pool in build_pools(MAIN_RUNS) if pool.balanced]
+    rows = [
+        {
+            "prompt_id": pool.prompt_id,
+            "run": pool.run,
+            "spec_id": pool.spec.spec_id,
+            "prompt": pool.spec.prompt,
+            "candidates": [
+                {"candidate_id": candidate.candidate_id, "image_path": candidate.image_path,
+                 "sampling_seed": candidate.sampling_seed, "correct": candidate.correct}
+                for candidate in pool.candidates
+            ],
+            "questions": [as_serializable(question) for question in spec_questions(pool.spec)],
+        }
+        for pool in pools
+    ]
+    write_jsonl(out_dir / "pools.jsonl", rows)
+    print(f"{len(rows)} balanced pools, "
+          f"{sum(len(row['candidates']) for row in rows)} candidates, "
+          f"{sum(len(row['questions']) for row in rows)} intent atoms")
+
+
+def _observe_naive(backbone: Any, pool: Pool, candidate: PoolCandidate) -> ObservationResult:
+    """The leaky arm: the same questions, wrapped in the description it drew from."""
+
+    questions = tuple(
+        replace(question, text=PROMPTED_PREAMBLE.format(prompt=pool.spec.prompt,
+                                                        question=question.text))
+        for question in spec_questions(pool.spec)
+    )
+    return backbone.observe_atoms(candidate.image_path, questions)
+
+
+def _observe_rfo(observer: Any, pool: Pool, candidate: PoolCandidate) -> ObservationResult:
+    """The blind arm, over the allow-listed wire.
+
+    Going through encode/decode rather than calling the observer directly is not
+    ceremony: `assert_blind_wire_payload` is what makes "this observer never saw
+    the prompt" a checked property rather than a claim about this file.
+    """
+
+    image_path = Path(candidate.image_path).resolve()
+    request = BlindObservationRequest(
+        request_id=sha256_json(["v4-gate-b", pool.prompt_id, candidate.candidate_id]),
+        image_path=str(image_path),
+        rgb_sha256=rgb_sha256(image_path),
+        questions=spec_questions(pool.spec),
+    )
+    return execute_request(observer, decode_request(encode_request(request)))
+
+
+def stage_observe(args: argparse.Namespace) -> None:
+    """One arm's view of every candidate. Resumable; never mixes arms in a file."""
+
+    out_dir = Path(args.outdir)
+    pools = load_pools(out_dir)
+    out_path = out_dir / f"observations.{args.arm}.jsonl"
+    done = {(row["prompt_id"], row["candidate_id"]) for row in read_jsonl(out_path)}
+    if done:
+        print(f"resuming: {len(done)} candidates already observed")
+    todo = [(pool, candidate) for pool in pools for candidate in pool.candidates
+            if (pool.prompt_id, candidate.candidate_id) not in done]
+    print(f"{len(todo)} candidates to observe with {args.arm}")
+    if not todo:
+        return
+
+    if args.arm == "naive":
+        from selfsight.backbones.showo2 import Showo2Adapter
+
+        backbone = Showo2Adapter(device=args.device, lazy=False)
+        print(f"g_naive observer: {backbone.model_id} @ {backbone.revision} (prompted)")
+
+        def observe(pool: Pool, candidate: PoolCandidate) -> ObservationResult:
+            return _observe_naive(backbone, pool, candidate)
+    else:
+        from selfsight.observers.transformers_vlm import create_transformers_observer
+
+        config = yaml.safe_load(Path(RFO_OBSERVER_CONFIG).read_text(encoding="utf-8"))
+        if config.get("trainable", False):
+            raise SystemExit("g_rfo must come from a frozen observer")
+        observer = create_transformers_observer(
+            args.backend, str(config["observer_id"]), str(config["revision"]), args.device)
+        print(f"g_rfo observer: {config['observer_id']} @ {config['revision']} (blind)")
+
+        def observe(pool: Pool, candidate: PoolCandidate) -> ObservationResult:
+            return _observe_rfo(observer, pool, candidate)
+
+    with out_path.open("a" if done else "w", encoding="utf-8") as handle:
+        for index, (pool, candidate) in enumerate(todo):
+            result = observe(pool, candidate)
+            handle.write(json.dumps({"prompt_id": pool.prompt_id,
+                                     "candidate_id": candidate.candidate_id,
+                                     "observation": as_serializable(result)},
+                                    ensure_ascii=False) + "\n")
+            handle.flush()
+            if index % 25 == 0:
+                print(f"{index + 1}/{len(todo)}", flush=True)
+    print(f"wrote {out_path}")
+
+
+def _candidate_record(pool: Pool, candidate: PoolCandidate) -> CandidateRecord:
+    return CandidateRecord(
+        candidate_id=candidate.candidate_id,
+        prompt_id=pool.prompt_id,
+        scene_id=pool.spec.spec_id,
+        sampling_seed=candidate.sampling_seed,
+        image_path=candidate.image_path,
+        rgb_sha256="",
+        generator_id="showlab/show-o2-1.5B-HQ",
+        generator_revision="v4-main",
+        checkpoint_id="v4-main",
+    )
+
+
+def stage_select(args: argparse.Namespace) -> None:
+    """Apply the three criteria to the identical pool and record every pick.
+
+    A prompt where any arm abstains is dropped from **all** of them. The
+    bootstrap is paired, so a prompt present in one store and absent from another
+    would silently unpair the Gram matrices.
+    """
+
+    out_dir = Path(args.outdir)
+    pools = load_pools(out_dir)
+    observations = {
+        arm: {(row["prompt_id"], row["candidate_id"]):
+              ObservationResult.from_dict(row["observation"])
+              for row in read_jsonl(out_dir / f"observations.{arm}.jsonl")}
+        for arm in ARMS
+    }
+    rows: list[dict[str, Any]] = []
+    for pool in pools:
+        questions = spec_questions(pool.spec)
+        candidates = [_candidate_record(pool, candidate) for candidate in pool.candidates]
+        picks: dict[str, str] = {}
+        scores: dict[str, dict[str, float]] = {}
+        for arm in ARMS:
+            per_candidate = {}
+            for candidate in pool.candidates:
+                key = (pool.prompt_id, candidate.candidate_id)
+                if key not in observations[arm]:
+                    raise SystemExit(f"Missing {arm} observation for {key}")
+                per_candidate[candidate.candidate_id] = observations[arm][key]
+            decision = select_candidate(
+                prompt_id=pool.prompt_id, arm=arm, candidates=candidates,
+                observations=per_candidate, questions=questions,
+                selector_id=arm, observer_revision="v4-gate-b")
+            scores[arm] = decision.scores
+            if decision.abstain or decision.selected_candidate_id is None:
+                break
+            picks[arm] = decision.selected_candidate_id
+        if len(picks) != len(ARMS):
+            rows.append({"prompt_id": pool.prompt_id, "dropped": "selector_abstained"})
+            continue
+        picks["gold"] = gold_selection(pool)
+        rows.append({
+            "prompt_id": pool.prompt_id,
+            "dropped": None,
+            "selected": picks,
+            "scores": scores,
+            "agreement": {"naive_vs_rfo": picks["naive"] == picks["rfo"],
+                          "naive_vs_gold": picks["naive"] == picks["gold"],
+                          "rfo_vs_gold": picks["rfo"] == picks["gold"]},
+        })
+    write_jsonl(out_dir / "selection.jsonl", rows)
+    kept = [row for row in rows if row["dropped"] is None]
+    print(f"{len(kept)} prompts usable, {len(rows) - len(kept)} dropped to abstention")
+    for pair in ("naive_vs_rfo", "naive_vs_gold", "rfo_vs_gold"):
+        hits = sum(1 for row in kept if row["agreement"][pair])
+        print(f"  {pair}: {hits}/{len(kept)} = {hits / max(1, len(kept)):.3f}")
+
+
+def stage_gradients(args: argparse.Namespace) -> None:
+    """One LoRA gradient per prompt per criterion, streamed to a memmap."""
+
+    from selfsight.backbones.showo2 import Showo2Adapter, Showo2GenerationBatch
+
+    out_dir = Path(args.outdir)
+    pools = {pool.prompt_id: pool for pool in load_pools(out_dir)}
+    kept = [row for row in read_jsonl(out_dir / "selection.jsonl") if row["dropped"] is None]
+    if not kept:
+        raise SystemExit("Run the select stage first")
+    targets = json.loads(Path(LORA_TARGETS).read_text(encoding="utf-8"))
+
+    backbone = Showo2Adapter(device=args.device, lazy=False)
+    audit = backbone.attach_lora(target_modules=tuple(targets["target_modules"]),
+                                 rank=args.rank, alpha=args.alpha, dropout=0.0)
+    dimension = int(audit["trainable_parameters"])
+    print(f"LoRA attached: {dimension} trainable parameters across "
+          f"{len(targets['target_modules'])} audited modules")
+
+    stores = {
+        criterion: PerPromptGradientStore(
+            out_dir / f"gradients.{criterion}.f32", criterion=criterion,
+            dimension=dimension, capacity=len(kept))
+        for criterion in CRITERIA
+    }
+    started = datetime.now(timezone.utc).isoformat()
+    for index, row in enumerate(kept):
+        pool = pools[row["prompt_id"]]
+        # One seed per prompt, shared by all three criteria: the only thing that
+        # may differ across criteria is which image was selected.
+        latent_seed = int(sha256_json(["v4-gate-b", pool.prompt_id])[:8], 16) % (2 ** 31)
+        for criterion in CRITERIA:
+            candidate = next(item for item in pool.candidates
+                             if item.candidate_id == row["selected"][criterion])
+            batch = Showo2GenerationBatch(
+                prompts=(pool.spec.prompt,),
+                images=(candidate.image_path,),
+                sample_ids=(pool.prompt_id,),
+                latent_seed=latent_seed,
+            )
+            result = backbone.compute_lora_gradient(batch, criterion)
+            stores[criterion].add(pool.prompt_id, result.vector)
+        if index % 10 == 0:
+            print(f"{index + 1}/{len(kept)} prompts", flush=True)
+
+    prompt_ids = list(stores[CRITERIA[0]].prompt_ids)
+    for criterion in CRITERIA:
+        store = stores[criterion]
+        if list(store.prompt_ids) != prompt_ids:
+            raise SystemExit(f"{criterion} store is out of order with {CRITERIA[0]}")
+        store.finalize().close()
+    (out_dir / "gradients.meta.json").write_text(json.dumps({
+        "dimension": dimension, "prompts": len(kept), "criteria": list(CRITERIA),
+        "rank": args.rank, "alpha": args.alpha, "dtype": "float32",
+        "lora_targets_digest": targets["selection_digest"],
+        "module_tree_sha256": targets.get("module_tree_sha256"),
+        "backbone": f"{backbone.model_id}@{backbone.revision}",
+        "started_at": started, "finished_at": datetime.now(timezone.utc).isoformat(),
+        "prompt_ids": prompt_ids,
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"wrote {len(kept)} x {len(CRITERIA)} gradients of {dimension} parameters")
+
+
+def stage_report(args: argparse.Namespace) -> None:
+    out_dir = Path(args.outdir)
+    meta = json.loads((out_dir / "gradients.meta.json").read_text(encoding="utf-8"))
+    stores = {
+        criterion: PerPromptGradientStore.open_existing(
+            out_dir / f"gradients.{criterion}.f32", criterion=criterion,
+            dimension=int(meta["dimension"]), prompt_ids=meta["prompt_ids"])
+        for criterion in CRITERIA
+    }
+
+    report: dict[str, Any] = {"prompts": meta["prompts"], "dimension": meta["dimension"],
+                              "lora_targets_digest": meta["lora_targets_digest"]}
+    grams = {}
+    for left, right, name in (("naive", "rfo", "gda_free"), ("naive", "gold", "gda_gold")):
+        gram = gram_matrices(stores[left], stores[right])
+        grams[name] = gram
+        boot = paired_bootstrap_cosine(gram, resamples=args.resamples, seed=args.seed)
+        report[name] = dict(boot) | {
+            "left": left, "right": right,
+            "rms_norm_left": float(np.sqrt(np.mean(np.diag(gram.g_ll)))),
+            "rms_norm_right": float(np.sqrt(np.mean(np.diag(gram.g_rr)))),
+        }
+        print(f"{name} = cos(g_{left}, g_{right}): {boot['cosine']:.4f} "
+              f"CI [{boot['ci_low']:.4f}, {boot['ci_high']:.4f}] "
+              f"width {boot['ci_width']:.4f}")
+
+    report["sample_noise"] = dict(sample_noise_diagnostic(grams["gda_free"], seed=args.seed))
+    print(f"split-half SNR diagnostic (not a gate): {report['sample_noise']['mean']:.4f}")
+
+    gate = gate_b_instrument_report([report["gda_free"]],
+                                    identical_cosine=args.identical_cosine)
+    report["gate_b"] = gate
+    (out_dir / "gate_b.json").write_text(json.dumps(report, ensure_ascii=False, indent=2),
+                                         encoding="utf-8")
+    print()
+    print(f"paired CI width {gate['worst_ci_width']:.4f} <= {gate['max_ci_width']}: "
+          f"{'ok' if gate['ci_width_ok'] else 'FAIL'}")
+    print(f"LoRA subspace non-degenerate: {'ok' if gate['subspace_ok'] else 'FAIL'}")
+    print(f"identical-selection cosine {gate['identical_cosine']}: "
+          f"{'ok' if gate['identical_cosine_ok'] else 'FAIL'}")
+    print(f"GATE B: {'passed' if gate['passed'] else 'NOT PASSED'}")
+    if not gate["passed"]:
+        print(gate["action_if_failed"])
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    sub = parser.add_subparsers(dest="stage", required=True)
+
+    pools = sub.add_parser("pools")
+    pools.add_argument("--outdir", required=True)
+    pools.set_defaults(func=stage_pools)
+
+    observe = sub.add_parser("observe")
+    observe.add_argument("--outdir", required=True)
+    observe.add_argument("--arm", choices=list(ARMS), required=True)
+    observe.add_argument("--device", default="cuda:0")
+    observe.add_argument("--backend", default="qwen2vl")
+    observe.set_defaults(func=stage_observe)
+
+    select = sub.add_parser("select")
+    select.add_argument("--outdir", required=True)
+    select.set_defaults(func=stage_select)
+
+    gradients = sub.add_parser("gradients")
+    gradients.add_argument("--outdir", required=True)
+    gradients.add_argument("--device", default="cuda:0")
+    gradients.add_argument("--rank", type=int, default=16)
+    gradients.add_argument("--alpha", type=int, default=32)
+    gradients.set_defaults(func=stage_gradients)
+
+    report = sub.add_parser("report")
+    report.add_argument("--outdir", required=True)
+    report.add_argument("--seed", type=int, default=20260903)
+    report.add_argument("--resamples", type=int, default=5000)
+    report.add_argument("--identical-cosine", type=float, default=1.0)
+    report.set_defaults(func=stage_report)
+
+    args = parser.parse_args()
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()

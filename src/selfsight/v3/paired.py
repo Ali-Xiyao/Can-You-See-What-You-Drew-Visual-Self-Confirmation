@@ -83,6 +83,36 @@ class PerPromptGradientStore:
         )
         self._finalized = False
 
+    @classmethod
+    def open_existing(
+        cls,
+        path: str | Path,
+        *,
+        criterion: str,
+        dimension: int,
+        prompt_ids: Sequence[str],
+        dtype: str = "float32",
+    ) -> PerPromptGradientStore:
+        """Reopen a finished store read-only, for analysis in a later process.
+
+        The prompt order is not recoverable from the memmap -- it is only the row
+        order -- so the caller must supply the same order that was written, and
+        the pairing check in `gram_matrices` then still means what it says.
+        """
+
+        store = cls.__new__(cls)
+        store.path = Path(path)
+        store.criterion = criterion
+        store.dimension = int(dimension)
+        store.capacity = len(prompt_ids)
+        store.dtype = dtype
+        store._prompt_ids = [str(item) for item in prompt_ids]
+        store._memmap = np.memmap(
+            store.path, dtype=dtype, mode="r", shape=(store.capacity, store.dimension)
+        )
+        store._finalized = True
+        return store
+
     def add(self, prompt_id: str, vector: Any) -> None:
         if self._finalized:
             raise RuntimeError("Cannot add to a finalized gradient store")
