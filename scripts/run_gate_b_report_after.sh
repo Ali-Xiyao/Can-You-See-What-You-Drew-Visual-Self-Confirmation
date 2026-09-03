@@ -22,4 +22,11 @@ while [ ! -f "$SENTINEL" ]; do
 done
 
 echo "$(date +%H:%M:%S) batch-3 finished, running the Gate B report at n=232"
-exec envs/core/python.exe scripts/v4_gate_b_probe.py report --outdir runs/v4/gate-b
+envs/core/python.exe scripts/v4_gate_b_probe.py report --outdir runs/v4/gate-b
+status=$?
+# The sentinel is written whether the report succeeded or not, and carries the
+# exit code. The L3 preview waits on this file, and a failed report should let
+# it start rather than block it forever -- the report is a read over gradients
+# that are already on disk, so it can be re-run at any time.
+echo "$status $(date +%FT%T)" > runs/v4/gate-b/REPORT_DONE
+exit "$status"
