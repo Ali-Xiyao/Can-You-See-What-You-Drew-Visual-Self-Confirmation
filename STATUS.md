@@ -1068,6 +1068,45 @@ CI 宽度按 1/√n 收窄，要到 0.10 需要 n ≈ 138 × (0.1728/0.10)² ≈
 
 ---
 
+### 30. 通往 D* 的路上没有训练回路（2026-09-03）
+
+`830cfa7`「Delete the v3 geometric instrument」删掉的不只是几何刺激栈，还包括**跑训练和按
+checkpoint 出指标的整条回路**。那次删除本身是对的——这些文件从头到尾吃的就是几何刺激——
+但决策树下面那句「其余 L0–L2 的脚本均已存在」是 `8f155ae` 写的，没有跟着更新，
+于是记录里一直显示「只差一个运行器」。实际情况：
+
+| 已删除 | 行数 | 原职责 | 阶段 |
+|---|---|---|---|
+| `src/selfsight/pilot/real_loop.py` | 819 | 配对训练主循环 | L1 |
+| `src/selfsight/pilot/evaluate.py` | 580 | 按 checkpoint 计算 internal / external 指标 | L2 |
+| `src/selfsight/analysis/gradient_gate.py` | 359 | 梯度门判定 | L0 |
+| `scripts/run_gradient_gate.py` | 298 | L0 入口 | L0 |
+| `scripts/evaluate_pilot.py` | 212 | L2 入口 | L2 |
+| `scripts/run_local_pilot.py` | 151 | L1 入口 | L1 |
+| `scripts/run_formal_e2.py` | 341 | 三 seed A800 编排 | C1/C2 |
+
+`src/selfsight/pilot/` 现在只剩 `__pycache__`。
+
+**活下来的是零件，不是回路**：`training/checkpoint.py`（存档 + RNG 状态）、`training/lora.py`
+（挂 LoRA、断言只有 LoRA 可训）、`training/gradients.py`（采集、余弦、噪声区间、EMA）、
+`training/paired.py`（配对 schedule 与同一性断言），共 460 行；
+`analysis/breakpoints.py` 的 `estimate_d_star` / `estimate_d_g` / `estimate_lead` 也在。
+
+也就是说：**测 D\* 需要的统计学已经写好，产生它输入的那条训练曲线没有代码可以产生。**
+从这里到 Gate C 的工作量不是「拆一个单 seed 运行器」，是在 v4 仪器上重建 L1+L2。
+
+**为什么不 revert `830cfa7`**：`real_loop.py` 的数据侧全部指向已删的 `data/renderer`、
+`data/manifest`、`data/verifier`，恢复回来也编译不过；它的 gold 来自参考渲染器，而 v4 的
+gold 来自三级升级裁定。可复用的是它的**骨架决定**（resume 语义、checkpoint 间隔、
+配对两臂共享 schedule 与 latent seed、只训 LoRA），这些照抄，数据与 gold 侧重写。
+参考实现取 `git show 830cfa7^:src/selfsight/pilot/real_loop.py`。
+
+**教训（与 §28 同类）**：§28 是运行工件不记录 backbone 身份，这一条是删除操作不回写依赖它的
+计划文档。两者都是「记录与实际脱钩」，都只在下一次有人照着记录行动时才暴露。
+
+---
+
+
 ## 已作废 / 已被取代
 
 | 结论 | 状态 | 原因 |
@@ -1179,7 +1218,10 @@ L1 Gate A ──红──> 能力地板报告，项目转向
    C3 + 追加 seed
 ```
 
-**尚未实现的运行器**：`scripts/run_main_seed_e2.py`（从 `run_formal_e2.py` 拆出单 arm / 单 seed / 单卡，供 C1/C2 并行启动）。其余 L0–L2 的脚本均已存在。
+**尚未实现的运行器**：整条 L0–L2 训练/评估回路。见 §30。
+
+（本行原文写的是「只差 `scripts/run_main_seed_e2.py`，其余 L0–L2 的脚本均已存在」。那是 `8f155ae`
+（v3 时期）的实情；`830cfa7` 删几何栈时把 `pilot/**` 一并删了，这句话没跟着更新。2026-09-03 更正。）
 
 **原则**：所有能杀死项目的实验都在本地跑完，再碰 A800。v2.x 的教训是把最贵的东西排在最前面——先审计观察者、再审计生成，最后才发现**根本没有可选的东西**（79% 的候选池是退化的）。
 
