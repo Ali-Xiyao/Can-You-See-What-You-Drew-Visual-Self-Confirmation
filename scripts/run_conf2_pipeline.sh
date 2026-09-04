@@ -30,6 +30,12 @@ export PYTHONPATH
 
 OBS=envs/observer/python.exe
 CORE=envs/core/python.exe
+# The observe stage asks the *backbone* to look at a picture, so it needs the
+# environment the backbone lives in. envs/observer is for the external
+# detectors and has no diffusers; running observe there dies on the import
+# after the stage has already been announced, which is how this pipeline spent
+# an afternoon looking like it was working.
+SHOWO=envs/showo2/python.exe
 OUT=runs/v4/tierb-conf2
 RUNS=(runs/v4/conf2-2plus1 runs/v4/conf2-1plus1plus1)
 DEV=cuda:0
@@ -116,7 +122,7 @@ step "questions"
 
 for condition in image_only prompted; do
   step "observe $condition"
-  "$OBS" scripts/v4_tierb_build.py observe --outdir "$OUT" \
+  "$SHOWO" scripts/v4_tierb_build.py observe --outdir "$OUT" \
     --condition "$condition" --device "$DEV" \
     >> "$OUT/observe.$condition.log" 2>&1 || die "observe $condition failed"
 done
