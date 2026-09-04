@@ -171,6 +171,20 @@ def run_stage(command: list[str], log_path: Path) -> None:
                        text=True, check=True)
 
 
+def _same_cuda_device(left: str, right: str) -> bool:
+    """True when two device strings name the same CUDA card.
+
+    "cuda" and "cuda:0" are one card spelled two ways and torch.device does not
+    call them equal, so the comparison is written out rather than trusted to ==.
+    """
+    import torch
+
+    a, b = torch.device(left), torch.device(right)
+    if a.type != "cuda" or b.type != "cuda":
+        return False
+    return (a.index or 0) == (b.index or 0)
+
+
 def adjudicate(
     directory: Path,
     *,
@@ -237,6 +251,14 @@ def stage_train(args: argparse.Namespace) -> None:
     print(f"{len(done)} rounds already complete: {done}")
 
     backbone = Showo2Adapter(device=args.device, lazy=False)
+    # Two cards was the plan; one card is what the machine had free. The
+    # ladder's adjudicator cannot load beside a resident backbone on a single
+    # card, so when both land on the same one the backbone is parked for the
+    # ladder's duration. Twenty parkings over ten rounds cost minutes; the
+    # alternative measured out as a crash in round zero.
+    ladder_shares_the_card = _same_cuda_device(args.device, args.ladder_device)
+    if ladder_shares_the_card:
+        print(f"    ladder shares {args.device}: parking the backbone to adjudicate")
     targets = json.loads(Path(LORA_TARGETS).read_text(encoding="utf-8"))
     lora = training["lora"]
     # The readiness artefact records which forbidden modules the selection let
@@ -318,9 +340,10 @@ def stage_train(args: argparse.Namespace) -> None:
             if arm == "rfo_gold":
                 ladder_dir = round_dir / "ladder" / arm
                 write_candidate_manifest(ladder_dir, corpus=corpus, pools=pools[arm])
-                verified = adjudicate(ladder_dir, observer_python=args.observer_python,
-                                      core_python=args.core_python,
-                                      device=args.ladder_device)
+                with backbone.parked(enabled=ladder_shares_the_card):
+                    verified = adjudicate(ladder_dir, observer_python=args.observer_python,
+                                          core_python=args.core_python,
+                                          device=args.ladder_device)
                 verdicts, unadjudicated = read_verdicts(verified, pools[arm])
                 decisions[arm] = select_gold(pools=pools[arm], verdicts=verdicts)
                 abstained = sum(1 for d in decisions[arm] if d.selected_candidate_id is None)
