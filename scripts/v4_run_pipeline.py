@@ -41,6 +41,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import time
 from dataclasses import replace
 from pathlib import Path
@@ -66,6 +67,75 @@ def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
     with path.open("w", encoding="utf-8") as handle:
         for row in rows:
             handle.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
+# ------------------------------------------------------- sharing the cards
+
+# A detector is an 8B model in bf16. The allocation that actually failed on
+# 2026-09-04 was a 15.17 GiB warmup, so this is that plus room for the context
+# and the activations. On a 24 GiB card it means we will start beside about
+# 6 GiB of someone else's work and not beside more.
+DETECTOR_MIB = 18000
+
+
+def free_mib(device: str) -> int | None:
+    """Free memory on `device`, or None when the question does not apply.
+
+    Deliberately nvidia-smi and not torch.cuda.mem_get_info: mem_get_info
+    creates a CUDA context on the card it is asked about, several hundred MiB
+    of it. A process that is only waiting for room should not be holding any.
+    """
+    if not device.startswith("cuda"):
+        return None
+    index = int(device.split(":")[1]) if ":" in device else 0
+    try:
+        out = subprocess.run(
+            ["nvidia-smi", "--query-gpu=memory.free",
+             "--format=csv,noheader,nounits"],
+            capture_output=True, text=True, timeout=30, check=True).stdout
+    except (OSError, subprocess.SubprocessError):
+        return None
+    lines = [line.strip() for line in out.splitlines() if line.strip()]
+    if index >= len(lines):
+        return None
+    try:
+        return int(lines[index])
+    except ValueError:
+        return None
+
+
+def await_room(device: str, need_mib: int = DETECTOR_MIB, patience_s: int = 1800,
+               poll_s: int = 60, sleep=time.sleep) -> None:
+    """Hold off loading a detector until the card has room for one.
+
+    This machine is shared and the other jobs on it are not ours to move. The
+    wait does not make the allocation safe -- between the reading and the claim
+    anything can happen, and on 2026-09-04 that is exactly what did: 15.17 GiB
+    refused while 22.76 GiB read as free. What it buys is the other two thirds
+    of the problem: we do not walk into a card that visibly has no room, and we
+    do not become the job that squeezes someone else's out.
+
+    When the patience runs out it starts anyway. Refusing here would write a
+    scheduling accident into the pre-registered record as condition B.3, which
+    is a claim about the experiment and not about the queue; the caller already
+    retries.
+    """
+    waited = 0
+    while True:
+        free = free_mib(device)
+        if free is None:
+            return
+        if free >= need_mib:
+            print(f"{device}: {free} MiB free, need {need_mib} -- starting", flush=True)
+            return
+        if waited >= patience_s:
+            print(f"{device}: still only {free} MiB free after {waited}s -- starting "
+                  f"anyway and letting the allocation decide", flush=True)
+            return
+        print(f"{device}: {free} MiB free, need {need_mib} -- waiting {poll_s}s "
+              f"({waited}s so far)", flush=True)
+        sleep(poll_s)
+        waited += poll_s
 
 
 # ---------------------------------------------------------------- generate
@@ -126,6 +196,7 @@ def stage_detect(args: argparse.Namespace) -> None:
         done = {r["image_path"] for r in read_jsonl(out) if "detections" in r}
         print(f"resuming: {len(done)} already done")
 
+    await_room(args.device)
     detector = load(args.detector, device=args.device)
     started = time.time()
     with out.open("a" if done else "w", encoding="utf-8") as handle:
@@ -221,6 +292,7 @@ def stage_crop(args: argparse.Namespace) -> None:
     if not todo:
         return
 
+    await_room(args.device)
     detector = load(args.primary, device=args.device)
     started = time.time()
     with out.open("a" if done else "w", encoding="utf-8") as handle:
