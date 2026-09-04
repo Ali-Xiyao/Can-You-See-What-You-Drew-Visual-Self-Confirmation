@@ -28,6 +28,7 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -210,10 +211,31 @@ def adjudicate(
         have = sum(1 for _ in done.open(encoding="utf-8")) if done.exists() else 0
         if have >= expected:
             continue
-        run_stage([observer_python, "scripts/v4_run_pipeline.py", "detect",
-                   "--manifest", str(directory / "manifest.jsonl"),
-                   "--detector", detector, "--device", device],
-                  directory / f"detect.{detector}.log")
+        # The ladder's card is shared with jobs that are not this project's, and
+        # loading an 8B observer means asking for one 15 GiB block. That can lose
+        # a race it would win a minute later: the first failure here reported
+        # 22.76 GiB free in the same message that refused 15.17, because the free
+        # figure is computed when the error is raised rather than when the
+        # allocation was attempted.
+        #
+        # Retrying is cheap and cannot double-count -- detect appends, and rows
+        # already written are skipped by the `have >= expected` test above, so a
+        # second pass resumes rather than repeats. Losing a round of generation
+        # to a transient is what is expensive: that is an hour, and it is what
+        # the orchestrator's own retry would cost.
+        for tries_left in (2, 1, 0):
+            try:
+                run_stage([observer_python, "scripts/v4_run_pipeline.py", "detect",
+                           "--manifest", str(directory / "manifest.jsonl"),
+                           "--detector", detector, "--device", device],
+                          directory / f"detect.{detector}.log")
+                break
+            except subprocess.CalledProcessError:
+                if not tries_left:
+                    raise
+                print(f"    detect {detector} failed, {tries_left} tries left, "
+                      f"waiting 180s for the card", flush=True)
+                time.sleep(180)
     run_stage([observer_python, "scripts/v4_run_pipeline.py", "crop",
                "--run", str(directory), "--device", device],
               directory / "crop.log")
