@@ -154,6 +154,15 @@ def run_stage(command: list[str], log_path: Path) -> None:
     second detector distinguishable from one that died at the first.
     """
 
+    # CreateProcess will not resolve a relative path written with forward
+    # slashes, so "envs/observer/python.exe" -- the default this script ships
+    # with -- fails with WinError 2 while "envs\observer\python.exe" and the
+    # absolute form both work. Resolving the interpreter here covers detect,
+    # crop and verify at once, and keeps the CLI defaults readable.
+    interpreter = Path(command[0])
+    if interpreter.exists():
+        command = [str(interpreter.resolve()), *command[1:]]
+
     log_path.parent.mkdir(parents=True, exist_ok=True)
     with log_path.open("a", encoding="utf-8") as handle:
         handle.write(f"\nCOMMAND {subprocess.list2cmdline(command)}\n")
@@ -246,12 +255,20 @@ def stage_train(args: argparse.Namespace) -> None:
         gradient_checkpointing=bool(training["gradient_checkpointing"]),
     )
 
-    observer_config = yaml.safe_load(Path(RFO_OBSERVER_CONFIG).read_text(encoding="utf-8"))
-    if observer_config.get("trainable", False):
-        raise SystemExit("The RFO arm's observer must be frozen")
-    observer = create_transformers_observer(
-        args.backend, str(observer_config["observer_id"]),
-        str(observer_config["revision"]), args.ladder_device)
+    # Pass 1 is Naive against RFO-Gold and neither arm consults an observer:
+    # naive asks itself, gold reads the adjudication ladder. Loading one anyway
+    # costs a model load and its memory on the same card the detectors need,
+    # for a component that pass 1 never calls. The frozen-ness check still runs
+    # whenever it *is* built, which is the part that matters.
+    observer = None
+    if RFO_SELF in ARMS:
+        observer_config = yaml.safe_load(
+            Path(RFO_OBSERVER_CONFIG).read_text(encoding="utf-8"))
+        if observer_config.get("trainable", False):
+            raise SystemExit("The RFO arm's observer must be frozen")
+        observer = create_transformers_observer(
+            args.backend, str(observer_config["observer_id"]),
+            str(observer_config["revision"]), args.ladder_device)
 
     digest = sha256_json(config)
     parameters = [p for p in backbone.model.parameters() if p.requires_grad]
