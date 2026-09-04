@@ -89,9 +89,7 @@ def test_a_checkpoint_can_be_reloaded_for_evaluation_without_an_optimizer(tmp_pa
     -- after the model had loaded, which on a 1.5B backbone is the expensive part.
     """
 
-    torch = pytest.importorskip("torch")
-
-    model = _Model()
+    model = TinyLora()
     optimizer = torch.optim.SGD([model.block.lora_A, model.block.lora_B], lr=0.1)
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda _: 1.0)
     optimizer.zero_grad()
