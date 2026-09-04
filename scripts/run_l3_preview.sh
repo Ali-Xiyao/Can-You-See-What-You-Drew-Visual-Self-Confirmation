@@ -32,19 +32,34 @@ stop () { echo "$*" > "$OUT/TERMINAL.txt"; log "TERMINAL: $*"; exit "${2:-0}"; }
 over_budget () { [ $(( $(date +%s) - STARTED )) -gt "$BUDGET" ]; }
 
 # --- which cards ----------------------------------------------------------
-# GPU1 is fair game only when it is idle: there are jobs on this machine that
-# are not this project's and they are not to be preempted. When it is busy the
-# run still works, it just serialises drawing behind adjudication on GPU0 and
-# the wall clock becomes their sum rather than the larger (STATUS 32).
+# This needs two cards and the earlier version of it did not know that. It
+# demanded GPU1 be all but empty, and when it was not it put both stages on
+# GPU0 and called that "the slower plan". It is not a slower plan, it is not a
+# plan: the training process holds the backbone resident while it shells out to
+# the ladder, so the adjudicator has to load beside 13.5 GB and cannot. That
+# fallback ran twice and died twice in round 0, both times at 0xC0000005 during
+# shard loading (STATUS 37).
+#
+# So the test is now "does the generator fit on GPU1 beside whatever is already
+# there", not "is GPU1 empty" -- other people's jobs are not to be preempted,
+# but a card with room is a card with room. The generator is the smaller of the
+# two consumers, so it takes the shared card and the adjudicator gets GPU0 to
+# itself; that is also what the frozen config asks for.
+#
+# When no assignment fits, this stops. Refusing beats degrading into something
+# that cannot work, which is the whole lesson of the fallback it replaces.
+GENERATOR_MIB=15000     # 13.5 GB resident plus room to breathe
 pick_devices () {
-  local used
+  local used free
   used=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | sed -n 2p)
-  if [ "${used:-9999}" -lt 500 ]; then
+  free=$(( 24576 - ${used:-24576} ))
+  if [ "$free" -ge "$GENERATOR_MIB" ]; then
     DEV=cuda:1; LADDER=cuda:0
-    log "GPU1 idle (${used} MiB): backbone on $DEV, ladder on $LADDER"
+    log "GPU1 has ${free} MiB free (${used} used, not ours): backbone on $DEV, ladder on $LADDER"
   else
-    DEV=cuda:0; LADDER=cuda:0
-    log "GPU1 busy (${used} MiB, not ours): everything on $DEV, expect the slower plan"
+    stop "B.3 no two-card assignment fits: GPU1 has only ${free} MiB free and the \
+generator needs ${GENERATOR_MIB}. One card cannot host both stages -- the ladder \
+loads while the backbone is resident. Wait for GPU1 or lower the scale." 1
   fi
 }
 

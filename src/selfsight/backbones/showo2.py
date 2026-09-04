@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import contextlib
 import json
 import re
 import sys
@@ -347,35 +346,6 @@ class Showo2Adapter(ModelAdapter):
         if self.device.type != "cuda":
             return []
         return [self.device.index if self.device.index is not None else 0]
-
-    @contextlib.contextmanager
-    def parked(self, *, enabled: bool = True):
-        """Hold the transformer on the CPU while another model needs the card.
-
-        The adjudicating ladder loads an 8B observer. Across two cards it sits
-        beside this one; on a single card the resident transformer leaves about
-        11 GB free and the observer wants seventeen, so the load dies. On
-        Windows that arrives as an access violation part-way through the shards
-        rather than a clean CUDA OOM, which is why the first single-card attempt
-        read as a crash rather than as a capacity problem.
-
-        Only the transformer moves. It is essentially the whole 13.5 GB, and
-        moving less means less to go wrong. LoRA optimiser state stays on the
-        card, which is safe because nothing steps while the parameters are away,
-        and torch moves parameters in place -- the Parameter objects survive the
-        round trip, so the optimiser's references to them stay valid.
-        """
-        if not enabled:
-            yield
-            return
-        import torch
-
-        self.model.to("cpu")
-        torch.cuda.empty_cache()
-        try:
-            yield
-        finally:
-            self.model.to(self.device)
 
     def _generate_one(self, prompt: str, seed: int) -> Image.Image:
         self._load()

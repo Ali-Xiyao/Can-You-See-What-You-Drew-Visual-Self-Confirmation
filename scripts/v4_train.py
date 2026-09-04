@@ -251,14 +251,25 @@ def stage_train(args: argparse.Namespace) -> None:
     print(f"{len(done)} rounds already complete: {done}")
 
     backbone = Showo2Adapter(device=args.device, lazy=False)
-    # Two cards was the plan; one card is what the machine had free. The
-    # ladder's adjudicator cannot load beside a resident backbone on a single
-    # card, so when both land on the same one the backbone is parked for the
-    # ladder's duration. Twenty parkings over ten rounds cost minutes; the
-    # alternative measured out as a crash in round zero.
-    ladder_shares_the_card = _same_cuda_device(args.device, args.ladder_device)
-    if ladder_shares_the_card:
-        print(f"    ladder shares {args.device}: parking the backbone to adjudicate")
+    # This stage needs the ladder on a different card and there is no way round
+    # it. The backbone stays resident across the whole round, so an adjudicator
+    # sharing the card has to load beside 13.5 GB and dies part-way through its
+    # shards -- on Windows as 0xC0000005, which reads as a crash rather than as
+    # the capacity problem it is.
+    #
+    # Parking the backbone on the CPU for the ladder's duration was tried and
+    # does not work: with LoRA attached and accelerate's hooks on the blocks,
+    # moving the dispatched model segfaults the training process. It segfaults
+    # after the round's images are drawn, so the cost of finding out is an hour
+    # (STATUS 37).
+    #
+    # Hence: refuse at the top, before an hour of generation, rather than fail
+    # deep in the round. Whoever hands this stage one card gets told in seconds.
+    if _same_cuda_device(args.device, args.ladder_device):
+        raise SystemExit(
+            f"train needs the ladder on another card: --device {args.device} and "
+            f"--ladder-device {args.ladder_device} are the same one. The backbone is "
+            f"resident for the whole round and the adjudicator cannot load beside it.")
     targets = json.loads(Path(LORA_TARGETS).read_text(encoding="utf-8"))
     lora = training["lora"]
     # The readiness artefact records which forbidden modules the selection let
@@ -340,10 +351,9 @@ def stage_train(args: argparse.Namespace) -> None:
             if arm == "rfo_gold":
                 ladder_dir = round_dir / "ladder" / arm
                 write_candidate_manifest(ladder_dir, corpus=corpus, pools=pools[arm])
-                with backbone.parked(enabled=ladder_shares_the_card):
-                    verified = adjudicate(ladder_dir, observer_python=args.observer_python,
-                                          core_python=args.core_python,
-                                          device=args.ladder_device)
+                verified = adjudicate(ladder_dir, observer_python=args.observer_python,
+                                      core_python=args.core_python,
+                                      device=args.ladder_device)
                 verdicts, unadjudicated = read_verdicts(verified, pools[arm])
                 decisions[arm] = select_gold(pools=pools[arm], verdicts=verdicts)
                 abstained = sum(1 for d in decisions[arm] if d.selected_candidate_id is None)
