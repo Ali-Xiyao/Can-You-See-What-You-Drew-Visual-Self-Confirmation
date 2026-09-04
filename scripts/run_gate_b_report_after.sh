@@ -11,11 +11,27 @@ set -u
 cd "$(dirname "$0")/.."
 
 SENTINEL="runs/v4/tierb-conf2/conf_fork.txt"
-DEADLINE=$(( $(date +%s) + 12 * 3600 ))
+
+# 36h, not the 12h this started with. That budget was sized against an estimate
+# that batch-3 would finish by 04:15; the pipeline died of a parse error at
+# 04:13 and sat dead for seven hours, which ate the whole margin and expired
+# this waiter at 12:46 while the restarted pipeline was running fine. A wall
+# clock is the wrong instrument for "is what I depend on still alive", so the
+# liveness check below is what should normally end this early.
+DEADLINE=$(( $(date +%s) + 36 * 3600 ))
+
+pipeline_alive () {
+  powershell -NoProfile -Command "@(Get-CimInstance Win32_Process -Filter \"Name='bash.exe'\" | Where-Object { \$_.CommandLine -like '*run_conf2_pipeline*' }).Count" 2>/dev/null | tr -d '\r' | grep -E '^[0-9]+$' | head -1
+}
 
 while [ ! -f "$SENTINEL" ]; do
   if [ "$(date +%s)" -gt "$DEADLINE" ]; then
-    echo "$(date +%H:%M:%S) gave up waiting for $SENTINEL after 12h" >&2
+    echo "$(date +%H:%M:%S) gave up waiting for $SENTINEL after 36h" >&2
+    exit 1
+  fi
+  alive=$(pipeline_alive); alive=${alive:-0}
+  if [ "$alive" -eq 0 ]; then
+    echo "$(date +%H:%M:%S) the batch-3 pipeline is gone and $SENTINEL was never written" >&2
     exit 1
   fi
   sleep 120
