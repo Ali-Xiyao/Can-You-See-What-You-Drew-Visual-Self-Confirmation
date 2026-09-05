@@ -17,6 +17,8 @@ the picture, but its thresholds are not registered and it is not the verdict.
 from __future__ import annotations
 
 import argparse
+import collections
+import json
 import math
 import sys
 from pathlib import Path
@@ -126,6 +128,65 @@ def selection_vs_random(pools: dict[str, dict[str, Any]]) -> None:
         print(f"  K={k}  n={len(ids):3d}  随机期望 {uniform:5.1%}   " + "   ".join(cells))
 
 
+def counting_accuracy(out_dir: Path) -> None:
+    """Two different numbers that were being read as one.
+
+    "The answer differs from what the spec asked for" is not "the observer
+    miscounted". A picture is allowed to differ from the request -- that
+    divergence is the signal the probe exists to catch -- and on top of that the
+    first open-counting run was scoring some correct counts as wrong (STATUS
+    42). So report the deviation rate beside the accuracy measured against the
+    detections in `verified.jsonl`, which is an independent record of what is in
+    the image.
+
+    The slug in `atom_id` says which phrase a question is about: `red-book` for
+    the colour-qualified form, bare `book` for the category form the defective
+    run used. Colours contain no hyphen and `canonical_noun` returns a single
+    word, so the two cases separate cleanly.
+    """
+    from selfsight.v4.spec import canonical_noun
+
+    runs = json.loads((out_dir / "runs.json").read_text(encoding="utf-8"))["runs"]
+    detected: dict[str, collections.Counter] = {}
+    for name in runs:
+        for row in read_jsonl(Path(name) / "verified.jsonl"):
+            if row.get("detections") is None:
+                continue
+            detected[row["image_path"]] = collections.Counter(
+                (d.get("color"), canonical_noun(d["object"])) for d in row["detections"])
+
+    image_of: dict[tuple[str, str], str] = {}
+    asks: dict[tuple[str, str], tuple[str, str]] = {}
+    for pool in read_jsonl(out_dir / "pools.jsonl"):
+        for candidate in pool["candidates"]:
+            image_of[(pool["prompt_id"], candidate["candidate_id"])] = candidate["image_path"]
+        for question in pool["questions"]:
+            if ":count:" in question["question_id"]:
+                asks[(pool["prompt_id"], question["question_id"])] = (
+                    question["atom_id"].split(":")[-1], question["expected_answer"])
+
+    print("\n计数题：偏离请求 vs 数错图（后者以 verified.jsonl 的检出为准）")
+    for arm in ("naive", "rfo"):
+        n = off_spec = miscounted = skipped = 0
+        for row in read_jsonl(out_dir / f"observations.{arm}.jsonl"):
+            counts = detected.get(image_of[(row["prompt_id"], row["candidate_id"])])
+            for answer in row["observation"]["answers"]:
+                key = (row["prompt_id"], answer["question_id"])
+                if key not in asks:
+                    continue
+                slug, wanted = asks[key]
+                if counts is None:
+                    skipped += 1
+                    continue
+                n += 1
+                truth = sum(c for (colour, noun), c in counts.items()
+                            if f"{colour}-{noun}" == slug or noun == slug)
+                off_spec += answer["normalized_answer"] != wanted
+                miscounted += answer["normalized_answer"] != str(truth)
+        print(f"  {arm:6s} n={n:5d}  偏离请求 {off_spec / n:6.1%}"
+              f"   数错图 {miscounted / n:6.1%}   不可判定 {skipped}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("outdir")
@@ -155,6 +216,7 @@ def main() -> None:
     movement(new_rfo, old_rfo)
 
     selection_vs_random(new_pools)
+    counting_accuracy(Path(args.outdir))
 
     print("\n" + "=" * 78)
     print(f"分辨力判据（naive 臂）：{'通过' if passed else '未通过'}")
