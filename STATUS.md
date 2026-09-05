@@ -2252,6 +2252,17 @@ free 单点降幅超过 0.01，但区间含零，且只有一个训练后 checkp
 证据为 `runtime-check/naive-step00008-gradient-integrity.json`。主流程已自动转入
 rfo_gold step8 的留出生成；继续原定日程，没有调整阈值或规模。
 
+**43.10 Gold step8 内部量核验（2026-09-05 22:34 UTC，外部/梯度尚未完成）。** 64 个
+outcome ID、固定 seeds、图像与题目哈希均匹配；所有记录的参数 digest 为
+`be43b23a…c325d`，关联已审计的 Gold round000。316 个原始回答重新规范化和计分全部
+一致，289 个符合 spec，零错误/弃答/缺失；64 项 cycle 有限。逐图平均原子自评分
+0.91015625，较 base −1.6927pp（1 升/5 降/58 平），较 Naive step8 −0.390625pp
+（1 升/2 降/61 平）；cycle 为 −2.23828125，较 base +0.06665039，较 Naive −0.02526855。
+这些是两个时点的内部量描述，不构成外部效果或分叉判断。
+证据在 `runtime-check/rfo-gold-step00008-internal-integrity.json`，未重做已完成的
+checkpoint 审计、未使用 GPU 或改写既有测量。当前独立检测仍正常进行，源文件和冻结
+config/protocol 哈希一致，剩余空间约 40.53 GiB；主流程继续自动完成裁定、梯度与整轮报告。
+
 ## 已作废 / 已被取代
 
 | 结论 | 状态 | 原因 |
