@@ -252,7 +252,8 @@ def stage_train(args: argparse.Namespace) -> None:
 
     from selfsight.backbones.showo2 import Showo2Adapter
     from selfsight.observers.transformers_vlm import create_transformers_observer
-    from selfsight.training.checkpoint import load_checkpoint, save_checkpoint
+    from selfsight.training.checkpoint import (
+        capture_base_state, restore_arm_state, save_checkpoint)
 
     config = load_config(args.config)
     out = Path(args.outdir)
@@ -326,6 +327,10 @@ def stage_train(args: argparse.Namespace) -> None:
             str(observer_config["revision"]), args.ladder_device)
 
     digest = sha256_json(config)
+    # Both arms run through this one backbone, so "the weights the other arm
+    # has not touched yet" has to be kept somewhere. Captured after attach_lora
+    # and before any training, which is the only moment it is available.
+    base_state = capture_base_state(backbone.model)
     parameters = [p for p in backbone.model.parameters() if p.requires_grad]
     optimizers = {
         arm: torch.optim.AdamW(parameters, lr=float(training["learning_rate"]),
@@ -356,10 +361,10 @@ def stage_train(args: argparse.Namespace) -> None:
         # images" rather than "which selector trains a better model".
         pools: dict[str, Any] = {}
         for arm in ARMS:
-            previous = out / "checkpoints" / arm / f"round-{round_index - 1:03d}"
-            if previous.exists():
-                load_checkpoint(previous, model=backbone.model, optimizer=optimizers[arm],
-                                scheduler=schedulers[arm], expected_config_digest=digest)
+            restore_arm_state(
+                out / "checkpoints" / arm / f"round-{round_index - 1:03d}",
+                model=backbone.model, optimizer=optimizers[arm],
+                scheduler=schedulers[arm], expected_config_digest=digest, base=base_state)
             pools[arm] = generate_candidates(
                 backbone=backbone,
                 corpus=corpus,
@@ -382,11 +387,11 @@ def stage_train(args: argparse.Namespace) -> None:
                 print(f"    gold: {abstained}/{len(decisions[arm])} pools had nothing "
                       f"correct, {len(unadjudicated)} images unadjudicated")
             else:
-                previous = out / "checkpoints" / arm / f"round-{round_index - 1:03d}"
-                if previous.exists():
-                    load_checkpoint(previous, model=backbone.model,
-                                    optimizer=optimizers[arm], scheduler=schedulers[arm],
-                                    expected_config_digest=digest)
+                restore_arm_state(
+                    out / "checkpoints" / arm / f"round-{round_index - 1:03d}",
+                    model=backbone.model, optimizer=optimizers[arm],
+                    scheduler=schedulers[arm], expected_config_digest=digest,
+                    base=base_state)
                 decisions[arm] = select_by_observation(
                     arm=arm, backbone=backbone,
                     observer=observer if arm == RFO_SELF else None,
@@ -399,10 +404,15 @@ def stage_train(args: argparse.Namespace) -> None:
         reports = []
         for arm in ARMS:
             checkpoint = out / "checkpoints" / arm / f"round-{round_index:03d}"
-            previous = out / "checkpoints" / arm / f"round-{round_index - 1:03d}"
-            if previous.exists():
-                load_checkpoint(previous, model=backbone.model, optimizer=optimizers[arm],
-                                scheduler=schedulers[arm], expected_config_digest=digest)
+            # The one that was actually wrong: with no previous checkpoint the
+            # old code did nothing, so round 0's second arm trained on top of
+            # the first arm's update and every later round inherited it through
+            # its own checkpoint.
+            source = restore_arm_state(
+                out / "checkpoints" / arm / f"round-{round_index - 1:03d}",
+                model=backbone.model, optimizer=optimizers[arm],
+                scheduler=schedulers[arm], expected_config_digest=digest, base=base_state)
+            print(f"    {arm}: training from {source}")
             report = train_arm(
                 arm=arm,
                 backbone=backbone,

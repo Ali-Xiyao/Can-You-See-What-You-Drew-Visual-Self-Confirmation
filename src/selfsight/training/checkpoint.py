@@ -51,6 +51,40 @@ def lora_state_dict(model: Any) -> dict[str, Any]:
     }
 
 
+def capture_base_state(model: Any) -> dict[str, Any]:
+    """What an arm needs to start a round exactly where the other arm started.
+
+    Round 0 has no previous checkpoint to load, and the paired design runs both
+    arms through one resident backbone. Without a base to come back to, the
+    second arm of round 0 starts from the first arm's updated weights -- the
+    two arms are then not two arms.
+
+    The RNG goes with the adapter and not because it changes the weights. From
+    round 1 on, `load_checkpoint` restores each arm's RNG along with its
+    parameters; if round 0 skipped that, the arms would draw different LoRA
+    dropout masks in the one round where they are supposed to be identical,
+    and the pairing would be weaker exactly where it is strongest.
+    """
+    # `.clone()` and not just `lora_state_dict`: on a CPU tensor `.cpu()` is the
+    # identity and hands back the live parameter, so the "base" would follow the
+    # first arm's in-place optimizer step and restore to exactly the state it is
+    # supposed to undo. `save_checkpoint` gets away with the same call because it
+    # serialises immediately; a snapshot that outlives the step does not.
+    return {
+        "adapter": {name: tensor.clone() for name, tensor in lora_state_dict(model).items()},
+        "rng": _rng_state(),
+    }
+
+
+def restore_base_state(model: Any, base: dict[str, Any]) -> None:
+    """Counterpart to `capture_base_state`. Adapter only, like the checkpoints."""
+    _missing, unexpected = model.load_state_dict(base["adapter"], strict=False)
+    bad_unexpected = [name for name in unexpected if "lora_" in name.lower()]
+    if bad_unexpected:
+        raise ValueError(f"Unexpected LoRA keys restoring base: {bad_unexpected[:20]}")
+    _restore_rng_state(base["rng"])
+
+
 def save_checkpoint(
     directory: str | Path,
     *,
@@ -139,3 +173,27 @@ def load_checkpoint(
         scheduler.load_state_dict(state["scheduler"])
     _restore_rng_state(state["rng"])
     return {"step": int(state["step"]), "round_index": int(state["round_index"])}
+
+
+def restore_arm_state(
+    previous: str | Path,
+    *,
+    model: Any,
+    optimizer: Any,
+    scheduler: Any,
+    expected_config_digest: str,
+    base: dict[str, Any],
+) -> str:
+    """Put `model` into `arm`'s state for the round about to run.
+
+    The three places that swap arms mid-round must all go through here. Written
+    out at each site it reads as `if previous.exists(): load_checkpoint(...)`,
+    whose else branch is silent and wrong: doing nothing leaves whichever arm
+    ran last in the weights. Returns which source it used, so callers can say so.
+    """
+    if Path(previous).exists():
+        load_checkpoint(previous, model=model, optimizer=optimizer, scheduler=scheduler,
+                        expected_config_digest=expected_config_digest)
+        return "checkpoint"
+    restore_base_state(model, base)
+    return "base"

@@ -1491,6 +1491,26 @@ detect 与 crop 两个阶段在 `load()` 之前先读卡,空闲不足 `DETECTOR_
 第四条是共用机器的噪声,**关不死,只能变便宜**——重试是可续的(detect 追加写,
 已写的行下轮跳过),所以抢输的代价从「一轮生成」降到「一次等待」。
 
+**同一天 21:26 又输了一次,而这一次留下了重试确实管用的记录**
+(`runs/v4/l3-preview/rounds/round-000/ladder/rfo_gold/detect.internvl.log`)。
+`Tried to allocate 96.00 MiB … 13.64 GiB is free`,栈在 `detectors.py:234` 的 `.to(device)`,
+`8.99 GiB is allocated by PyTorch`。日志里有**两次** COMMAND:
+
+| | 起步读数 | 结局 |
+|---|---|---|
+| 第一次 | `cuda:0: 23470 MiB free, need 18000 -- starting` | 装到 8.99 GiB 时 96 MiB 被拒 |
+| 第二次(等 180s 后) | 同样 `23470 MiB free` | 一路装到 21:32 被人工停止时仍在跑 |
+
+`train.log` 对应一行:`detect internvl failed, 2 tries left, waiting 180s for the card`。
+**起步条件相同、第一次死第二次活,这正是竞争的签名,不是上限也不是缺陷的签名。**
+本项目的 backbone 当时在**另一张卡**上(`backbone on cuda:1, ladder on cuda:0`),
+所以挤掉我们的不是我们自己。
+
+**我先前把它判成「不是容量,也不是 §37c 的竞争」,那半句是错的**——当时只看了单次报错,
+没看第二次 COMMAND,也没看 `train.log` 的重试行。它就是 §37c 的第二个实例,
+**没有新的代码缺陷要修**,`await_room` 与三次重试都按设计工作了。
+§37c 说过等待关不掉那个时间窗;这次的记录补上了它关得掉的那部分是真的。
+
 
 ### 38. 训练选择器没有在选择：天花板效应，以及它作废了什么（2026-09-04）
 
@@ -1606,6 +1626,59 @@ prompted 条件）：
 D\* 重定义为效果脱钩并要求与普通收敛/随机波动分开、D_g 与在线报警步 A 拆开
 （`Lead = D* − A`，四向记账，`T_max` 兜底删除）、Gate B 的补救改为「先修评分器」、
 Gate C 加四条前置条件、§38.1 作为 §1.1 与 Q8 正面写入。
+### 39. 重跑前的三个阻塞项：一个修好了，一个是缺口，一个不是缺陷（2026-09-05）
+
+**39.1 两臂在第 0 轮不是从同一权重出发（已修）**
+
+`stage_train` 用一个常驻 backbone 轮流跑两臂，靠「载入该臂上一轮的 checkpoint」换权重。
+第 0 轮两臂都没有上一轮，于是三处 `if previous.exists(): load_checkpoint(...)` 全部
+**什么也不做**——而 `ARMS = ("naive", "rfo_gold")`，naive 先训练并改掉共享参数，
+`rfo_gold` 的第 0 轮**从 naive 更新过的权重起步**，此后每一轮通过它自己的 checkpoint 继承下去。
+
+三处里其实只有第三处（训练）真的被污染：前两处（生成候选、选样）在第 0 轮时权重确实还是 base，
+因为生成和选样都不改权重。但**三处走同一个 helper 才是对的**，
+`if ... exists()` 而没有 else 是这个缺陷的书面形式，手写第四次照样会错，而且不报错。
+
+修法：`capture_base_state` / `restore_base_state` / `restore_arm_state`
+（`src/selfsight/training/checkpoint.py`），在 `attach_lora` 之后、任何训练之前抓一次 base；
+没有上一轮 checkpoint 时**恢复 base，而不是什么都不做**。
+RNG 一并抓——第 1 轮起 `load_checkpoint` 本来就会恢复各臂的 RNG，
+第 0 轮若跳过，两臂会在唯一应当完全相同的那一轮里抽到不同的 LoRA dropout。
+
+**过程中发现的第二件事，比第一件更值得记**：`lora_state_dict` 里的 `.detach().cpu()`
+在 CPU 张量上是**恒等操作，不是拷贝**，所以第一版 `capture_base_state` 存的是活引用，
+`optimizer.step()` 会把「base」一起改掉。`save_checkpoint` 侥幸没事，因为它马上序列化。
+**后果是第一版测试全绿而毫无内容**——比较的两边是同一个张量，恒等永远成立。
+测试里的取值也改成 `clone()`，并单独跑了一遍旧行为确认它真的会红
+（旧代码下 rfo_gold 从 `[11.0, 8.0]` 起步，base 是 `[1.0, -2.0]`）。
+守住它的是 `tests/test_round_zero_weights.py`（8 项），含一条语法树检查：
+`stage_train` 内不得再直接调用 `load_checkpoint`。
+
+**39.2 被优化的那个信号，从未在结果集上测过（缺口，未修）**
+
+这里有三个量，此前被当成两个：
+
+| 记号 | 是什么 | 在哪测 |
+|---|---|---|
+| `s_select` | 各臂的选样奖励（naive：看得到提示词的原子题正确率） | **训练池**，每轮，存在 `SelectionDecision.scores` |
+| `internal_cycle` | `log p(prompt \| image)` | 结果集，每 checkpoint |
+| `external_correct` | 判别阶梯的正确率 | 结果集，每 checkpoint |
+
+**D\* 用的是 `internal_cycle`，不是 `s_select`，而且这是有理由的既定选择，不要改**：
+原子题形式正是 RFO 臂的选样目标，内部曲线若也用它，画的就是某一臂自己的目标函数
+（`tests/test_v4_evaluate.py:162` 写着理由，v2.3 正是这么错过一次）。
+
+**但缺口是真的**：过度优化的故事是「**被优化的那个信号**继续涨、真值不涨」，
+而 `s_select` 只在训练池上按轮记录，不进 `CheckpointMetrics`，不进任何曲线。
+所以当前设计能回答「循环一致性与正确率是否脱钩」，**不能**回答「自评价奖励与正确率是否脱钩」——
+后者才是摘要里那句话。补法是**加第三条曲线，不是替换**：每个 checkpoint 在结果集上另测
+`s_select`。这需要模型重新答题，是 GPU 成本。Proposal 3.5 §4.1 已登记。
+
+**39.3 internvl 的 96 MiB 拒绝：不是缺陷，是 §37c 的第二个实例**
+
+见 §37c 末尾的补记。两次 COMMAND、起步读数相同、第一次死第二次活，是竞争的签名。
+`await_room` 与三次重试都按设计工作了，**没有代码要改**。我先前判它「不是 §37c 的竞争」是错的。
+
 ## 已作废 / 已被取代
 
 | 结论 | 状态 | 原因 |
