@@ -38,6 +38,7 @@ from selfsight.training.checkpoint import (
     restore_base_state,
     save_checkpoint,
 )
+from selfsight.v4.train import initialize_base_checkpoint
 
 ROOT = Path(__file__).resolve().parents[1]
 DIGEST = "0" * 64
@@ -208,6 +209,34 @@ def test_the_base_carries_the_rng_so_both_arms_draw_the_same_randomness(tmp_path
     second = torch.randn(4)
 
     assert torch.equal(first, second)
+
+
+def test_persisted_base_restores_adapter_and_rng_before_round_zero(tmp_path):
+    model = TinyLora()
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda _step: 1)
+    base_path = tmp_path / "checkpoints" / "base" / "round--01"
+    torch.manual_seed(41)
+    expected_adapter = _adapter(model)
+    initialize_base_checkpoint(base_path, model=model, optimizer=optimizer,
+                               scheduler=scheduler, config={"seed": 41})
+    expected_random = torch.randn(4)
+    _train(model, 50)
+    torch.manual_seed(900)
+    initialize_base_checkpoint(base_path, model=model, optimizer=optimizer,
+                               scheduler=scheduler, config={"seed": 41})
+    assert _same(_adapter(model), expected_adapter)
+    assert torch.equal(torch.randn(4), expected_random)
+    manifest = json.loads((base_path / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["step"] == 0 and manifest["round_index"] == -1
+    assert manifest["metadata"]["initialization_seed"] == 41
+    # The restored snapshot is the source both arms receive, even after one
+    # of them has updated the resident adapter.
+    base = capture_base_state(model)
+    _train(model, 100)
+    restore_arm_state(tmp_path / "missing-round-zero", model=model, optimizer=None,
+                      scheduler=None, expected_config_digest=DIGEST, base=base)
+    assert _same(_adapter(model), expected_adapter)
 
 
 def test_restoring_the_base_does_not_touch_cuda(monkeypatch):
