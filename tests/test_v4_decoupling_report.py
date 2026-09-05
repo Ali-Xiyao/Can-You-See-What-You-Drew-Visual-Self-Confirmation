@@ -3,21 +3,29 @@
 from __future__ import annotations
 
 import json
+import importlib.util
+import math
 import sys
 from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from v4_decoupling_report import (  # noqa: E402
-    analyze_arm,
-    behavior_windows,
-    build_report,
-    classify_lead,
-    gradient_trajectory,
-    paired_changes,
-    read_outcome,
-)
+_script = Path(__file__).with_name("v4_decoupling_report.py")
+if not _script.exists():
+    _script = Path(__file__).resolve().parents[1] / "scripts/v4_decoupling_report.py"
+_spec = importlib.util.spec_from_file_location("reviewed_v4_decoupling_report", _script)
+_module = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_module)
+analyze_arm = _module.analyze_arm
+behavior_windows = _module.behavior_windows
+build_report = _module.build_report
+classify_lead = _module.classify_lead
+gradient_trajectory = _module.gradient_trajectory
+paired_changes = _module.paired_changes
+paired_binary_bounds = _module.paired_binary_bounds
+read_outcome = _module.read_outcome
+scene_cluster_changes = _module.scene_cluster_changes
+add_scene_sensitivity = _module.add_scene_sensitivity
 
 
 def _point(step: int, score: float, external: float = 1.0, n: int = 6) -> dict:
@@ -156,15 +164,17 @@ def test_missing_probe_breaks_consecutive_flags_and_alarm_uses_confirmation_time
     assert result["candidate_alarm_step"] == 32
 
 
-def test_late_gradient_alarm_has_negative_lead_not_zero():
+def test_late_registered_rule_lead_is_preserved_but_not_upgraded_to_robust_support():
     points = [_point(0, 0.5), _point(8, 0.51), _point(16, 0.54), _point(24, 0.55)]
     gradients = [_gradient(0, 0.99), _gradient(8, 0.987, paired=True),
                  _gradient(16, 0.97, paired=True), _gradient(24, 0.96, paired=True)]
     result = analyze_arm(points, gradients, bootstrap_samples=100)
     assert result["first_interval_supported_step"] == 16
     assert result["gradient"]["interval_supported_alarm_step"] == 24
-    assert result["lead"]["status"] == "late"
-    assert result["lead"]["lead_steps"] == -8
+    assert result["bootstrap_rule_lead"]["status"] == "late"
+    assert result["bootstrap_rule_lead"]["lead_steps"] == -8
+    assert result["lead"]["status"] == "no_event"
+    assert result["first_robustness_supported_step"] is None
 
 
 @pytest.mark.parametrize("event,alarm,status,lead", [
@@ -213,3 +223,260 @@ def test_wrong_reference_or_too_few_common_prompts_cannot_support_alarm():
     result = gradient_trajectory(reports, [0, 8, 16])
     assert result["candidate_alarm_step"] == 16
     assert result["interval_supported_alarm_step"] is None
+
+
+def test_zero_external_changes_on_64_specs_do_not_prove_two_point_stagnation():
+    points = [_point(0, 0.5, 0.0, n=64), _point(8, 0.516, 0.0, n=64),
+              _point(16, 0.532, 0.0, n=64)]
+    result = analyze_arm(points, [], bootstrap_samples=2000)
+    window = result["windows"][0]
+    assert window["bootstrap_rule_supported"] is True
+    assert window["bootstrap_degenerate_external_interval"] is True
+    assert window["external"]["ci_high"] == 0
+    robustness = window["robustness"]
+    exact_upper = 1 - 0.0125 ** (1 / 64)
+    assert robustness["external_paired_binary_bounds"]["ci_high"] == pytest.approx(exact_upper)
+    assert robustness["external_confidence_and_unknown_envelope"][1] > 0.02
+    assert window["robustness_supported"] is False
+    assert result["first_bootstrap_rule_supported_step"] == 16
+    assert result["first_robustness_supported_step"] is None
+
+
+def test_two_complete_pairs_cannot_represent_64_specs(tmp_path):
+    points = []
+    for step in (0, 8, 16):
+        rows = [{"spec": f"s{i}", "score": 0.5 + step * 0.002,
+                 "verdict": False if step < 16 or i < 2 else None} for i in range(64)]
+        points.append(read_outcome(_write_checkpoint(tmp_path, step, rows)))
+    window = behavior_windows(points, bootstrap_samples=2000)[0]
+    assert window["n_paired_specs"] == 2
+    assert window["bootstrap_rule_supported"] is True
+    robustness = window["robustness"]
+    assert robustness["n_population_specs"] == 64
+    assert robustness["n_external_unknown_pairs"] == 62
+    assert robustness["external_pair_coverage"] == 2 / 64
+    assert robustness["external_unknown_completion_delta_bounds"] == [0.0, 62 / 64]
+    assert robustness["external_confidence_and_unknown_envelope"][1] >= 62 / 64
+    assert window["robustness_supported"] is False
+
+
+def test_missing_manifest_rows_still_belong_to_the_frozen_population(tmp_path):
+    all_ids = [f"s{i}" for i in range(64)]
+    directory = _write_checkpoint(tmp_path, 16, [
+        {"spec": sid, "score": 0.6, "verdict": False} for sid in all_ids[:2]])
+    point = read_outcome(directory, expected_spec_ids=all_ids)
+    assert point["coverage"]["missing_manifest_specs"] == 62
+    assert len(point["spec_measurements"]) == 64
+    assert point["spec_measurements"]["s63"]["external"] is None
+    assert point["spec_measurements"]["s63"]["external_high"] == 1
+    with pytest.raises(ValueError, match="outside the frozen outcome split"):
+        read_outcome(directory, expected_spec_ids=["different"])
+
+
+def test_a_large_fully_observed_decline_can_pass_the_supplementary_check():
+    points = [_point(0, 0.5, 1.0, n=64), _point(8, 0.516, 1.0, n=64),
+              _point(16, 0.532, 0.0, n=64), _point(24, 0.54, 0.0, n=64)]
+    gradients = [_gradient(0, 0.99), _gradient(8, 0.987, paired=True),
+                 _gradient(16, 0.97, paired=True), _gradient(24, 0.96, paired=True)]
+    result = analyze_arm(points, gradients, bootstrap_samples=100)
+    window = result["windows"][0]
+    assert window["bootstrap_rule_supported"] is True
+    assert window["robustness_supported"] is True
+    assert window["robustness"]["external_paired_binary_bounds"]["deteriorations"] == 64
+    assert result["first_robustness_supported_step"] == 16
+    assert result["lead"]["status"] == "late"
+    assert result["lead"]["lead_steps"] == -8
+
+
+def test_nonbinary_spec_rates_are_not_silently_sent_to_binomial_inference():
+    points = [_point(0, 0.5, 0.5, n=64), _point(8, 0.516, 0.5, n=64),
+              _point(16, 0.532, 0.0, n=64)]
+    window = behavior_windows(points, bootstrap_samples=100)[0]
+    assert window["bootstrap_rule_supported"] is True
+    assert window["robustness"]["external_ci_status"] == "nonbinary_spec_rates"
+    assert window["robustness_supported"] is False
+
+
+def test_missing_internal_scores_block_the_supplementary_population_claim(tmp_path):
+    points = []
+    for step in (0, 8, 16):
+        rows = [{"spec": f"s{i}", "score": 0.5 + step * 0.002
+                 if step < 16 or i < 2 else None, "verdict": step < 16} for i in range(64)]
+        points.append(read_outcome(_write_checkpoint(tmp_path, step, rows)))
+    window = behavior_windows(points, bootstrap_samples=100)[0]
+    assert window["bootstrap_rule_supported"] is True
+    assert window["robustness"]["external_supported"] is True
+    assert window["robustness"]["internal_pair_coverage"] == 2 / 64
+    assert window["robustness_supported"] is False
+
+
+def test_clopper_pearson_joint_bounds_cover_small_multinomial_population():
+    n, p_plus, p_minus = 5, 0.3, 0.2
+    truth = p_plus - p_minus
+    coverage = 0.0
+    for plus in range(n + 1):
+        for minus in range(n - plus + 1):
+            unchanged = n - plus - minus
+            probability = (math.factorial(n) / math.factorial(plus) / math.factorial(minus)
+                           / math.factorial(unchanged) * p_plus ** plus * p_minus ** minus
+                           * (1 - p_plus - p_minus) ** unchanged)
+            interval = paired_binary_bounds(plus, minus, n)
+            if interval["ci_low"] <= truth <= interval["ci_high"]:
+                coverage += probability
+    assert coverage >= 0.95
+    positive = paired_binary_bounds(64, 0, 64)
+    negative = paired_binary_bounds(0, 64, 64)
+    assert positive["ci_low"] == pytest.approx(-negative["ci_high"])
+    assert positive["ci_high"] == pytest.approx(-negative["ci_low"])
+
+
+def _scene_audit() -> dict:
+    groups = [["s0", "s1", "s2"], ["s3", "s4"], ["s5", "s6"], ["s7", "s8"]]
+    groups.extend([[f"s{i}"] for i in range(9, 64)])
+    return {"created_before_any_outcome_evaluation_artifact": True,
+            "within_outcome_clusters": [{"scene_sha256": f"scene-{index}", "spec_ids": ids}
+                                         for index, ids in enumerate(groups)],
+            "scene_disjoint_outcome_sensitivity": {"spec_ids": [f"s{i}" for i in range(57)]},
+            "summary": {"outcome_unique_canonical_scenes": 59}}
+
+
+def test_cluster_bootstrap_preserves_prompt_weighting_and_paired_scene_membership():
+    start = _point(0, 0.0, n=3)
+    end = _point(16, 1.0, n=3)
+    end["complete_specs"]["s2"]["s_select"] = 0.0
+    result = scene_cluster_changes(start, end, {"s0": "duplicate", "s1": "duplicate", "s2": "other"},
+                                   bootstrap_samples=2000, seed=17)
+    assert result["s_select"]["delta"] == pytest.approx(2 / 3)
+    assert result["n_population_scene_clusters"] == 2
+    assert result["n_paired_scene_clusters"] == 2
+    assert result["s_select"]["ci_low"] == 0.0
+    assert result["s_select"]["ci_high"] == 1.0
+    assert result["valid_bootstrap_draws"] == 2000
+
+
+def test_duplicate_scene_screen_does_not_change_registered_64_spec_rule():
+    points = [_point(0, 0.5, 1.0, n=64), _point(8, 0.516, 1.0, n=64),
+              _point(16, 0.532, 0.0, n=64)]
+    report = analyze_arm(points, [], bootstrap_samples=100)
+    assert report["windows"][0]["robustness_supported"] is True
+    add_scene_sensitivity(report, points, _scene_audit(), bootstrap_samples=100, seed=17,
+                          rules=_module.RULES)
+    window = report["windows"][0]
+    assert window["n_paired_specs"] == 64
+    assert window["bootstrap_rule_supported"] is True
+    assert report["first_bootstrap_rule_supported_step"] == 16
+    assert window["scene_cluster_bootstrap"]["n_population_scene_clusters"] == 59
+    assert window["robustness_supported_assuming_independent_specs"] is True
+    assert window["robustness_supported"] is False
+    assert "blocked_pending_scene" in window["robustness_support_status"]
+    assert report["lead"]["status"] == "no_event"
+    sensitivity = window["scene_disjoint_sensitivity"]
+    assert sensitivity["n_paired_specs"] == 57
+    assert sensitivity["requested_sensitivity_n"] == 57
+    assert sensitivity["scene_cluster_bootstrap"]["n_population_scene_clusters"] == 52
+    assert sensitivity["robustness_supported"] is False
+    assert report["scene_disjoint_sensitivity_summary"]["requested_specs"] == 57
+
+
+def test_scene_audit_loaded_and_its_identity_frozen_across_reports(tmp_path):
+    (tmp_path / "split.json").write_text(json.dumps({"outcome": [f"s{i}" for i in range(64)]}),
+                                         encoding="utf-8")
+    for step in (0, 8, 16):
+        _write_checkpoint(tmp_path, step, [{"spec": f"s{i}", "score": 0.5 + step * 0.002,
+                                          "verdict": step < 16} for i in range(64)])
+    audit_path = tmp_path / "audit-splits" / "scene_overlap.json"
+    audit_path.parent.mkdir()
+    audit = _scene_audit()
+    audit["provenance"] = {"split_sha256": _module.file_identity(tmp_path / "split.json")["sha256"]}
+    audit_path.write_text(json.dumps(audit), encoding="utf-8")
+    report = build_report(tmp_path, bootstrap_samples=100)
+    assert report["scene_audit_status"] == "prospectively_frozen_supplement_loaded"
+    assert report["provenance"]["scene_overlap"]["sha256"] == _module.file_identity(audit_path)["sha256"]
+    assert report["arms"]["naive"]["windows"][0]["scene_disjoint_sensitivity"]["n_paired_specs"] == 57
+    (tmp_path / "decoupling_report.json").write_text(json.dumps(report), encoding="utf-8")
+    audit["scene_disjoint_outcome_sensitivity"]["spec_ids"].pop()
+    audit_path.write_text(json.dumps(audit), encoding="utf-8")
+    with pytest.raises(ValueError, match="Frozen scene_overlap changed"):
+        build_report(tmp_path, bootstrap_samples=100)
+
+
+def test_scene_audit_cannot_silently_target_a_different_outcome_population(tmp_path):
+    (tmp_path / "split.json").write_text(json.dumps({"outcome": ["foreign"]}), encoding="utf-8")
+    path = tmp_path / "audit-splits" / "scene_overlap.json"
+    path.parent.mkdir()
+    path.write_text(json.dumps(_scene_audit()), encoding="utf-8")
+    with pytest.raises(ValueError, match="population does not match frozen split"):
+        build_report(tmp_path, bootstrap_samples=100)
+
+
+def test_one_observed_scene_does_not_get_a_cluster_confidence_interval():
+    start, end = _point(0, 0.5, n=3), _point(16, 0.6, n=3)
+    result = scene_cluster_changes(start, end, {f"s{i}": "same" for i in range(3)},
+                                   bootstrap_samples=100, seed=17)
+    assert result["n_paired_scene_clusters"] == 1
+    assert result["s_select"]["ci_low"] is None
+    assert result["external"]["ci_high"] is None
+
+
+def test_fixed_missingness_mixture_is_not_promoted_to_population_support(tmp_path):
+    points = []
+    for step in (0, 8, 16):
+        rows = [{"spec": f"s{i}", "score": 0.5 + step * 0.002,
+                 "verdict": (i < 36) if step < 16 else False if i < 36 else None}
+                for i in range(64)]
+        points.append(read_outcome(_write_checkpoint(tmp_path, step, rows)))
+    window = behavior_windows(points, bootstrap_samples=100)[0]
+    robust = window["robustness"]
+    assert robust["external_confidence_and_unknown_envelope"][1] < 0.02
+    assert robust["external_fixed_cohort_screen"] is True
+    assert robust["external_complete_population"] is False
+    assert robust["external_full_cohort_completion_confidence_bounds"][1] > 0.02
+    assert robust["external_supported"] is False
+    assert window["robustness_supported"] is False
+
+
+def test_full_cohort_completion_can_support_a_large_decline_with_one_unknown(tmp_path):
+    points = []
+    for step in (0, 8, 16):
+        rows = [{"spec": f"s{i}", "score": 0.5 + step * 0.002,
+                 "verdict": True if step < 16 else False if i < 63 else None}
+                for i in range(64)]
+        points.append(read_outcome(_write_checkpoint(tmp_path, step, rows)))
+    window = behavior_windows(points, bootstrap_samples=100)[0]
+    robust = window["robustness"]
+    assert robust["n_external_unknown_pairs"] == 1
+    assert robust["external_complete_population"] is False
+    assert robust["external_upper_completion_binary_bounds"]["n"] == 64
+    assert robust["external_full_cohort_completion_confidence_bounds"][1] < 0.02
+    assert robust["external_supported"] is True
+    assert window["robustness_supported"] is True
+
+
+def test_frozen_one_representative_per_held_out_scene_allows_conditional_screen():
+    points = [_point(0, 0.5, 1.0, n=64), _point(8, 0.516, 1.0, n=64),
+              _point(16, 0.532, 0.0, n=64)]
+    audit = _scene_audit()
+    allowed = set(audit["scene_disjoint_outcome_sensitivity"]["spec_ids"])
+    representatives = {"spec_ids": sorted(min(group["spec_ids"]) for group in audit["within_outcome_clusters"]
+                                          if set(group["spec_ids"]) <= allowed)}
+    report = analyze_arm(points, [], bootstrap_samples=100)
+    add_scene_sensitivity(report, points, audit, bootstrap_samples=100, seed=17,
+                          rules=_module.RULES, representative_audit=representatives)
+    window = report["windows"][0]
+    assert window["n_paired_specs"] == 64
+    assert window["bootstrap_rule_supported"] is True
+    assert window["robustness_supported"] is False
+    assert window["scene_disjoint_sensitivity"]["n_paired_specs"] == 57
+    representative = window["independent_scene_representative_sensitivity"]
+    assert representative["n_paired_specs"] == 52
+    assert representative["scene_cluster_bootstrap"]["n_population_scene_clusters"] == 52
+    assert representative["robustness_supported"] is True
+    assert representative["robustness_support_status"] == "conditional_on_independent_canonical_scenes"
+    assert report["independent_scene_representative_summary"]["first_robustness_supported_step"] == 16
+
+
+def test_representative_selection_cannot_change_after_seeing_outcomes():
+    report = analyze_arm([], [], bootstrap_samples=100)
+    with pytest.raises(ValueError, match="lexicographic scene rule"):
+        add_scene_sensitivity(report, [], _scene_audit(), bootstrap_samples=100, seed=17,
+                              rules=_module.RULES, representative_audit={"spec_ids": ["s1"]})

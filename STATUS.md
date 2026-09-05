@@ -2117,9 +2117,26 @@ spec ID 和原文 prompt 隔离不等于场景隔离：按规范化的物体/颜
 主划分不回填；不能把全 64 项称为未见场景，补充分析须考虑场景聚类。
 
 统计复审发现二值配对变化全零时 percentile bootstrap 会退化为 [0,0]，不能据此可靠排除
-2pp 以上改善；少量完整可判 spec 也不能代表大量 unknown 的全体 outcome。正在准备报告技术
-修复：原注册 bootstrap 旗标保留并明确命名，补未知补全界与稀疏二值保守界，不改实验门槛。
-运行中的源码暂不修改，阶段完成后才记录修复并恢复。
+2pp 以上改善；少量完整可判 spec 也不能代表大量 unknown 的全体 outcome。报告修复已经
+独立验证：保留原注册 bootstrap 旗标，补逐 spec 未知完成界及完整 N 项的保守二值界。
+64 项全零的补充上界为 6.618pp，不能据此证明小于 2pp；2/64 可判同样不能获支持。
+Clopper–Pearson 反演与 SciPy exact 在 25 组边界/常规情形相差不超过 1.04e-13。
+原门槛不变；内部连续量仍使用注册 bootstrap，重复查看未校正，补充筛查仍非确证。
+
+另在任何 outcome manifest 出现前固定 54 个独立场景代表题（每场景字典序首 spec，剔除
+训练重合场景），见 `audit-splits/scene_representatives.json`。原 64/57 项及场景聚类结果
+全部保留。梯度的独立 CPU 敏感性脚本剔除两项训练重合，目标为 14 池、14 场景，
+只对 Gram 切片并做同场景联合重采样，不新增 GPU 计算或宣称预警确证。
+
+437 项 CPU 检查全过。GPU0 额外完成真实 train_arm/AdamW canary：2 次更新、12 个 T2I
+及 4 个 replay microbatch，参数 delta L2=0.114798，峰值 reserved 9.04 GiB，退出 0。
+主 base/config/split 哈希未变，全部 canary 排除于主轨迹。
+
+报告/调度修复采用一次性边界接续：当前训练子进程继续使用启动时的代码；成功退出后旧
+supervisor 的源码守卫会暂停。`repair-staging/resume-after-reviewed-repair.ps1` 只在首轮
+成功、暂停原因精确匹配且所有已审查文件哈希一致时，启动带修复登记的新版 supervisor。
+真实训练失败或未经审查的改动不会自动重试。每个后续测量阶段还输出场景敏感性报告及
+独立 PNG 轨迹图；当前无主轨迹数据时明示 no_data，不把 canary 冒充测量结果。
 
 LoRA B 从零初始化还带来解释限制：base 的 A 梯度为零，训练后 A 梯度出现，余弦变化可以
 部分来自参数化几何。早期 GDA 下降不能单独证明观察能力脱钩，须结合行为轨迹和 Gold 对照。

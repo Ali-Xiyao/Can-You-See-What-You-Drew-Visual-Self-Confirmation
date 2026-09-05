@@ -20,12 +20,13 @@ SPEC.loader.exec_module(MODULE)
 def test_done_with_invalid_updates_is_rejected(tmp_path, field, value):
     runner = object.__new__(MODULE.Pilot)
     runner.out = tmp_path
-    runner.config = {"pilot": {"min_paired_prompts": 2}}
+    runner.config = {"pilot": {"min_paired_prompts": 2}, "training": {"optimizer_steps_per_round": 8}}
     arm = {"mean_t2i_loss": 1, "mean_gradient_norm_before_clip": .2, "parameter_delta_l2": .1}
     arm[field] = value
     target = tmp_path / "rounds/round-000/DONE.json"
     target.parent.mkdir(parents=True)
-    target.write_text(json.dumps({"paired": 3, "arms": [arm, arm]}))
+    target.write_text(json.dumps({"paired": 3, "arms": [
+        dict(arm, arm=name, round=0, optimizer_steps=8) for name in MODULE.ARMS]}))
     with pytest.raises(RuntimeError):
         runner.validate_round(0)
 
@@ -38,4 +39,16 @@ def test_done_with_too_few_paired_prompts_is_rejected(tmp_path):
     target.parent.mkdir(parents=True)
     target.write_text(json.dumps({"paired": 1, "arms": []}))
     with pytest.raises(RuntimeError, match="too few"):
+        runner.validate_round(0)
+
+
+@pytest.mark.parametrize("names", [[], ["naive"], ["naive", "naive"]])
+def test_done_does_not_hide_missing_independent_training_arm(tmp_path, names):
+    runner = object.__new__(MODULE.Pilot)
+    runner.out = tmp_path
+    runner.config = {"pilot": {"min_paired_prompts": 2}, "training": {"optimizer_steps_per_round": 8}}
+    target = tmp_path / "rounds/round-000/DONE.json"
+    target.parent.mkdir(parents=True)
+    target.write_text(json.dumps({"paired": 3, "arms": [{"arm": name} for name in names]}))
+    with pytest.raises(RuntimeError, match="missing or duplicate"):
         runner.validate_round(0)

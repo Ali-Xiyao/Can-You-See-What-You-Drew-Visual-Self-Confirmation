@@ -28,6 +28,7 @@ SOURCES = [
     "scripts/v4_checkpoint_probe.py", "src/selfsight/v4/checkpoint_probe.py",
     "scripts/v4_decoupling_report.py", "src/selfsight/v4/factual_truth.py",
     "src/selfsight/training/checkpoint.py", "scripts/run_decoupling_pilot.py",
+    "scripts/v4_decoupling_plot.py", "scripts/v4_gradient_sensitivity.py",
 ]
 
 
@@ -86,7 +87,9 @@ class Pilot:
                 if not args.accept_code_update:
                     raise ValueError("Source changed; review and record the repair before resume")
                 repairs = old.get("code_repairs", [])
-                repairs.append({"at": time.time(), "previous": old["source_sha256"]})
+                repairs.append({"at": time.time(), "previous": old["source_sha256"],
+                                "git_head": subprocess.check_output(
+                                    ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()})
                 old.update(source_sha256=fingerprint, code_repairs=repairs)
                 write_json(self.manifest_path, old)
             manifest = old
@@ -187,16 +190,27 @@ class Pilot:
         self.run(f"step-{step:05d}.report", "core", "scripts/v4_decoupling_report.py",
                  ["--outdir", str(self.out), "--config", str(self.config_path),
                   "--protocol", str(ROOT / "docs/prereg/2026-09-06-decoupling-pilot.md")])
+        self.run(f"step-{step:05d}.gradient-sensitivity", "core", "scripts/v4_gradient_sensitivity.py",
+                 ["--outdir", str(self.out)])
+        self.run(f"step-{step:05d}.plot", "core", "scripts/v4_decoupling_plot.py",
+                 ["--outdir", str(self.out)])
 
     def validate_round(self, index: int) -> None:
         path = self.out / "rounds" / f"round-{index:03d}" / "DONE.json"
         row = json.loads(path.read_text(encoding="utf-8"))
         if row["paired"] < self.config["pilot"]["min_paired_prompts"]:
             raise RuntimeError(f"Round {index} has too few paired prompts")
+        reports = row.get("arms", [])
+        if sorted(report.get("arm", "") for report in reports) != sorted(ARMS):
+            raise RuntimeError(f"Round {index}: missing or duplicate arm reports")
         for report in row["arms"]:
+            if report.get("round") != index or report.get("optimizer_steps") != self.config["training"]["optimizer_steps_per_round"]:
+                raise RuntimeError(f"Round {index}: report does not match scheduled optimizer updates")
             for key in ("mean_t2i_loss", "mean_gradient_norm_before_clip", "parameter_delta_l2"):
                 if not math.isfinite(report[key]):
                     raise RuntimeError(f"Round {index}: nonfinite {key}")
+            if report["mean_gradient_norm_before_clip"] <= 0:
+                raise RuntimeError(f"Round {index}: no measured objective gradient")
             if report["parameter_delta_l2"] <= 0:
                 raise RuntimeError(f"Round {index}: no measured parameter update")
 
