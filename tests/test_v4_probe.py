@@ -78,25 +78,67 @@ def test_the_questions_come_from_the_spec_and_not_from_any_one_image():
 
     questions = spec_questions(_spec())
     texts = [question.text for question in questions]
-    assert all("red cube" in text or "blue sphere" in text for text in texts)
-    assert all(question.expected_answer in ("yes", "one", "two") for question in questions)
+    assert all("cube" in text or "sphere" in text for text in texts)
+    assert all(question.expected_answer in ("yes", "1") for question in questions)
 
 
-def test_a_count_atom_appears_only_when_more_than_one_was_requested():
-    assert len(spec_questions(_spec(count=1))) == 2
-    counted = spec_questions(_spec(count=2))
-    assert len(counted) == 3
-    count_atom = next(q for q in counted if ":count:" in q.question_id)
-    assert count_atom.expected_answer == "two"
-    assert set(count_atom.choices) == {"two", "one"}
+def test_a_count_atom_appears_for_every_object_including_the_singletons():
+    """"One cup was asked for and two were drawn" used to have no question at all.
+
+    The count atom was built only when `obj.count > 1`, so over-drawing a
+    singleton was invisible to the selector -- one of the three coverage gaps
+    STATUS 38 turned up.
+    """
+
+    for count in (1, 2, 3):
+        questions = spec_questions(_spec(count=count))
+        assert len(questions) == 4  # two objects, an existence and a count each
+        counts = [q for q in questions if ":count:" in q.question_id]
+        assert len(counts) == 2
+    singleton = next(q for q in spec_questions(_spec(count=1))
+                     if q.question_id.endswith(":count:1"))
+    assert singleton.expected_answer == "1"
 
 
-def test_every_atom_is_forced_choice():
-    """Open answers would let the two arms differ by verbosity rather than belief."""
+def test_the_count_atom_is_open_and_the_existence_atom_is_forced_choice():
+    """The count atom has to be able to express an answer the spec does not hold.
+
+    As a forced choice between `count` and `count - 1` it could not: a picture
+    asked for two and drawn with five had "two" as its only reachable correct-
+    looking answer, so looking carefully returned the same answer as reciting
+    the prompt. That is what put 83.2% of candidates at the ceiling.
+    """
 
     for question in spec_questions(_spec(count=3)):
-        assert question.question_format is QuestionFormat.FORCED_CHOICE
-        assert len(question.choices) == 2
+        if ":count:" in question.question_id:
+            assert question.question_format is QuestionFormat.OPEN
+            assert question.choices == ()
+        else:
+            assert question.question_format is QuestionFormat.FORCED_CHOICE
+            assert len(question.choices) == 2
+
+
+def test_a_count_the_spec_never_mentions_scores_wrong_rather_than_right():
+    """The whole point of the change, stated as the behaviour it buys.
+
+    Under the old binary a reply of "five" found no letter and abstained, and
+    `observation_score` drops abstentions from the denominator -- so seeing five
+    cups where two were asked cost the candidate nothing.
+    """
+
+    from selfsight.data.questions import score_answer
+
+    count_atom = next(q for q in spec_questions(_spec(count=2))
+                      if q.question_id.endswith(":count:1"))
+    assert count_atom.expected_answer == "2"
+
+    seen_five = score_answer("five", count_atom)
+    assert seen_five.normalized == "5"
+    assert not seen_five.abstain, "an observable count must reach the score, not abstain"
+    assert not seen_five.correct
+
+    recited = score_answer("two", count_atom)
+    assert recited.correct, "reciting the spec still scores; that is not what changed"
 
 
 def test_the_correct_option_is_not_always_the_same_letter():
@@ -110,6 +152,8 @@ def test_the_correct_option_is_not_always_the_same_letter():
     first_letters = []
     for index in range(40):
         for question in spec_questions(_spec(f"s{index}", count=2)):
+            if question.question_format is not QuestionFormat.FORCED_CHOICE:
+                continue  # the open count atom has no letters to prefer
             first_letters.append(question.choices[0] == question.expected_answer)
     share = sum(first_letters) / len(first_letters)
     assert 0.3 < share < 0.7, f"correct answer sat in A {share:.0%} of the time"
@@ -121,21 +165,41 @@ def test_the_placement_is_identical_for_every_candidate_in_a_pool():
     assert spec_questions(_spec("s1", count=2)) == spec_questions(_spec("s1", count=2))
 
 
-def test_counting_atoms_do_not_use_the_counting_fallback_vocabulary():
-    """`normalize_answer`'s counting branch rewrites "two" to "2".
+def test_counting_atoms_now_take_the_counting_fallback_vocabulary():
+    """The reason the old atoms avoided this branch was the forced-choice form.
 
-    An expected answer of "two" would then never match a reply that names the
-    word but not the letter, and the atom would score as wrong rather than
-    abstain.
+    `normalize_answer`'s counting branch rewrites number words to digits, so an
+    expected answer of "two" could never match and the atom scored as an
+    abstention. With an open atom the branch is what we want, and the expected
+    answer is `str(count)` to meet it: the branch is deliberately open-ended
+    past the 0--4 ontology so a count the prompt never mentioned survives as an
+    answer instead of collapsing into "unparseable".
     """
 
     from selfsight.data.questions import normalize_answer
 
-    count_atom = next(q for q in spec_questions(_spec(count=2)) if ":count:" in q.question_id)
-    assert count_atom.family is QuestionFamily.EXISTENCE
-    assert normalize_answer("two", count_atom) is None
-    letter = "A" if count_atom.choices[0] == "two" else "B"
-    assert normalize_answer(f"{letter}. two", count_atom) == "two"
+    count_atom = next(q for q in spec_questions(_spec(count=2))
+                      if q.question_id.endswith(":count:1"))
+    assert count_atom.family is QuestionFamily.COUNT
+    assert count_atom.expected_answer == "2"
+    assert normalize_answer("two", count_atom) == "2"
+    assert normalize_answer("I count 2 spheres", count_atom) == "2"
+    assert normalize_answer("six", count_atom) == "6"
+    # Still refuses to guess: two numbers, or a hedge, is not an observation.
+    assert normalize_answer("either 2 or 3", count_atom) is None
+    assert normalize_answer("unclear", count_atom) is None
+
+
+def test_the_existence_atom_still_abstains_on_an_unparseable_reply():
+    """Unchanged, and checked here because the family split is easy to get wrong."""
+
+    from selfsight.data.questions import normalize_answer
+
+    exists = next(q for q in spec_questions(_spec()) if ":exists:" in q.question_id)
+    assert exists.family is QuestionFamily.EXISTENCE
+    assert normalize_answer("hard to say", exists) is None
+    letter = "A" if exists.choices[0] == "yes" else "B"
+    assert normalize_answer(f"{letter}. yes", exists) == "yes"
 
 
 # ---------------------------------------------------------------------- pools

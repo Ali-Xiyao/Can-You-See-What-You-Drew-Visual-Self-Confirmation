@@ -45,7 +45,6 @@ from selfsight.v4.questions import _place
 from selfsight.v4.spec import SceneSpec, canonical_noun
 
 UNADJUDICATED = {"pending_human", "unnameable"}
-NUMBER_WORDS = {0: "zero", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}
 
 
 @dataclass(frozen=True)
@@ -74,30 +73,43 @@ def _phrase(noun: str, colour: str | None) -> str:
 
 
 def spec_questions(spec: SceneSpec) -> tuple[AtomicQuestion, ...]:
-    """The intent, as forced-choice atoms the observer can be asked about.
+    """The intent, as atoms the observer can be asked about.
 
-    One existence atom per requested object, plus a count atom for objects
-    requested more than once. The expected answer is always what the *request*
-    asked for, which is what makes the resulting score a cycle-consistency
-    score: a candidate scores high when the observer confirms the picture
-    matches what was asked.
+    Two atoms per requested object: a forced-choice existence atom, and an open
+    counting atom. The expected answer is always what the *request* asked for,
+    which is what makes the resulting score a cycle-consistency score: a
+    candidate scores high when the observer confirms the picture matches what
+    was asked.
 
-    Two details are load-bearing.
+    Three details are load-bearing.
 
-    The correct option is placed in A or B by the same `_place` the v4 corpus
-    uses, seeded from the spec so the placement is identical for every candidate
-    in a pool and stable across reruns. Left in a fixed position, a model with a
-    letter preference would score above chance without looking at the picture,
-    every candidate would score alike, all three criteria would fall through to
-    the same tie-break, and the Gate B cosine would come out at 1.000 while
-    measuring nothing at all.
+    The existence atom's correct option is placed in A or B by the same `_place`
+    the v4 corpus uses, seeded from the spec so the placement is identical for
+    every candidate in a pool and stable across reruns. Left in a fixed position,
+    a model with a letter preference would score above chance without looking at
+    the picture, every candidate would score alike, all three criteria would fall
+    through to the same tie-break, and the Gate B cosine would come out at 1.000
+    while measuring nothing at all.
 
-    `family` is EXISTENCE on every atom, including the counting ones, for the
-    reason `v4.questions.to_atomic` gives: the family only chooses the fallback
-    vocabulary `normalize_answer` uses when no choice letter is found, and the
-    counting fallback rewrites "two" to "2", which would never match an expected
-    answer of "two". With EXISTENCE, a reply that names no letter abstains --
-    which is the right reading of an unparseable answer to a forced choice.
+    **The counting atom is open, and asked for every object rather than only for
+    the ones requested more than once.** It used to be a forced choice between
+    `count` and `count - 1`, which had two consequences measured in STATUS 38.
+    A picture asked for one cup and drawn with two was never asked about at all.
+    And a picture asked for two and drawn with five could only be answered "two"
+    or "one" -- so a model that had looked, and looked correctly, was forced back
+    onto the answer a model that had merely recited the prompt would give. That
+    is the part worth being precise about: **the ceiling is not broken by making
+    recitation fail.** Recitation matches the spec by construction, and the spec
+    is the gold. It is broken by letting looking produce a *different* answer,
+    which the binary form forbade. `str(obj.count)` and not the number word,
+    because `normalize_answer`'s counting branch rewrites words to digits and is
+    deliberately open-ended past the 0--4 ontology, so a visible "six" survives
+    as a wrong answer instead of collapsing into an abstention.
+
+    `family` is COUNT on the counting atoms so they take that branch. The
+    existence atoms stay EXISTENCE: the family only chooses the fallback
+    vocabulary used when no choice letter is found, and for a forced choice an
+    unparseable reply should abstain rather than be guessed at.
     """
 
     rng = random.Random(f"v4-gate-b:{spec.spec_id}")
@@ -117,20 +129,15 @@ def spec_questions(spec: SceneSpec) -> tuple[AtomicQuestion, ...]:
             choices=(option_a, option_b),
             choice_order_seed=ord(gold),
         ))
-        if obj.count > 1:
-            wanted = NUMBER_WORDS[obj.count]
-            option_a, option_b, gold = _place(rng, wanted, NUMBER_WORDS[obj.count - 1])
-            questions.append(AtomicQuestion(
-                question_id=f"{spec.spec_id}:count:{index}",
-                atom_id=f"{spec.spec_id}:count:{noun}",
-                family=QuestionFamily.EXISTENCE,
-                text=(f"How many {noun}s are in this picture? Answer A or B "
-                      f"only.\nA. {option_a}\nB. {option_b}"),
-                expected_answer=wanted,
-                question_format=QuestionFormat.FORCED_CHOICE,
-                choices=(option_a, option_b),
-                choice_order_seed=ord(gold),
-            ))
+        questions.append(AtomicQuestion(
+            question_id=f"{spec.spec_id}:count:{index}",
+            atom_id=f"{spec.spec_id}:count:{noun}",
+            family=QuestionFamily.COUNT,
+            text=(f"How many {noun}s are in this picture? "
+                  f"Answer with a single number."),
+            expected_answer=str(obj.count),
+            question_format=QuestionFormat.OPEN,
+        ))
     return tuple(questions)
 
 

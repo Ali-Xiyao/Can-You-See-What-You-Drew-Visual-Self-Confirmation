@@ -27,7 +27,20 @@ from selfsight.schemas import (
     Size,
 )
 
-NUMBER_WORDS = {"zero": "0", "one": "1", "two": "2", "three": "3", "four": "4"}
+# Past "four" because the vocabulary is for reading *replies*, not for writing
+# prompts. The reference scenes use a 0--4 ontology, but an open counting atom
+# asks what the observer sees in a generated picture, and it can see more than
+# was asked for -- that is the whole reason the atom is open (v4/probe.py).
+# A word this map does not hold parses to nothing, and an unparseable reply
+# abstains, and `rfo.selection.observation_score` drops abstentions from the
+# denominator: "I see five cups" where two were asked would cost the candidate
+# nothing. Extending the map is what makes the miscount reach the score.
+NUMBER_WORDS = {
+    "zero": "0", "none": "0", "no": "0",
+    "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
+    "six": "6", "seven": "7", "eight": "8", "nine": "9", "ten": "10",
+    "eleven": "11", "twelve": "12",
+}
 ABSTAIN_MARKERS = {"unknown", "unclear", "cannot tell", "can't tell", "not sure", "ambiguous"}
 
 
