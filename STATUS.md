@@ -2182,6 +2182,21 @@ CSV 新增 `external_coverage_policy` 区分旧 row-only 与 manifest 语义，�
 接续与 cycle 核验在 `runtime-check/coverage-repair-handoff-verified.json`，只读快照在
 `runtime-check/base-naive-integrity.json`（后者写入时 cycle 尚未齐，保留 partial 标签）。
 
+**43.7 首份留出基线裁定（2026-09-05 20:43 UTC）。** naive 的真实 base 64 图完成双检测、
+crop 和 verify：两检测器各 64 条有效记录、零错误/缺失；15 条 crop 回答覆盖 8 图，全部
+有效。独立 CPU 重放与保存的 64 条裁定逐字段一致。57 图已知，其中 16 正确；7 图因
+crop 未能确认争议物体而仍为 pending_human，无 unnameable 或 missing。
+正式外部口径为 16/57=28.07%，未知覆盖 7/64=10.94%；全 64 图完成界为
+[16/64,23/64]=[25.00%,35.94%]。证据在 `runtime-check/base-naive-verdict-integrity.json`。
+
+旧 `verified.summary.json` 的 p=31.25% 把 pending 的临时布尔字段也纳入，不是本轮正式
+外部指标，不能引用；新 manifest 计分和主轨迹报告按未知处理。基线逐图平均自评分为
+0.9270833，316 个问题中 293 个答案符合 spec 目标，回答覆盖完整。原子符合率与整图
+完全正确率不是同一种指标；这两个基线数的落差不等于训练脱钩。
+7 张待人工图如实保留未知；当前动态协议要求覆盖/边界，没有按 pending 数自动停机的
+条款。第二份 base 重复运行正在继续；20:42 的 49 对已生成图片 PNG/RGB 全部逐对一致，
+完整配对及梯度结果尚待后续测量。该部分快照保留在 `runtime-check/base-paired-images-20260905T204250Z.json`。
+
 ## 已作废 / 已被取代
 
 | 结论 | 状态 | 原因 |
