@@ -110,17 +110,46 @@ def spec_questions(spec: SceneSpec) -> tuple[AtomicQuestion, ...]:
     existence atoms stay EXISTENCE: the family only chooses the fallback
     vocabulary used when no choice letter is found, and for a forced choice an
     unparseable reply should abstain rather than be guessed at.
+
+    **The question names a colour, and the questions are grouped by the phrase
+    they name.** The first open-counting version asked "How many books are in
+    this picture?" and answered it with one spec entry's `count`. On `a red
+    book, a blue notebook, a yellow candle` -- `canonical_noun` maps notebook to
+    book on purpose, see `spec.SYNONYMS` -- that emitted the same sentence twice,
+    each wanting 1, about a picture that correctly holds 2 books. A model that
+    looked, counted right, and said 2 lost both marks, and the pool's ceiling for
+    a perfect observer of a perfect picture was 4/6. Two pools went further and
+    demanded 1 and 2 from the identical sentence, which nothing can satisfy. It
+    reached 24 of the 232 gate-b pools before anyone caught it, and it inflated
+    the reversed-order pools that the first rerun reported as the price of
+    resolution (STATUS 42).
+
+    Naming the colour is what fixes it, and it buys something: "how many red
+    books" is a question about colour bound to count, which is harder to answer
+    by reciting than a bare category total. Grouping by phrase and summing is
+    then belt and braces -- no spec in this corpus has two entries sharing a
+    colour *and* a canonical noun -- but it is what makes "a correct picture,
+    correctly observed, scores full marks" true by construction rather than true
+    because the corpus happened not to contain the bad case.
     """
 
     rng = random.Random(f"v4-gate-b:{spec.spec_id}")
+    # Insertion-ordered, so the question order and the RNG draws stay a function
+    # of the spec alone. Grouping never merges anything in the current corpus,
+    # which is why this leaves every existence placement where it already was.
+    groups: dict[tuple[str | None, str], int] = {}
+    for obj in spec.objects:
+        key = (obj.color, canonical_noun(obj.object))
+        groups[key] = groups.get(key, 0) + obj.count
+
     questions: list[AtomicQuestion] = []
-    for index, obj in enumerate(spec.objects):
-        noun = canonical_noun(obj.object)
-        phrase = _phrase(noun, obj.color)
+    for index, ((colour, noun), count) in enumerate(groups.items()):
+        phrase = _phrase(noun, colour)
+        slug = phrase.replace(" ", "-")
         option_a, option_b, gold = _place(rng, "yes", "no")
         questions.append(AtomicQuestion(
             question_id=f"{spec.spec_id}:exists:{index}",
-            atom_id=f"{spec.spec_id}:exists:{noun}",
+            atom_id=f"{spec.spec_id}:exists:{slug}",
             family=QuestionFamily.EXISTENCE,
             text=(f"Is there a {phrase} in this picture? Answer A or B only.\n"
                   f"A. {option_a}\nB. {option_b}"),
@@ -131,11 +160,11 @@ def spec_questions(spec: SceneSpec) -> tuple[AtomicQuestion, ...]:
         ))
         questions.append(AtomicQuestion(
             question_id=f"{spec.spec_id}:count:{index}",
-            atom_id=f"{spec.spec_id}:count:{noun}",
+            atom_id=f"{spec.spec_id}:count:{slug}",
             family=QuestionFamily.COUNT,
-            text=(f"How many {noun}s are in this picture? "
+            text=(f"How many {_phrase(noun + 's', colour)} are in this picture? "
                   f"Answer with a single number."),
-            expected_answer=str(obj.count),
+            expected_answer=str(count),
             question_format=QuestionFormat.OPEN,
         ))
     return tuple(questions)

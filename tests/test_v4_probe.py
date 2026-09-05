@@ -141,6 +141,121 @@ def test_a_count_the_spec_never_mentions_scores_wrong_rather_than_right():
     assert recited.correct, "reciting the spec still scores; that is not what changed"
 
 
+def _truthful_answers(spec: SceneSpec) -> dict[str, str]:
+    """What an observer with perfect sight says about a picture that is perfectly correct.
+
+    Built from the spec independently of `spec_questions`, by the same rule the
+    gold verdict uses: a (colour, canonical noun) multiset. If the two ever
+    disagree, the scorer is punishing something other than a drawing error.
+    """
+    from selfsight.v4.spec import canonical_noun
+
+    scene: dict[tuple[str | None, str], int] = {}
+    for obj in spec.objects:
+        key = (obj.color, canonical_noun(obj.object))
+        scene[key] = scene.get(key, 0) + obj.count
+
+    answers = {}
+    for question in spec_questions(spec):
+        kind = question.question_id.split(":")[-2]
+        # The question names a colour and a plural noun; find the scene entry it
+        # is asking about by matching the atom_id slug, which is built from the
+        # same phrase.
+        slug = question.atom_id.split(":")[-1]
+        match = next(key for key in scene
+                     if "-".join(filter(None, [key[0], key[1]])) == slug)
+        answers[question.question_id] = "yes" if kind == "exists" else str(scene[match])
+    return answers
+
+
+REAL_SYNONYM_PROMPTS = [
+    # Every one of these is a prompt the corpus actually contains, and every one
+    # of them collapses under `spec.SYNONYMS`.
+    ("v4b-0018", "a red book, a blue notebook, a yellow candle",
+     (SpecObject(object="book", color="red", count=1),
+      SpecObject(object="notebook", color="blue", count=1),
+      SpecObject(object="candle", color="yellow", count=1))),
+    ("v4a-0089", "one red book, two black notebooks",
+     (SpecObject(object="book", color="red", count=1),
+      SpecObject(object="notebook", color="black", count=2))),
+    ("syn-mug", "one white cup, two green mugs",
+     (SpecObject(object="cup", color="white", count=1),
+      SpecObject(object="mug", color="green", count=2))),
+]
+
+
+@pytest.mark.parametrize("spec_id,prompt,objects", REAL_SYNONYM_PROMPTS,
+                         ids=[row[0] for row in REAL_SYNONYM_PROMPTS])
+def test_a_correct_picture_correctly_observed_scores_full_marks(spec_id, prompt, objects):
+    """The invariant the first open-counting version broke.
+
+    `a red book, a blue notebook` asked "How many books are in this picture?"
+    twice, wanted 1 both times, and the correct picture holds 2. An observer
+    that looked and counted right scored 2 out of 3. This is the test that would
+    have caught it: build the scene the spec describes, answer every question
+    truthfully about that scene, and require a perfect score. It has to hold for
+    the synonym pairs specifically, because those are where the question's noun
+    and the answer's noun stopped meaning the same thing.
+    """
+    from selfsight.data.questions import score_answer
+
+    spec = SceneSpec(spec_id=spec_id, prompt=prompt, objects=objects)
+    truth = _truthful_answers(spec)
+    wrong = [q.question_id for q in spec_questions(spec)
+             if not score_answer(truth[q.question_id], q).correct]
+    assert not wrong, f"a correct picture, correctly observed, lost marks on {wrong}"
+
+
+@pytest.mark.parametrize("spec_id,prompt,objects", REAL_SYNONYM_PROMPTS,
+                         ids=[row[0] for row in REAL_SYNONYM_PROMPTS])
+def test_no_two_questions_ask_the_same_thing_and_want_different_answers(
+        spec_id, prompt, objects):
+    """`one red book, two black notebooks` wanted 1 and 2 from one sentence.
+
+    Nothing can satisfy that, so at least one mark in the pool was unreachable
+    no matter what the picture held or the observer said.
+    """
+    spec = SceneSpec(spec_id=spec_id, prompt=prompt, objects=objects)
+    wanted: dict[str, set[str]] = {}
+    for question in spec_questions(spec):
+        wanted.setdefault(question.text, set()).add(question.expected_answer)
+    contradictory = {text: golds for text, golds in wanted.items() if len(golds) > 1}
+    assert not contradictory, f"one question, two golds: {contradictory}"
+
+
+def test_the_count_question_names_the_colour_so_it_is_not_a_category_total():
+    """Bare "how many books" is a different question from what the gold answers.
+
+    It is also an easier one: a count bound to a colour cannot be answered from
+    the category alone, which is the resolution the probe is short of.
+    """
+    spec = SceneSpec(spec_id="s1", prompt="a red book, a blue notebook",
+                     objects=(SpecObject(object="book", color="red", count=1),
+                              SpecObject(object="notebook", color="blue", count=1)))
+    counts = [q for q in spec_questions(spec) if ":count:" in q.question_id]
+    assert [q.text.split("?")[0] for q in counts] == [
+        "How many red books are in this picture",
+        "How many blue books are in this picture",
+    ]
+    assert [q.expected_answer for q in counts] == ["1", "1"]
+
+
+def test_entries_sharing_a_colour_and_a_noun_become_one_question_that_sums():
+    """No spec in this corpus does this. The scorer must not depend on that.
+
+    Colour is what separates the synonym pairs, so a corpus that put "one red
+    book" and "two red notebooks" in one prompt would reintroduce the whole
+    defect. Merging and summing makes the invariant structural.
+    """
+    spec = SceneSpec(spec_id="s1", prompt="one red book and two red notebooks",
+                     objects=(SpecObject(object="book", color="red", count=1),
+                              SpecObject(object="notebook", color="red", count=2)))
+    counts = [q for q in spec_questions(spec) if ":count:" in q.question_id]
+    assert len(counts) == 1, "one phrase must not become two questions"
+    assert counts[0].expected_answer == "3"
+    assert len([q for q in spec_questions(spec) if ":exists:" in q.question_id]) == 1
+
+
 def test_the_correct_option_is_not_always_the_same_letter():
     """A model with a letter preference must not be able to score above chance.
 
