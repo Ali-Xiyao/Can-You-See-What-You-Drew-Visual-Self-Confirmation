@@ -1506,6 +1506,13 @@ detect 与 crop 两个阶段在 `load()` 之前先读卡,空闲不足 `DETECTOR_
 本项目的 backbone 当时在**另一张卡**上(`backbone on cuda:1, ladder on cuda:0`),
 所以挤掉我们的不是我们自己。
 
+**进程级上限也排除了,这次是静态排除**:项目的 `*.py` / `*.sh` / `*.ps1` / `*.yaml` 里
+没有任何 `set_per_process_memory_fraction`、`PYTORCH_CUDA_ALLOC_CONF`、
+`max_split_size`、`expandable_segments`;启动这些阶段的 shell 环境里也没有
+(只有 `CUDA_PATH_V12_1` 与 PATH,无分配器配置、无 `CUDA_VISIBLE_DEVICES` 限制)。
+第一次(19:59)靠**实测**排除上限——同卡直接申请 8/12/15.17/18 GiB 单块全部成功;
+这一次靠**通读配置**排除。两条互补:前者证明卡能给,后者证明我们没设过不让要。
+
 **我先前把它判成「不是容量,也不是 §37c 的竞争」,那半句是错的**——当时只看了单次报错,
 没看第二次 COMMAND,也没看 `train.log` 的重试行。它就是 §37c 的第二个实例,
 **没有新的代码缺陷要修**,`await_room` 与三次重试都按设计工作了。
