@@ -2197,6 +2197,27 @@ crop 未能确认争议物体而仍为 pending_human，无 unnameable 或 missin
 条款。第二份 base 重复运行正在继续；20:42 的 49 对已生成图片 PNG/RGB 全部逐对一致，
 完整配对及梯度结果尚待后续测量。该部分快照保留在 `runtime-check/base-paired-images-20260905T204250Z.json`。
 
+**43.8 完整 base 配对与主梯度（2026-09-05 21:19 UTC）。** 两臂完整的 64 对 base 图
+逐对 PNG/RGB、spec、seed 一致；316 个原始/归一化回答逐条一致，时间戳证明分别记录。
+逐图 cycle、自评分及 64 个 verdict 状态也一致，7 个 pending 在两次裁定中相同。
+正式 CSV 两臂均为 16/57 正确、7 未知，使用 manifest_image_verdict_v1。
+完整证据为 `runtime-check/base-paired-integrity-complete.json` 与
+`runtime-check/base-paired-answer-integrity.json`；仅 step0 的报告已另存不可回填快照
+`runtime-check/step-00000-reports/`。主报告如实标 insufficient_checkpoints，没有产生图或报警。
+
+主 base 梯度用冻结 16 池、80 图，每臂 404 个观察回答；全部可解析，无弃答/错误。
+从原始回答用精确分数重算三个准则的选择均一致：Naive 7/16、RFO 12/16、Gold 16/16
+选中正确图。这是平衡探针的静态选择率，不是训练后效果。选择复用后实际反向 26 次，
+loss、norm 及 Gram 全部有限，参数 digest 对应保存的真实 base。
+GDA-free=0.7749844，prompt bootstrap 95% 区间 [0.2190707,0.9887376]；
+GDA-gold=0.8020402，区间 [0.2284272,0.9790155]。联合 Gram 谱分解所得等价向量
+独立重采样 2000 次，统计量与原报告最大差 8.9e-16。
+剔除训练重合的 14 池敏感性分别为 0.7146706 / 0.7455354，区间独立重算最大差 2.8e-15；
+base 与自身的配对差严格为零。这些单点及宽区间不构成预警；后续必须比较同一 bank 的配对变化。
+38 项只读完整性检查通过，3.302 GiB 临时梯度向量已清理，阶段耗时 223.4 秒。
+证据为 `runtime-check/base-gradient-integrity.json`。21:11 UTC 已自动开始 naive step8
+留出图生成；当前没有达到冻结停止条件，不修改实验协议。
+
 ## 已作废 / 已被取代
 
 | 结论 | 状态 | 原因 |
