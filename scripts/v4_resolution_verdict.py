@@ -128,63 +128,69 @@ def selection_vs_random(pools: dict[str, dict[str, Any]]) -> None:
         print(f"  K={k}  n={len(ids):3d}  随机期望 {uniform:5.1%}   " + "   ".join(cells))
 
 
-def counting_accuracy(out_dir: Path) -> None:
-    """Two different numbers that were being read as one.
+def counting_report(out_dir: Path) -> dict[str, dict[str, Any]]:
+    """Paired count comparisons on facts known for the frozen question scope."""
+    from selfsight.v4.factual_truth import (
+        canonical_answer, factual_answer, load_verifications, question_scope,
+    )
 
-    "The answer differs from what the spec asked for" is not "the observer
-    miscounted". A picture is allowed to differ from the request -- that
-    divergence is the signal the probe exists to catch -- and on top of that the
-    first open-counting run was scoring some correct counts as wrong (STATUS
-    42). So report the deviation rate beside the accuracy measured against the
-    detections in `verified.jsonl`, which is an independent record of what is in
-    the image.
-
-    The slug in `atom_id` says which phrase a question is about: `red-book` for
-    the colour-qualified form, bare `book` for the category form the defective
-    run used. Colours contain no hyphen and `canonical_noun` returns a single
-    word, so the two cases separate cleanly.
-    """
-    from selfsight.v4.spec import canonical_noun
-
-    runs = json.loads((out_dir / "runs.json").read_text(encoding="utf-8"))["runs"]
-    detected: dict[str, collections.Counter] = {}
-    for name in runs:
-        for row in read_jsonl(Path(name) / "verified.jsonl"):
-            if row.get("detections") is None:
-                continue
-            detected[row["image_path"]] = collections.Counter(
-                (d.get("color"), canonical_noun(d["object"])) for d in row["detections"])
-
-    image_of: dict[tuple[str, str], str] = {}
-    asks: dict[tuple[str, str], tuple[str, str]] = {}
-    for pool in read_jsonl(out_dir / "pools.jsonl"):
-        for candidate in pool["candidates"]:
-            image_of[(pool["prompt_id"], candidate["candidate_id"])] = candidate["image_path"]
-        for question in pool["questions"]:
-            if ":count:" in question["question_id"]:
-                asks[(pool["prompt_id"], question["question_id"])] = (
-                    question["atom_id"].split(":")[-1], question["expected_answer"])
-
-    print("\n计数题：偏离请求 vs 数错图（后者以 verified.jsonl 的检出为准）")
+    found = load_verifications(out_dir)
+    pools = {p["prompt_id"]: p for p in read_jsonl(out_dir / "pools.jsonl")}
+    report: dict[str, dict[str, Any]] = {}
     for arm in ("naive", "rfo"):
-        n = off_spec = miscounted = skipped = 0
+        totals: collections.Counter[str] = collections.Counter()
+        unknown: collections.Counter[str] = collections.Counter()
+        seen: set[tuple[str, str]] = set()
         for row in read_jsonl(out_dir / f"observations.{arm}.jsonl"):
-            counts = detected.get(image_of[(row["prompt_id"], row["candidate_id"])])
-            for answer in row["observation"]["answers"]:
-                key = (row["prompt_id"], answer["question_id"])
-                if key not in asks:
+            key = (row["prompt_id"], row["candidate_id"])
+            if key in seen:
+                raise ValueError(f"Duplicate {arm} observation: {key}")
+            seen.add(key)
+            pool = pools[row["prompt_id"]]
+            candidate = next(c for c in pool["candidates"]
+                             if c["candidate_id"] == row["candidate_id"])
+            questions = {q["question_id"]: q for q in pool["questions"]}
+            answers = row["observation"]["answers"]
+            ids = [a["question_id"] for a in answers]
+            if len(ids) != len(set(ids)) or set(ids) != set(questions):
+                raise ValueError(f"Incomplete or duplicate question set: {key}")
+            for answer in answers:
+                question = questions[answer["question_id"]]
+                scope = question_scope(question)
+                if scope is None or scope.kind != "count":
                     continue
-                slug, wanted = asks[key]
-                if counts is None:
-                    skipped += 1
+                totals["total"] += 1
+                truth = factual_answer(question, found.get(candidate["image_path"]))
+                if not truth.known:
+                    unknown[truth.reason] += 1
                     continue
-                n += 1
-                truth = sum(c for (colour, noun), c in counts.items()
-                            if f"{colour}-{noun}" == slug or noun == slug)
-                off_spec += answer["normalized_answer"] != wanted
-                miscounted += answer["normalized_answer"] != str(truth)
-        print(f"  {arm:6s} n={n:5d}  偏离请求 {off_spec / n:6.1%}"
-              f"   数错图 {miscounted / n:6.1%}   不可判定 {skipped}")
+                totals["known"] += 1
+                observed = (None if answer.get("abstain") else
+                            canonical_answer(question, answer["normalized_answer"]))
+                totals["abstained"] += observed is None
+                totals["off_recorded_target"] += observed != canonical_answer(
+                    question, question["expected_answer"])
+                totals["miscounted"] += observed != truth.answer
+        expected = {(p["prompt_id"], c["candidate_id"])
+                    for p in pools.values() for c in p["candidates"]}
+        if seen != expected:
+            raise ValueError(f"{arm}: observations do not cover the frozen candidate set")
+        report[arm] = {**totals, "unknown_reasons": dict(unknown),
+                       "unknown": sum(unknown.values())}
+    return report
+
+
+def counting_accuracy(out_dir: Path) -> None:
+    print("\\n计数题：同一可判事实子集上的记录目标不一致率与图像计数错误率")
+    for arm, row in counting_report(out_dir).items():
+        n = row.get("known", 0)
+        off = row.get("off_recorded_target", 0) / n if n else float("nan")
+        wrong = row.get("miscounted", 0) / n if n else float("nan")
+        print(f"  {arm:6s} 可判 {n}/{row.get('total', 0)}  记录目标不一致 {off:.1%}"
+              f"  数错图 {wrong:.1%}  已知事实题弃答 {row.get('abstained', 0)}"
+              f"  未知 {row['unknown']} {row['unknown_reasons']}")
+    print("记录目标使用该运行冻结的 expected_answer；旧运行的目标口径缺陷仍须单独说明。")
+    print("这些是可判定子集的描述统计；不同模型两臂之差不单独识别提示词效应。")
 
 
 def main() -> None:

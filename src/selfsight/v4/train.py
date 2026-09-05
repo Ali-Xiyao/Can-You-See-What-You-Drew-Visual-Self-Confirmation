@@ -54,6 +54,7 @@ curve that Gate C is measured against.
 from __future__ import annotations
 
 import json
+import hashlib
 import random
 import os
 from collections.abc import Mapping, Sequence
@@ -63,12 +64,12 @@ from fractions import Fraction
 from pathlib import Path
 from typing import Any
 
-from selfsight.rfo.selection import select_candidate
 from selfsight.schemas import CandidateRecord, SelectionDecision
 from selfsight.training.paired import PromptScheduleEntry, _seed_from_parts
 from selfsight.v4.observe import observe_naive, observe_rfo
 from selfsight.v4.probe import UNADJUDICATED, build_pools, spec_questions
 from selfsight.v4.spec import SceneSpec
+from selfsight.v4.evaluate import fixed_atomic_score
 
 ARMS = ("naive", "rfo_gold")
 """Pass 1, and the only pairing Gate C is defined over.
@@ -105,6 +106,7 @@ class ReplayExample:
     question: str
     answer: str
     sample_id: str
+    prompt_id: str = ""
 
 
 @dataclass(frozen=True)
@@ -141,9 +143,124 @@ def load_training_corpus(runs: Sequence[str]) -> TrainingCorpus:
                     question=question.text,
                     answer=question.expected_answer,
                     sample_id=f"{pool.run}:{candidate.candidate_id}:{question.question_id}",
+                    prompt_id=pool.spec.spec_id,
                 ))
     replay.sort(key=lambda item: item.sample_id)
     return TrainingCorpus(specs=specs, replay=tuple(replay))
+
+
+def restrict_replay(corpus: TrainingCorpus, train_prompt_ids: Sequence[str]) -> TrainingCorpus:
+    """Outcome/probe images must never enter understanding replay."""
+    train_ids = set(train_prompt_ids)
+    if any(not item.prompt_id for item in corpus.replay):
+        raise ValueError("Replay example has no prompt ID; cannot establish holdout isolation")
+    return replace(corpus, replay=tuple(item for item in corpus.replay
+                                      if item.prompt_id in train_ids))
+
+
+def seed_training(seed: int) -> None:
+    """Identical adapter initialization for training, baseline and gradient probes."""
+    import numpy as np
+    import torch
+
+    random.seed(seed)
+    np.random.seed(seed % (2 ** 32))
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+
+def pending_rounds(total: int, done: Sequence[int], max_rounds: int | None) -> list[int]:
+    """Limit this invocation only; the caller still builds the complete schedule."""
+    if total <= 0 or (max_rounds is not None and max_rounds <= 0):
+        raise ValueError("rounds and --max-rounds must be positive")
+    if sorted(done) != list(range(len(done))) or len(done) > total:
+        raise ValueError("Completed rounds must be a contiguous prefix of the frozen schedule")
+    pending = list(range(len(done), total))
+    return pending if max_rounds is None else pending[:max_rounds]
+
+
+def previous_checkpoint(out: Path, arm: str, round_index: int) -> Path:
+    """Only round zero may fall back to base; later rounds require full state."""
+    if round_index < 0:
+        raise ValueError("Training round must be nonnegative")
+    path = out / "checkpoints" / arm / f"round-{round_index - 1:03d}"
+    if round_index > 0:
+        for filename in ("manifest.json", "adapter.pt", "training_state.pt"):
+            if not (path / filename).is_file():
+                raise FileNotFoundError(f"Round {round_index} requires previous checkpoint {path}: "
+                                        f"missing {filename}; refusing to reset to base")
+    return path
+
+
+def trainable_snapshot(model: Any) -> dict[str, Any]:
+    return {name: parameter.detach().float().cpu().clone()
+            for name, parameter in model.named_parameters() if parameter.requires_grad}
+
+
+def parameter_digest(snapshot: Mapping[str, Any]) -> str:
+    digest = hashlib.sha256()
+    for name, tensor in sorted(snapshot.items()):
+        digest.update(name.encode("utf-8"))
+        digest.update(str(tuple(tensor.shape)).encode("ascii"))
+        digest.update(tensor.contiguous().numpy().tobytes())
+    return digest.hexdigest()
+
+
+def initialize_base_checkpoint(
+    directory: str | Path, *, model: Any, optimizer: Any, scheduler: Any,
+    config: dict[str, Any],
+) -> Path:
+    """Persist or restore the untrained adapter once, before any arm swaps.
+
+    This is the shared base lifecycle, not a per-arm resume operation. The
+    caller captures its in-memory base after this returns; every subsequent
+    arm swap still goes through restore_arm_state.
+    """
+    from selfsight.training.checkpoint import load_checkpoint, save_checkpoint
+    from selfsight.utils.hashing import sha256_json
+
+    path = Path(directory)
+    digest = sha256_json(config)
+    if path.exists():
+        state = load_checkpoint(path, model=model, optimizer=None, scheduler=None,
+                                expected_config_digest=digest)
+        if state != {"step": 0, "round_index": -1}:
+            raise ValueError(f"Base checkpoint is not an untrained step-0 adapter: {path}")
+    else:
+        save_checkpoint(path, model=model, optimizer=optimizer, scheduler=scheduler,
+                        config_digest=digest, config_values=config, step=0, round_index=-1,
+                        metadata={"kind": "untrained_base", "initialization_seed": int(config["seed"]),
+                                  "parameter_digest": parameter_digest(trainable_snapshot(model))})
+    return path
+
+
+def parameter_update_stats(before: Mapping[str, Any], after: Mapping[str, Any]) -> dict[str, Any]:
+    """Measure the actual finite parameter movement, independently of optimizer logs."""
+    import math
+    import torch
+
+    if not before or before.keys() != after.keys():
+        raise ValueError("Trainable parameter set is empty or changed during the round")
+    before_squared = delta_squared = 0.0
+    changed = elements = 0
+    delta_max = 0.0
+    for name in before:
+        left, right = before[name], after[name]
+        if left.shape != right.shape or not torch.isfinite(right).all():
+            raise FloatingPointError(f"Invalid updated parameter: {name}")
+        delta = right.double() - left.double()
+        delta_squared += float(delta.square().sum())
+        before_squared += float(left.double().square().sum())
+        changed += int(torch.count_nonzero(delta))
+        elements += left.numel()
+        delta_max = max(delta_max, float(delta.abs().max()))
+    return {"parameter_delta_l2": math.sqrt(delta_squared),
+            "parameter_delta_max_abs": delta_max,
+            "parameter_norm_before": math.sqrt(before_squared),
+            "parameter_changed_elements": changed, "trainable_elements": elements,
+            "parameter_digest_before": parameter_digest(before),
+            "parameter_digest_after": parameter_digest(after)}
 
 
 # --------------------------------------------------------------------------
@@ -270,10 +387,35 @@ def abandon_incomplete(path: str | Path) -> Path | None:
     path = Path(path)
     if not path.exists():
         return None
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     destination = path.with_name(f"{path.name}.abandoned-{stamp}")
     os.replace(path, destination)
     return destination
+
+
+def prepare_round(run_root: str | Path, round_index: int) -> Path:
+    """Archive all partial-round artifacts, including a checkpoint saved by one arm."""
+    root = Path(run_root).resolve()
+    round_dir = root / "rounds" / f"round-{round_index:03d}"
+    if (round_dir / "DONE.json").exists():
+        raise FileExistsError(f"Refusing to restart completed round: {round_dir}")
+    checkpoints = {arm: root / "checkpoints" / arm / f"round-{round_index:03d}" for arm in ARMS}
+    if any(not path.resolve().is_relative_to(root) for path in (round_dir, *checkpoints.values())):
+        raise ValueError("Partial round archive escapes run directory")
+    if any(path.exists() for path in checkpoints.values()):
+        round_dir.mkdir(parents=True, exist_ok=True)
+    abandoned = abandon_incomplete(round_dir)
+    if abandoned is not None:
+        for arm, source in checkpoints.items():
+            if not source.exists():
+                continue
+            destination = abandoned / "checkpoints" / arm
+            if not source.resolve().is_relative_to(root) or not destination.resolve().is_relative_to(root):
+                raise ValueError("Partial checkpoint archive escapes run directory")
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            source.rename(destination)
+    round_dir.mkdir(parents=True)
+    return round_dir
 
 
 def write_done(round_dir: str | Path, payload: dict[str, Any]) -> Path:
@@ -332,6 +474,7 @@ def select_by_observation(
     observer,
     corpus: TrainingCorpus,
     pools: dict[str, list[CandidateRecord]],
+    observation_path: str | Path | None = None,
 ) -> list[SelectionDecision]:
     """Naive and RFO-Self: pick by asking something to look at the picture.
 
@@ -361,15 +504,37 @@ def select_by_observation(
                     observer, namespace=NAMESPACE, prompt_id=prompt_id,
                     candidate_id=candidate.candidate_id, questions=questions,
                     image_path=candidate.image_path)
+        scored = {candidate_id: fixed_atomic_score(observation, questions)
+                  for candidate_id, observation in observations.items()}
+        if observation_path is not None:
+            destination = Path(observation_path)
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            from dataclasses import asdict
+            with destination.open("a", encoding="utf-8") as handle:
+                for candidate in candidates:
+                    handle.write(json.dumps({
+                        "prompt_id": prompt_id, "candidate_id": candidate.candidate_id,
+                        "image_path": candidate.image_path, "arm": arm,
+                        "questions": [asdict(question) for question in questions],
+                        "observation": observations[candidate.candidate_id].to_dict(),
+                        **scored[candidate.candidate_id],
+                    }) + "\n")
+        usable = [candidate for candidate in candidates
+                  if scored[candidate.candidate_id]["available"] > 0]
+        selected = max(usable, key=lambda candidate: (
+            scored[candidate.candidate_id]["s_select"], -int(candidate.sampling_seed),
+            candidate.candidate_id)) if usable else None
         first = next(iter(observations.values()))
-        decisions.append(select_candidate(
+        decisions.append(SelectionDecision(
             prompt_id=prompt_id,
             arm=arm,
-            candidates=candidates,
-            observations=observations,
-            questions=questions,
+            candidate_pool_ids=tuple(candidate.candidate_id for candidate in candidates),
+            selected_candidate_id=selected.candidate_id if selected else None,
+            scores={key: float(value["s_select"]) for key, value in scored.items()},
             selector_id=first.observer_id,
             observer_revision=first.observer_revision,
+            abstain=selected is None,
+            reason="highest fixed-denominator atomic score" if selected else "all answers unavailable",
         ))
     return decisions
 
@@ -514,11 +679,16 @@ def train_arm(
     ratio = Fraction(str(float(training["understanding_replay_ratio"]))).limit_denominator(100)
 
     t2i_cursor = 0
-    replay_cursor = 0
+    replay_cursor = (_seed_from_parts(seed, round_index, "replay-cursor") % len(corpus.replay)
+                     if corpus.replay else 0)
+    replay_cursor_start = replay_cursor
     t2i_losses: list[float] = []
     replay_losses: list[float] = []
     gradient_norms: list[float] = []
     trainable = [parameter for parameter in backbone.model.parameters() if parameter.requires_grad]
+    if not trainable or optimizer_steps <= 0 or accumulation <= 0 or micro_size <= 0:
+        raise ValueError("Training requires parameters, optimizer steps, accumulation and batch size")
+    parameters_before = trainable_snapshot(backbone.model)
 
     for optimizer_step in range(optimizer_steps):
         optimizer.zero_grad(set_to_none=True)
@@ -553,11 +723,15 @@ def train_arm(
             if not torch.isfinite(loss):
                 raise FloatingPointError(f"Non-finite {arm} loss at round {round_index}")
             (loss / accumulation).backward()
-        grad_norm = torch.nn.utils.clip_grad_norm_(trainable, float(training["max_grad_norm"]))
+        grad_norm = torch.nn.utils.clip_grad_norm_(trainable, float(training["max_grad_norm"]),
+                                                 error_if_nonfinite=True)
         gradient_norms.append(float(grad_norm.detach().cpu()))
         optimizer.step()
         scheduler.step()
 
+    update = parameter_update_stats(parameters_before, trainable_snapshot(backbone.model))
+    if update["parameter_changed_elements"] == 0:
+        raise RuntimeError(f"Arm {arm} round {round_index}: optimizer completed but no parameter changed")
     return {
         "arm": arm,
         "round": round_index,
@@ -565,8 +739,11 @@ def train_arm(
         "optimizer_steps": optimizer_steps,
         "t2i_microbatches": len(t2i_losses),
         "replay_microbatches": len(replay_losses),
+        "replay_cursor_start": replay_cursor_start,
         "mean_t2i_loss": sum(t2i_losses) / len(t2i_losses) if t2i_losses else None,
         "mean_replay_loss": sum(replay_losses) / len(replay_losses) if replay_losses else None,
         "mean_gradient_norm_before_clip": sum(gradient_norms) / len(gradient_norms),
         "learning_rate": float(optimizer.param_groups[0]["lr"]),
+        "gradient_norms_before_clip": gradient_norms,
+        **update,
     }

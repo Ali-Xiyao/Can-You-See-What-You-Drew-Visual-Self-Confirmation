@@ -1,0 +1,73 @@
+profile: v4_decoupling_pilot_20260906
+seed: 20260906
+paths:
+  cache_root: ${SELFSIGHT_CACHE_ROOT}
+  data_root: ${SELFSIGHT_DATA_ROOT}
+  run_root: ${SELFSIGHT_RUN_ROOT}
+  model_root: ${SELFSIGHT_MODEL_ROOT}
+  tmp_root: ${SELFSIGHT_TMP_ROOT}
+hardware:
+  generator_device: cuda:1
+  observer_device: cuda:0
+  precision: bf16
+  attention: sdpa
+  distributed: false
+model:
+  trainable_id: showlab/show-o2-1.5B
+  backbone_config: configs/backbones/showo2_1p5b.yaml
+  frozen_negative_control_id: showlab/show-o-w-clip-vit-512x512
+  language_base_id: Qwen/Qwen2.5-1.5B-Instruct
+  vision_tower_id: google/siglip-so400m-patch14-384
+  image_autoencoder_id: Wan-AI/Wan2.1-T2V-14B
+  image_resolution: 432
+  generation_timesteps: 50
+  guidance_scale: 5.0
+  temperature: 1.0
+data:
+  local_train_prompts: 132
+  local_outcome: 64
+  local_probe: 32
+  images_per_prompt: 1
+training:
+  arms: [naive, rfo_gold]
+  seeds: [20260906]
+  rounds: 10
+  prompts_per_round: 12
+  candidate_k: 8
+  optimizer_steps_per_round: 8
+  micro_batch_size: 1
+  gradient_accumulation_steps: 8
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  warmup_ratio: 0.10
+  max_grad_norm: 1.0
+  understanding_replay_ratio: 0.25
+  gradient_checkpointing: true
+  lora:
+    rank: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: []
+    target_selection_required: true
+    forbidden_trainable: [embed_tokens, lm_head, image_embedder_und, und_trans, fusion_proj]
+evaluation:
+  fixed_latents: true
+  selector_missing_policy: zero_over_all_questions
+gradient_probe:
+  source: runs/v4/gate-b-openct2
+  size: 16
+  minimum_size: 4
+  criteria: [naive, rfo, gold]
+  resamples: 2000
+  reference: base
+  fixed_candidate_bank: true
+pilot:
+  status: exploratory_not_confirmatory
+  max_wall_hours: 60
+  min_free_gib: 8
+  min_paired_prompts: 2
+  effect_window_checkpoints: 3
+  internal_change_margin: 0.02
+  external_improvement_margin: 0.02
+  gradient_drop_margin: 0.01
+  gradient_confirmation_checkpoints: 2

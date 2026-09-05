@@ -21,12 +21,11 @@ training loop would make the external curve incomparable to every number in
 sections 11 through 27, and the first thing anyone would ask of a D* is how it
 sits against those.
 
-**Internal is the registered criterion, not the convenient one.** Proposal 7.1
-specifies naive as `prompt -> image -> recover prompt`, and
-`cycle_consistency_score` implements that. v2.3 asked the atomic question
-instead, which is the RFO question form, and the two arms turned out to be the
-same function at step 0 (agreement 1.000, EVIDENCE_LOG 4.2). Using the atomic
-form here would rebuild that bug inside the main measurement.
+**The two internal measurements remain separate.** The legacy caption recovery
+likelihood is retained as `internal_cycle`. The dynamic pilot additionally
+records `s_select`: the prompted atomic score used to select training images.
+Both use the outcome images, and every requested atomic answer remains in the
+score denominator, including missing answers, errors and abstentions.
 
 Evaluation prompts are held out from training by `split_prompts`. If a prompt
 the model trained on appeared in the outcome set, the external curve would be
@@ -51,6 +50,10 @@ from selfsight.analysis.breakpoints import (
     estimate_lead,
 )
 from selfsight.training.paired import _seed_from_parts
+from selfsight.schemas import AtomicQuestion, ObservationResult
+from selfsight.utils.hashing import rgb_sha256, sha256_json
+from selfsight.v4.observe import observe_naive
+from selfsight.v4.probe import spec_questions
 from selfsight.v4.spec import SceneSpec
 
 METRIC_FIELDS = (
@@ -63,6 +66,11 @@ METRIC_FIELDS = (
     "external_correct",
     "external_n",
     "external_unadjudicated",
+    "s_select",
+    "s_select_sem",
+    "s_select_n",
+    "s_select_available",
+    "s_select_total",
 )
 
 
@@ -206,6 +214,103 @@ def external_correctness(verified_path: str | Path) -> tuple[float | None, int, 
 # --------------------------------------------------------------------------
 
 
+def fixed_atomic_score(
+    observation: ObservationResult, questions: Sequence[AtomicQuestion],
+) -> dict[str, float | int]:
+    """All requested questions count; unavailable answers never raise the score."""
+    wanted = {question.question_id: question for question in questions}
+    if not wanted or len(wanted) != len(questions):
+        raise ValueError("Atomic score requires nonempty, unique question IDs")
+    answers = {}
+    for answer in observation.answers:
+        if answer.question_id not in wanted:
+            raise ValueError(f"Unexpected answer: {answer.question_id}")
+        if answer.question_id in answers:
+            raise ValueError(f"Duplicate answer: {answer.question_id}")
+        answers[answer.question_id] = answer
+    available = correct = errors = abstained = 0
+    for question_id, question in wanted.items():
+        answer = answers.get(question_id)
+        if answer is None:
+            continue
+        if answer.error is not None:
+            errors += 1
+        elif answer.abstain or answer.normalized_answer is None:
+            abstained += 1
+        else:
+            available += 1
+            correct += answer.normalized_answer == question.expected_answer
+    return {"s_select": correct / len(wanted), "correct": correct,
+            "available": available, "total": len(wanted),
+            "errors": errors, "abstained": abstained,
+            "missing": len(wanted) - len(answers)}
+
+
+def self_selection_scores(
+    backbone: Any, *, specs: dict[str, SceneSpec], images: dict[str, str],
+    output_path: str | Path, metadata: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Durable per-image prompted scores, with image/question/run resume guards."""
+    path = Path(output_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    existing: dict[str, dict[str, Any]] = {}
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            prompt_id = row["prompt_id"]
+            if prompt_id in existing or prompt_id not in images:
+                raise ValueError(f"Duplicate or unexpected evaluation prompt: {prompt_id}")
+            if row["metadata"] != metadata:
+                raise ValueError("Self-selection evaluation belongs to a different checkpoint/config")
+            existing[prompt_id] = row
+    rows = []
+    with path.open("a", encoding="utf-8") as handle:
+        for prompt_id, image_path in sorted(images.items()):
+            spec = specs[prompt_id]
+            questions = spec_questions(spec)
+            question_rows = [asdict(question) for question in questions]
+            digest = sha256_json({"prompt": spec.prompt, "questions": question_rows})
+            image_digest = rgb_sha256(image_path)
+            if prompt_id in existing:
+                row = existing[prompt_id]
+                if row["question_digest"] != digest or row["rgb_sha256"] != image_digest:
+                    raise ValueError(f"Evaluation image/questions changed for {prompt_id}")
+                observation = ObservationResult.from_dict(row["observation"])
+                rescored = fixed_atomic_score(observation, questions)
+                if (observation.rgb_sha256 != image_digest or
+                        any(row[key] != value for key, value in rescored.items())):
+                    raise ValueError(f"Saved evaluation observation/score mismatch for {prompt_id}")
+            else:
+                observation = observe_naive(backbone, prompt=spec.prompt,
+                                            questions=questions, image_path=image_path)
+                if observation.rgb_sha256 != image_digest:
+                    raise ValueError(f"Observer returned a different image hash for {prompt_id}")
+                row = {"prompt_id": prompt_id, "image_path": image_path,
+                       "rgb_sha256": image_digest, "question_digest": digest,
+                       "metadata": metadata, "questions": question_rows,
+                       "observation": observation.to_dict(),
+                       **fixed_atomic_score(observation, questions)}
+                encoded = json.dumps(row)
+                row = json.loads(encoded)
+                handle.write(encoded + "\n")
+                handle.flush()
+            rows.append(row)
+    return rows
+
+
+def summarize_selection(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    mean, sem, n = summarize_cycle({str(index): float(row["s_select"])
+                                   for index, row in enumerate(rows)})
+    total = sum(int(row["total"]) for row in rows)
+    available = sum(int(row["available"]) for row in rows)
+    return {"mean": mean, "sem": sem, "n": n, "available": available,
+            "total": total, "coverage": available / total if total else None,
+            **{key: sum(int(row[key]) for row in rows)
+               for key in ("correct", "errors", "abstained", "missing")}}
+
+
 def cycle_scores(
     backbone: Any,
     *,
@@ -258,6 +363,11 @@ class CheckpointMetrics:
     external_correct: float | None
     external_n: int
     external_unadjudicated: int
+    s_select: float | None = None
+    s_select_sem: float | None = None
+    s_select_n: int = 0
+    s_select_available: int = 0
+    s_select_total: int = 0
 
 
 def write_metrics_csv(path: str | Path, rows: Sequence[CheckpointMetrics]) -> Path:
@@ -285,6 +395,11 @@ def read_metrics_csv(path: str | Path) -> list[CheckpointMetrics]:
                 external_correct=_optional_float(raw["external_correct"]),
                 external_n=int(raw["external_n"]),
                 external_unadjudicated=int(raw["external_unadjudicated"]),
+                s_select=_optional_float(raw.get("s_select", "")),
+                s_select_sem=_optional_float(raw.get("s_select_sem", "")),
+                s_select_n=int(raw.get("s_select_n", 0)),
+                s_select_available=int(raw.get("s_select_available", 0)),
+                s_select_total=int(raw.get("s_select_total", 0)),
             ))
     return rows
 

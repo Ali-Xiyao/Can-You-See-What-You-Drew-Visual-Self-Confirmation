@@ -1,42 +1,14 @@
-"""What the questions would be worth to an observer that never miscounts.
+"""Compare observed and truthful scores on the same adjudicable pools.
 
-The residual diagnosis says the pools that stay tied are almost all "in
-vocabulary": the images differ, the question names the thing they differ on, and
-the answers still do not separate them. That points at the observer rather than
-at the wording, but pointing is not measuring. This measures it.
-
-Every observer answer is replaced by the truth about the image, taken from the
-`detections` in `verified.jsonl`, and the four registered criteria are recomputed
-with the same questions, the same spec golds and the same scoring rule. A
-perfect observer says "yes" when the phrase is in the picture and reports the
-number it actually counts; it is still graded against what the *prompt* asked
-for, so the score stays a cycle-consistency score.
-
-Reading the result:
-
-  criteria pass under a perfect observer   the questions can do the job and the
-      shortfall is observation accuracy. Effort belongs on the observer -- a
-      stronger one, repeated sampling, agreement between two -- and not on
-      rewriting questions.
-
-  criteria still fail under a perfect observer   the questions themselves cannot
-      express the verdict, and no amount of observation accuracy will fix it.
-
-This is a diagnostic. It is not a run, it cannot pass the prereg, and the number
-it produces must never be quoted as a result of the experiment: an observer that
-reads the detector's answer sheet is not measuring self-confirmation. The
-detections also come from the same detectors the verdict was built on, so this
-is an upper bound on what a spec-side scorer could ever recover from that
-verdict, not an estimate of what a real observer would get.
-
-    envs/core/python.exe scripts/v4_observation_ceiling.py runs/v4/gate-b-openct2
+This conditional diagnostic is neither an independent experiment nor a proof
+that only observer accuracy matters. Unknown facts exclude the whole pool from
+both actual and ideal columns; original denominators remain visible.
 """
-
 from __future__ import annotations
 
 import argparse
 import collections
-import json
+import math
 import sys
 from pathlib import Path
 from typing import Any
@@ -44,57 +16,63 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from selfsight.v4.spec import canonical_noun  # noqa: E402
-from v4_resolution_verdict import REGISTERED, load_pools, measure  # noqa: E402
-from v4_selector_resolution import Candidate, read_jsonl, resolution  # noqa: E402
+from selfsight.v4.factual_truth import canonical_answer, factual_answer, load_verifications
+from v4_resolution_verdict import REGISTERED, candidates, load_pools
+from v4_selector_resolution import Candidate, resolution
 
 
-def detections(out_dir: Path) -> dict[str, collections.Counter]:
-    runs = json.loads((out_dir / "runs.json").read_text(encoding="utf-8"))["runs"]
-    found: dict[str, collections.Counter] = {}
-    for name in runs:
-        for row in read_jsonl(Path(name) / "verified.jsonl"):
-            if row.get("detections") is None:
-                continue
-            found[row["image_path"]] = collections.Counter(
-                (d.get("color"), canonical_noun(d["object"])) for d in row["detections"])
-    return found
-
-
-def truth_for(question: dict[str, Any], counts: collections.Counter) -> str:
-    """What an observer with perfect sight says about this picture.
-
-    The slug in `atom_id` is the phrase the question names: `red-book` for the
-    colour-qualified form, bare `book` for the category form. Colours hold no
-    hyphen and `canonical_noun` returns one word, so the two cases separate.
-    """
-    slug = question["atom_id"].split(":")[-1]
-    seen = sum(value for (colour, noun), value in counts.items()
-               if f"{colour}-{noun}" == slug or noun == slug)
-    if ":count:" in question["question_id"]:
-        return str(seen)
-    return "yes" if seen else "no"
-
-
-def perfect_pools(pools: dict[str, dict[str, Any]],
-                  found: dict[str, collections.Counter]) -> list[list[Candidate]]:
-    out: list[list[Candidate]] = []
+def paired_diagnostic(pools: dict[str, dict[str, Any]],
+                      found: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    arms: dict[str, list[list[Candidate]]] = {"naive": [], "rfo": [], "ideal": []}
+    eligible: list[str] = []
+    unknown: collections.Counter[str] = collections.Counter()
+    total_questions = known_questions = total_candidates = unknown_candidates = 0
+    unavailable_actual = 0
     for prompt_id, pool in pools.items():
-        scored: list[Candidate] = []
-        usable = True
+        ideal: list[Candidate] = []
+        usable = bool(pool["questions"])
         for candidate in pool["candidates"]:
-            counts = found.get(candidate["image_path"])
-            if counts is None:
+            total_candidates += 1
+            facts = [factual_answer(q, found.get(candidate["image_path"]))
+                     for q in pool["questions"]]
+            total_questions += len(facts)
+            known_questions += sum(f.known for f in facts)
+            unknown.update(f.reason for f in facts if not f.known)
+            if not all(f.known for f in facts):
+                unknown_candidates += 1
                 usable = False
-                break
-            hits = sum(truth_for(q, counts) == q["expected_answer"]
-                       for q in pool["questions"])
-            scored.append(Candidate(candidate["candidate_id"],
-                                    hits / len(pool["questions"]),
-                                    bool(candidate["correct"])))
-        if usable:
-            out.append(scored)
-    return out
+                continue
+            # Legacy closed questions sometimes cannot express a truthful reply.
+            representable = all(
+                not q.get("choices") or f.answer in {
+                    canonical_answer(q, choice) for choice in q["choices"]}
+                for q, f in zip(pool["questions"], facts))
+            if not representable:
+                unknown["truth_not_in_choices"] += 1
+                usable = False
+                continue
+            hits = sum(f.answer == canonical_answer(q, q["expected_answer"])
+                       for q, f in zip(pool["questions"], facts))
+            ideal.append(Candidate(candidate["candidate_id"], hits / len(facts),
+                                   bool(candidate["correct"])))
+        if not usable:
+            continue
+        if pool["selection"].get("dropped"):
+            unavailable_actual += 1
+            continue
+        actual = {arm: candidates(pool, arm) for arm in ("naive", "rfo")}
+        if any(not math.isfinite(c.score) for cs in actual.values() for c in cs):
+            unavailable_actual += 1
+            continue
+        eligible.append(prompt_id)
+        arms["ideal"].append(ideal)
+        for arm in actual:
+            arms[arm].append(actual[arm])
+    return {"eligible_ids": eligible, "total_pools": len(pools),
+            "total_candidates": total_candidates, "unknown_candidates": unknown_candidates,
+            "total_questions": total_questions, "known_questions": known_questions,
+            "unknown_reasons": dict(unknown), "unavailable_actual_pools": unavailable_actual,
+            "metrics": {arm: resolution(rows) if rows else None for arm, rows in arms.items()}}
 
 
 def main() -> None:
@@ -102,39 +80,23 @@ def main() -> None:
     parser.add_argument("outdir")
     args = parser.parse_args()
     out_dir = Path(args.outdir)
-
-    pools = load_pools(out_dir)
-    found = detections(out_dir)
-    ceiling = resolution(perfect_pools(pools, found))
-    arms = {arm: measure(pools, arm) for arm in ("naive", "rfo")}
-
-    print(f"{args.outdir}: 若观察 100% 准确，同一套题能做到什么\n")
-    print(f"  {'判据':22s} {'门槛':>9s} {'naive':>8s} {'rfo':>8s} {'完美观察':>10s} {'':4s}")
-    verdict = True
+    report = paired_diagnostic(load_pools(out_dir), load_verifications(out_dir))
+    n = len(report["eligible_ids"])
+    print(f"{out_dir}: 事实答案诊断；三列使用同一组 {n}/{report['total_pools']} 池")
+    print(f"可判事实 {report['known_questions']}/{report['total_questions']}；"
+          f"含未知事实候选 {report['unknown_candidates']}/{report['total_candidates']}；"
+          f"实际分数不可用池 {report['unavailable_actual_pools']}")
+    print(f"未知/不可表达原因：{report['unknown_reasons']}")
+    if not n:
+        print("没有可共同评估的完整池；不作理想分数推断。")
+        return
+    arms = report["metrics"]
+    print(f"  {'判据':22s} {'参照门槛':>9s} {'naive':>8s} {'rfo':>8s} {'事实答案':>10s}")
     for key, name, direction, threshold, _b, _a, _t in REGISTERED:
-        value = ceiling[key]
-        ok = value >= threshold if direction == ">=" else value <= threshold
-        verdict &= ok
         print(f"  {name:22s} {direction}{threshold:8.0%} {arms['naive'][key]:8.1%}"
-              f" {arms['rfo'][key]:8.1%} {value:10.1%}  {'PASS' if ok else 'FAIL'}")
-    print(f"\n  完美观察下 {ceiling['n_pools']} 池，四条判据："
-          f"{'全部通过' if verdict else '仍未全部通过'}")
-    print(f"  同分池 {ceiling['all_tied']:.1%}   满分候选 {ceiling['ceiling']:.1%}"
-          f"   均分差 {ceiling['mean_gap']:+.4f}")
-
-    if verdict:
-        print("""
-  结论：题目能表达这个裁定，短板是观察准确率。
-  下一步的功夫应当花在观察者上（更强的观察者、重复采样、双观察者一致性），
-  不是改题。改题在这里买不到东西——题已经问对了地方。""")
-    else:
-        print("""
-  结论：即使观察 100% 准确，这套题仍达不到门槛。
-  短板在题目能表达什么，不只在观察准确率。改观察者买不到全部差距。""")
-    print("""
-  这是诊断，不是实验结果。读检测器答案的观察者不在测自我确认，
-  而且 detections 与裁定同源，所以这是「spec 侧评分器最多能从该裁定里
-  恢复多少」的上界，不是真实观察者的预期值。""")
+              f" {arms['rfo'][key]:8.1%} {arms['ideal'][key]:10.1%}")
+    print("这是可判定子集上的诊断，不改变原预注册实测判定。事实与整图裁定同源；")
+    print("差距可能涉及观察、问题范围、计分及标签，不自动确定下一种方法，也不外推训练表现。")
 
 
 if __name__ == "__main__":

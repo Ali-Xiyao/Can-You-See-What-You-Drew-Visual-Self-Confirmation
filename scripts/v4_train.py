@@ -29,6 +29,7 @@ import argparse
 import json
 import subprocess
 import time
+from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -43,24 +44,33 @@ from selfsight.v4.evaluate import (
     evaluation_seed,
     external_correctness,
     read_metrics_csv,
+    self_selection_scores,
     split_prompts,
     summarize_cycle,
+    summarize_selection,
     write_evaluation_manifest,
     write_metrics_csv,
 )
 from selfsight.v4.train import (
     ARMS,
     RFO_SELF,
-    abandon_incomplete,
     build_schedule,
     completed_rounds,
     generate_candidates,
+    initialize_base_checkpoint,
     load_training_corpus,
     pair_decisions,
+    parameter_digest,
+    pending_rounds,
+    prepare_round,
+    previous_checkpoint,
     read_verdicts,
+    restrict_replay,
     round_entries,
     select_by_observation,
     select_gold,
+    seed_training,
+    trainable_snapshot,
     train_arm,
     write_candidate_manifest,
     write_done,
@@ -259,6 +269,7 @@ def stage_train(args: argparse.Namespace) -> None:
     out = Path(args.outdir)
     split = read_split(out, config, tuple(args.runs))
     corpus = load_training_corpus(args.runs)
+    corpus = restrict_replay(corpus, split["train"])
     training = config["training"]
 
     schedule = build_schedule(
@@ -271,9 +282,14 @@ def stage_train(args: argparse.Namespace) -> None:
     )
 
     done = completed_rounds(out)
+    pending = pending_rounds(int(training["rounds"]), done, getattr(args, "max_rounds", None))
     print(f"{len(done)} rounds already complete: {done}")
+    if not pending:
+        print("All scheduled rounds are already complete")
+        return
+    for arm in ARMS:
+        previous_checkpoint(out, arm, pending[0])
 
-    backbone = Showo2Adapter(device=args.device, lazy=False)
     # This stage needs the ladder on a different card and there is no way round
     # it. The backbone stays resident across the whole round, so an adjudicator
     # sharing the card has to load beside 13.5 GB and dies part-way through its
@@ -293,6 +309,8 @@ def stage_train(args: argparse.Namespace) -> None:
             f"train needs the ladder on another card: --device {args.device} and "
             f"--ladder-device {args.ladder_device} are the same one. The backbone is "
             f"resident for the whole round and the adjudicator cannot load beside it.")
+    seed_training(int(config["seed"]))
+    backbone = Showo2Adapter(device=args.device, lazy=False)
     targets = json.loads(Path(LORA_TARGETS).read_text(encoding="utf-8"))
     lora = training["lora"]
     # The readiness artefact records which forbidden modules the selection let
@@ -303,6 +321,7 @@ def stage_train(args: argparse.Namespace) -> None:
     leaked = sorted(targets.get("forbidden_modules_selected", []))
     if leaked:
         raise SystemExit(f"{LORA_TARGETS} selects forbidden modules: {leaked}")
+    seed_training(int(config["seed"]))
     backbone.attach_lora(
         target_modules=targets["target_modules"],
         rank=int(lora["rank"]),
@@ -330,7 +349,6 @@ def stage_train(args: argparse.Namespace) -> None:
     # Both arms run through this one backbone, so "the weights the other arm
     # has not touched yet" has to be kept somewhere. Captured after attach_lora
     # and before any training, which is the only moment it is available.
-    base_state = capture_base_state(backbone.model)
     parameters = [p for p in backbone.model.parameters() if p.requires_grad]
     optimizers = {
         arm: torch.optim.AdamW(parameters, lr=float(training["learning_rate"]),
@@ -344,13 +362,13 @@ def stage_train(args: argparse.Namespace) -> None:
             optimizers[arm], lr_lambda=lambda step: min(1.0, float(step + 1) / warmup))
         for arm in ARMS
     }
+    base_checkpoint = out / "checkpoints" / "base" / "round--01"
+    initialize_base_checkpoint(base_checkpoint, model=backbone.model, optimizer=optimizers[ARMS[0]],
+                               scheduler=schedulers[ARMS[0]], config=config)
+    base_state = capture_base_state(backbone.model)
 
-    for round_index in range(int(training["rounds"])):
-        if round_index in done:
-            continue
-        round_dir = out / "rounds" / f"round-{round_index:03d}"
-        abandon_incomplete(round_dir)
-        round_dir.mkdir(parents=True)
+    for round_index in pending:
+        round_dir = prepare_round(out, round_index)
         entries = round_entries(schedule, round_index)
         print(f"=== {now()} round {round_index}: {len(entries)} prompts ===")
 
@@ -362,7 +380,7 @@ def stage_train(args: argparse.Namespace) -> None:
         pools: dict[str, Any] = {}
         for arm in ARMS:
             restore_arm_state(
-                out / "checkpoints" / arm / f"round-{round_index - 1:03d}",
+                previous_checkpoint(out, arm, round_index),
                 model=backbone.model, optimizer=optimizers[arm],
                 scheduler=schedulers[arm], expected_config_digest=digest, base=base_state)
             pools[arm] = generate_candidates(
@@ -388,17 +406,24 @@ def stage_train(args: argparse.Namespace) -> None:
                       f"correct, {len(unadjudicated)} images unadjudicated")
             else:
                 restore_arm_state(
-                    out / "checkpoints" / arm / f"round-{round_index - 1:03d}",
+                    previous_checkpoint(out, arm, round_index),
                     model=backbone.model, optimizer=optimizers[arm],
                     scheduler=schedulers[arm], expected_config_digest=digest,
                     base=base_state)
                 decisions[arm] = select_by_observation(
                     arm=arm, backbone=backbone,
                     observer=observer if arm == RFO_SELF else None,
-                    corpus=corpus, pools=pools[arm])
+                    corpus=corpus, pools=pools[arm],
+                    observation_path=round_dir / "observations" / f"{arm}.jsonl")
 
         paired = pair_decisions(entries, decisions)
         kept = len(next(iter(paired.values())))
+        (round_dir / "selection.json").write_text(json.dumps({
+            "round": round_index,
+            "decisions": {arm: [asdict(decision) for decision in values]
+                          for arm, values in decisions.items()},
+            "paired_prompt_ids": [decision.prompt_id for decision in paired[ARMS[0]]],
+        }, indent=2), encoding="utf-8")
         print(f"    {kept}/{len(entries)} prompts survived pairing")
 
         reports = []
@@ -409,7 +434,7 @@ def stage_train(args: argparse.Namespace) -> None:
             # the first arm's update and every later round inherited it through
             # its own checkpoint.
             source = restore_arm_state(
-                out / "checkpoints" / arm / f"round-{round_index - 1:03d}",
+                previous_checkpoint(out, arm, round_index),
                 model=backbone.model, optimizer=optimizers[arm],
                 scheduler=schedulers[arm], expected_config_digest=digest, base=base_state)
             print(f"    {arm}: training from {source}")
@@ -434,14 +459,17 @@ def stage_train(args: argparse.Namespace) -> None:
                 metadata=report,
             )
             reports.append(report)
-            print(f"    {arm}: t2i {report['mean_t2i_loss']:.4f} "
-                  f"grad {report['mean_gradient_norm_before_clip']:.3f}")
+            print(f"    {arm}: t2i {report['mean_t2i_loss']} "
+                  f"grad {report['mean_gradient_norm_before_clip']:.3f} "
+                  f"parameter delta {report['parameter_delta_l2']:.6g}")
 
         write_done(round_dir, {
             "round": round_index, "finished": now(),
             "prompts": len(entries), "paired": kept, "arms": reports,
+            "initialization_seed": int(config["seed"]), "train_replay_examples": len(corpus.replay),
         })
-    print(f"=== {now()} training complete ===")
+    print(f"=== {now()} invocation complete: rounds {pending}; "
+          f"{len(done) + len(pending)}/{training['rounds']} total ===")
 
 
 # --------------------------------------------------------------------------
@@ -461,26 +489,34 @@ def stage_generate(args: argparse.Namespace) -> None:
     split = read_split(out, config, tuple(args.runs))
     corpus = load_training_corpus(args.runs)
 
-    checkpoint = out / "checkpoints" / args.arm / f"round-{args.round:03d}"
-    if not checkpoint.is_file() and not checkpoint.is_dir():
+    if args.round < -1:
+        raise SystemExit("--round must be -1 (untrained baseline) or a nonnegative checkpoint")
+    checkpoint = (out / "checkpoints" / "base" / "round--01" if args.round == -1 else
+                  out / "checkpoints" / args.arm / f"round-{args.round:03d}")
+    if args.round >= 0 and not checkpoint.is_dir():
         raise SystemExit(f"No checkpoint at {checkpoint}")
 
+    seed_training(int(config["seed"]))
     backbone = Showo2Adapter(device=args.device, lazy=False)
     targets = json.loads(Path(LORA_TARGETS).read_text(encoding="utf-8"))
     lora = config["training"]["lora"]
+    seed_training(int(config["seed"]))
     backbone.attach_lora(target_modules=targets["target_modules"], rank=int(lora["rank"]),
                          alpha=int(lora["alpha"]), dropout=float(lora["dropout"]),
                          gradient_checkpointing=False)
-    load_checkpoint(checkpoint, model=backbone.model, optimizer=None, scheduler=None,
-                    expected_config_digest=sha256_json(config))
+    if checkpoint.exists():
+        load_checkpoint(checkpoint, model=backbone.model, optimizer=None, scheduler=None,
+                        expected_config_digest=sha256_json(config))
+    model_digest = parameter_digest(trainable_snapshot(backbone.model))
 
     step = (args.round + 1) * int(config["training"]["optimizer_steps_per_round"])
     eval_dir = out / "evaluations" / args.arm / f"step-{step:05d}"
     eval_dir.mkdir(parents=True, exist_ok=True)
 
     prompt_ids = list(split["outcome"])
+    seed_step = 0 if config.get("evaluation", {}).get("fixed_latents", False) else step
     seeds = {prompt_id: evaluation_seed(seed=int(config["seed"]), arm=args.arm,
-                                        step=step, prompt_id=prompt_id)
+                                        step=seed_step, prompt_id=prompt_id)
              for prompt_id in prompt_ids}
     drawn = backbone.generate_images(
         [corpus.specs[prompt_id].prompt for prompt_id in prompt_ids],
@@ -494,13 +530,25 @@ def stage_generate(args: argparse.Namespace) -> None:
     write_evaluation_manifest(eval_dir, specs=corpus.specs, prompt_ids=prompt_ids,
                               images=images, seeds=seeds)
 
+    selection_rows = self_selection_scores(
+        backbone, specs=corpus.specs, images=images,
+        output_path=eval_dir / "s_select.jsonl", metadata={
+            "arm": args.arm, "round": args.round, "step": step,
+            "config_digest": sha256_json(config), "parameter_digest": model_digest,
+            "initialization_seed": int(config["seed"]),
+            "evaluation_seed_step": seed_step,
+            "score_policy": "fixed_question_denominator_v1"})
+    selection_summary = summarize_selection(selection_rows)
+    (eval_dir / "s_select.json").write_text(json.dumps(selection_summary, indent=2), encoding="utf-8")
     scores = cycle_scores(backbone, specs=corpus.specs, images=images)
     mean, sem, count = summarize_cycle(scores)
     (eval_dir / "cycle.json").write_text(json.dumps({
         "arm": args.arm, "round": args.round, "step": step,
         "mean": mean, "sem": sem, "n": count, "scores": scores,
+        "parameter_digest": model_digest, "initialization_seed": int(config["seed"]),
     }, indent=2), encoding="utf-8")
-    print(f"{args.arm} step {step}: cycle {mean:.4f} +/- {sem:.4f} over {count} images")
+    print(f"{args.arm} step {step}: cycle {mean} +/- {sem} over {count} images; "
+          f"s_select {selection_summary['mean']}, coverage {selection_summary['coverage']}")
     print(f"next: v4_run_pipeline.py detect --manifest {eval_dir / 'manifest.jsonl'} "
           f"--detector qwen3vl --device cuda:0")
 
@@ -518,12 +566,18 @@ def stage_score(args: argparse.Namespace) -> None:
     for cycle_path in sorted(out.glob("evaluations/*/step-*/cycle.json")):
         eval_dir = cycle_path.parent
         cycle = json.loads(cycle_path.read_text(encoding="utf-8"))
+        selection_path = eval_dir / "s_select.json"
+        selection = json.loads(selection_path.read_text(encoding="utf-8")) if selection_path.exists() else {}
         rate, n, unadjudicated = external_correctness(eval_dir / "verified.jsonl")
         row = CheckpointMetrics(
             arm=cycle["arm"], round_index=int(cycle["round"]), step=int(cycle["step"]),
             internal_cycle=cycle["mean"], internal_sem=cycle["sem"],
             internal_n=int(cycle["n"]),
             external_correct=rate, external_n=n, external_unadjudicated=unadjudicated,
+            s_select=selection.get("mean"), s_select_sem=selection.get("sem"),
+            s_select_n=int(selection.get("n", 0)),
+            s_select_available=int(selection.get("available", 0)),
+            s_select_total=int(selection.get("total", 0)),
         )
         rows = [existing for existing in rows
                 if (existing.arm, existing.step) != (row.arm, row.step)]
@@ -534,7 +588,7 @@ def stage_score(args: argparse.Namespace) -> None:
     for row in sorted(rows, key=lambda item: (item.arm, item.step)):
         external = "--" if row.external_correct is None else f"{row.external_correct:.3f}"
         print(f"  {row.arm:9s} step {row.step:6d}  internal {row.internal_cycle:8.4f}  "
-              f"external {external}")
+              f"s_select {row.s_select}  external {external}")
 
 
 def stage_report(args: argparse.Namespace) -> None:
@@ -608,12 +662,14 @@ def main() -> None:
     t.add_argument("--core-python", default="envs/core/python.exe")
     t.add_argument("--max-epochs", type=int, default=1,
                    help="passes over the prompt bank; >1 mixes memorisation into the curve")
+    t.add_argument("--max-rounds", type=int, default=None,
+                   help="run at most this many unfinished rounds now; frozen total schedule is unchanged")
     t.set_defaults(func=stage_train)
 
     g = sub.add_parser("generate", help="outcome images + internal curve for one checkpoint")
     common(g)
     g.add_argument("--arm", choices=list(ARMS), required=True)
-    g.add_argument("--round", type=int, required=True)
+    g.add_argument("--round", type=int, required=True, help="-1 is the untrained step-0 baseline")
     g.add_argument("--device", default="cuda:0")
     g.set_defaults(func=stage_generate)
 
