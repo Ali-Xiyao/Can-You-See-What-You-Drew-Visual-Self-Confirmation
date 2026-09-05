@@ -588,14 +588,22 @@ def read_verdicts(
         if not line.strip():
             continue
         row = json.loads(line)
-        if row["resolution"] in UNADJUDICATED:
+        # Image-level failure is known for unnameable=False. Only the visual
+        # facts are unknown there; do not conflate that with pending verdicts.
+        if (row.get("resolution") == "pending_human"
+                or not isinstance(row.get("image_correct"), bool)):
             unadjudicated.add(row["image_path"])
             continue
-        by_image[row["image_path"]] = bool(row["image_correct"])
+        by_image[row["image_path"]] = row["image_correct"]
     verdicts = {candidate.candidate_id: by_image[candidate.image_path]
                 for candidates in pools.values()
                 for candidate in candidates
                 if candidate.image_path in by_image}
+    # A detector error may omit an image from verified.jsonl entirely. It is
+    # still an expected candidate and has no verdict, just like a pending row.
+    expected_images = {candidate.image_path for candidates in pools.values()
+                       for candidate in candidates}
+    unadjudicated.update(expected_images.difference(by_image))
     return verdicts, unadjudicated
 
 

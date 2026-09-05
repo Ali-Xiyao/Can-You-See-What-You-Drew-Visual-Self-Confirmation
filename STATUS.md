@@ -15,14 +15,15 @@
 **新动态 pilot 已于 2026-09-05 18:04 UTC 启动，运行状态以 `runs/v4/decoupling-pilot-20260906/state.json` 为准。**
 用户明确授权接手实现、使用本地两张 3090 并持续推进至完成或预先规定的停止条件（§43）。
 GPU1 生成/训练/梯度，GPU0 独立裁定；不会恢复旧 `l3-preview` 调度链。
-407 项 CPU 检查通过；InternVL 在空卡完成真实图片推理。固定方案见
+447 项 CPU 检查通过；InternVL 在空卡完成真实图片推理。固定方案见
 `docs/prereg/2026-09-06-decoupling-pilot.md`。当前尚未得到训练分叉或可靠预警结论。
 
-2026-09-05 19:14 UTC 检查：首轮两臂各 96 张候选已生成，正在 GPU0 做独立检测裁定。
-更新前 96/96 对候选的 PNG 和 RGB 哈希全部一致，12 prompt×K8 的 seed/索引均匹配
-冻结日程；naive 512 条回答完整记录并可解析。细节在新运行的
-`runtime-check/round-zero-pairing.json`。此时两臂首轮 checkpoint 尚未写出，
-这些是起点配对与记录完整性的证据，不代表已完成训练或测到分叉。
+2026-09-05 19:44 UTC 首轮完成：两臂各做 8 次真实更新，9/12 个 prompt 进入配对训练；
+更新前 96/96 对候选 PNG/RGB 哈希一致，naive 512 条回答完整可解析。保存的两臂
+checkpoint、Adam 步数、参数 delta/digest 与日志一致，见 `runtime-check/first-update-integrity.json`。
+19:46 UTC 已接续真实 base 的留出评测；先训练首轮、再评测已保存 base 是原定执行顺序。
+训练池中两臂 5/9 次选图不同，尚不是留出效果或分叉证据。另发现 1 张未被选中图片
+因检测解析失败缺少 verdict，覆盖率修复及边界接续见 §43.6。
 
 **§41/§42 的事实错误率、旧 oracle 与“短板全在观察者”解释已被 §43 更正。**
 原预注册实测的未通过判定保留；原始数据不覆盖。
@@ -2152,6 +2153,27 @@ LoRA B 从零初始化还带来解释限制：base 的 A 梯度为零，训练�
 并列规则选错；故“题目全好，短板全在观察者”不成立。628/5556 个逐题事实实例未知
 （548 disputed、80 unnameable）。全 232 池实际比例 114/232 和 162/232 不能直接与
 79 池理想比例比较，旧注册未通过判定保持不变。
+
+**43.6 首次真实更新与裁定覆盖修复（2026-09-05 20:04 UTC）。** 首轮 12 个自然池中
+3 个无已认证正确图，按冻结配对规则排除；两臂都训练其余 9 个池。naive 所选图为
+4 正确、4 错误、1 未决，Gold 为 9 正确；两臂 4 次同选、5 次不同。这个 Naive 轨迹
+以 Gold 有可选正确图为条件，不能当成未过滤全部自然池的 Naive 训练结果。
+两臂各 8 次 optimizer step、48 个 T2I 与 16 个 replay microbatch，参数 delta L2 分别
+为 0.9348818562 / 0.9350694554；保存的 392 个 LoRA 张量、Adam 状态与 RNG 已独立核验。
+
+主检测器 96 条记录中 1 条 JSON 解析失败，故 verified 实际为 95 条：89 已知、6 pending。
+完整候选全集的未知数应为 7（6 pending + 1 missing），旧日志只报 6。缺项为 v4b-0052
+候选 6，naive 选 7、Gold 选 5，因此未改变已完成的首轮训练选择，不重跑该轮。
+`read_verdicts` 现显式保留缺失候选的未知状态；后续 `stage_score` 使用生成 manifest
+统计全集覆盖，缺失不当错误。整图 `unnameable=False` 是已知生成失败；逐题事实仍未知。
+CSV 新增 `external_coverage_policy` 区分旧 row-only 与 manifest 语义，旧原始结果不回填。
+447 项 CPU 测试通过，含 10 项新增的缺失裁定、已知失败和 CSV 连续读写检查。
+
+首次边界接续的 PowerShell helper 因 `Get-FileHash` 不可用而未启动新 supervisor；
+19:46 UTC 人工核验成功 sentinel、全部已审查哈希及 checkpoint 后已恢复（PID 8124）。
+本次覆盖修复改用 `repair-staging/missing-verdict/continue_after_repair.py` 做一次性接续：
+核验原进程身份，等当前 base 生成成功及精确 source-guard 暂停后才恢复；真实阶段失败
+不自动重试。全部审查输入另锁 SHA256，保留最初 started_unix 与 60 小时上限，不延长预算。
 
 ## 已作废 / 已被取代
 

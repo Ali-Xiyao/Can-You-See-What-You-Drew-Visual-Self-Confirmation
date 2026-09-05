@@ -568,12 +568,17 @@ def stage_score(args: argparse.Namespace) -> None:
         cycle = json.loads(cycle_path.read_text(encoding="utf-8"))
         selection_path = eval_dir / "s_select.json"
         selection = json.loads(selection_path.read_text(encoding="utf-8")) if selection_path.exists() else {}
-        rate, n, unadjudicated = external_correctness(eval_dir / "verified.jsonl")
+        manifest_path = eval_dir / "manifest.jsonl"
+        rate, n, unadjudicated = external_correctness(
+            eval_dir / "verified.jsonl",
+            manifest_path=manifest_path if manifest_path.exists() else None)
         row = CheckpointMetrics(
             arm=cycle["arm"], round_index=int(cycle["round"]), step=int(cycle["step"]),
             internal_cycle=cycle["mean"], internal_sem=cycle["sem"],
             internal_n=int(cycle["n"]),
             external_correct=rate, external_n=n, external_unadjudicated=unadjudicated,
+            external_coverage_policy=("manifest_image_verdict_v1" if manifest_path.exists()
+                                      else "legacy_row_only"),
             s_select=selection.get("mean"), s_select_sem=selection.get("sem"),
             s_select_n=int(selection.get("n", 0)),
             s_select_available=int(selection.get("available", 0)),

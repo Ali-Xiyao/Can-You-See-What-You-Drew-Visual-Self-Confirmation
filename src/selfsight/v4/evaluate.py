@@ -66,6 +66,7 @@ METRIC_FIELDS = (
     "external_correct",
     "external_n",
     "external_unadjudicated",
+    "external_coverage_policy",
     "s_select",
     "s_select_sem",
     "s_select_n",
@@ -186,8 +187,14 @@ def write_evaluation_manifest(
 UNADJUDICATED = {"pending_human", "unnameable"}
 
 
-def external_correctness(verified_path: str | Path) -> tuple[float | None, int, int]:
+def external_correctness(
+    verified_path: str | Path, *, manifest_path: str | Path | None = None,
+) -> tuple[float | None, int, int]:
     """Correct rate over adjudicated images, plus how many were not adjudicated.
+
+    `manifest_path=None` is legacy row-only mode, including its historical
+    unnameable exclusion. New pipeline callers supply the image manifest and
+    count a boolean unnameable=False verdict as a known generation failure.
 
     Unadjudicated images are excluded from the rate rather than counted wrong.
     Counting them wrong would let the external curve fall simply because later
@@ -196,13 +203,34 @@ def external_correctness(verified_path: str | Path) -> tuple[float | None, int, 
     breakpoint early in precisely the direction the hypothesis predicts.
     """
 
+    # Existing callers without a manifest retain the historical row-based
+    # behavior. New evaluations provide the generated-image manifest so missing
+    # detector/verifier output is visible in coverage instead of disappearing.
+    expected = None
+    if manifest_path is not None:
+        manifest_rows = [json.loads(line) for line in
+                         Path(manifest_path).read_text(encoding="utf-8").splitlines()
+                         if line.strip()]
+        expected = {str(row["image_path"]) for row in manifest_rows}
+        if len(expected) != len(manifest_rows):
+            raise ValueError("Evaluation manifest contains duplicate image paths")
     path = Path(verified_path)
-    if not path.exists():
-        return None, 0, 0
-    rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()
-            if line.strip()]
-    adjudicated = [row for row in rows if row["resolution"] not in UNADJUDICATED]
-    unadjudicated = len(rows) - len(adjudicated)
+    rows = ([json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()
+             if line.strip()] if path.exists() else [])
+    if expected is not None:
+        observed = [str(row["image_path"]) for row in rows]
+        if len(set(observed)) != len(observed):
+            raise ValueError("Evaluation verdicts contain duplicate image paths")
+        if set(observed).difference(expected):
+            raise ValueError("Evaluation verdict contains an image outside the manifest")
+    if expected is None:
+        # Explicitly retained legacy semantics for old report callers.
+        adjudicated = [row for row in rows if row["resolution"] not in UNADJUDICATED]
+    else:
+        adjudicated = [row for row in rows
+                       if row.get("resolution") != "pending_human"
+                       and isinstance(row.get("image_correct"), bool)]
+    unadjudicated = (len(expected) if expected is not None else len(rows)) - len(adjudicated)
     if not adjudicated:
         return None, 0, unadjudicated
     rate = sum(bool(row["image_correct"]) for row in adjudicated) / len(adjudicated)
@@ -368,6 +396,7 @@ class CheckpointMetrics:
     s_select_n: int = 0
     s_select_available: int = 0
     s_select_total: int = 0
+    external_coverage_policy: str = "legacy_row_only"
 
 
 def write_metrics_csv(path: str | Path, rows: Sequence[CheckpointMetrics]) -> Path:
@@ -400,6 +429,7 @@ def read_metrics_csv(path: str | Path) -> list[CheckpointMetrics]:
                 s_select_n=int(raw.get("s_select_n", 0)),
                 s_select_available=int(raw.get("s_select_available", 0)),
                 s_select_total=int(raw.get("s_select_total", 0)),
+                external_coverage_policy=raw.get("external_coverage_policy", "legacy_row_only"),
             ))
     return rows
 
