@@ -2175,6 +2175,13 @@ CSV 新增 `external_coverage_policy` 区分旧 row-only 与 manifest 语义，�
 核验原进程身份，等当前 base 生成成功及精确 source-guard 暂停后才恢复；真实阶段失败
 不自动重试。全部审查输入另锁 SHA256，保留最初 started_unix 与 60 小时上限，不延长预算。
 
+20:08 UTC 本次 Python 接续已成功：原 owner 自然退出，新 PID 1884 接管并开始 base
+图像的 Qwen3-VL 裁定；run_manifest 登记 `aded444`，全部 12 个源码哈希与审查版一致。
+64 张 base 图及全部 316 个回答完整可用，真实 base 参数 digest 相符；64 项 cycle 全部
+有限，均值 -2.304931640625。此为单 checkpoint 的基线完整性证据，尚无外部结果或分叉。
+接续与 cycle 核验在 `runtime-check/coverage-repair-handoff-verified.json`，只读快照在
+`runtime-check/base-naive-integrity.json`（后者写入时 cycle 尚未齐，保留 partial 标签）。
+
 ## 已作废 / 已被取代
 
 | 结论 | 状态 | 原因 |
