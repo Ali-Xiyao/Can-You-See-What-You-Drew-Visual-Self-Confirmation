@@ -2328,6 +2328,12 @@ supervisor 补记成功并先测 step16，不伪造旧进程成功状态。
 `runtime-check/round-limit-repair/exact-round-noop.json`。冻结 config/prereg/split 和原
 started_unix/60 小时预算不变；随后登记源码修复并恢复 step16 评测。
 
+00:22 UTC 恢复已实测成功：新 supervisor PID26356 登记源码修复 `d5fd716`，精确 round1
+调用正常退出并写完成 sentinel，紧接进入 `naive.step-00016.generate`（child20832）。
+原 exit15 日志保留；没有伪造旧调用成功、没有重跑第二轮、没有重新创建 round002。
+全部新源码哈希一致，原 started_unix1788631464.2176192 和截止1788847464.2176192 保持
+不变。恢复记录为 `runtime-check/round-limit-repair/resume-verified.json`。
+
 ## 已作废 / 已被取代
 
 | 结论 | 状态 | 原因 |
