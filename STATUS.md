@@ -2578,6 +2578,14 @@ CPU核查本地冻结模型及仓库revision、12项源码/配置/协议hash、�
 完成Gold step24与配套报告，才进入第四轮；不重跑已完成训练、不改失败为成功，
 不要求旧helper补写一个并未成功的hold-complete。尚未启动的旧等待入口保留但弃用。
 
+04:32:57 UTC 已实际启动修复入口，launcher32704确认新supervisor18576拥有运行；
+现场state为 `naive.step-00024.gradient`，child28688，through_round=10，原started未变。
+入口 `resume_with_original_env.py` 的SHA256为
+`357c1a6c55ba39dd090c9b33cfc646fc11ca4832d2fb68c355a61b9c5b9b5dc7`；
+recovery-expected SHA为 `738bb78114ec88057a0202b4470f3543011d92c77d16963e6f2822b3867be9d2`。
+真实CPU预检退出0，新命令已追加到原阶段日志，旧KeyError证据仍保留。此处确认的是
+恢复启动，尚不代表step24梯度、十轮pilot或研究目标已完成；30分钟兜底跟进已更新。
+
 ## 已作废 / 已被取代
 
 | 结论 | 状态 | 原因 |
