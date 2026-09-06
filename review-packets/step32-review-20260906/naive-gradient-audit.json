@@ -1,0 +1,268 @@
+{
+  "schema_version": "naive-step32-gradient-audit-1",
+  "created_utc": "2026-09-06T08:33:59.139261+00:00",
+  "status": "pass",
+  "must_pause_for_integrity": false,
+  "scope": "CPU-only new Naive step32; old audits reused, base Gram used only for new paired contrast. No Gold32 cross-arm comparison.",
+  "inputs": {
+    "report": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032\\report.json",
+      "sha256": "e8bb31451af79aaff52429d1146eb37c2cda961bda19f3465e05edab307849ee"
+    },
+    "meta": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032\\run.meta.json",
+      "sha256": "57e2220e69071aa8ec98155f9ad24f14f3fe0a02e8091bfe5b274d0c4e543038"
+    },
+    "selection": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032\\selection.json",
+      "sha256": "b91c9e349ea475239b91b9f85293c63af7634873c15ec3f59ef369bcf2101a9a"
+    },
+    "per_prompt": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032\\per_prompt.json",
+      "sha256": "0c7558ab745b666eba6b0970a22a0964dc7e7a9c37fab6b900be7241ae7c796d"
+    },
+    "grams": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032\\grams.npz",
+      "sha256": "1592923a95b223aa68f190c7100e8bbfbc2ed4b1ba22064ffd2ce4318b296fdf"
+    },
+    "observations": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032\\observations.naive.jsonl",
+      "sha256": "5e42aab1e989bbe5e57d499210bed00a6b932a38d29403787b514b798c92b324"
+    },
+    "bank": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\probe-bank\\bank.json",
+      "sha256": "ebd7fac6d03d55465429e686a3b09d0720328b92905e4dad0b59de95036430d1"
+    },
+    "checkpoint_manifest": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-003\\manifest.json",
+      "sha256": "a4c3b204d8702938f448a013dce026d3e4fc5f57362c29eaf147a49701929b12"
+    },
+    "checkpoint_adapter": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-003\\adapter.pt",
+      "sha256": "05c7b04e2545b888a6df10345dd6363327775503961975bc472fd7231666302d"
+    },
+    "sentinel": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\stage-completion\\naive.step-00032.gradient.json",
+      "sha256": "fc9cf97cdfe72c4f0d03570f0fb78f81c1851d43443943c01908f64d01848212"
+    },
+    "base_report": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\base\\step-00000\\report.json",
+      "sha256": "c7b44d82dde502995d38a7cb53528ff2a9ce5a8fcd53ebbd3edb4c20ca579faa"
+    },
+    "base_grams": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\base\\step-00000\\grams.npz",
+      "sha256": "7d71badf4946c5f01e3ba6845f27ba4f6958785903facbee6a7cbe6e7e735d71"
+    },
+    "prior_step24_audit": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\step24-review-20260906\\gradient-audit.json",
+      "sha256": "8ea8a1863eafd72373cce9b63f4e97baad5bf329ed484ee97924f9d68bee14c3"
+    },
+    "current_main_report": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\decoupling_report.json",
+      "sha256": "aeae6d834fa6ce06b4e328c28c905bfd47d1c1f045278c3ad57f7880e4ea001f"
+    },
+    "config": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\configs\\v4_decoupling_pilot.yaml",
+      "sha256": "d92afed91a4649cb958e0a4011d20b4d0e7dac46a222b3634a90e246a2400106"
+    },
+    "scene_audit": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\audit-splits\\scene_overlap.json",
+      "sha256": "b305fce3d53172e16f7c524c516053041cc398aa4f9e674b396cad4513cfd1ce"
+    }
+  },
+  "checks": {
+    "successful_sentinel_command_identity": true,
+    "real_checkpoint_files_step32_round3": true,
+    "metadata_and_fingerprints": true,
+    "prior_base_Gram_and_bank_unchanged": true,
+    "source_implementation_hashes": true,
+    "16_complete_fixed_prompt_order": true,
+    "parameter_coordinates_and_seed": true,
+    "80_distinct_observations_404_answers": true,
+    "no_error_or_abstention": true,
+    "raw_answer_identity_normalization_and_selection": true,
+    "26_finite_backwards": true,
+    "temporary_vectors_removed": true,
+    "Gram_hash_matches": true,
+    "gda_free_finite_PSD": true,
+    "gda_free_same_prompt_paired_CI_recompute": true,
+    "gda_gold_finite_PSD": true,
+    "gda_gold_same_prompt_paired_CI_recompute": true,
+    "current_no_point_flag_historical_candidate_only": true,
+    "inputs_unchanged_after_analysis": true,
+    "independent_14_pool_inputs_match": true
+  },
+  "checkpoint": {
+    "adapter_sha256": "05c7b04e2545b888a6df10345dd6363327775503961975bc472fd7231666302d",
+    "arm": "naive",
+    "manifest_sha256": "a4c3b204d8702938f448a013dce026d3e4fc5f57362c29eaf147a49701929b12",
+    "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-003",
+    "round_index": 3,
+    "step": 32,
+    "type": "checkpoint"
+  },
+  "adapter_parameter_digest": "9bb84cc7160254f8cc0adb3bc22182c00522d55187fbf58e4c5bfdf6a2f7d55a",
+  "finished_at": "2026-09-06T08:13:26.675511+00:00",
+  "counts": {
+    "pools": 16,
+    "images": 80,
+    "answers": 404,
+    "backwards": 26,
+    "dropped_pools": 0,
+    "selected_correct_by_criterion": {
+      "naive": 7,
+      "rfo": 12,
+      "gold": 16
+    }
+  },
+  "statistics": {
+    "gda_free": {
+      "point": 0.8079376433598159,
+      "base_paired_difference": 0.03295322710321624,
+      "ci_low": -0.17297806767271792,
+      "ci_high": 0.5234313836817199,
+      "bootstrap_median": 0.8535839599625046,
+      "delta_bootstrap_median": 0.05790767736873026,
+      "n_common": 16,
+      "finite_bootstrap_draws": 2000,
+      "max_recompute_error": 2.4424906541753444e-15,
+      "minimum_joint_eigenvalue": -5.561359154843651e-18
+    },
+    "gda_gold": {
+      "point": 0.8119659231421446,
+      "base_paired_difference": 0.009925682234406263,
+      "ci_low": -0.19214609569350677,
+      "ci_high": 0.4859498049718043,
+      "bootstrap_median": 0.8230571156611775,
+      "delta_bootstrap_median": 0.031233751286656564,
+      "n_common": 16,
+      "finite_bootstrap_draws": 2000,
+      "max_recompute_error": 3.7192471324942744e-15,
+      "minimum_joint_eigenvalue": -1.1414954265360245e-18
+    }
+  },
+  "bootstrap_method": {
+    "definition": "cosine(mean_prompt_gradient_left,mean_prompt_gradient_right)",
+    "independent_recompute": "Equivalent vectors reconstructed from joint Gram via eigendecomposition; current and saved base use the same multinomial prompt counts.",
+    "seed": 20260906,
+    "resamples": 2000,
+    "confidence": 0.95
+  },
+  "alarm_semantics": {
+    "current_step32_point_flag": false,
+    "current_step32_interval_supported_flag": false,
+    "historical_first_point_candidate_step": 16,
+    "first_interval_supported_alarm_step": null,
+    "explanation": "Historical candidate step16 records first qualifying step8/16 pair; it is not an active persistent warning at step32.",
+    "trajectory_recomputed_in_memory": {
+      "baseline_cosine": 0.7749844162565988,
+      "points": [
+        {
+          "step": 0,
+          "cosine": 0.7749844162565988,
+          "delta_from_step0": 0,
+          "marginal_point_delta": 0,
+          "paired_ci_low": null,
+          "paired_ci_high": null,
+          "n_common": 0,
+          "point_flag": false,
+          "interval_supported_flag": false,
+          "support_status": "unsupported_no_paired_difference_ci",
+          "missing_report": false
+        },
+        {
+          "step": 8,
+          "cosine": 0.7361813552167358,
+          "delta_from_step0": -0.038803061039862974,
+          "marginal_point_delta": -0.038803061039862974,
+          "paired_ci_low": -0.06592874826417844,
+          "paired_ci_high": 0.023026620038652714,
+          "n_common": 16,
+          "point_flag": true,
+          "interval_supported_flag": false,
+          "support_status": "paired_difference_ci",
+          "missing_report": false
+        },
+        {
+          "step": 16,
+          "cosine": 0.5232923867792474,
+          "delta_from_step0": -0.25169202947735136,
+          "marginal_point_delta": -0.25169202947735136,
+          "paired_ci_low": -0.27985439654449,
+          "paired_ci_high": 0.33245248160046337,
+          "n_common": 16,
+          "point_flag": true,
+          "interval_supported_flag": false,
+          "support_status": "paired_difference_ci",
+          "missing_report": false
+        },
+        {
+          "step": 24,
+          "cosine": 0.702092943288951,
+          "delta_from_step0": -0.07289147296764775,
+          "marginal_point_delta": -0.07289147296764775,
+          "paired_ci_low": -0.26143913310948064,
+          "paired_ci_high": 0.4534971400683529,
+          "n_common": 16,
+          "point_flag": true,
+          "interval_supported_flag": false,
+          "support_status": "paired_difference_ci",
+          "missing_report": false
+        },
+        {
+          "step": 32,
+          "cosine": 0.8079376433598159,
+          "delta_from_step0": 0.03295322710321713,
+          "marginal_point_delta": 0.03295322710321713,
+          "paired_ci_low": -0.17297806767271878,
+          "paired_ci_high": 0.5234313836817224,
+          "n_common": 16,
+          "point_flag": false,
+          "interval_supported_flag": false,
+          "support_status": "paired_difference_ci",
+          "missing_report": false
+        }
+      ],
+      "candidate_alarm_step": 16,
+      "interval_supported_alarm_step": null,
+      "alarm_timestamp": "final_checkpoint_of_required_consecutive_flags",
+      "warning": "marginal cosine intervals are never subtracted to obtain a difference CI"
+    }
+  },
+  "sensitivity_14_pool": {
+    "status": "supplementary_cpu_in_memory",
+    "not_written_to_main_run": true,
+    "excluded_spec_ids": [
+      "v4a-0087",
+      "v4a-0095"
+    ],
+    "n_common_prompts": 14,
+    "n_scene_clusters": 14,
+    "n_missing": 0,
+    "seed": 20260906,
+    "resamples": 2000,
+    "finite_resamples": 2000,
+    "method": "Existing fixed scene-disjoint pool rule; same scene multiplicities for current and base, preserving cos(mean original prompt gradients). Independent eigendecomposition and Gram quadratic-form comparison.",
+    "max_independent_method_error": 3.91e-14,
+    "statistics": {
+      "gda_free": {
+        "point": 0.7113150944,
+        "base_paired_difference": -0.0033554936,
+        "ci_low": -0.2278621646,
+        "ci_high": 0.6080092336
+      },
+      "gda_gold": {
+        "point": 0.7132965736,
+        "base_paired_difference": -0.0322388499,
+        "ci_low": -0.2178753811,
+        "ci_high": 0.5051945431
+      }
+    },
+    "supports_warning": false
+  },
+  "limitations": [
+    "No reliable gradient warning, D_g or lead-time inference follows from these non-significant descriptive differences.",
+    "Prompt bootstrap does not quantify independent training-run variation; initial LoRA gradient geometry and unnormalized gradient magnitudes remain interpretation limits.",
+    "No locked source, original run result, original bank or prior checkpoint was modified."
+  ]
+}

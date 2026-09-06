@@ -1,0 +1,561 @@
+{
+  "created_at": "2026-09-06T08:33:47.696700+00:00",
+  "status": "PASS",
+  "scope": "New Naive step32 outcome and in-memory [16,24,32] Naive behavior window only; step16 read solely as the new-window endpoint. No step24 re-audit, Gold32 inference, live report writes, source changes, GPU work, or process control.",
+  "input_hashes": {
+    "runs\\v4\\decoupling-pilot-20260906\\decoupling_report.json": {
+      "sha256": "aeae6d834fa6ce06b4e328c28c905bfd47d1c1f045278c3ad57f7880e4ea001f",
+      "bytes": 121513
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\split.json": {
+      "sha256": "9b358ecce2473addd6244751a10dd2c35fcb01953a1b1fef0a59b7610666d546",
+      "bytes": 4157
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\audit-splits\\scene_overlap.json": {
+      "sha256": "b305fce3d53172e16f7c524c516053041cc398aa4f9e674b396cad4513cfd1ce",
+      "bytes": 274851
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\audit-splits\\scene_representatives.json": {
+      "sha256": "b981ad63507e1fa836cd9ded8bd578e93393df794d9341ea8776d57770c4d8c2",
+      "bytes": 9179
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-003\\manifest.json": {
+      "sha256": "a4c3b204d8702938f448a013dce026d3e4fc5f57362c29eaf147a49701929b12",
+      "bytes": 4084
+    },
+    "configs\\v4_decoupling_pilot.yaml": {
+      "sha256": "d92afed91a4649cb958e0a4011d20b4d0e7dac46a222b3634a90e246a2400106",
+      "bytes": 1941
+    },
+    "docs\\prereg\\2026-09-06-decoupling-pilot.md": {
+      "sha256": "c1d1e7240c134293077b8e1a68d5b9ab503f3ffdfac1c22343bdf6fd72a47710",
+      "bytes": 5521
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00016\\manifest.jsonl": {
+      "sha256": "2233b665e5ab8eae6c4a18d0f74078821fcd19ab295be7def6a7d28df49ed1b6",
+      "bytes": 41686
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00016\\s_select.jsonl": {
+      "sha256": "025f7613b7d85bc03dea8d61d372b9bc0bb5d7a69b97985d6c77d6f671433a9e",
+      "bytes": 218533
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00016\\verified.jsonl": {
+      "sha256": "92f753f804518d655370bfc67d3919defaa59cd882f610773566d822f7b7289a",
+      "bytes": 58193
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00032\\manifest.jsonl": {
+      "sha256": "8d85eb5d28fd6734eab000b874364411f08b58c9f35556d121a52cb238a14c36",
+      "bytes": 41686
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00032\\s_select.jsonl": {
+      "sha256": "fa939c6464a11e17cb56559126aefd358a5f24b816297f642ba11a43b06af130",
+      "bytes": 218567
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00032\\verified.jsonl": {
+      "sha256": "8c82d3b3ac959fc25ab803f4ab91770f5edbbec1550754996cd972c6638acd66",
+      "bytes": 58919
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00032\\s_select.json": {
+      "sha256": "c523066c5a1474fd1924aa913d383fe6c0d5dd2b86c6af0f29639fba5a015a63",
+      "bytes": 207
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00032\\cycle.json": {
+      "sha256": "a76db1df8dc7f741d816cf637b7ae0b51f6a04feb2433b50fb9ef89982916ac1",
+      "bytes": 2029
+    }
+  },
+  "reference_report_created_at": "2026-09-06T05:50:24.415894+00:00",
+  "rules": {
+    "window_checkpoints": 3,
+    "internal_delta_min": 0.02,
+    "external_delta_max": 0.02,
+    "gradient_drop_min": 0.01,
+    "gradient_consecutive_checkpoints": 2,
+    "gradient_paired_ci_min_common": 4,
+    "confidence_level": 0.95
+  },
+  "bootstrap": {
+    "samples": 2000,
+    "seed": 20260938,
+    "confidence_level": 0.95,
+    "method": "Same paired per-spec resamples for self/external; independent NumPy implementation of frozen percentile algorithm."
+  },
+  "verification": {
+    "checks": 397,
+    "failures": [],
+    "external_policy": "Pending_human, missing or nonbool verdicts are unknown. Other bool verdicts known, including unnameable false. verified.summary.p not read.",
+    "s_select_policy": "Each image uses all frozen questions as denominator; final score weights each image equally. Family matches measure agreement with prompt requests, not factual observation accuracy.",
+    "uncertainty_method": "Endpoint unknown completions across the full frozen cohort; SciPy beta-quantile four-tail CP bounds. Duplicate canonical scenes block primary/57 robust support. 54 representative IDs are frozen and only supplemental."
+  },
+  "naive_step32": {
+    "n": 64,
+    "s_select_equal_image_mean": 0.9622395833333333,
+    "external": {
+      "correct": 19,
+      "incorrect": 38,
+      "unknown": 7
+    },
+    "external_known_rate": 0.3333333333333333,
+    "fullscore": {
+      "correct": 19,
+      "incorrect": 28,
+      "unknown": 6
+    },
+    "answers": {
+      "total": 316,
+      "available": 316,
+      "correct": 305,
+      "errors": 0,
+      "abstained": 0,
+      "missing": 0
+    },
+    "families": {
+      "existence": {
+        "matches_request": 158,
+        "total": 158,
+        "rate": 1.0
+      },
+      "count": {
+        "matches_request": 147,
+        "total": 158,
+        "rate": 0.930379746835443
+      }
+    },
+    "unknown_items": [
+      {
+        "spec_id": "v4a-0030",
+        "resolution": "pending_human",
+        "raw_verdict": false
+      },
+      {
+        "spec_id": "v4b-0033",
+        "resolution": "pending_human",
+        "raw_verdict": true
+      },
+      {
+        "spec_id": "v4b-0066",
+        "resolution": "pending_human",
+        "raw_verdict": true
+      },
+      {
+        "spec_id": "v4b-0072",
+        "resolution": "pending_human",
+        "raw_verdict": true
+      },
+      {
+        "spec_id": "v4b-0075",
+        "resolution": "pending_human",
+        "raw_verdict": true
+      },
+      {
+        "spec_id": "v4b-0088",
+        "resolution": "pending_human",
+        "raw_verdict": false
+      },
+      {
+        "spec_id": "v4b-0099",
+        "resolution": "pending_human",
+        "raw_verdict": true
+      }
+    ],
+    "cycle": -2.0234375,
+    "parameter_digest": "9bb84cc7160254f8cc0adb3bc22182c00522d55187fbf58e4c5bfdf6a2f7d55a"
+  },
+  "step16_endpoint_description": {
+    "n": 64,
+    "s_select_equal_image_mean": 0.9466145833333333,
+    "external": {
+      "correct": 21,
+      "incorrect": 40,
+      "unknown": 3
+    },
+    "external_known_rate": 0.3442622950819672,
+    "fullscore": {
+      "correct": 21,
+      "incorrect": 26,
+      "unknown": 3
+    }
+  },
+  "windows": {
+    "primary64": {
+      "window_steps": [
+        16,
+        24,
+        32
+      ],
+      "available_at_step": 32,
+      "middle_checkpoint_role": "Window membership; registered statistic uses first/last checkpoint only. Step24 was not re-audited.",
+      "population": 64,
+      "canonical_scenes": 59,
+      "paired_known": 57,
+      "unknown_pairs": 7,
+      "paired_spec_ids": [
+        "v4a-0001",
+        "v4a-0004",
+        "v4a-0007",
+        "v4a-0008",
+        "v4a-0009",
+        "v4a-0011",
+        "v4a-0014",
+        "v4a-0023",
+        "v4a-0024",
+        "v4a-0031",
+        "v4a-0032",
+        "v4a-0033",
+        "v4a-0039",
+        "v4a-0041",
+        "v4a-0058",
+        "v4a-0062",
+        "v4a-0066",
+        "v4a-0070",
+        "v4a-0071",
+        "v4a-0073",
+        "v4a-0078",
+        "v4a-0080",
+        "v4a-0084",
+        "v4a-0088",
+        "v4a-0090",
+        "v4a-0097",
+        "v4a-0103",
+        "v4a-0104",
+        "v4a-0105",
+        "v4a-0106",
+        "v4a-0107",
+        "v4a-0108",
+        "v4a-0113",
+        "v4b-0017",
+        "v4b-0021",
+        "v4b-0026",
+        "v4b-0029",
+        "v4b-0032",
+        "v4b-0045",
+        "v4b-0049",
+        "v4b-0054",
+        "v4b-0055",
+        "v4b-0059",
+        "v4b-0060",
+        "v4b-0061",
+        "v4b-0062",
+        "v4b-0069",
+        "v4b-0077",
+        "v4b-0082",
+        "v4b-0083",
+        "v4b-0090",
+        "v4b-0092",
+        "v4b-0094",
+        "v4b-0097",
+        "v4b-0103",
+        "v4b-0104",
+        "v4b-0106"
+      ],
+      "s_select": {
+        "delta": 0.016081871345029242,
+        "ci_low": -0.008771929824561403,
+        "ci_high": 0.04093567251461989
+      },
+      "external": {
+        "delta": 0.0,
+        "ci_low": -0.07017543859649122,
+        "ci_high": 0.07017543859649122
+      },
+      "candidate": false,
+      "bootstrap_rule_supported": false,
+      "external_discordances": {
+        "n": 57,
+        "improvements": 2,
+        "deteriorations": 2,
+        "unchanged": 53,
+        "delta": 0.0,
+        "ci_low": -0.13209966636355047,
+        "ci_high": 0.13209966636355047
+      },
+      "unknown_completion_delta_bounds": [
+        -0.078125,
+        0.078125
+      ],
+      "completion_confidence_bounds": [
+        -0.22537401651770317,
+        0.22537401651770317
+      ],
+      "lower_completion_counts": {
+        "n": 64,
+        "improvements": 2,
+        "deteriorations": 7,
+        "unchanged": 55,
+        "delta": -0.078125,
+        "ci_low": -0.22537401651770317,
+        "ci_high": 0.0818046572392584
+      },
+      "upper_completion_counts": {
+        "n": 64,
+        "improvements": 7,
+        "deteriorations": 2,
+        "unchanged": 55,
+        "delta": 0.078125,
+        "ci_low": -0.0818046572392584,
+        "ci_high": 0.22537401651770317
+      },
+      "internal_all_available_delta": 0.015625,
+      "internal_all_available_bootstrap_ci": [
+        -0.010416666666666664,
+        0.040364583333333336
+      ],
+      "internal_supported": false,
+      "external_supported": false,
+      "robustness_supported_assuming_independent_specs": false,
+      "robustness_supported": false,
+      "support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+      "role": "primary"
+    },
+    "scene_disjoint57": {
+      "window_steps": [
+        16,
+        24,
+        32
+      ],
+      "available_at_step": 32,
+      "middle_checkpoint_role": "Window membership; registered statistic uses first/last checkpoint only. Step24 was not re-audited.",
+      "population": 57,
+      "canonical_scenes": 54,
+      "paired_known": 51,
+      "unknown_pairs": 6,
+      "paired_spec_ids": [
+        "v4a-0001",
+        "v4a-0004",
+        "v4a-0007",
+        "v4a-0008",
+        "v4a-0009",
+        "v4a-0011",
+        "v4a-0023",
+        "v4a-0024",
+        "v4a-0031",
+        "v4a-0032",
+        "v4a-0033",
+        "v4a-0039",
+        "v4a-0041",
+        "v4a-0058",
+        "v4a-0062",
+        "v4a-0066",
+        "v4a-0070",
+        "v4a-0071",
+        "v4a-0073",
+        "v4a-0078",
+        "v4a-0080",
+        "v4a-0084",
+        "v4a-0088",
+        "v4a-0090",
+        "v4a-0097",
+        "v4a-0103",
+        "v4a-0104",
+        "v4a-0106",
+        "v4a-0107",
+        "v4a-0108",
+        "v4a-0113",
+        "v4b-0017",
+        "v4b-0021",
+        "v4b-0026",
+        "v4b-0032",
+        "v4b-0045",
+        "v4b-0059",
+        "v4b-0060",
+        "v4b-0061",
+        "v4b-0062",
+        "v4b-0069",
+        "v4b-0077",
+        "v4b-0082",
+        "v4b-0083",
+        "v4b-0090",
+        "v4b-0092",
+        "v4b-0094",
+        "v4b-0097",
+        "v4b-0103",
+        "v4b-0104",
+        "v4b-0106"
+      ],
+      "s_select": {
+        "delta": 0.022875816993464058,
+        "ci_low": -0.0032679738562091474,
+        "ci_high": 0.05392156862745098
+      },
+      "external": {
+        "delta": 0.0,
+        "ci_low": -0.0784313725490196,
+        "ci_high": 0.0784313725490196
+      },
+      "candidate": true,
+      "bootstrap_rule_supported": false,
+      "external_discordances": {
+        "n": 51,
+        "improvements": 2,
+        "deteriorations": 2,
+        "unchanged": 47,
+        "delta": 0.0,
+        "ci_low": -0.1466894224802641,
+        "ci_high": 0.1466894224802641
+      },
+      "unknown_completion_delta_bounds": [
+        -0.07017543859649122,
+        0.07017543859649122
+      ],
+      "completion_confidence_bounds": [
+        -0.2288186126180227,
+        0.2288186126180227
+      ],
+      "lower_completion_counts": {
+        "n": 57,
+        "improvements": 2,
+        "deteriorations": 6,
+        "unchanged": 49,
+        "delta": -0.07017543859649122,
+        "ci_low": -0.2288186126180227,
+        "ci_high": 0.10119174374894661
+      },
+      "upper_completion_counts": {
+        "n": 57,
+        "improvements": 6,
+        "deteriorations": 2,
+        "unchanged": 49,
+        "delta": 0.07017543859649122,
+        "ci_low": -0.10119174374894661,
+        "ci_high": 0.2288186126180227
+      },
+      "internal_all_available_delta": 0.024853801169590645,
+      "internal_all_available_bootstrap_ci": [
+        1.947759692324836e-18,
+        0.05116959064327486
+      ],
+      "internal_supported": false,
+      "external_supported": false,
+      "robustness_supported_assuming_independent_specs": false,
+      "robustness_supported": false,
+      "support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+      "role": "frozen_sensitivity_not_replacement_primary_analysis"
+    },
+    "independent54": {
+      "window_steps": [
+        16,
+        24,
+        32
+      ],
+      "available_at_step": 32,
+      "middle_checkpoint_role": "Window membership; registered statistic uses first/last checkpoint only. Step24 was not re-audited.",
+      "population": 54,
+      "canonical_scenes": 54,
+      "paired_known": 48,
+      "unknown_pairs": 6,
+      "paired_spec_ids": [
+        "v4a-0001",
+        "v4a-0004",
+        "v4a-0007",
+        "v4a-0008",
+        "v4a-0009",
+        "v4a-0011",
+        "v4a-0023",
+        "v4a-0024",
+        "v4a-0031",
+        "v4a-0032",
+        "v4a-0033",
+        "v4a-0041",
+        "v4a-0058",
+        "v4a-0062",
+        "v4a-0066",
+        "v4a-0070",
+        "v4a-0071",
+        "v4a-0073",
+        "v4a-0078",
+        "v4a-0080",
+        "v4a-0084",
+        "v4a-0088",
+        "v4a-0097",
+        "v4a-0103",
+        "v4a-0104",
+        "v4a-0106",
+        "v4a-0108",
+        "v4a-0113",
+        "v4b-0017",
+        "v4b-0021",
+        "v4b-0026",
+        "v4b-0032",
+        "v4b-0045",
+        "v4b-0059",
+        "v4b-0060",
+        "v4b-0061",
+        "v4b-0062",
+        "v4b-0069",
+        "v4b-0077",
+        "v4b-0082",
+        "v4b-0083",
+        "v4b-0090",
+        "v4b-0092",
+        "v4b-0094",
+        "v4b-0097",
+        "v4b-0103",
+        "v4b-0104",
+        "v4b-0106"
+      ],
+      "s_select": {
+        "delta": 0.024305555555555563,
+        "ci_low": -0.003472222222222219,
+        "ci_high": 0.057291666666666664
+      },
+      "external": {
+        "delta": 0.0,
+        "ci_low": -0.08333333333333333,
+        "ci_high": 0.08333333333333333
+      },
+      "candidate": true,
+      "bootstrap_rule_supported": false,
+      "external_discordances": {
+        "n": 48,
+        "improvements": 2,
+        "deteriorations": 2,
+        "unchanged": 44,
+        "delta": 0.0,
+        "ci_low": -0.15526043290492367,
+        "ci_high": 0.15526043290492367
+      },
+      "unknown_completion_delta_bounds": [
+        -0.07407407407407407,
+        0.07407407407407407
+      ],
+      "completion_confidence_bounds": [
+        -0.2405253854684592,
+        0.2405253854684592
+      ],
+      "lower_completion_counts": {
+        "n": 54,
+        "improvements": 2,
+        "deteriorations": 6,
+        "unchanged": 46,
+        "delta": -0.07407407407407407,
+        "ci_low": -0.2405253854684592,
+        "ci_high": 0.10633153742354123
+      },
+      "upper_completion_counts": {
+        "n": 54,
+        "improvements": 6,
+        "deteriorations": 2,
+        "unchanged": 46,
+        "delta": 0.07407407407407407,
+        "ci_low": -0.10633153742354123,
+        "ci_high": 0.2405253854684592
+      },
+      "internal_all_available_delta": 0.026234567901234573,
+      "internal_all_available_bootstrap_ci": [
+        -0.0015432098765432065,
+        0.05555555555555555
+      ],
+      "internal_supported": false,
+      "external_supported": false,
+      "robustness_supported_assuming_independent_specs": false,
+      "robustness_supported": false,
+      "support_status": "conditional_on_independent_canonical_scenes",
+      "role": "frozen_sensitivity_not_replacement_primary_analysis"
+    }
+  },
+  "gold_step32": {
+    "external_verified_file_exists": false,
+    "cross_arm_conclusion": "Not assessed: Gold32 outcome was incomplete when this audit began."
+  },
+  "interpretation": "Descriptive pilot screening only; candidate, bootstrap support and supplementary robustness are separate. No predictive-lead analysis was performed."
+}
