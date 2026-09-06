@@ -170,12 +170,30 @@ def seed_training(seed: int) -> None:
         torch.cuda.manual_seed_all(seed)
 
 
-def pending_rounds(total: int, done: Sequence[int], max_rounds: int | None) -> list[int]:
-    """Limit this invocation only; the caller still builds the complete schedule."""
+def pending_rounds(
+    total: int, done: Sequence[int], max_rounds: int | None,
+    *, round_index: int | None = None,
+) -> list[int]:
+    """Choose new rounds or one exact target without changing the frozen schedule.
+
+    A repeated exact target is a no-op once DONE exists. In particular, it must
+    not select the next unfinished round while a supervisor resumes evaluation.
+    """
     if total <= 0 or (max_rounds is not None and max_rounds <= 0):
         raise ValueError("rounds and --max-rounds must be positive")
+    if round_index is not None and max_rounds is not None:
+        raise ValueError("--round-index and --max-rounds are mutually exclusive")
     if sorted(done) != list(range(len(done))) or len(done) > total:
         raise ValueError("Completed rounds must be a contiguous prefix of the frozen schedule")
+    if round_index is not None:
+        if not 0 <= round_index < total:
+            raise ValueError(f"--round-index must be within the frozen schedule [0, {total - 1}]")
+        if round_index in done:
+            return []
+        if round_index != len(done):
+            raise ValueError(f"Round {round_index} requires all preceding rounds to be complete; "
+                             f"next unfinished round is {len(done)}")
+        return [round_index]
     pending = list(range(len(done), total))
     return pending if max_rounds is None else pending[:max_rounds]
 

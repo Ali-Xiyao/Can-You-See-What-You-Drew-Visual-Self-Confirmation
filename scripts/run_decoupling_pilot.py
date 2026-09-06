@@ -228,7 +228,7 @@ class Pilot:
             # into training, and reaches the first optimizer update sooner.
             self.run(f"round-{index:03d}.train", "showo2", "scripts/v4_train.py",
                      ["train", *self.common, "--device", "cuda:1", "--ladder-device", "cuda:0",
-                      "--max-epochs", "1", "--max-rounds", str(index + 1)])
+                      "--max-epochs", "1", "--round-index", str(index)])
             self.validate_round(index)
             if index == 0:
                 for arm in ARMS:

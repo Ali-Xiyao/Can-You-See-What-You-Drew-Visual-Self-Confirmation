@@ -15,7 +15,7 @@
 **新动态 pilot 已于 2026-09-05 18:04 UTC 启动，运行状态以 `runs/v4/decoupling-pilot-20260906/state.json` 为准。**
 用户明确授权接手实现、使用本地两张 3090 并持续推进至完成或预先规定的停止条件（§43）。
 GPU1 生成/训练/梯度，GPU0 独立裁定；不会恢复旧 `l3-preview` 调度链。
-447 项 CPU 检查通过；InternVL 在空卡完成真实图片推理。固定方案见
+461 项 CPU 检查通过；InternVL 在空卡完成真实图片推理。固定方案见
 `docs/prereg/2026-09-06-decoupling-pilot.md`。当前尚未得到训练分叉或可靠预警结论。
 
 2026-09-05 19:44 UTC 首轮完成：两臂各做 8 次真实更新，9/12 个 prompt 进入配对训练；
@@ -25,6 +25,8 @@ checkpoint、Adam 步数、参数 delta/digest 与日志一致，见 `runtime-ch
 随后自动开始第二轮（round001）。当前只具备 0/8 两个测量点，没有三点行为候选或
 两点梯度报警；首轮配对结果及限制见 §43.11。先训练首轮再评测已保存 base 是原定顺序。
 曾有 1 张未被选中训练图片因检测解析失败缺少 verdict，覆盖率修复及边界接续见 §43.6。
+2026-09-06 00:11 UTC 第二轮更新完成、两臂累计 16 步；随后发现新增轮数/累计轮号混用的
+调度 bug，已停止提前生成并修复，checkpoint 核验通过。恢复目标是先测 step16，见 §43.12。
 
 **§41/§42 的事实错误率、旧 oracle 与“短板全在观察者”解释已被 §43 更正。**
 原预注册实测的未通过判定保留；原始数据不覆盖。
@@ -2295,6 +2297,36 @@ Gold step8 梯度独立审计 29/29 项通过，16 池/404 回答/27 backward，
 视觉斜率判断优劣。22:42 UTC 主流程已自动启动 round001；当前固定方案继续，没有因
 首轮趋势调整方法、阈值或规模。首轮完整核验后，后续以既有不变量及变化/异常检查为主，
 不重复重算已经通过的基线审计。
+
+**43.12 第二轮完成后的调度修复（2026-09-06 00:21 UTC）。** 我写的 supervisor 将
+`--max-rounds index+1` 当成“跑到此轮”，但 train CLI 的既有语义是“本次新增多少个未完成
+轮次”。第一轮的参数 1 没有暴露问题；第二次调用的参数 2 使 round001 完成后，继续
+提前生成 round002，尚未执行要求的 step16 评测。这是调度实现缺陷，不是新科学协议。
+00:14 UTC 在核验进程身份和 DONE 后停止 owned child27664，其 parent1884 退出并如实
+保留 exit15/needs_diagnosis。停止前 round002 只有 9 张 PNG，没有该轮 checkpoint、DONE、
+selection 或训练更新；9 文件全部按原哈希移入
+`runtime-check/round-limit-repair/round-002-early-20260906T001426Z/`。不删除、不回填、不复用
+提前生成的数据；原故障日志及 `round-limit-incident-20260906T001426Z.json` 留档。
+
+round001 两臂各 8 次真实更新，累计 step16，9/12 个新的训练 prompt 完成配对；与上一轮
+12 个 ID 不重复且全部来自 train。Gold 选中 9 个已确认正确图；两臂 1/9 同候选槽位、
+8/9 不同槽位。训练后的两臂生成图不同，不能把 Gold 图像裁定转用为 Naive 图像标签。
+两个 step16 checkpoint 独立审计 32/32 通过：文件哈希、392 个 Adam state 的 step16、
+有限性、scheduler16 和各自上轮关联均匹配；实际 digest 为 Naive `9813785e…4c83` / Gold
+`6d06ec80…08de`，参数 delta L2 精确复现为 1.3007776172 / 1.3019357355。
+因此保留并复用这两个 checkpoint，不重跑第二轮。证据在
+`runtime-check/round001-checkpoint-integrity.json` 和 `round001-selection-integrity.json`。
+
+修复引入明确的 `--round-index N`：只执行指定轮；其 DONE 已存在则在模型导入/训练输入
+加载前返回，不挑选下一未完成轮。与 `--max-rounds` 互斥，后者保留旧新增轮数语义。
+supervisor 改传明确 index。只改为 `--max-rounds 1` 不够：本次恢复时 round001 的 DONE
+已存在而阶段 sentinel 尚缺，那个写法会跳到 round002。新路径通过正常的完成返回让
+supervisor 补记成功并先测 step16，不伪造旧进程成功状态。
+新增 CLI/轮次 12 项及真实 main→execute→run 恢复顺序 2 项先在旧代码失败，修复后全过；
+全量 CPU 461 项通过（两条既有 Pillow 警告）。真实 showo2 环境禁用 CUDA 后重复请求
+已完成 round1，0.6 秒内退出 0，8 个已完成工件哈希未变、没有创建下一轮目录，见
+`runtime-check/round-limit-repair/exact-round-noop.json`。冻结 config/prereg/split 和原
+started_unix/60 小时预算不变；随后登记源码修复并恢复 step16 评测。
 
 ## 已作废 / 已被取代
 

@@ -258,6 +258,19 @@ def adjudicate(
 def stage_train(args: argparse.Namespace) -> None:
     """Rounds of paired selection and SFT. Resumable at round granularity."""
 
+    config = load_config(args.config)
+    out = Path(args.outdir)
+    training = config["training"]
+    done = completed_rounds(out)
+    target = getattr(args, "round_index", None)
+    pending = pending_rounds(int(training["rounds"]), done,
+                             getattr(args, "max_rounds", None), round_index=target)
+    print(f"{len(done)} rounds already complete: {done}")
+    if not pending:
+        print(f"Requested round {target} is already complete" if target is not None else
+              "All scheduled rounds are already complete")
+        return
+
     import torch
 
     from selfsight.backbones.showo2 import Showo2Adapter
@@ -265,12 +278,9 @@ def stage_train(args: argparse.Namespace) -> None:
     from selfsight.training.checkpoint import (
         capture_base_state, restore_arm_state, save_checkpoint)
 
-    config = load_config(args.config)
-    out = Path(args.outdir)
     split = read_split(out, config, tuple(args.runs))
     corpus = load_training_corpus(args.runs)
     corpus = restrict_replay(corpus, split["train"])
-    training = config["training"]
 
     schedule = build_schedule(
         split["train"],
@@ -281,12 +291,6 @@ def stage_train(args: argparse.Namespace) -> None:
         max_epochs=args.max_epochs,
     )
 
-    done = completed_rounds(out)
-    pending = pending_rounds(int(training["rounds"]), done, getattr(args, "max_rounds", None))
-    print(f"{len(done)} rounds already complete: {done}")
-    if not pending:
-        print("All scheduled rounds are already complete")
-        return
     for arm in ARMS:
         previous_checkpoint(out, arm, pending[0])
 
@@ -667,8 +671,11 @@ def main() -> None:
     t.add_argument("--core-python", default="envs/core/python.exe")
     t.add_argument("--max-epochs", type=int, default=1,
                    help="passes over the prompt bank; >1 mixes memorisation into the curve")
-    t.add_argument("--max-rounds", type=int, default=None,
-                   help="run at most this many unfinished rounds now; frozen total schedule is unchanged")
+    rounds = t.add_mutually_exclusive_group()
+    rounds.add_argument("--max-rounds", type=int, default=None,
+                        help="run at most this many unfinished rounds now; frozen total schedule is unchanged")
+    rounds.add_argument("--round-index", type=int, default=None,
+                        help="run only this zero-based round; return without loading models if already complete")
     t.set_defaults(func=stage_train)
 
     g = sub.add_parser("generate", help="outcome images + internal curve for one checkpoint")
