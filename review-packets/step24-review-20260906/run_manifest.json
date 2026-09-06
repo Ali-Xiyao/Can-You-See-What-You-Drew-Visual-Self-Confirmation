@@ -1,0 +1,177 @@
+{
+  "config_sha256": "d92afed91a4649cb958e0a4011d20b4d0e7dac46a222b3634a90e246a2400106",
+  "protocol_sha256": "c1d1e7240c134293077b8e1a68d5b9ab503f3ffdfac1c22343bdf6fd72a47710",
+  "source_sha256": {
+    "scripts/v4_train.py": "987cb0a5d718b09bc083e09020eecc23c27d34c2bb8084587f55dd5c5edc48f8",
+    "src/selfsight/v4/train.py": "7de5d3dfcec9bcfb3be994e41621e256842f0f563fed9e11be5b0ba84d8e574e",
+    "src/selfsight/v4/evaluate.py": "d4e65ff59832d6ef7b96cabc315489c9ad4689e967e34fe5b0f0c9ba001d13a1",
+    "src/selfsight/v4/probe.py": "f704b87c2e35f314230fe6865968397bedb764f73ea512325bcebe7f64e274d5",
+    "scripts/v4_checkpoint_probe.py": "8dbceae2c001065f81d18548627dbe62d1560111dd59f41dddb91516bfc3f05d",
+    "src/selfsight/v4/checkpoint_probe.py": "9840c3fea98b60e261176a4291195deb50b34fb95eb0d21ec1ece80b19a5b209",
+    "scripts/v4_decoupling_report.py": "a6fabc7b46c0114388cecf27b10d55d0db11687f4dad6d914bbdd97a189050bc",
+    "src/selfsight/v4/factual_truth.py": "0e9a4cf293939344e000f4b6c89cf4d714b55376049aa8edfb19885d48337c19",
+    "src/selfsight/training/checkpoint.py": "1252ebcdda5a6a2b6b411f081168a1f348aa738e3025f1220f04910cc47ff261",
+    "scripts/run_decoupling_pilot.py": "02af8ac4fb20bc1e2492c803e7302f3c16fbe9671d0e8da0dd8356e2b335e392",
+    "scripts/v4_decoupling_plot.py": "2f93d3b440596a57d0f4fd782f10923a0f22d7328d74cf583daed99176b27ebc",
+    "scripts/v4_gradient_sensitivity.py": "e1e7d719644dda0b662576f0b336f2b35afed7a42045b2a67bd611bb4b0852d2"
+  },
+  "runs": [
+    "runs/v4/main-2plus1",
+    "runs/v4/main-1plus1plus1"
+  ],
+  "started_unix": 1788631464.2176192,
+  "config": {
+    "profile": "v4_decoupling_pilot_20260906",
+    "seed": 20260906,
+    "paths": {
+      "cache_root": "${SELFSIGHT_CACHE_ROOT}",
+      "data_root": "${SELFSIGHT_DATA_ROOT}",
+      "run_root": "${SELFSIGHT_RUN_ROOT}",
+      "model_root": "${SELFSIGHT_MODEL_ROOT}",
+      "tmp_root": "${SELFSIGHT_TMP_ROOT}"
+    },
+    "hardware": {
+      "generator_device": "cuda:1",
+      "observer_device": "cuda:0",
+      "precision": "bf16",
+      "attention": "sdpa",
+      "distributed": false
+    },
+    "model": {
+      "trainable_id": "showlab/show-o2-1.5B",
+      "backbone_config": "configs/backbones/showo2_1p5b.yaml",
+      "frozen_negative_control_id": "showlab/show-o-w-clip-vit-512x512",
+      "language_base_id": "Qwen/Qwen2.5-1.5B-Instruct",
+      "vision_tower_id": "google/siglip-so400m-patch14-384",
+      "image_autoencoder_id": "Wan-AI/Wan2.1-T2V-14B",
+      "image_resolution": 432,
+      "generation_timesteps": 50,
+      "guidance_scale": 5.0,
+      "temperature": 1.0
+    },
+    "data": {
+      "local_train_prompts": 132,
+      "local_outcome": 64,
+      "local_probe": 32,
+      "images_per_prompt": 1
+    },
+    "training": {
+      "arms": [
+        "naive",
+        "rfo_gold"
+      ],
+      "seeds": [
+        20260906
+      ],
+      "rounds": 10,
+      "prompts_per_round": 12,
+      "candidate_k": 8,
+      "optimizer_steps_per_round": 8,
+      "micro_batch_size": 1,
+      "gradient_accumulation_steps": 8,
+      "learning_rate": 0.0001,
+      "weight_decay": 0.01,
+      "warmup_ratio": 0.1,
+      "max_grad_norm": 1.0,
+      "understanding_replay_ratio": 0.25,
+      "gradient_checkpointing": true,
+      "lora": {
+        "rank": 16,
+        "alpha": 32,
+        "dropout": 0.05,
+        "target_modules": [],
+        "target_selection_required": true,
+        "forbidden_trainable": [
+          "embed_tokens",
+          "lm_head",
+          "image_embedder_und",
+          "und_trans",
+          "fusion_proj"
+        ]
+      }
+    },
+    "evaluation": {
+      "fixed_latents": true,
+      "selector_missing_policy": "zero_over_all_questions"
+    },
+    "gradient_probe": {
+      "source": "runs/v4/gate-b-openct2",
+      "size": 16,
+      "minimum_size": 4,
+      "criteria": [
+        "naive",
+        "rfo",
+        "gold"
+      ],
+      "resamples": 2000,
+      "reference": "base",
+      "fixed_candidate_bank": true
+    },
+    "pilot": {
+      "status": "exploratory_not_confirmatory",
+      "max_wall_hours": 60,
+      "min_free_gib": 8,
+      "min_paired_prompts": 2,
+      "effect_window_checkpoints": 3,
+      "internal_change_margin": 0.02,
+      "external_improvement_margin": 0.02,
+      "gradient_drop_margin": 0.01,
+      "gradient_confirmation_checkpoints": 2
+    }
+  },
+  "git_head": "8ee6b97e418e398b9cc8200bed4f99d325e78732",
+  "code_repairs": [
+    {
+      "at": 1788637576.0497196,
+      "previous": {
+        "scripts/v4_train.py": "382991a1627eae1335a535fd8fdb8537ea19a3501e0a0ce5b42711b4dc6e46f9",
+        "src/selfsight/v4/train.py": "afa2708f9f26e15a88c9b58796a03fa61641bd4949038de8ce4c752d2d4e715c",
+        "src/selfsight/v4/evaluate.py": "e7210c952b335abcc73c7d64c12d4fdf18f7c578764f09fef9cfc3a43618e576",
+        "src/selfsight/v4/probe.py": "f704b87c2e35f314230fe6865968397bedb764f73ea512325bcebe7f64e274d5",
+        "scripts/v4_checkpoint_probe.py": "8dbceae2c001065f81d18548627dbe62d1560111dd59f41dddb91516bfc3f05d",
+        "src/selfsight/v4/checkpoint_probe.py": "9840c3fea98b60e261176a4291195deb50b34fb95eb0d21ec1ece80b19a5b209",
+        "scripts/v4_decoupling_report.py": "ee7dbd8494f66fd8a468ed42a1e5f4e672065e7092d8ef5bc90011b1d7533f32",
+        "src/selfsight/v4/factual_truth.py": "0e9a4cf293939344e000f4b6c89cf4d714b55376049aa8edfb19885d48337c19",
+        "src/selfsight/training/checkpoint.py": "1252ebcdda5a6a2b6b411f081168a1f348aa738e3025f1220f04910cc47ff261",
+        "scripts/run_decoupling_pilot.py": "67cb54ac744364e93eb2dc3ca5142f4e4251054afe5dbe7c440f87025d2f1470"
+      },
+      "git_head": "6a66b353370479577a5791e61b2f5f6cd2dd513a"
+    },
+    {
+      "at": 1788638901.9324691,
+      "previous": {
+        "scripts/v4_train.py": "382991a1627eae1335a535fd8fdb8537ea19a3501e0a0ce5b42711b4dc6e46f9",
+        "src/selfsight/v4/train.py": "afa2708f9f26e15a88c9b58796a03fa61641bd4949038de8ce4c752d2d4e715c",
+        "src/selfsight/v4/evaluate.py": "e7210c952b335abcc73c7d64c12d4fdf18f7c578764f09fef9cfc3a43618e576",
+        "src/selfsight/v4/probe.py": "f704b87c2e35f314230fe6865968397bedb764f73ea512325bcebe7f64e274d5",
+        "scripts/v4_checkpoint_probe.py": "8dbceae2c001065f81d18548627dbe62d1560111dd59f41dddb91516bfc3f05d",
+        "src/selfsight/v4/checkpoint_probe.py": "9840c3fea98b60e261176a4291195deb50b34fb95eb0d21ec1ece80b19a5b209",
+        "scripts/v4_decoupling_report.py": "a6fabc7b46c0114388cecf27b10d55d0db11687f4dad6d914bbdd97a189050bc",
+        "src/selfsight/v4/factual_truth.py": "0e9a4cf293939344e000f4b6c89cf4d714b55376049aa8edfb19885d48337c19",
+        "src/selfsight/training/checkpoint.py": "1252ebcdda5a6a2b6b411f081168a1f348aa738e3025f1220f04910cc47ff261",
+        "scripts/run_decoupling_pilot.py": "118f58e033b49ae2e559b774a1b44b9f2dc01a3ba8fc7df45d1c95a9bdbe937f",
+        "scripts/v4_decoupling_plot.py": "2f93d3b440596a57d0f4fd782f10923a0f22d7328d74cf583daed99176b27ebc",
+        "scripts/v4_gradient_sensitivity.py": "e1e7d719644dda0b662576f0b336f2b35afed7a42045b2a67bd611bb4b0852d2"
+      },
+      "git_head": "aded444742af27caebda7896b3b37fca4cee706b"
+    },
+    {
+      "at": 1788654177.8593283,
+      "previous": {
+        "scripts/v4_train.py": "9bd0027b7388d55139ec5c1ff76e8cbf4ba2e5c2b6d8ceeb26644044270316a4",
+        "src/selfsight/v4/train.py": "d3cead4c72fb5c76269f87a668c94ce0f8fb125054118a065c89446a2cf86c98",
+        "src/selfsight/v4/evaluate.py": "d4e65ff59832d6ef7b96cabc315489c9ad4689e967e34fe5b0f0c9ba001d13a1",
+        "src/selfsight/v4/probe.py": "f704b87c2e35f314230fe6865968397bedb764f73ea512325bcebe7f64e274d5",
+        "scripts/v4_checkpoint_probe.py": "8dbceae2c001065f81d18548627dbe62d1560111dd59f41dddb91516bfc3f05d",
+        "src/selfsight/v4/checkpoint_probe.py": "9840c3fea98b60e261176a4291195deb50b34fb95eb0d21ec1ece80b19a5b209",
+        "scripts/v4_decoupling_report.py": "a6fabc7b46c0114388cecf27b10d55d0db11687f4dad6d914bbdd97a189050bc",
+        "src/selfsight/v4/factual_truth.py": "0e9a4cf293939344e000f4b6c89cf4d714b55376049aa8edfb19885d48337c19",
+        "src/selfsight/training/checkpoint.py": "1252ebcdda5a6a2b6b411f081168a1f348aa738e3025f1220f04910cc47ff261",
+        "scripts/run_decoupling_pilot.py": "118f58e033b49ae2e559b774a1b44b9f2dc01a3ba8fc7df45d1c95a9bdbe937f",
+        "scripts/v4_decoupling_plot.py": "2f93d3b440596a57d0f4fd782f10923a0f22d7328d74cf583daed99176b27ebc",
+        "scripts/v4_gradient_sensitivity.py": "e1e7d719644dda0b662576f0b336f2b35afed7a42045b2a67bd611bb4b0852d2"
+      },
+      "git_head": "d5fd716b55bbac15ede2e734fe257e3f114166b0"
+    }
+  ]
+}

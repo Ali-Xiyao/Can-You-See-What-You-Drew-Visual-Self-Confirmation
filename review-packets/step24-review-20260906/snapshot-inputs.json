@@ -1,0 +1,22 @@
+{
+  "checkpoint_metrics.csv": {
+    "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoint_metrics.csv",
+    "sha256": "defe0585260343ea6aae658ed3cf9f16518861707c50afa8b05fb1f1795b8cc8"
+  },
+  "decoupling_report.json": {
+    "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\decoupling_report.json",
+    "sha256": "aeae6d834fa6ce06b4e328c28c905bfd47d1c1f045278c3ad57f7880e4ea001f"
+  },
+  "gradient_sensitivity.json": {
+    "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient_sensitivity.json",
+    "sha256": "d50c0bda4fc9a6ef2618b42c309a1abe7acee6ca497d61241b291f8db987e9f7"
+  },
+  "run_manifest.json": {
+    "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\run_manifest.json",
+    "sha256": "f441ad87a4a9dc6bff14c534819ee18c2c6c011490a3db6d91f08617691de0c2"
+  },
+  "decoupling-20260906T055038001296Z.png": {
+    "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\plots\\decoupling-20260906T055038001296Z.png",
+    "sha256": "5575b25703586c1c85af545ca302f23c21c74cb2e6c1ce6332df873db39cdc87"
+  }
+}

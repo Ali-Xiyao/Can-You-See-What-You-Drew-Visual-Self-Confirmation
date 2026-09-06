@@ -1,0 +1,419 @@
+{
+  "created_at": "2026-09-06T05:57:23.104355+00:00",
+  "status": "PASS",
+  "scope": "Step24 outcomes and only new [8,16,24] behavioral window; step8 read solely as new-window endpoint; no earlier windows/checkpoints re-audited. CPU only. No live source, run artifact, or process changes.",
+  "report_created_at": "2026-09-06T05:50:24.415894+00:00",
+  "input_hashes": {
+    "runs\\v4\\decoupling-pilot-20260906\\decoupling_report.json": {
+      "sha256": "aeae6d834fa6ce06b4e328c28c905bfd47d1c1f045278c3ad57f7880e4ea001f",
+      "bytes": 121513
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\split.json": {
+      "sha256": "9b358ecce2473addd6244751a10dd2c35fcb01953a1b1fef0a59b7610666d546",
+      "bytes": 4157
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\audit-splits\\scene_overlap.json": {
+      "sha256": "b305fce3d53172e16f7c524c516053041cc398aa4f9e674b396cad4513cfd1ce",
+      "bytes": 274851
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\audit-splits\\scene_representatives.json": {
+      "sha256": "b981ad63507e1fa836cd9ded8bd578e93393df794d9341ea8776d57770c4d8c2",
+      "bytes": 9179
+    },
+    "configs\\v4_decoupling_pilot.yaml": {
+      "sha256": "d92afed91a4649cb958e0a4011d20b4d0e7dac46a222b3634a90e246a2400106",
+      "bytes": 1941
+    },
+    "docs\\prereg\\2026-09-06-decoupling-pilot.md": {
+      "sha256": "c1d1e7240c134293077b8e1a68d5b9ab503f3ffdfac1c22343bdf6fd72a47710",
+      "bytes": 5521
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00008\\manifest.jsonl": {
+      "sha256": "5d13eb967bc6170815019a9d5ee3e375f0f8a3b52e2605f1289e8b6382919487",
+      "bytes": 41686
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00008\\s_select.jsonl": {
+      "sha256": "c38dd0a2180df9dec1595e0835cda680c3d3a04dc640d9a01106195f0e77f5e9",
+      "bytes": 218320
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00008\\verified.jsonl": {
+      "sha256": "58b3f1e9e521cae4f478b3f997d6d668545d5481e71c43e1e69eda91b6fdf2d3",
+      "bytes": 59065
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00024\\manifest.jsonl": {
+      "sha256": "f5f5f820447ca6478b4888bff3190804f272d15827aef7c88be6c3d1e0622e72",
+      "bytes": 41686
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00024\\s_select.jsonl": {
+      "sha256": "583f2d6685e40745550705839c62aeae793c29a5bdac81824ad1528382930a4f",
+      "bytes": 218451
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00024\\verified.jsonl": {
+      "sha256": "c118dd07dde820c7a0675acf01781524202fa9b9713ef59d659fbef15beb6890",
+      "bytes": 58804
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00024\\s_select.json": {
+      "sha256": "8996118c4eb882af7f570bb5b7c3f64558f11f1d402ccc3f9ca8800fc178b931",
+      "bytes": 199
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00024\\cycle.json": {
+      "sha256": "d9d5aa3467cababbf1c9c47679b0d0667d1e60fddb699cd97d5dec6da2863fd7",
+      "bytes": 2058
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00008\\manifest.jsonl": {
+      "sha256": "4da8da85b41780b4d73cafa78de5bd9aadbba5cb0764241fae6c129f11cfe798",
+      "bytes": 42070
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00008\\s_select.jsonl": {
+      "sha256": "4f28b9a4e7c46c418c5800bef870b9d41e39173a5c958a6b18922fa5ca12bdaa",
+      "bytes": 218906
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00008\\verified.jsonl": {
+      "sha256": "d0821b39171eba15be2c3f9d6a60869e5b99ea54ba76c13d8a6b81e0461cf69f",
+      "bytes": 60059
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00024\\manifest.jsonl": {
+      "sha256": "20c88a8d767a5bb9bd7b813c3336e2e510979cf7f9b21439e4d689f770bcd4e3",
+      "bytes": 42070
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00024\\s_select.jsonl": {
+      "sha256": "8c99e66be8c13ec01f5f6fbc15f21a39906e41a3eab51729d95bce46976c21ee",
+      "bytes": 219035
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00024\\verified.jsonl": {
+      "sha256": "4cbbe833f14e67994e71c175ce4c9856089e219ebeae25fe969f07f993e2453f",
+      "bytes": 59564
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00024\\s_select.json": {
+      "sha256": "cf099da9aef6f40fe131ab5363192ae4f4f18087375146559fbde1ea197fde9d",
+      "bytes": 197
+    },
+    "runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00024\\cycle.json": {
+      "sha256": "167e624a5d773206639a997106ef553e163ad1a9f258a024352e3fc3871d31b8",
+      "bytes": 2025
+    }
+  },
+  "verification": {
+    "checks": 333,
+    "failed": [],
+    "independent_arithmetic": "Raw fixed-denominator answer scoring, per-spec paired NumPy percentile bootstrap using recorded seed/draw count; missing verdict endpoint completions independently recalculated; SciPy beta quantiles independently check four-tail paired CP completion bounds.",
+    "external_policy": "pending_human or missing/nonbool image_correct is unknown; all other bools known including unnameable false; verified.summary.p never read.",
+    "s_select_policy": "Fixed number of questions per image, then equal image mean. Family matches are agreement with request, not observation accuracy."
+  },
+  "results": {
+    "naive": {
+      "step24": {
+        "images": 64,
+        "external": {
+          "correct": 20,
+          "incorrect": 39,
+          "unknown": 5
+        },
+        "known_rate": 0.3389830508474576,
+        "fullscore": {
+          "correct": 20,
+          "incorrect": 22,
+          "unknown": 3
+        },
+        "s_select": 0.92578125,
+        "answers": {
+          "total": 316,
+          "available": 316,
+          "correct": 297,
+          "errors": 0,
+          "abstained": 0,
+          "missing": 0
+        },
+        "families": {
+          "existence": {
+            "matches_request": 158,
+            "total": 158,
+            "rate": 1.0
+          },
+          "count": {
+            "matches_request": 139,
+            "total": 158,
+            "rate": 0.879746835443038
+          }
+        },
+        "cycle": -2.0445556640625
+      },
+      "windows": {
+        "primary64": {
+          "window_steps": [
+            8,
+            16,
+            24
+          ],
+          "population": 64,
+          "canonical_scenes": 59,
+          "paired_known": 52,
+          "unknown_pairs": 12,
+          "s_select": {
+            "delta": 0.017628205128205125,
+            "ci_low": -0.025681089743589753,
+            "ci_high": 0.06089743589743589
+          },
+          "external": {
+            "delta": 0.038461538461538464,
+            "ci_low": -0.038461538461538464,
+            "ci_high": 0.11538461538461539
+          },
+          "candidate": false,
+          "bootstrap_rule_supported": false,
+          "robustness_supported": false,
+          "unknown_completion_delta_bounds": [
+            -0.0625,
+            0.171875
+          ],
+          "completion_confidence_bounds": [
+            -0.22050439456421517,
+            0.3213780810290945
+          ],
+          "internal_all_available_delta": 0.011718749999999997,
+          "internal_all_available_bootstrap_ci": [
+            -0.02604166666666667,
+            0.05078124999999999
+          ],
+          "support_status": "blocked_pending_scene_adjusted_sparse_binary_inference"
+        },
+        "scene_disjoint57": {
+          "window_steps": [
+            8,
+            16,
+            24
+          ],
+          "population": 57,
+          "canonical_scenes": 54,
+          "paired_known": 48,
+          "unknown_pairs": 9,
+          "s_select": {
+            "delta": 0.012152777777777776,
+            "ci_low": -0.03298611111111111,
+            "ci_high": 0.057335069444444206
+          },
+          "external": {
+            "delta": 0.041666666666666664,
+            "ci_low": -0.041666666666666664,
+            "ci_high": 0.125
+          },
+          "candidate": false,
+          "bootstrap_rule_supported": false,
+          "robustness_supported": false,
+          "unknown_completion_delta_bounds": [
+            -0.05263157894736842,
+            0.14035087719298245
+          ],
+          "completion_confidence_bounds": [
+            -0.223340676638767,
+            0.296153507635781
+          ],
+          "internal_all_available_delta": 0.0043859649122807,
+          "internal_all_available_bootstrap_ci": [
+            -0.036549707602339186,
+            0.04678362573099415
+          ],
+          "support_status": "blocked_pending_scene_adjusted_sparse_binary_inference"
+        },
+        "independent54": {
+          "window_steps": [
+            8,
+            16,
+            24
+          ],
+          "population": 54,
+          "canonical_scenes": 54,
+          "paired_known": 45,
+          "unknown_pairs": 9,
+          "s_select": {
+            "delta": 0.01296296296296296,
+            "ci_low": -0.03333333333333334,
+            "ci_high": 0.06296296296296296
+          },
+          "external": {
+            "delta": 0.044444444444444446,
+            "ci_low": -0.044444444444444446,
+            "ci_high": 0.13333333333333333
+          },
+          "candidate": false,
+          "bootstrap_rule_supported": false,
+          "robustness_supported": false,
+          "unknown_completion_delta_bounds": [
+            -0.05555555555555555,
+            0.14814814814814814
+          ],
+          "completion_confidence_bounds": [
+            -0.23473758029495073,
+            0.31110185435770643
+          ],
+          "internal_all_available_delta": 0.004629629629629628,
+          "internal_all_available_bootstrap_ci": [
+            -0.03858024691358025,
+            0.047839506172839504
+          ],
+          "support_status": "conditional_on_independent_canonical_scenes"
+        }
+      }
+    },
+    "rfo_gold": {
+      "step24": {
+        "images": 64,
+        "external": {
+          "correct": 20,
+          "incorrect": 37,
+          "unknown": 7
+        },
+        "known_rate": 0.3508771929824561,
+        "fullscore": {
+          "correct": 20,
+          "incorrect": 20,
+          "unknown": 6
+        },
+        "s_select": 0.9296875,
+        "answers": {
+          "total": 316,
+          "available": 316,
+          "correct": 298,
+          "errors": 0,
+          "abstained": 0,
+          "missing": 0
+        },
+        "families": {
+          "existence": {
+            "matches_request": 158,
+            "total": 158,
+            "rate": 1.0
+          },
+          "count": {
+            "matches_request": 140,
+            "total": 158,
+            "rate": 0.8860759493670886
+          }
+        },
+        "cycle": -2.04913330078125
+      },
+      "windows": {
+        "primary64": {
+          "window_steps": [
+            8,
+            16,
+            24
+          ],
+          "population": 64,
+          "canonical_scenes": 59,
+          "paired_known": 54,
+          "unknown_pairs": 10,
+          "s_select": {
+            "delta": 0.016975308641975304,
+            "ci_low": -0.02469135802469136,
+            "ci_high": 0.057098765432098735
+          },
+          "external": {
+            "delta": 0.018518518518518517,
+            "ci_low": -0.037037037037037035,
+            "ci_high": 0.09259259259259259
+          },
+          "candidate": false,
+          "bootstrap_rule_supported": false,
+          "robustness_supported": false,
+          "unknown_completion_delta_bounds": [
+            -0.046875,
+            0.15625
+          ],
+          "completion_confidence_bounds": [
+            -0.18499475263167273,
+            0.30330121001417143
+          ],
+          "internal_all_available_delta": 0.019531249999999997,
+          "internal_all_available_bootstrap_ci": [
+            -0.01822916666666667,
+            0.05602213541666649
+          ],
+          "support_status": "blocked_pending_scene_adjusted_sparse_binary_inference"
+        },
+        "scene_disjoint57": {
+          "window_steps": [
+            8,
+            16,
+            24
+          ],
+          "population": 57,
+          "canonical_scenes": 54,
+          "paired_known": 49,
+          "unknown_pairs": 8,
+          "s_select": {
+            "delta": 0.01530612244897959,
+            "ci_low": -0.028911564625850344,
+            "ci_high": 0.0629251700680272
+          },
+          "external": {
+            "delta": 0.02040816326530612,
+            "ci_low": -0.04081632653061224,
+            "ci_high": 0.10204081632653061
+          },
+          "candidate": false,
+          "bootstrap_rule_supported": false,
+          "robustness_supported": false,
+          "unknown_completion_delta_bounds": [
+            -0.05263157894736842,
+            0.14035087719298245
+          ],
+          "completion_confidence_bounds": [
+            -0.20611946565470737,
+            0.296153507635781
+          ],
+          "internal_all_available_delta": 0.01608187134502924,
+          "internal_all_available_bootstrap_ci": [
+            -0.024853801169590645,
+            0.05701754385964911
+          ],
+          "support_status": "blocked_pending_scene_adjusted_sparse_binary_inference"
+        },
+        "independent54": {
+          "window_steps": [
+            8,
+            16,
+            24
+          ],
+          "population": 54,
+          "canonical_scenes": 54,
+          "paired_known": 46,
+          "unknown_pairs": 8,
+          "s_select": {
+            "delta": 0.016304347826086953,
+            "ci_low": -0.03260869565217391,
+            "ci_high": 0.06159420289855072
+          },
+          "external": {
+            "delta": 0.021739130434782608,
+            "ci_low": -0.043478260869565216,
+            "ci_high": 0.10869565217391304
+          },
+          "candidate": false,
+          "bootstrap_rule_supported": false,
+          "robustness_supported": false,
+          "unknown_completion_delta_bounds": [
+            -0.05555555555555555,
+            0.14814814814814814
+          ],
+          "completion_confidence_bounds": [
+            -0.21671938915632766,
+            0.31110185435770643
+          ],
+          "internal_all_available_delta": 0.016975308641975304,
+          "internal_all_available_bootstrap_ci": [
+            -0.02469135802469136,
+            0.06172839506172839
+          ],
+          "support_status": "conditional_on_independent_canonical_scenes"
+        }
+      }
+    }
+  },
+  "interpretation": [
+    "Neither arm has a behavioral candidate in the new window.",
+    "Main64/scene-disjoint57 duplicate-scene guard remains active; independent54 is supplemental and is not promoted to primary.",
+    "Worst-case unknown completion intervals are descriptive finite-cohort bounds; completion confidence bounds retain independent canonical-scene assumptions.",
+    "No D* or predictive lead is established by this audit."
+  ]
+}

@@ -1,0 +1,559 @@
+{
+  "schema_version": "step24-gradient-review-1",
+  "created_utc": "2026-09-06T05:56:21.393915+00:00",
+  "scope": "CPU only. Step24 current evidence and cross-arm/sensitivity diagnostics. Earlier base/step8/step16 instruments not reaudited; saved base Gram reused for new paired contrasts. Naive24 inspection reused as established current comparator.",
+  "status": "pass",
+  "must_pause_for_integrity": false,
+  "checks": {
+    "naive_successful_stage": true,
+    "naive_checkpoint_sources": true,
+    "naive_bank_reference_and_complete_prompt_pairing": true,
+    "naive_Gram_hash_finite": true,
+    "naive_observations_complete": true,
+    "naive_26_finite_backwards_and_temporary_cleanup": true,
+    "rfo_gold_successful_stage": true,
+    "rfo_gold_checkpoint_sources": true,
+    "rfo_gold_bank_reference_and_complete_prompt_pairing": true,
+    "rfo_gold_Gram_hash_finite": true,
+    "rfo_gold_observations_complete": true,
+    "rfo_gold_26_finite_backwards_and_temporary_cleanup": true,
+    "common_instrument_coordinates_and_latents": true,
+    "naive_gda_free_paired_CI_consistency": true,
+    "rfo_gold_gda_free_paired_CI_consistency": true,
+    "naive_gda_gold_paired_CI_consistency": true,
+    "rfo_gold_gda_gold_paired_CI_consistency": true,
+    "naive_main_step24_point_and_interval_status": true,
+    "rfo_gold_main_step24_point_and_interval_status": true,
+    "independent_14_pool_audit_same_source_hashes": true,
+    "independent_14_pool_pairing_and_CI_pass": true
+  },
+  "inputs": {
+    "base/report.json": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\base\\step-00000\\report.json",
+      "sha256": "c7b44d82dde502995d38a7cb53528ff2a9ce5a8fcd53ebbd3edb4c20ca579faa"
+    },
+    "base/grams.npz": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\base\\step-00000\\grams.npz",
+      "sha256": "7d71badf4946c5f01e3ba6845f27ba4f6958785903facbee6a7cbe6e7e735d71"
+    },
+    "naive/report.json": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00024\\report.json",
+      "sha256": "19edba35ddf9cc3cc39d6cd536d1dcaf93d10c51856956a04ff59fda6d9c0751"
+    },
+    "naive/grams.npz": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00024\\grams.npz",
+      "sha256": "7703def155875f9b1ee4c908096b9c7b367ccf2b3c5909362f7bd473fdaa76f5"
+    },
+    "naive/run.meta.json": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00024\\run.meta.json",
+      "sha256": "76fa3883ed5357bbe6a10cf5ad3a3f14f33f39ec5416d2c2b9d9f2db6b59da13"
+    },
+    "naive/per_prompt.json": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00024\\per_prompt.json",
+      "sha256": "c9a74bfd3db0cfb9b9cac6be5e97ccd4258818d0b2d296d018239875fd6ea740"
+    },
+    "naive/selection.json": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00024\\selection.json",
+      "sha256": "bbe0194ed4832d727a0392367b89f85f50a7fa2865951c747f1608a1d532ae47"
+    },
+    "naive/observations.naive.jsonl": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00024\\observations.naive.jsonl",
+      "sha256": "16b8213b3ce4127ca8f7d999bc8c09fb44c4fd97e6dac4bc2817e7a04ad765ce"
+    },
+    "rfo_gold/report.json": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00024\\report.json",
+      "sha256": "500867bf1a1b221beb321e32fd147cf5c4efaedcb1c15c0c7faf6a592d984117"
+    },
+    "rfo_gold/grams.npz": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00024\\grams.npz",
+      "sha256": "1dbe9954bc0515f52d7d98627b5191a7a6af3355b85e06c5d9d3fb0ad090f192"
+    },
+    "rfo_gold/run.meta.json": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00024\\run.meta.json",
+      "sha256": "dccdc1591ba7d8bdf6c9167698c49c7c5dffcdaf7ca077d26c9b685a6eca299a"
+    },
+    "rfo_gold/per_prompt.json": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00024\\per_prompt.json",
+      "sha256": "b8cb5abfae9551cbf6059922cd07085db790d57ee174d58e72c688f84f03cbac"
+    },
+    "rfo_gold/selection.json": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00024\\selection.json",
+      "sha256": "cd0f8a2dad6f81f0fa1b93ccd42413cb0c2c839aff4c178b85875da249ada54e"
+    },
+    "rfo_gold/observations.naive.jsonl": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00024\\observations.naive.jsonl",
+      "sha256": "28c55f0a43e2bed0c31d94e72c4f74cfba07ea316459b5964e8ed6c1e3451269"
+    },
+    "decoupling_report.json": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\decoupling_report.json",
+      "sha256": "aeae6d834fa6ce06b4e328c28c905bfd47d1c1f045278c3ad57f7880e4ea001f"
+    },
+    "gradient_sensitivity.json": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient_sensitivity.json",
+      "sha256": "d50c0bda4fc9a6ef2618b42c309a1abe7acee6ca497d61241b291f8db987e9f7"
+    },
+    "audit-splits/scene_overlap.json": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\audit-splits\\scene_overlap.json",
+      "sha256": "b305fce3d53172e16f7c524c516053041cc398aa4f9e674b396cad4513cfd1ce"
+    },
+    "probe-bank/bank.json": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\probe-bank\\bank.json",
+      "sha256": "ebd7fac6d03d55465429e686a3b09d0720328b92905e4dad0b59de95036430d1"
+    },
+    "naive/sentinel": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\stage-completion\\naive.step-00024.gradient.json",
+      "sha256": "06e6929189c41997ba6358212a6d6f53645935abb214dce1c5b1379582d86f85"
+    },
+    "naive/checkpoint_manifest": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-002\\manifest.json",
+      "sha256": "a1fb5af901b3d4b3d59eae7f66be38d8e61a02287de2d19e80d2dc0b5bc94089"
+    },
+    "naive/checkpoint_adapter": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-002\\adapter.pt",
+      "sha256": "7d2351fabd9bf210e372eb05200955cba6c49a75ec0e32dd11a262078ca2cb34"
+    },
+    "rfo_gold/sentinel": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\stage-completion\\rfo_gold.step-00024.gradient.json",
+      "sha256": "97656524c76a6a8ce1930071b4e5ce52cad98a5b1e6b4000d375400088233209"
+    },
+    "rfo_gold/checkpoint_manifest": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\rfo_gold\\round-002\\manifest.json",
+      "sha256": "aacca92358e555919d822d697f114a34aed422840c0d8b35948c2fe4fb429b4b"
+    },
+    "rfo_gold/checkpoint_adapter": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\rfo_gold\\round-002\\adapter.pt",
+      "sha256": "b8561bab9769f525250017e87f03aca93cb9be8383b3ce888403e88739b4224d"
+    }
+  },
+  "estimand": "cosine(mean_prompt_gradient_left,mean_prompt_gradient_right)",
+  "bootstrap_reproduction": {
+    "seed": 20260906,
+    "resamples": 2000,
+    "confidence": 0.95,
+    "method": "joint Gram eigendecomposition to equivalent vectors; shared multinomial(16,uniform(16)) counts applied to each arm and baseline; percentile intervals of replicate differences",
+    "n_common": 16
+  },
+  "step24": {
+    "naive": {
+      "gda_free": {
+        "point": 0.7020929432889503,
+        "paired_base_difference": -0.0728914729676493,
+        "ci_low": -0.2614391331094815,
+        "ci_high": 0.4534971400683517,
+        "bootstrap_median": 0.7989894641565605,
+        "mean_per_prompt_cosine": 0.7980551145365049,
+        "max_recompute_error": 1.5543122344752192e-15,
+        "min_joint_eigenvalue": -6.082418552278337e-18
+      },
+      "gda_gold": {
+        "point": 0.7251155651284866,
+        "paired_base_difference": -0.07692467577925166,
+        "ci_low": -0.25787450028997655,
+        "ci_high": 0.43666093173801135,
+        "bootstrap_median": 0.7832860583477631,
+        "mean_per_prompt_cosine": 0.7561797399748106,
+        "max_recompute_error": 5.551115123125783e-16,
+        "min_joint_eigenvalue": -9.599513984132677e-18
+      }
+    },
+    "rfo_gold": {
+      "gda_free": {
+        "point": 0.7773375450316822,
+        "paired_base_difference": 0.002353128775082536,
+        "ci_low": -0.26154496291374535,
+        "ci_high": 0.387877680437755,
+        "bootstrap_median": 0.8354543828093068,
+        "mean_per_prompt_cosine": 0.7754776825565481,
+        "max_recompute_error": 2.7977620220553945e-14,
+        "min_joint_eigenvalue": -4.694179359265455e-18
+      },
+      "gda_gold": {
+        "point": 0.8040704495977856,
+        "paired_base_difference": 0.0020302086900473304,
+        "ci_low": -0.2653280169826422,
+        "ci_high": 0.39102840760525304,
+        "bootstrap_median": 0.8240982271943931,
+        "mean_per_prompt_cosine": 0.731937957133692,
+        "max_recompute_error": 1.5543122344752192e-15,
+        "min_joint_eigenvalue": -3.0073676524039718e-18
+      }
+    }
+  },
+  "cross_arm_diagnostic_gold_minus_naive": {
+    "gda_free": {
+      "point_gold_minus_naive": 0.07524460174273184,
+      "ci_low": -0.3075592889789933,
+      "ci_high": 0.16479271337404386,
+      "bootstrap_median": 0.008999762947215606,
+      "n_common": 16,
+      "finite_resamples": 2000,
+      "diagnostic_only": true
+    },
+    "gda_gold": {
+      "point_gold_minus_naive": 0.07895488446929899,
+      "ci_low": -0.30164889002217943,
+      "ci_high": 0.17490701240683873,
+      "bootstrap_median": 0.019110392841917456,
+      "n_common": 16,
+      "finite_resamples": 2000,
+      "diagnostic_only": true
+    }
+  },
+  "same_bank_selection_comparison": {
+    "selected_correct": {
+      "naive": {
+        "naive": 9,
+        "rfo": 12,
+        "gold": 16
+      },
+      "rfo_gold": {
+        "naive": 9,
+        "rfo": 12,
+        "gold": 16
+      }
+    },
+    "different_selected_image_ids": {
+      "naive": [],
+      "rfo": [],
+      "gold": []
+    }
+  },
+  "norm_concentration_diagnostic": {
+    "naive": {
+      "definition": "share of sum of squared individual gradient norms; not prompt sampling weights",
+      "rows": [
+        {
+          "prompt_id": "conf-2plus1:v4a-0087",
+          "left_squared_norm_share": 0.016622776209394362,
+          "right_squared_norm_share": 0.014362488140217377,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0095",
+          "left_squared_norm_share": 0.13153463718269537,
+          "right_squared_norm_share": 0.11364916682789704,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "main-1plus1plus1:v4b-0108",
+          "left_squared_norm_share": 0.2871549409397491,
+          "right_squared_norm_share": 0.38140695086883986,
+          "per_prompt_cosine": 0.24718564305359705
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0012",
+          "left_squared_norm_share": 0.01902502276588575,
+          "right_squared_norm_share": 0.016438088343388415,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0061",
+          "left_squared_norm_share": 0.003200089239246088,
+          "right_squared_norm_share": 0.0027649559355996255,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "main-1plus1plus1:v4b-0018",
+          "left_squared_norm_share": 0.1301919461491853,
+          "right_squared_norm_share": 0.1124890486982993,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "main-1plus1plus1:v4b-0074",
+          "left_squared_norm_share": 0.00425790903756309,
+          "right_squared_norm_share": 0.0036789383003040725,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0009",
+          "left_squared_norm_share": 0.0037280225550731802,
+          "right_squared_norm_share": 0.009596598622742135,
+          "per_prompt_cosine": 0.4030347617829383
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0047",
+          "left_squared_norm_share": 0.317771838232235,
+          "right_squared_norm_share": 0.2745626964120595,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "conf-2plus1:v4a-0069",
+          "left_squared_norm_share": 0.004718359791963098,
+          "right_squared_norm_share": 0.0037691980547614784,
+          "per_prompt_cosine": 0.28992635274155026
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0113",
+          "left_squared_norm_share": 0.0023205989264707435,
+          "right_squared_norm_share": 0.0020050546394771904,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0013",
+          "left_squared_norm_share": 0.02995235132229699,
+          "right_squared_norm_share": 0.026128065262337123,
+          "per_prompt_cosine": 0.8685145804027002
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0076",
+          "left_squared_norm_share": 0.004770634078401799,
+          "right_squared_norm_share": 0.004121945366360623,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0114",
+          "left_squared_norm_share": 0.03225424941501255,
+          "right_squared_norm_share": 0.022384468809862806,
+          "per_prompt_cosine": 0.6694456765550354
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0100",
+          "left_squared_norm_share": 0.003292655231453698,
+          "right_squared_norm_share": 0.004140740027314537,
+          "per_prompt_cosine": 0.6625900055545791
+        },
+        {
+          "prompt_id": "conf-2plus1:v4a-0053",
+          "left_squared_norm_share": 0.009203968923373872,
+          "right_squared_norm_share": 0.008501595690538861,
+          "per_prompt_cosine": 0.628184812493679
+        }
+      ],
+      "top2_left_share": 0.6049267791719841,
+      "top2_right_share": 0.6559696472808993
+    },
+    "rfo_gold": {
+      "definition": "share of sum of squared individual gradient norms; not prompt sampling weights",
+      "rows": [
+        {
+          "prompt_id": "conf-2plus1:v4a-0087",
+          "left_squared_norm_share": 0.00940898061213744,
+          "right_squared_norm_share": 0.009907047949268387,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0095",
+          "left_squared_norm_share": 0.11250182006385323,
+          "right_squared_norm_share": 0.1184571391628538,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "main-1plus1plus1:v4b-0108",
+          "left_squared_norm_share": 0.28695853362599344,
+          "right_squared_norm_share": 0.24492656913619273,
+          "per_prompt_cosine": -0.06474185901805117
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0012",
+          "left_squared_norm_share": 0.010442220098180433,
+          "right_squared_norm_share": 0.010994982291284205,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0061",
+          "left_squared_norm_share": 0.0014572475022464944,
+          "right_squared_norm_share": 0.0015343873554255257,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "main-1plus1plus1:v4b-0018",
+          "left_squared_norm_share": 0.07165071532335021,
+          "right_squared_norm_share": 0.07544356839168292,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "main-1plus1plus1:v4b-0074",
+          "left_squared_norm_share": 0.0024893764413721504,
+          "right_squared_norm_share": 0.0026211523633749355,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0009",
+          "left_squared_norm_share": 0.0024951643238209933,
+          "right_squared_norm_share": 0.006731327427016541,
+          "per_prompt_cosine": 0.42240098911152213
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0047",
+          "left_squared_norm_share": 0.45672164312894686,
+          "right_squared_norm_share": 0.4808983464276933,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "conf-2plus1:v4a-0069",
+          "left_squared_norm_share": 0.002772510878857043,
+          "right_squared_norm_share": 0.002812409463815541,
+          "per_prompt_cosine": 0.32486286797360137
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0113",
+          "left_squared_norm_share": 0.0012007913523480898,
+          "right_squared_norm_share": 0.0012643556188683515,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0013",
+          "left_squared_norm_share": 0.01572871944472655,
+          "right_squared_norm_share": 0.017109436154834762,
+          "per_prompt_cosine": 0.8603081118469448
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0076",
+          "left_squared_norm_share": 0.002829557468097015,
+          "right_squared_norm_share": 0.002979340979349666,
+          "per_prompt_cosine": 1
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0114",
+          "left_squared_norm_share": 0.015740057669697414,
+          "right_squared_norm_share": 0.015425330183495962,
+          "per_prompt_cosine": 0.6458449278908103
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0100",
+          "left_squared_norm_share": 0.001948456258505779,
+          "right_squared_norm_share": 0.0028508249253381386,
+          "per_prompt_cosine": 0.6394304988941163
+        },
+        {
+          "prompt_id": "conf-2plus1:v4a-0053",
+          "left_squared_norm_share": 0.005654205807866903,
+          "right_squared_norm_share": 0.006043782169505158,
+          "per_prompt_cosine": 0.5795373842058276
+        }
+      ],
+      "top2_left_share": 0.7436801767549404,
+      "top2_right_share": 0.7258249155638861
+    }
+  },
+  "registered_alarm_status": {
+    "naive": {
+      "current_step24": {
+        "step": 24,
+        "cosine": 0.702092943288951,
+        "delta_from_step0": -0.07289147296764775,
+        "marginal_point_delta": -0.07289147296764775,
+        "paired_ci_low": -0.26143913310948064,
+        "paired_ci_high": 0.4534971400683529,
+        "n_common": 16,
+        "point_flag": true,
+        "interval_supported_flag": false,
+        "support_status": "paired_difference_ci",
+        "missing_report": false
+      },
+      "first_point_candidate_step": 16,
+      "first_interval_supported_step": null,
+      "lead": {
+        "status": "no_event",
+        "event_step": null,
+        "alarm_step": null,
+        "lead_steps": null,
+        "interpretation": "descriptive as of the currently available checkpoints"
+      }
+    },
+    "rfo_gold": {
+      "current_step24": {
+        "step": 24,
+        "cosine": 0.7773375450316826,
+        "delta_from_step0": 0.002353128775083868,
+        "marginal_point_delta": 0.002353128775083868,
+        "paired_ci_low": -0.2615449629137444,
+        "paired_ci_high": 0.387877680437727,
+        "n_common": 16,
+        "point_flag": false,
+        "interval_supported_flag": false,
+        "support_status": "paired_difference_ci",
+        "missing_report": false
+      },
+      "first_point_candidate_step": 16,
+      "first_interval_supported_step": null,
+      "lead": {
+        "status": "no_event",
+        "event_step": null,
+        "alarm_step": null,
+        "lead_steps": null,
+        "interpretation": "descriptive as of the currently available checkpoints"
+      }
+    }
+  },
+  "sensitivity_14_pool": {
+    "status": "pass",
+    "max_recompute_error": 1.2e-14,
+    "n_prompts": 14,
+    "n_scene_clusters": 14,
+    "n_common_with_base": 14,
+    "additional_missing": 0,
+    "excluded_spec_ids": [
+      "v4a-0087",
+      "v4a-0095"
+    ],
+    "warning_declarations": false,
+    "label": "supplementary diagnostic",
+    "independent_verification": "Equivalent vectors reconstructed by joint-Gram eigendecomposition; same scene multiplicities across compared conditions; 2000 finite resamples, seed 20260906.",
+    "source_hashes": {
+      "gradient_sensitivity.json": "d50c0bda4fc9a6ef2618b42c309a1abe7acee6ca497d61241b291f8db987e9f7",
+      "audit-splits/scene_overlap.json": "b305fce3d53172e16f7c524c516053041cc398aa4f9e674b396cad4513cfd1ce",
+      "naive/grams.npz": "7703def155875f9b1ee4c908096b9c7b367ccf2b3c5909362f7bd473fdaa76f5",
+      "naive/report.json": "19edba35ddf9cc3cc39d6cd536d1dcaf93d10c51856956a04ff59fda6d9c0751",
+      "rfo_gold/grams.npz": "1dbe9954bc0515f52d7d98627b5191a7a6af3355b85e06c5d9d3fb0ad090f192",
+      "rfo_gold/report.json": "500867bf1a1b221beb321e32fd147cf5c4efaedcb1c15c0c7faf6a592d984117"
+    },
+    "step24": {
+      "naive": {
+        "gda_free": {
+          "point": 0.5268112773,
+          "paired_base_difference": -0.1878593107,
+          "ci_low": -0.3417677259,
+          "ci_high": 0.5319996795
+        },
+        "gda_gold": {
+          "point": 0.5599653843,
+          "paired_base_difference": -0.1855700392,
+          "ci_low": -0.3121317145,
+          "ci_high": 0.4445953652
+        }
+      },
+      "rfo_gold": {
+        "gda_free": {
+          "point": 0.6139044275,
+          "paired_base_difference": -0.1007661606,
+          "ci_low": -0.3185236064,
+          "ci_high": 0.45028344
+        },
+        "gda_gold": {
+          "point": 0.6545262995,
+          "paired_base_difference": -0.091009124,
+          "ci_low": -0.3161427942,
+          "ci_high": 0.4056777018
+        }
+      }
+    },
+    "cross_arm_diagnostic_gold_minus_naive": {
+      "gda_free": {
+        "point": 0.0870931501,
+        "ci_low": -0.3320261659,
+        "ci_high": 0.1945517441
+      },
+      "gda_gold": {
+        "point": 0.0945609151,
+        "ci_low": -0.3303875594,
+        "ci_high": 0.1752163717
+      }
+    }
+  },
+  "limitations": [
+    "No original registered pools removed or estimand changed. Norm concentration is a diagnostic, not a substitute metric.",
+    "Prompt bootstrap does not quantify independent training-run uncertainty. Neither same-bank cosine nor a point flag alone validates an early warning mechanism.",
+    "LoRA initialization geometry and changing checkpoint weights can change alignment with fixed image selections; present evidence does not isolate that contribution.",
+    "No reliable behavioral event means no D_g or lead time can be assigned, including zero."
+  ],
+  "conclusion": {
+    "integrity": "pass; no actual integrity bug requiring pause",
+    "new_interval_support": false,
+    "new_reliable_D_g": false,
+    "naive_step24_point_flag": true,
+    "gold_step24_point_flag": false,
+    "historical_first_point_candidate_step": 16,
+    "interpretation": "Gold24 alignment returned near the base point, while Naive remains below base. Neither within-arm baseline contrast nor direct cross-arm contrast has interval support. All three selected-image criteria match across arms; observed cross-arm alignment differences reflect different gradient geometry on the same selected images. Large-norm pools still dominate this cosine-of-mean statistic."
+  }
+}

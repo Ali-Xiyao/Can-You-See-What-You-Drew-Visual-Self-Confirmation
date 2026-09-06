@@ -1,0 +1,110 @@
+{
+  "schema_version": "fixed-bank-observation-validation-1",
+  "created_utc": "2026-09-06T06:26:40.862946+00:00",
+  "status": "pass",
+  "artifacts_sha256": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\step24-review-20260906\\fixed-bank-observation.json": "8843b494cb28f402bbc670c0e1b36b6cbc2dc09184cbcf6bd7da0502cb13afb1",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\step24-review-20260906\\fixed-bank-observation-v2.json": "61aa570490042bc12f6c6af8346aad45bf7c932f61f400850941f7e6ced4ed28",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\step24-review-20260906\\fixed-bank-observation.py": "ff7b2018ed8222af0a2497e6c29dcfccc1c160a2b6b005403614badd8fee0c37",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\step24-review-20260906\\fixed-bank-observation-v1.py": "9bdfc24c2e0c7895e4258d0f9f456feedb3ffbbc39dfa2709944179f2df46d14"
+  },
+  "v1_report_preserved": true,
+  "original_script_preserved_byte_exact_as": "fixed-bank-observation-v1.py",
+  "v2_numerical_results_and_fact_set_identical_to_v1": true,
+  "all_original_v1_input_hashes_match_using_preserved_v1_script": true,
+  "v2_input_files_checked_after_analysis": 128,
+  "all_v2_inputs_unchanged_after_analysis": true,
+  "checkpoint_identity_audit_references": [
+    {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\runtime-check\\base-gradient-integrity.json",
+      "sha256": "23a61715189b2720c0c60c68ec80145062c77b9428c912bef39098d3765be6dd",
+      "status": "pass"
+    },
+    {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\runtime-check\\naive-step00008-gradient-integrity.json",
+      "sha256": "aed607d9215e7c0e1094d38150edc4d4baecaf5c564de6447935182b90e901b7",
+      "status": "pass"
+    },
+    {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\runtime-check\\rfo-gold-step00008-gradient-integrity.json",
+      "sha256": "b6d14c58c850b8fcd0db08971faf93e37fa778c66f9709e03a0c6188acaa68e6",
+      "status": "pass"
+    },
+    {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\runtime-check\\naive-step00016-gradient-integrity.json",
+      "sha256": "9ca8f9b6df225cd2822176466da88cc6845a7887df32c28267db41ff246cac4e",
+      "status": "pass"
+    },
+    {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\runtime-check\\rfo-gold-step00016-gradient-integrity.json",
+      "sha256": "e2064a7d645d4c483b45fb9c8604bdf0b35a2f231de5144249f59e1154fd009c",
+      "status": "pass"
+    },
+    {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\step24-review-20260906\\gradient-audit.json",
+      "sha256": "8ea8a1863eafd72373cce9b63f4e97baad5bf329ed484ee97924f9d68bee14c3",
+      "status": "pass"
+    }
+  ],
+  "checkpoint_identity_scope": "Checkpoint weight and gradient integrity are inherited from the cited completed audits; this answer-only diagnostic does not repeat weight or Gram audits.",
+  "fixed_known_set_sha256": "1ca4565df552cc5f5739dfdbeb63de933c54a6632b2f23c0cdcc3a824d2aaa99",
+  "independent_recomputation": {
+    "agent": "fixed_bank_truth_sources",
+    "method": "read complete verification records and re-normalize saved raw responses independently; do not call the new summarize function",
+    "main_metrics_checked": 63,
+    "exact_fraction_value_image_count_matches": 63,
+    "micro_hits_all_match": true,
+    "known_questions": 356,
+    "eligible_images": 76,
+    "unknown_questions": {
+      "disputed_scope": 42,
+      "unnameable": 6
+    },
+    "resolved_by_crop_images_retained": 9
+  },
+  "cross_arm_normalized_answer_equality": {
+    "8": {
+      "equal_normalized_answers": 404,
+      "total_answers": 404,
+      "equal_question_keys": true
+    },
+    "16": {
+      "equal_normalized_answers": 404,
+      "total_answers": 404,
+      "equal_question_keys": true
+    },
+    "24": {
+      "equal_normalized_answers": 404,
+      "total_answers": 404,
+      "equal_question_keys": true
+    }
+  },
+  "external_fact_request_constant": {
+    "count_exact": "113/152",
+    "existence_exact": "407/456",
+    "all_exact": "373/456",
+    "all_7_checkpoints_verified": true
+  },
+  "defensive_canaries": {
+    "before_fix": {
+      "row_error": "incorrectly ignored; assertion failed",
+      "missing_observation": "KeyError"
+    },
+    "after_fix": {
+      "row_error": "4 nonmatches + 400 valid / 404 fixed questions",
+      "observation_error": "4 nonmatches + 400 valid / 404 fixed questions",
+      "missing_observation": "4 nonmatches + 400 valid / 404 fixed questions",
+      "missing_atomic_answer": "1 nonmatch + 403 valid / 404 fixed questions"
+    },
+    "all_preserve_known_question_denominators_and_76_eligible_images": true,
+    "all_preserve_external_fact_request_constant": true,
+    "synthetic_mutations_in_memory_only": true,
+    "image_weighting_canary": "1 correct single-question image and 1 two-question image with missing/error responses gives 1/2 image mean, not 1/3 pooled-question mean"
+  },
+  "actual_saved_response_coverage": "Every checkpoint has 80 images / 404 valid answers. Defensive changes do not affect any actual metric.",
+  "limitations": [
+    "Descriptive fixed-bank subset only: no CI, D_g, causal mechanism or general observer ability claim.",
+    "V2 handles explicit row/observation errors and missing observation/answer objects in the saved schema. Unexpected IDs or malformed non-error metadata are rejected.",
+    "No weight reloading, Gram audit repetition, model inference or run-directory modifications."
+  ]
+}
