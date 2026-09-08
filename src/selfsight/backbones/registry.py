@@ -51,6 +51,21 @@ def backbone_environment(config: Mapping[str, Any]) -> str | None:
     return None if value is None else str(value)
 
 
+def answer_length(config: Mapping[str, Any], *, default: int = 16) -> int:
+    """How many tokens the model gets to answer in.
+
+    Sixteen is enough for the Show-o models, which reply with a letter. It is
+    not enough for a model that narrates the picture first and puts the letter
+    at the end -- the reply is then cut off mid-sentence, `grade` finds neither
+    option, and the trial is recorded as an abstention. Half of Janus-Pro's
+    answers were being lost that way, which would have left E4 comparing two
+    conditions on whichever trials happened to survive truncation.
+    """
+
+    profile = config.get("official_profile") or {}
+    return int(profile.get("mmu_max_new_tokens", default))
+
+
 def build_observer(
     backbone_config: str | Path,
     *,
@@ -82,7 +97,8 @@ def build_observer(
     elif family == "janus_pro":
         from selfsight.backbones.janus_pro import JanusProAdapter
 
-        observer = JanusProAdapter(device=device, lock_path=lock_path, lazy=False)
+        observer = JanusProAdapter(device=device, lock_path=lock_path, lazy=False,
+                                   max_new_tokens=answer_length(config))
     else:  # pragma: no cover - read_backbone_config already rejected it
         raise ValueError(f"No observer for family {family!r}")
 

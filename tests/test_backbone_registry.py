@@ -160,6 +160,52 @@ def test_showo2_still_receives_the_config_path_itself(monkeypatch, tmp_path):
     assert built["backbone_config"] == str(config)
 
 
+# --------------------------------------------------------- the answer budget
+#
+# A truncated reply is not a wrong answer, it is a missing one, and a missing
+# one is silent: the trial leaves the denominator and the accuracy is computed
+# over whatever survived. Which trials survive depends on how much the model
+# felt like saying, which is not independent of the condition E4 varies.
+
+
+def test_a_config_that_says_nothing_keeps_the_budget_the_showo_models_use():
+    assert registry.answer_length({}) == 16
+    assert registry.answer_length({"official_profile": {}}) == 16
+
+
+def test_the_budget_reaches_the_adapter_instead_of_its_default(monkeypatch, tmp_path):
+    """The config key has to be read. A value sitting in YAML that nothing
+    consults is the same as no value, and looks like one that was applied."""
+
+    built = stub_family(monkeypatch, "janus_pro")
+    config = write(tmp_path, family="janus_pro", backbone_id="declared",
+                   revision="declared-revision",
+                   official_profile={"mmu_max_new_tokens": 99})
+    registry.build_observer(config, device="cpu")
+    assert built["max_new_tokens"] == 99
+
+
+def test_the_shipped_janus_config_leaves_room_for_a_sentence():
+    """Janus narrates the picture and puts the letter at the end.
+
+    At 16 tokens the reply stops before the letter and the trial is graded as an
+    abstention -- measured at half of them on a two-image probe. This is the
+    config value that stops that, and it is the same in both conditions, so it
+    cannot move the within-model comparison E4 reads.
+    """
+
+    config = registry.read_backbone_config(CONFIGS / "janus_pro_1b.yaml")
+    assert registry.answer_length(config) >= 64
+
+
+def test_the_showo_configs_keep_the_budget_their_frozen_rows_were_answered_at():
+    """showo_v1 is a frozen negative control. Its answers must be produced under
+    the same decoding budget as the rest of the Show-o evidence."""
+
+    config = registry.read_backbone_config(CONFIGS / "showo_v1.yaml")
+    assert registry.answer_length(config) == 16
+
+
 # ------------------------------------------------------------ identity guard
 
 

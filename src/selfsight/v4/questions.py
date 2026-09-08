@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import collections
 import random
+import re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any
@@ -485,6 +486,69 @@ def build_questions(
     return out
 
 
+BARE_LETTER = re.compile(r"^([AB])(?:\s*$|[.):,])")
+"""The reply opens with the letter, and the letter is a choice rather than a word.
+
+The 7246 frozen replies take three shapes and no others: "A", "A.", and
+"B. left" -- the letter, optionally a full stop, optionally the option text
+after it. `text.startswith(letter)` covered all three, and while Show-o2-1.5B
+was the only model answering these questions it was enough, because it never
+wrote a word.
+
+It is not enough for a model that writes a sentence. "Based on the image" was
+graded B on its first syllable; the reply went on to name the plate, which is
+option A, so the recorded answer was the opposite of the one given -- a wrong
+answer attributed to the model, not a lost trial. Requiring the letter to be
+followed by the end of the reply or by punctuation is what separates the choice
+from the word.
+
+The English indefinite article is the same problem one character later. "A
+plate and a banana are both possible" is a refusal, and a rule that accepts a
+letter followed by a space turns it into a confident A. Demanding punctuation
+or nothing rejects it, and rejects no frozen reply: all three shapes above
+still match, and none of the 7246 grades moves.
+"""
+
+LABELLED_CHOICE = re.compile(r"\b(?:ANSWER|OPTION|CHOICE)\b(?:\s+IS)?[^A-Z0-9]{0,6}([AB])\b")
+""""Answer: A" -- how a model that narrates before it answers writes the label.
+
+The other two rules in `grade` were written for a model that replies with a bare
+letter, which is what Show-o2-1.5B does in almost every frozen row. E4 asks the
+same questions of models that write a sentence first and put the letter at the
+end, and those were being recorded as abstentions with the answer in plain
+sight. On an eight-reply Janus-Pro-1B probe, three abstained once the token
+budget was large enough to finish the sentence, and two of the three had said
+"The answer is A" and, after a blank line, "Answer: A".
+
+It runs before `BARE_LETTER` because it is the more specific rule, not because
+anything currently depends on the order: `BARE_LETTER` no longer matches the "A"
+in "ANSWER". It did once. While the bare-letter rule was a `startswith`, every
+"Answer: B" in this position graded as a confident A, and the two fixes were
+made together.
+
+Both patterns here are matched against the uppercased reply, which is why they
+carry no lowercase and no IGNORECASE.
+
+Whatever sits between the label and the letter is skipped rather than
+enumerated: a colon, a dash, a bracket, the asterisks of "**Answer:** A". Six
+characters is enough for every punctuation run and short enough that the letter
+still has to belong to the label. The word boundary after the captured letter
+is load-bearing in the same way -- without it "Answer: Apples are not shown"
+reads as a choice of A, the same class of error one word to the right.
+
+Requiring the marker word is the design of the pattern, not caution. A bare
+trailing letter cannot be told apart from the English article in a reply
+truncated mid-phrase -- "possibly a lemon or a" -- and the first version of
+this, which accepted one, turned exactly that reply into a confident and
+correct-by-luck choice of option A. That reply is a test case.
+
+Checked against the frozen rows before being added: 52 of the 7246 answers in
+runs/v4/main-2plus1 and main-1plus1plus1 contain a marker word, and none of the
+7246 grades differently under this ordering than the grades already recorded in
+those files. Nothing already measured moves. That is a test, not a memory.
+"""
+
+
 def grade(reply: str, question: ForcedChoice) -> bool | None:
     """Did the model pick the gold option?
 
@@ -493,10 +557,18 @@ def grade(reply: str, question: ForcedChoice) -> bool | None:
     """
     text = reply.strip().upper()
     picked = None
-    for letter in ("A", "B"):
-        if text.startswith(letter) or f" {letter}." in f" {text}":
-            picked = letter
-            break
+    marked = LABELLED_CHOICE.search(text)
+    if marked:
+        picked = marked.group(1)
+    if picked is None:
+        opening = BARE_LETTER.match(text)
+        if opening:
+            picked = opening.group(1)
+        else:
+            for letter in ("A", "B"):
+                if f" {letter}." in text:
+                    picked = letter
+                    break
     if picked is None:
         lowered = reply.strip().lower()
         matches = [

@@ -39,5 +39,10 @@ official_profile:
   language_base_id: deepseek-ai/Janus-Pro-1B
   num_image_tokens: 576
   sft_format: deepseek
-  mmu_max_new_tokens: 16
+  # Not 16, which is what the Show-o adapters use. Janus narrates the picture
+  # before it answers, so 16 tokens cuts the reply off before the letter and
+  # `grade` records an abstention: measured 50% lost on a two-image probe. The
+  # value is per model and identical across the two conditions, so it cannot
+  # move the within-model comparison E4 reads.
+  mmu_max_new_tokens: 64
   decoding: greedy
