@@ -174,3 +174,38 @@ B 的 gap 不塌。
    项目的算力预算里没有第二个 seed,这条如实写进 limitations。
 3. **BSV 不是新架构**,是把一段文本从上下文里删掉。
    论文的贡献主张必须是「测量 + 机制 + 后果」,不是「新模块」。
+
+---
+
+## 偏离 1(2026-09-08,同日追加,不改写上文)
+
+**E4 写的「本地没有权重」是错的。** 我当时只查了 HF cache
+(`cache/huggingface` 与 `~/.cache/huggingface`),没查 `SELFSIGHT_MODEL_ROOT`。
+实际全部在 `H:\selfsight-models`:
+
+```
+show-o2-7B                  17 G   revision 3012b1d6  <- 与 configs/backbones/showo2_7b.yaml 对得上
+show-o-512x512             5.4 G
+show-o-w-clip-vit-512x512  5.6 G
+magvitv2                   365 M
+deepseek-ai/Janus-Pro-1B   3.9 G   <- 另一个家族的统一模型
+```
+
+7B 的三个依赖(Wan2.1 VAE、SigLIP-so400m、Qwen2.5-7B-Instruct)也都在。
+
+**因此 E4 不需要任何下载,原文里「若本地没有则本条不做」这句作废。**
+`Showo2Adapter` 本来就由 `backbone_config` 参数化,而且里面已经有一段
+`_ensure_legacy_shard_index`,注释直说是为 Show-o2 7B 的分片布局写的
+——这条路以前走通过。
+
+**修订后的 E4 成本**:
+- **Show-o2-7B**:`observe --backbone-config configs/backbones/showo2_7b.yaml`,
+  纯推理。已实现(worktree 提交 279df47),零新增权重、零新增适配器。
+- **Show-o v1**:权重和 magvitv2 都在,但适配器在 8f155ae
+  (「Collapse to v3」)里被删了。要从那个提交的父节点恢复。工作量真实存在,
+  但不是下载问题。
+- **Janus-Pro-1B**:另一个家族,能挡住「这是 Show-o 家族的怪癖」这句审稿意见。
+  没有适配器,需要新写。
+
+判定标准不变(三个模型里至少两个复制成功)。
+「负对照模型、必须标注」这条约束也不变。
