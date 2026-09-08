@@ -121,7 +121,7 @@ envs/core/python.exe -u scripts/run_decoupling_pilot.py   --outdir runs/v4/blind
 
 ```
 cd "H:/Xiyao_Wang/062_Can You See What You Drew Visual Self-Confirmation"
-SELFSIGHT_MODEL_ROOT="H:\selfsight-models" envs/core/python.exe -u   H:/Xiyao_Wang/062_armB/scripts/v4_cross_model.py preflight --device cuda:0
+SELFSIGHT_MODEL_ROOT="H:\selfsight-models" envs/core/python.exe -u H:/Xiyao_Wang/062_armB/scripts/v4_cross_model.py preflight --device cuda:0
 ```
 
 `observe` 与 `report` 同样写法。`--out` 给 report:
