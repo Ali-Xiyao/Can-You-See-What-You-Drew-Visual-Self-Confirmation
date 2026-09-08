@@ -241,3 +241,10 @@ E4 只写了「单侧」,没有写检验量。在任何一个模型开口之前�
 228 个 spec、冻结划分里 196 个 spec 的 974 道题,没有一道触发 `blind()` 守卫;
 同样这些题套上真实 preamble 后 20/20 全部被拒。所以「守卫抛错」不会在 round 0
 就无条件发生,arm B 可以跑。
+
+**偏离 2 附注**:偏离 1 说 Show-o v1「适配器在 8f155ae 里被删了,要从父节点恢复,
+工作量真实存在」——这句高估了。8f155ae 删的是 `backbones/showo_v1.py`,
+一层只提供 LoRA / 训练 / 存档的 backbone-surface 包装;
+`src/selfsight/showo_adapter.py` 从未被删,`ShowoAdapter.observe_atoms`
+的签名与 `stage_observe` 调用的完全一致。E4 只需要读图作答,不需要那层包装。
+实际改动是 0 行新适配器,只是让 `stage_observe` 能选到它。
