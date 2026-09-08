@@ -65,11 +65,17 @@ DEFAULT_RUNS = ("runs/v4/main-2plus1", "runs/v4/main-1plus1plus1")
 REGISTERED = ("showo2_1p5b", "showo2_7b", "showo_v1")
 BASELINE = "showo2_1p5b"
 
+# Paths from this checkout, not from the working directory, for the same reason
+# PIPELINE is. A config is versioned alongside the driver that reads it, whereas
+# `runs/` and `envs/` belong to the machine and stay relative to the cwd. So the
+# split is: code and configs follow the file, data and interpreters follow the
+# shell. Without it a driver run from a worktree looks for its own new configs
+# in whichever tree the shell was sitting in and does not find them.
 MODELS = {
     "showo2_1p5b": None,  # already measured; its rows are answers[.prompted].jsonl
-    "showo2_7b": "configs/backbones/showo2_7b.yaml",
-    "showo_v1": "configs/backbones/showo_v1.yaml",
-    "janus_pro_1b": "configs/backbones/janus_pro_1b.yaml",
+    "showo2_7b": str(ROOT / "configs/backbones/showo2_7b.yaml"),
+    "showo_v1": str(ROOT / "configs/backbones/showo_v1.yaml"),
+    "janus_pro_1b": str(ROOT / "configs/backbones/janus_pro_1b.yaml"),
 }
 
 CONDITIONS = ("image_only", "prompted")

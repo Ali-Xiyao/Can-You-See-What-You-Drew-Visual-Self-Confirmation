@@ -186,3 +186,22 @@ def test_the_stage_environment_matches_the_supervisor(driver):
     env = driver.child_env()
     for key, value in expected.items():
         assert env.get(key) == value, f"the supervisor sets {key}={value}; E4 does not"
+
+
+def test_a_config_comes_from_the_checkout_and_data_from_the_shell():
+    """Code and configs follow the file; runs/ and envs/ follow the cwd.
+
+    E4 needs both halves at once: the branch's configs, which exist only in this
+    checkout, and `envs/` and `runs/`, which exist only where the machine keeps
+    them. Resolving configs against the cwd meant the driver could never see
+    both from one directory.
+    """
+
+    driver = _load("_driver_models", "scripts/v4_cross_model.py")
+    for model, config in driver.MODELS.items():
+        if config is None:
+            continue
+        path = Path(config)
+        assert path.is_absolute(), f"{model} resolves against the cwd"
+        assert path == ROOT / "configs" / "backbones" / path.name
+        assert path.exists(), f"{model} names a config this checkout does not have"
