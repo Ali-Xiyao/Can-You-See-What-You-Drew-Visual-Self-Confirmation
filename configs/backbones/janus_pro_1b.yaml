@@ -1,0 +1,43 @@
+# Janus-Pro-1B as a READER ONLY, for E4 of .planning/2026-09-08-iclr-redesign.
+#
+# The second model family. Show-o v1 and Show-o2 come from one lab and one
+# design idea, so replicating on both replicates on that idea twice. Janus-Pro
+# decouples the visual pathway -- SigLIP for understanding, a separate VQ
+# tokeniser for generation -- which is the architecture usually proposed as the
+# cure for the interference measured here. It is the harder test of the two.
+#
+# Inference only. Janus never draws anything in this project; it answers
+# questions about images Show-o2-1.5B drew. No training, no LoRA, no entry in
+# arm A/B/C.
+#
+# THE ADAPTER DOES NOT READ THIS FILE for paths. JanusProAdapter resolves the
+# snapshot and the source checkout from configs/models.lock.yaml. The ids below
+# are what build_observer checks the loaded model against.
+
+schema_version: 1
+family: janus_pro
+environment: envs/janus/Scripts/python.exe
+role: cross_family_replication
+
+backbone_id: deepseek-ai/Janus-Pro-1B
+revision: 960ab33191f61342a4c60ae74d8dc356a39fafcb
+
+source:
+  repository_id: deepseek-ai/Janus
+  revision: 1daa72fa409002d40931bd7b36a9280362469ead
+  subtree: .
+
+dependencies:
+  deepseek-ai/Janus-Pro-1B: 960ab33191f61342a4c60ae74d8dc356a39fafcb
+
+official_profile:
+  # The understanding tower is SigLIP-Large at 384; the 576 image tokens are
+  # spliced at <image_placeholder> by VLChatProcessor. Generation uses a
+  # separate VQ path that this project never touches.
+  resolution: 384
+  weight_dtype: bfloat16
+  language_base_id: deepseek-ai/Janus-Pro-1B
+  num_image_tokens: 576
+  sft_format: deepseek
+  mmu_max_new_tokens: 16
+  decoding: greedy

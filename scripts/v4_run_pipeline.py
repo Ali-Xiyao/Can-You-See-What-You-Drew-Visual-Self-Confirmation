@@ -542,7 +542,7 @@ def answer_file(run: Path, *, prompted: bool, checkpoint: str | None = None,
 
 
 def stage_observe(args: argparse.Namespace) -> None:
-    from selfsight.backbones.showo2 import Showo2Adapter
+    from selfsight.backbones.registry import build_observer
 
     run = Path(args.run)
     verified = {r["image_path"]: r for r in read_jsonl(run / "verified.jsonl")}
@@ -568,8 +568,7 @@ def stage_observe(args: argparse.Namespace) -> None:
         print("nothing to do")
         return
 
-    backbone = Showo2Adapter(device=args.device, lazy=False,
-                             backbone_config=backbone_config)
+    backbone = build_observer(backbone_config, device=args.device)
     if checkpoint is not None:
         import yaml
 
@@ -709,11 +708,13 @@ def main() -> None:
                         "required with --checkpoint")
     o.add_argument("--backbone-config", default=None,
                    help=f"which model answers, default {DEFAULT_BACKBONE}. "
-                        "configs/backbones/showo2_7b.yaml replicates the context "
-                        "ablation at 7B on the images the 1.5B drew, which is the "
-                        "cross-scale check and not a main-line result: the larger "
-                        "backbones are frozen negative controls and must be "
-                        "labelled as such wherever they are reported.")
+                        "showo2_7b.yaml, showo_v1.yaml and janus_pro_1b.yaml "
+                        "re-ask the same questions about the images the 1.5B "
+                        "drew: E4's cross-scale and cross-family replication. "
+                        "None of the three is a main-line result -- they are "
+                        "frozen negative controls and must be labelled as such "
+                        "wherever they are reported. Each needs its own "
+                        "interpreter; the config names it under `environment`.")
     o.set_defaults(func=stage_observe)
 
     args = parser.parse_args()
