@@ -252,3 +252,76 @@ def test_every_adapter_answers_with_the_same_method():
     for adapter in (Showo2Adapter, ShowoAdapter, JanusProAdapter):
         signature = inspect.signature(adapter.observe_atoms)
         assert list(signature.parameters) == ["self", "image_path", "questions"], adapter
+
+
+# --------------------------------------------------------- interpreter fallback
+
+
+def test_a_config_that_names_its_interpreter_gets_that_one(tmp_path):
+    """A declared environment is never overridden by the family default."""
+
+    config = tmp_path / "declared.yaml"
+    config.write_text("family: janus_pro\nenvironment: envs/janus/Scripts/python.exe\n",
+                      encoding="utf-8")
+    resolved = registry.read_backbone_config(config)
+    assert registry.backbone_interpreter(resolved) == "envs/janus/Scripts/python.exe"
+
+
+def test_a_showo2_config_that_names_none_gets_the_showo2_environment(tmp_path):
+    """The case the older test returns early on, which is where the gap was.
+
+    `backbone_environment` answers None here and that is correct -- the config
+    genuinely declares nothing. A caller that treats None as a path builds a
+    command whose first element is None, which is what E4 did.
+    """
+
+    config = tmp_path / "bare.yaml"
+    config.write_text("backbone_id: showlab/show-o2-7B\n", encoding="utf-8")
+    resolved = registry.read_backbone_config(config)
+    assert registry.backbone_environment(resolved) is None
+    assert registry.backbone_interpreter(resolved) == "envs/showo2/python.exe"
+
+
+def test_a_family_with_neither_says_which_family(tmp_path):
+    """Guessing an interpreter fails as a pile of import errors somewhere else."""
+
+    config = tmp_path / "orphan.yaml"
+    config.write_text("family: showo_v1\n", encoding="utf-8")
+    resolved = registry.read_backbone_config(config)
+    with pytest.raises(ValueError, match="showo_v1"):
+        registry.backbone_interpreter(resolved)
+
+
+@pytest.mark.parametrize("name", sorted(E4))
+def test_every_e4_config_resolves_to_an_interpreter_that_exists(name):
+    """All three, including the two the older test excuses.
+
+    E4 loads these one after another over hours. An interpreter that resolves
+    to nothing should fail here, not after the second model is resident.
+    """
+
+    config = registry.read_backbone_config(CONFIGS / name)
+    interpreter = registry.backbone_interpreter(config)
+    assert interpreter.startswith("envs/") and interpreter.endswith("python.exe"), interpreter
+    if not Path("envs").is_dir():
+        pytest.skip("no envs/ in this checkout")
+    assert Path(interpreter).exists(), interpreter
+
+
+def test_the_driver_asks_for_an_interpreter_not_an_optional_one():
+    """`backbone_environment` is the wrong function to build a command from.
+
+    Reads the source because both call sites are inside stages that launch
+    subprocesses. What it pins is that neither reaches for the Optional.
+    """
+
+    import ast
+
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "v4_cross_model.py")
+    tree = ast.parse(source.read_text(encoding="utf-8"))
+    used = {node.id for node in ast.walk(tree) if isinstance(node, ast.Name)}
+    used |= {alias.name for node in ast.walk(tree)
+             if isinstance(node, ast.ImportFrom) for alias in node.names}
+    assert "backbone_interpreter" in used, "the driver must resolve, not read the raw key"
+    assert "backbone_environment" not in used, (
+        "backbone_environment returns None for every Show-o2 config")

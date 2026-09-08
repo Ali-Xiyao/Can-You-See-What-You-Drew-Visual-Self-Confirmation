@@ -48,7 +48,7 @@ from selfsight.analysis.context import (
     wilson,
 )
 from selfsight.backbones.registry import (
-    backbone_environment,
+    backbone_interpreter,
     read_backbone_config,
 )
 
@@ -156,7 +156,7 @@ def stage_preflight(args: argparse.Namespace) -> None:
         if config is None:
             print(f"{model}: already measured, nothing to preflight")
             continue
-        interpreter = backbone_environment(read_backbone_config(config))
+        interpreter = backbone_interpreter(read_backbone_config(config))
         command = [interpreter, "-u", __file__, "_answer_once",
                    "--backbone-config", config, "--device", args.device,
                    "--images", *images]
@@ -208,7 +208,7 @@ def stage_observe(args: argparse.Namespace) -> None:
         if config is None:
             print(f"{model}: already measured, skipping")
             continue
-        interpreter = backbone_environment(read_backbone_config(config))
+        interpreter = backbone_interpreter(read_backbone_config(config))
         for run in args.runs:
             for condition in CONDITIONS:
                 existing = Path(run) / answer_name(model, condition)

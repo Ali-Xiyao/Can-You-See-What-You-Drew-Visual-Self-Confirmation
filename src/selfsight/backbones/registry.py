@@ -29,6 +29,14 @@ import yaml
 DEFAULT_FAMILY = "showo2"
 FAMILIES = ("showo2", "showo_v1", "janus_pro")
 
+# The interpreter for a family whose configs deliberately do not name one.
+# showo2_1p5b.yaml and showo2_7b.yaml predate the `environment` key for the
+# same reason they predate `family`: their stems appear in answer filenames
+# already written to disk. The fallback lives here rather than in the caller,
+# because a second copy of this table in a script is the thing the module
+# docstring is arguing against.
+FAMILY_ENVIRONMENT = {"showo2": "envs/showo2/python.exe"}
+
 
 def read_backbone_config(path: str | Path) -> dict[str, Any]:
     raw = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
@@ -49,6 +57,32 @@ def backbone_environment(config: Mapping[str, Any]) -> str | None:
 
     value = config.get("environment")
     return None if value is None else str(value)
+
+
+def backbone_interpreter(config: Mapping[str, Any]) -> str:
+    """The interpreter that can load this backbone. Declared wins; family fills in.
+
+    `backbone_environment` returns None for a config that does not declare one,
+    which is every Show-o2 config, and a caller that passes that straight into
+    a command builds a command whose first element is None. E4 would have hit
+    that on showo2_7b -- one of the three registered replications -- at the
+    moment the preflight tried to launch it, hours into a session that had
+    already loaded two other models.
+
+    Raises rather than guessing when a family has neither, because the failure
+    of a wrong interpreter is a stack of import errors far from here.
+    """
+
+    declared = backbone_environment(config)
+    if declared is not None:
+        return declared
+    family = backbone_family(config)
+    interpreter = FAMILY_ENVIRONMENT.get(family)
+    if interpreter is None:
+        raise ValueError(
+            f"Backbone family {family!r} declares no environment and has no default; "
+            "add one to the config or to FAMILY_ENVIRONMENT")
+    return interpreter
 
 
 def answer_length(config: Mapping[str, Any], *, default: int = 16) -> int:
