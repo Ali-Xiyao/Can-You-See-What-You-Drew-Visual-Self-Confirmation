@@ -1,0 +1,24 @@
+showo2_1p5b: already measured, nothing to preflight
+showo2_7b: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\python.exe (4 images)
+    v4-main-42c31882e9a3127976d0-20260901-0.png    'Blue'
+    v4-main-e5b398ba54149473f44d-20260909-0.png    'Red'
+    v4-main-7f6f4853860928bb71aa-20260913-0.png    'White'
+    v4-main-9b9e69494e9df4d3f977-20260917-0.png    'Blue'
+    -> the answer depends on the image
+
+showo_v1: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\core\python.exe (4 images)
+    v4-main-42c31882e9a3127976d0-20260901-0.png    'Blue'
+    v4-main-e5b398ba54149473f44d-20260909-0.png    'Red'
+    v4-main-7f6f4853860928bb71aa-20260913-0.png    'White'
+    v4-main-9b9e69494e9df4d3f977-20260917-0.png    'Red'
+    -> the answer depends on the image
+
+janus_pro_1b: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\janus\Scripts\python.exe (4 images)
+    v4-main-42c31882e9a3127976d0-20260901-0.png    'Blue.'
+    v4-main-e5b398ba54149473f44d-20260909-0.png    'The largest object in the image is a red tomato.'
+    v4-main-7f6f4853860928bb71aa-20260913-0.png    'The largest object in the image is a white plate.'
+    v4-main-9b9e69494e9df4d3f977-20260917-0.png    'Red.'
+    -> the answer depends on the image
+
+all models read the picture
+PREFLIGHT_EXIT=0
