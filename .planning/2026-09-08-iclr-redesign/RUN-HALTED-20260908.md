@@ -113,3 +113,66 @@ if any(digest(ROOT / name) != expected
 3. **60 还是 96 h。** 见 EXECUTION.md §0.1,现在又多烧了停机时间。
 
 两张卡当前空闲。
+
+---
+
+# 补充分析:这个阶段根本不必待在关键路径上,但 audit 无论如何都躲不掉
+
+停机后继续查了三件事,合起来把上面第 1 条的选择空间收窄了。
+
+## 1. 它的输出没有任何消费者
+
+全仓库提到 `gradient_sensitivity` 的地方只有两处,都在 supervisor 里
+(SOURCES 清单第 49 行,调用第 309 行)。**没有 gate、没有 report、没有 plot 读它。**
+它自己写的 `status` 是 `"supplementary"`,`limitations` 里写着
+"no warning or divergence is confirmed"。这是一个叶子产物。
+
+## 2. 它不是增量的,事后补跑得到同一份结果
+
+```python
+rows = [read_main_probe(path, bank)
+        for path in sorted((run / "gradient-probes").glob("**/report.json"))]
+```
+
+每次调用都重新扫描整个 `gradient-probes/` 目录、重算全部 checkpoint。
+所以**在最后跑一次,内容和循环里最后那次跑出来的完全一样**。
+逐步跑唯一多出来的是 `gradient-sensitivity-history/` 里的中间快照,
+而那个也不喂任何东西。
+
+## 3. audit 的契约比整个 pilot 产物小得多
+
+`read_partition` 只用 5 样东西:
+
+| 字段 | 用途 |
+|---|---|
+| `provenance.bank_sha256` / `bank_fingerprint` | 核对描述的是这一版 bank |
+| `within_probe_bank_clusters` | 必须**恰好**覆盖 bank 的 spec_ids,且 `sha256_json(canonical_scene) == scene_sha256` |
+| `overlap.actual_probe_bank` | 哪些 probe-bank spec 的场景在训练曝露里出现过 → 排除 |
+| `summary.actual_probe_bank_overlap_n` | 与上一条行数一致 |
+| `canonical_scene_key_definition` | 原样抄进报告,当文档 |
+
+pilot 那份 275 KB 里其余的字段(`planned_replay_by_round`、
+`scheduled_training_prompts`、`conservative_all_train_partition_sensitivity` …)
+这个脚本一个都不读。
+
+归结起来就是:**把 probe bank 的 spec 按 canonical scene 聚类,
+再标出哪些场景同时出现在训练曝露里。** 算法在 `canonical_scene_key_definition`
+里写全了,输入(`bank.json` + `split.json` + 冻结的 replay 调度)都已冻结,
+所以是确定性的,没有可调空间。
+
+## 由此得到的结论
+
+「摘掉这个阶段」并**不能**免掉 audit —— 它只是把需要 audit 的时刻推后。
+除非整个分析弃掉,否则那份文件迟早要造。
+
+而这推出一个方向性的结果:**如果这份 audit 终归要造,现在造严格优于以后造。**
+现在存在的 outcome 产物只有 step-00000(未训练的 base);
+跑完再造,12 个 checkpoint 的结果全都摆在那儿了。
+`created_before_any_outcome_evaluation_artifact` 这两种情况下都只能写 `false`,
+但「盲」的程度差得很远。
+
+我的建议是现在造,并在文件里如实记下它不是前瞻冻结、以及当时已存在哪些 outcome。
+但**造不造仍然是你的决定** —— 我不动手。
+
+顺带:造 audit 文件不改任何 SOURCES 里的文件,所以重启不需要
+`--accept-code-update`。改 supervisor 去摘阶段则需要。
