@@ -16,6 +16,8 @@ import yaml
 
 from selfsight.backbones import registry
 from selfsight.models import load_model_lock
+import os
+import subprocess
 
 CONFIGS = Path(__file__).resolve().parents[1] / "configs/backbones"
 E4 = {
@@ -254,7 +256,14 @@ def test_every_adapter_answers_with_the_same_method():
         assert list(signature.parameters) == ["self", "image_path", "questions"], adapter
 
 
-# --------------------------------------------------------- interpreter fallback
+# ------------------------------------------------------- interpreter resolution
+
+
+def _fake_envs(root: Path, relative: str) -> Path:
+    exe = root / relative
+    exe.parent.mkdir(parents=True, exist_ok=True)
+    exe.write_bytes(b"")
+    return exe
 
 
 def test_a_config_that_names_its_interpreter_gets_that_one(tmp_path):
@@ -263,12 +272,13 @@ def test_a_config_that_names_its_interpreter_gets_that_one(tmp_path):
     config = tmp_path / "declared.yaml"
     config.write_text("family: janus_pro\nenvironment: envs/janus/Scripts/python.exe\n",
                       encoding="utf-8")
+    exe = _fake_envs(tmp_path, "envs/janus/Scripts/python.exe")
     resolved = registry.read_backbone_config(config)
-    assert registry.backbone_interpreter(resolved) == "envs/janus/Scripts/python.exe"
+    assert registry.backbone_interpreter(resolved, root=tmp_path) == str(exe.resolve())
 
 
 def test_a_showo2_config_that_names_none_gets_the_showo2_environment(tmp_path):
-    """The case the older test returns early on, which is where the gap was.
+    """The case the older config test returns early on, which is where the gap was.
 
     `backbone_environment` answers None here and that is correct -- the config
     genuinely declares nothing. A caller that treats None as a path builds a
@@ -277,9 +287,31 @@ def test_a_showo2_config_that_names_none_gets_the_showo2_environment(tmp_path):
 
     config = tmp_path / "bare.yaml"
     config.write_text("backbone_id: showlab/show-o2-7B\n", encoding="utf-8")
+    exe = _fake_envs(tmp_path, "envs/showo2/python.exe")
     resolved = registry.read_backbone_config(config)
     assert registry.backbone_environment(resolved) is None
-    assert registry.backbone_interpreter(resolved) == "envs/showo2/python.exe"
+    assert registry.backbone_interpreter(resolved, root=tmp_path) == str(exe.resolve())
+
+
+def test_the_path_is_absolute_because_createprocess_rejects_the_other_kind(tmp_path):
+    """Windows will not launch `envs/showo2/python.exe` from the directory above it.
+
+    Not a style preference. Measured in the project root:
+    `Path("envs/showo2/python.exe").exists()` is True and
+    `subprocess.run(["envs/showo2/python.exe", "-c", "print(1)"])` raises
+    WinError 2 in the same process, because CreateProcess will not take a
+    relative path spelled with forward slashes -- which is how every config in
+    configs/backbones writes it. E4's preflight died on exactly this after
+    resolving the interpreter correctly.
+    """
+
+    config = tmp_path / "bare.yaml"
+    config.write_text("backbone_id: showlab/show-o2-7B\n", encoding="utf-8")
+    _fake_envs(tmp_path, "envs/showo2/python.exe")
+    resolved = registry.read_backbone_config(config)
+    returned = registry.backbone_interpreter(resolved, root=tmp_path)
+    assert Path(returned).is_absolute()
+    assert "/" not in returned or os.sep == "/", returned
 
 
 def test_a_family_with_neither_says_which_family(tmp_path):
@@ -289,23 +321,39 @@ def test_a_family_with_neither_says_which_family(tmp_path):
     config.write_text("family: showo_v1\n", encoding="utf-8")
     resolved = registry.read_backbone_config(config)
     with pytest.raises(ValueError, match="showo_v1"):
-        registry.backbone_interpreter(resolved)
+        registry.backbone_interpreter(resolved, root=tmp_path)
+
+
+def test_the_wrong_working_directory_says_so_rather_than_winerror_2(tmp_path):
+    """WinError 2 renders as mojibake on this machine and names nothing.
+
+    The interpreter is resolved from the cwd because `envs/` belongs to the
+    machine, so getting the cwd wrong is the likely mistake and it should read
+    as one.
+    """
+
+    config = tmp_path / "bare.yaml"
+    config.write_text("backbone_id: showlab/show-o2-7B\n", encoding="utf-8")
+    resolved = registry.read_backbone_config(config)
+    with pytest.raises(FileNotFoundError, match="envs/ is resolved from"):
+        registry.backbone_interpreter(resolved, root=tmp_path)
 
 
 @pytest.mark.parametrize("name", sorted(E4))
-def test_every_e4_config_resolves_to_an_interpreter_that_exists(name):
-    """All three, including the two the older test excuses.
+def test_every_e4_config_resolves_to_an_interpreter_that_runs(name):
+    """All three, including the two the older config test excuses.
 
-    E4 loads these one after another over hours. An interpreter that resolves
-    to nothing should fail here, not after the second model is resident.
+    E4 loads these one after another over hours; an interpreter that cannot be
+    launched should fail here, not once the second model is already resident.
     """
 
-    config = registry.read_backbone_config(CONFIGS / name)
-    interpreter = registry.backbone_interpreter(config)
-    assert interpreter.startswith("envs/") and interpreter.endswith("python.exe"), interpreter
     if not Path("envs").is_dir():
         pytest.skip("no envs/ in this checkout")
-    assert Path(interpreter).exists(), interpreter
+    config = registry.read_backbone_config(CONFIGS / name)
+    interpreter = registry.backbone_interpreter(config)
+    finished = subprocess.run([interpreter, "-c", "print('ok')"],
+                              capture_output=True, text=True, timeout=120)
+    assert finished.returncode == 0, finished.stderr[-400:]
 
 
 def test_the_driver_asks_for_an_interpreter_not_an_optional_one():
@@ -317,7 +365,7 @@ def test_the_driver_asks_for_an_interpreter_not_an_optional_one():
 
     import ast
 
-    source = (Path(__file__).resolve().parents[1] / "scripts" / "v4_cross_model.py")
+    source = Path(__file__).resolve().parents[1] / "scripts" / "v4_cross_model.py"
     tree = ast.parse(source.read_text(encoding="utf-8"))
     used = {node.id for node in ast.walk(tree) if isinstance(node, ast.Name)}
     used |= {alias.name for node in ast.walk(tree)
@@ -325,3 +373,21 @@ def test_the_driver_asks_for_an_interpreter_not_an_optional_one():
     assert "backbone_interpreter" in used, "the driver must resolve, not read the raw key"
     assert "backbone_environment" not in used, (
         "backbone_environment returns None for every Show-o2 config")
+
+
+def test_a_relative_root_still_yields_something_launchable(tmp_path, monkeypatch):
+    """`root="."` is the obvious way to say "here", and it must not stay relative.
+
+    The absoluteness in the ordinary case comes from `Path.cwd()`, so this is
+    the one path through the function where the normalisation is what supplies
+    it -- and a relative result is the WinError 2 this all started with.
+    """
+
+    config = tmp_path / "bare.yaml"
+    config.write_text("backbone_id: showlab/show-o2-7B\n", encoding="utf-8")
+    _fake_envs(tmp_path, "envs/showo2/python.exe")
+    monkeypatch.chdir(tmp_path)
+    resolved = registry.read_backbone_config(config)
+    returned = registry.backbone_interpreter(resolved, root=".")
+    assert Path(returned).is_absolute(), returned
+    assert Path(returned).exists()

@@ -59,30 +59,50 @@ def backbone_environment(config: Mapping[str, Any]) -> str | None:
     return None if value is None else str(value)
 
 
-def backbone_interpreter(config: Mapping[str, Any]) -> str:
-    """The interpreter that can load this backbone. Declared wins; family fills in.
+def backbone_interpreter(config: Mapping[str, Any], *, root: str | Path | None = None) -> str:
+    """An absolute path to the interpreter that can load this backbone.
 
-    `backbone_environment` returns None for a config that does not declare one,
-    which is every Show-o2 config, and a caller that passes that straight into
-    a command builds a command whose first element is None. E4 would have hit
-    that on showo2_7b -- one of the three registered replications -- at the
-    moment the preflight tried to launch it, hours into a session that had
-    already loaded two other models.
+    Declared wins; the family default fills in. `backbone_environment` returns
+    None for a config that does not declare one, which is every Show-o2 config,
+    and a caller that passes that straight into a command builds a command whose
+    first element is None. E4 would have hit that on showo2_7b -- one of three
+    registered replications -- after the preflight had already loaded two other
+    models.
 
-    Raises rather than guessing when a family has neither, because the failure
-    of a wrong interpreter is a stack of import errors far from here.
+    Absolute, and not merely because absolute is tidier. Every config writes the
+    path with forward slashes, and on Windows `CreateProcess` refuses a relative
+    path spelled that way even when the file is plainly there:
+    `subprocess.run(["envs/showo2/python.exe", ...])` raises WinError 2 from the
+    project root while `Path("envs/showo2/python.exe").exists()` is True in the
+    same process. Backslashes work, absolute works. Measured, not recalled.
+
+    `root` is where `envs/` lives, defaulting to the working directory, because
+    the interpreters belong to the machine rather than to the checkout -- a
+    worktree has no `envs/` at all.
+
+    Raises rather than guessing, in both directions. A family with no
+    environment and no default is a config error; a path that resolves to
+    nothing is a wrong working directory, and WinError 2 says neither.
     """
 
     declared = backbone_environment(config)
-    if declared is not None:
-        return declared
-    family = backbone_family(config)
-    interpreter = FAMILY_ENVIRONMENT.get(family)
-    if interpreter is None:
-        raise ValueError(
-            f"Backbone family {family!r} declares no environment and has no default; "
-            "add one to the config or to FAMILY_ENVIRONMENT")
-    return interpreter
+    if declared is None:
+        family = backbone_family(config)
+        declared = FAMILY_ENVIRONMENT.get(family)
+        if declared is None:
+            raise ValueError(
+                f"Backbone family {family!r} declares no environment and has no default; "
+                "add one to the config or to FAMILY_ENVIRONMENT")
+    base = Path.cwd() if root is None else Path(root)
+    resolved = Path(declared)
+    if not resolved.is_absolute():
+        resolved = base / resolved
+    resolved = resolved.resolve()
+    if not resolved.exists():
+        raise FileNotFoundError(
+            f"No interpreter at {resolved} for {declared!r}; envs/ is resolved "
+            f"from {base}, so run this where the environments live")
+    return str(resolved)
 
 
 def answer_length(config: Mapping[str, Any], *, default: int = 16) -> int:
