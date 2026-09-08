@@ -9,6 +9,8 @@ model lock before a 17 GB load rather than after it.
 """
 from __future__ import annotations
 
+import os
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -16,8 +18,6 @@ import yaml
 
 from selfsight.backbones import registry
 from selfsight.models import load_model_lock
-import os
-import subprocess
 
 CONFIGS = Path(__file__).resolve().parents[1] / "configs/backbones"
 E4 = {
@@ -351,7 +351,7 @@ def test_every_e4_config_resolves_to_an_interpreter_that_runs(name):
         pytest.skip("no envs/ in this checkout")
     config = registry.read_backbone_config(CONFIGS / name)
     interpreter = registry.backbone_interpreter(config)
-    finished = subprocess.run([interpreter, "-c", "print('ok')"],
+    finished = subprocess.run([interpreter, "-c", "print('ok')"], check=False,
                               capture_output=True, text=True, timeout=120)
     assert finished.returncode == 0, finished.stderr[-400:]
 
