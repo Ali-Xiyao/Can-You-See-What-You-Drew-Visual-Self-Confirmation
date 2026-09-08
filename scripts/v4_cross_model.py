@@ -210,7 +210,8 @@ def stage_preflight(args: argparse.Namespace) -> None:
             continue
         answers = json.loads(finished.stdout.strip().splitlines()[-1])
         for image, answer in zip(images, answers):
-            print(f"    {Path(image).name[:44]:<46} {answer!r}")
+            shown = " ".join((answer or "").split())[:60]
+            print(f"    {Path(image).name[:44]:<46} {shown!r}")
         if len({answer for answer in answers if answer}) < 2:
             failures.append(f"{model}: the same answer for every image -- "
                             "the picture may not be reaching the model")
@@ -223,10 +224,18 @@ def stage_preflight(args: argparse.Namespace) -> None:
 
 
 def stage_answer_once(args: argparse.Namespace) -> None:
-    """One question, several images, answers as JSON on the last stdout line.
+    """One question, several images, raw answers as JSON on the last stdout line.
 
     A subcommand rather than a function because the caller is a different
     interpreter: this is the only code in the file that imports an adapter.
+
+    Raw and not normalized. Decoding is greedy and the prompt is identical
+    across the images, so the picture is the only input that varies and any
+    difference in the returned string proves it arrived -- which is the entire
+    question this stage asks. Normalizing can only lose that: `normalize_answer`
+    matches COLOR answers against a four-value enum while the frozen specs use
+    ten colours, so a correct "white" for the white plate comes back as None
+    from every model at once and the image stops contributing to the check.
     """
 
     from selfsight.backbones.registry import build_observer
@@ -236,7 +245,7 @@ def stage_answer_once(args: argparse.Namespace) -> None:
                               family=QuestionFamily.COLOR, text=PREFLIGHT_QUESTION,
                               expected_answer="red")
     observer = build_observer(args.backbone_config, device=args.device)
-    answers = [observer.observe_atoms(image, [question]).answers[0].normalized_answer
+    answers = [observer.observe_atoms(image, [question]).answers[0].raw_answer
                for image in args.images]
     print(json.dumps(answers))
 

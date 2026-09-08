@@ -333,3 +333,25 @@ def test_the_preflight_stage_uses_that_selection():
               if isinstance(node, ast.Call) and isinstance(node.func, ast.Name)}
     assert "diverse_images" in called, "the stage picks its own images again"
     assert "sorted" not in called, "sorted(glob(...)) is the ordering that groups samples"
+
+
+def test_the_preflight_compares_what_the_model_said_not_what_it_normalises_to():
+    """`normalize_answer` matches COLOR against four colours; the specs use ten.
+
+    Measured over the two frozen manifests: blue, white, red, green, black,
+    yellow, orange, brown, silver and gray appear, and the Color enum holds
+    four of them. A correct "white" for the white plate normalises to None for
+    every model at once, and the image stops testing anything. Decoding is
+    greedy and the prompt is fixed, so the raw string is both the stronger
+    signal and the direct one.
+    """
+
+    import ast
+
+    source = ROOT / "scripts" / "v4_cross_model.py"
+    tree = ast.parse(source.read_text(encoding="utf-8"))
+    stage = next(node for node in ast.walk(tree)
+                 if isinstance(node, ast.FunctionDef) and node.name == "stage_answer_once")
+    read = {node.attr for node in ast.walk(stage) if isinstance(node, ast.Attribute)}
+    assert "raw_answer" in read
+    assert "normalized_answer" not in read, "a four-colour enum decides the gate again"
