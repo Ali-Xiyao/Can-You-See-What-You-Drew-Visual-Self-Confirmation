@@ -10,6 +10,7 @@ itself.
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -246,3 +247,89 @@ def test_the_quiet_case_says_so_rather_than_saying_nothing(verdict):
                     "showo2_7b": measured(-0.2, 1e-4),
                     "showo_v1": measured(-0.2, 1e-4)})
     assert "no model declines to answer at a different rate" in text
+
+
+# ------------------------------------------------- what the preflight looks at
+
+
+def _manifest(tmp_path: Path, specs: list[list[tuple[str, str]]]) -> Path:
+    rows = []
+    for index, objects in enumerate(specs):
+        rows.append(json.dumps({
+            "image_path": str(tmp_path / "images" / f"image-{index}.png"),
+            "spec": {"objects": [{"object": name, "color": colour, "count": 1}
+                                 for name, colour in objects]},
+        }))
+    (tmp_path / "manifest.jsonl").write_text("\n".join(rows) + "\n", encoding="utf-8")
+    return tmp_path
+
+
+def test_the_preflight_does_not_ask_about_three_copies_of_one_scene(driver, tmp_path):
+    """The corpus stores several samples of a prompt consecutively.
+
+    The first three images of runs/v4/main-2plus1 are three draws of one green
+    apple and two orange carrots. Every model answers "green" to all three,
+    correctly, and a check that reads identical answers as blindness fails all
+    of them at once.
+    """
+
+    run = _manifest(tmp_path, [
+        [("apple", "green")], [("apple", "green")], [("apple", "green")],
+        [("mug", "blue")], [("spoon", "black")],
+    ])
+    picked = [Path(p).name for p in driver.diverse_images(run, 3)]
+    assert picked == ["image-0.png", "image-3.png", "image-4.png"]
+
+
+def test_a_corpus_of_one_colour_set_says_so_instead_of_passing(driver, tmp_path):
+    """Two images that should give the same answer cannot test anything.
+
+    Returning them and letting the answers-must-differ check fire would blame
+    the model for a property of the images.
+    """
+
+    run = _manifest(tmp_path, [[("apple", "green")]] * 4)
+    with pytest.raises(SystemExit, match="distinct colour sets"):
+        driver.diverse_images(run, 3)
+
+
+def test_the_count_is_a_limit_on_distinct_scenes_not_on_rows(driver, tmp_path):
+    run = _manifest(tmp_path, [
+        [("apple", "green")], [("apple", "green")], [("mug", "blue")],
+        [("spoon", "black")], [("plate", "white")],
+    ])
+    assert len(driver.diverse_images(run, 2)) == 2
+    assert len(driver.diverse_images(run, 4)) == 4
+
+
+def test_a_spec_that_names_no_colour_is_skipped(driver, tmp_path):
+    """A colour question about a spec with no colour is not a fair comparison."""
+
+    run = _manifest(tmp_path, [[], [("mug", "blue")], [("spoon", "black")]])
+    picked = [Path(p).name for p in driver.diverse_images(run, 3)]
+    assert picked == ["image-1.png", "image-2.png"]
+
+
+def test_a_run_without_a_manifest_says_which_file(driver, tmp_path):
+    with pytest.raises(SystemExit, match="manifest.jsonl"):
+        driver.diverse_images(tmp_path, 3)
+
+
+def test_the_preflight_stage_uses_that_selection():
+    """A correct helper nobody calls is the same defect with extra steps.
+
+    `stage_preflight` loads adapters in subprocesses, so this reads the source
+    the way tests/test_v4_training_metrics.py does. Reverting the call site to
+    the first N images by filename is a mutation the direct tests do not see.
+    """
+
+    import ast
+
+    source = ROOT / "scripts" / "v4_cross_model.py"
+    tree = ast.parse(source.read_text(encoding="utf-8"))
+    stage = next(node for node in ast.walk(tree)
+                 if isinstance(node, ast.FunctionDef) and node.name == "stage_preflight")
+    called = {node.func.id for node in ast.walk(stage)
+              if isinstance(node, ast.Call) and isinstance(node.func, ast.Name)}
+    assert "diverse_images" in called, "the stage picks its own images again"
+    assert "sorted" not in called, "sorted(glob(...)) is the ordering that groups samples"

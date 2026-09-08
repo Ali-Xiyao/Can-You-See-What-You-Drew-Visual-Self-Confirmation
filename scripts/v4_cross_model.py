@@ -141,6 +141,44 @@ def read_jsonl(path: Path) -> list[dict]:
 PREFLIGHT_QUESTION = "What colour is the largest object? Answer with one word."
 
 
+def diverse_images(run: Path, count: int) -> list[str]:
+    """Images whose specs ask for different colours, one per colour set.
+
+    The check this feeds only means something if the pictures could produce
+    different answers. Taking the first N by filename does not give that: the
+    corpus stores several samples of one prompt consecutively, so the first
+    three images of runs/v4/main-2plus1 are three draws of the same green apple
+    and two orange carrots. All three models answer "green" to all three,
+    correctly, and the preflight reads it as the picture never reaching the
+    language tower -- a false failure for every model at once.
+
+    Grouping by the spec's colour set rather than by the whole spec because
+    that is what the question asks about. Two specs differing only in object
+    counts would still be an unfair test of a colour answer.
+    """
+
+    manifest = run / "manifest.jsonl"
+    if not manifest.exists():
+        raise SystemExit(f"No manifest at {manifest}; pass --images explicitly")
+    seen: dict[frozenset[str], str] = {}
+    for line in manifest.read_text(encoding="utf-8").splitlines():
+        if not line:
+            continue
+        row = json.loads(line)
+        colours = frozenset(str(o["color"]) for o in row["spec"].get("objects", [])
+                            if o.get("color"))
+        if not colours or colours in seen:
+            continue
+        seen[colours] = row["image_path"]
+        if len(seen) >= count:
+            break
+    if len(seen) < 2:
+        raise SystemExit(
+            f"{manifest} has fewer than two distinct colour sets; a preflight over "
+            "these images cannot tell a blind model from a correct one")
+    return list(seen.values())
+
+
 def stage_preflight(args: argparse.Namespace) -> None:
     """Ask one question about several images and require the answers to differ.
 
@@ -150,9 +188,7 @@ def stage_preflight(args: argparse.Namespace) -> None:
     and a false one. Two minutes here, on the CPU if the cards are busy.
     """
 
-    images = args.images or sorted(
-        str(path) for path in Path(args.runs[0], "images").glob("*.png")
-    )[: args.count]
+    images = args.images or diverse_images(Path(args.runs[0]), args.count)
     if len(images) < 2:
         raise SystemExit("preflight needs at least two images to compare answers")
 
