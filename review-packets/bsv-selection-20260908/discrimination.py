@@ -19,12 +19,8 @@ one a selection loop faces:
 from __future__ import annotations
 
 import random
-import sys
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
-
-from bsv_selection import by_spec, load  # noqa: E402
+from bsv_selection import by_spec, load
 
 
 def auc(scores: list[tuple[float, bool]]) -> float:
