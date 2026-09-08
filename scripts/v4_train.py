@@ -401,7 +401,7 @@ def stage_train(args: argparse.Namespace) -> None:
     base_state = capture_base_state(backbone.model)
 
     for round_index in pending:
-        round_dir = prepare_round(out, round_index)
+        round_dir = prepare_round(out, round_index, arms=arms)
         entries = round_entries(schedule, round_index)
         print(f"=== {now()} round {round_index}: {len(entries)} prompts ===")
 

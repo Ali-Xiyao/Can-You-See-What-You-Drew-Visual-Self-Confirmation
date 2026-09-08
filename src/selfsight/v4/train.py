@@ -424,13 +424,34 @@ def abandon_incomplete(path: str | Path) -> Path | None:
     return destination
 
 
-def prepare_round(run_root: str | Path, round_index: int) -> Path:
-    """Archive all partial-round artifacts, including a checkpoint saved by one arm."""
+def prepare_round(
+    run_root: str | Path,
+    round_index: int,
+    *,
+    arms: Sequence[str],
+) -> Path:
+    """Archive all partial-round artifacts, including a checkpoint saved by one arm.
+
+    `arms` is the set this invocation is training, not the registered pairing,
+    and it has no default on purpose. A blind-self run saves
+    `checkpoints/blind_self/round-NNN`; archiving only the two registered arms
+    would leave that one in place, the retry would start from a checkpoint
+    written by the attempt that crashed, and arm B's trajectory would be wrong
+    from that round on with nothing in the output saying so. Recovery is not a
+    rare path -- §2b of the main-run protocol is a list of the ways this run
+    has already crashed.
+
+    A default of `ARMS` would be that same silent wrong answer, one level up:
+    correct for the registered pairing and quietly incorrect for every other
+    run. Required, a caller that forgets fails in the first second of the first
+    round instead of twenty hours in.
+    """
+
     root = Path(run_root).resolve()
     round_dir = root / "rounds" / f"round-{round_index:03d}"
     if (round_dir / "DONE.json").exists():
         raise FileExistsError(f"Refusing to restart completed round: {round_dir}")
-    checkpoints = {arm: root / "checkpoints" / arm / f"round-{round_index:03d}" for arm in ARMS}
+    checkpoints = {arm: root / "checkpoints" / arm / f"round-{round_index:03d}" for arm in arms}
     if any(not path.resolve().is_relative_to(root) for path in (round_dir, *checkpoints.values())):
         raise ValueError("Partial round archive escapes run directory")
     if any(path.exists() for path in checkpoints.values()):
