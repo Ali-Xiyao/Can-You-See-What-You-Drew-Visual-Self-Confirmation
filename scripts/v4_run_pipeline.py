@@ -471,6 +471,56 @@ explicit instruction rather than filling a gap in an ambiguous one.
 """
 
 
+# Duplicated from scripts/v4_train.py, the same way scripts/v4_gate_b_probe.py
+# duplicates it: these are separate entry points, and one importing another is a
+# worse coupling than one repeated path.
+LORA_TARGETS = "runs/readiness/showo2-1p5b/a4-lora-targets-r1.json"
+
+
+def wear_checkpoint(backbone: Any, *, checkpoint: Path, config: dict[str, Any]) -> None:
+    """Put one arm's adapter on the base backbone before it answers.
+
+    Without this, `observe` asks the *untrained* model about images a *trained*
+    one drew. That is the right question for a fixed corpus and the wrong one
+    for a curve: the co-evolution claim is that training changes what the model
+    can see in its own output, and a fixed observer cannot show that either way.
+
+    The sequence -- seed, attach, load -- is `stage_generate`'s, verbatim and for
+    its reason: the adapter has to be initialised exactly as it was during
+    training before the saved state is poured into it, or the modules the state
+    dict names are not the modules that exist.
+    """
+
+    from selfsight.training.checkpoint import load_checkpoint
+    from selfsight.utils.hashing import sha256_json
+    from selfsight.v4.train import seed_training
+
+    checkpoint = Path(checkpoint)
+    if not checkpoint.is_dir():
+        raise SystemExit(f"No checkpoint at {checkpoint}")
+    targets = json.loads(Path(LORA_TARGETS).read_text(encoding="utf-8"))
+    lora = config["training"]["lora"]
+    seed_training(int(config["seed"]))
+    backbone.attach_lora(target_modules=targets["target_modules"], rank=int(lora["rank"]),
+                         alpha=int(lora["alpha"]), dropout=float(lora["dropout"]),
+                         gradient_checkpointing=False)
+    load_checkpoint(checkpoint, model=backbone.model, optimizer=None, scheduler=None,
+                    expected_config_digest=sha256_json(config))
+
+
+def answer_file(run: Path, *, prompted: bool, checkpoint: str | None) -> Path:
+    """Where this condition's answers go.
+
+    A checkpoint's answers land beside the base model's rather than on top of
+    them. Overwriting would be the worst kind of quiet: `answers.jsonl` is the
+    file every existing analysis reads by name, and a curve point written into
+    it would silently restate the cross-sectional result as something else.
+    """
+
+    stem = "answers.prompted" if prompted else "answers"
+    return run / (f"{stem}.jsonl" if checkpoint is None else f"{stem}.self.jsonl")
+
+
 def stage_observe(args: argparse.Namespace) -> None:
     from selfsight.backbones.showo2 import Showo2Adapter
 
@@ -478,8 +528,12 @@ def stage_observe(args: argparse.Namespace) -> None:
     verified = {r["image_path"]: r for r in read_jsonl(run / "verified.jsonl")}
     manifest = read_jsonl(run / "manifest.jsonl")
 
+    checkpoint = getattr(args, "checkpoint", None)
+    if checkpoint is not None and not getattr(args, "config", None):
+        raise SystemExit("--checkpoint needs --config: the adapter shape and the "
+                         "digest it is checked against both come from there")
     prompted = args.condition == "prompted"
-    out = run / ("answers.prompted.jsonl" if prompted else "answers.jsonl")
+    out = answer_file(run, prompted=prompted, checkpoint=checkpoint)
     done: set[str] = set()
     if out.exists() and not args.overwrite:
         done = {r["image_path"] for r in read_jsonl(out)}
@@ -491,6 +545,11 @@ def stage_observe(args: argparse.Namespace) -> None:
         return
 
     backbone = Showo2Adapter(device=args.device, lazy=False)
+    if checkpoint is not None:
+        import yaml
+
+        wear_checkpoint(backbone, checkpoint=Path(checkpoint),
+                        config=yaml.safe_load(Path(args.config).read_text(encoding="utf-8")))
     started = time.time()
     written = 0
     skipped_unnameable = 0
@@ -524,6 +583,10 @@ def stage_observe(args: argparse.Namespace) -> None:
                 correct = grade(raw, question)
                 handle.write(json.dumps({
                     "condition": args.condition,
+                    # None when the base model answered. A curve is a set of
+                    # these files and the analysis has to be able to tell which
+                    # model produced which row without trusting the directory.
+                    "checkpoint": checkpoint,
                     "spec_id": spec.spec_id,
                     "image_path": image,
                     "candidate_index": row["candidate_index"],
@@ -609,6 +672,15 @@ def main() -> None:
     o.add_argument("--overwrite", action="store_true")
     o.add_argument("--condition", choices=["image_only", "prompted"],
                    default="image_only")
+    o.add_argument("--checkpoint", default=None,
+                   help="a trained adapter to wear while answering, e.g. "
+                        "runs/v4/<run>/checkpoints/naive/round-003. Omit it and "
+                        "the base model answers, which is what every result "
+                        "before 2026-09-08 used. Answers go to answers*.self.jsonl "
+                        "so a curve point cannot overwrite a cross-sectional one.")
+    o.add_argument("--config", default=None,
+                   help="the training config the checkpoint was written under; "
+                        "required with --checkpoint")
     o.set_defaults(func=stage_observe)
 
     args = parser.parse_args()
