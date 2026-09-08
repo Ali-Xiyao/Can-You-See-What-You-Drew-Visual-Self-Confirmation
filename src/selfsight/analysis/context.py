@@ -179,3 +179,73 @@ def dose_response(points: Sequence[tuple[float, float]], *, draws: int = 20000,
     high = slopes[int(0.975 * len(slopes))] if slopes else float("nan")
     return {"slope": slope, "intercept": intercept, "low": low, "high": high,
             "n": len(usable)}
+
+
+# --------------------------------------------------------------------- E4
+#
+# The cross-model replication reports the same two numbers the cross-sectional
+# result did, so the three models can sit in one table with the 1.5B. Both are
+# byte-for-byte the estimators in
+# `review-packets/context-ablation-20260908/context_ablation.py`, moved here
+# rather than imported: that packet is frozen, and a frozen file is not a
+# library. `test_context_analysis.py` checks the two agree on the real rows.
+
+
+def wilson(hits: int, total: int) -> tuple[float, float, float]:
+    """Wilson interval: the accuracies here run close to 1.0, where Wald lies."""
+
+    if total == 0:
+        return float("nan"), float("nan"), float("nan")
+    point = hits / total
+    z = 1.96
+    denominator = 1 + z**2 / total
+    centre = (point + z**2 / (2 * total)) / denominator
+    margin = z * math.sqrt(point * (1 - point) / total + z**2 / (4 * total**2)) / denominator
+    return point, centre - margin, centre + margin
+
+
+def mcnemar(pairs: Sequence[tuple[bool, bool]], *, sided: int = 2) -> tuple[int, int, float]:
+    """Exact McNemar on the discordant pairs.
+
+    Two-sided reproduces the frozen packet. E4 registered a direction --
+    prompted below image_only -- so it reads the one-sided tail, and takes the
+    tail on the registered side rather than on whichever side is smaller: a
+    result that goes the wrong way must come back with a large p, not a small
+    one with a sign attached.
+    """
+
+    only_first = sum(1 for a, b in pairs if a and not b)
+    only_second = sum(1 for a, b in pairs if b and not a)
+    n = only_first + only_second
+    if n == 0:
+        return only_first, only_second, 1.0
+    if sided == 2:
+        k = min(only_first, only_second)
+        tail = sum(math.comb(n, i) for i in range(k + 1)) / 2**n
+        return only_first, only_second, min(1.0, 2 * tail)
+    if sided != 1:
+        raise ValueError(f"sided must be 1 or 2, not {sided}")
+    # P(second wins this few or fewer | fair coin): small exactly when the
+    # first condition -- blind -- is the one that won.
+    tail = sum(math.comb(n, i) for i in range(only_second + 1)) / 2**n
+    return only_first, only_second, min(1.0, tail)
+
+
+def conflict_pairs(blind: Sequence[dict], prompted: Sequence[dict]) -> list[tuple[bool, bool]]:
+    """(blind correct, prompted correct) per decisive trial both conditions answered.
+
+    Keyed by (image, question): the same picture and the same words, differing
+    only in whether the description was in the context. A trial either side
+    abstained on is dropped rather than counted as wrong -- an abstention is
+    the model declining to answer, and scoring it as an error would let the
+    prompted condition look worse for being more cautious.
+    """
+
+    def index(rows: Sequence[dict]) -> dict[tuple[str, str], dict]:
+        return {(row["image_path"], row["question"]): row
+                for row in rows
+                if not row["abstain"] and row["gold_source"] == CONFLICT}
+
+    left, right = index(blind), index(prompted)
+    return [(bool(left[key]["correct"]), bool(right[key]["correct"]))
+            for key in sorted(left.keys() & right.keys())]

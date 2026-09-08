@@ -13,15 +13,20 @@ import math
 import pytest
 
 from selfsight.analysis.context import (
+    AGREEMENT,
+    CONFLICT,
     accuracy,
+    conflict_pairs,
     context_effect,
     discrimination_gap,
     dose_response,
     kept,
+    mcnemar,
     ols,
     pools,
     selection_gain,
     spec_agreement,
+    wilson,
 )
 
 
@@ -172,3 +177,78 @@ def test_a_real_relationship_gives_an_interval_that_does_not():
     assert result["slope"] == pytest.approx(1.0)
     assert result["low"] > 0
     assert result["n"] == 20
+
+
+# ------------------------------------------------------------------------ E4
+
+
+def pairs(blind_only: int, told_only: int, both: int = 0) -> list[tuple[bool, bool]]:
+    return ([(True, False)] * blind_only + [(False, True)] * told_only
+            + [(True, True)] * both)
+
+
+def test_the_two_sided_test_is_the_frozen_packets_test():
+    """25 discordant pairs, 5 of them the other way: 2 * P(X <= 5 | n=25, 1/2)."""
+
+    _, _, p_value = mcnemar(pairs(20, 5))
+    expected = 2 * sum(math.comb(25, i) for i in range(6)) / 2**25
+    assert p_value == pytest.approx(expected)
+
+
+def test_the_one_sided_test_is_small_only_on_the_registered_side():
+    """A model where the description *helps* is evidence against E4's
+    hypothesis. Reading the smaller tail whichever way it fell would turn that
+    into a significant result with a minus sign in front of it."""
+
+    with_the_claim = mcnemar(pairs(20, 5), sided=1)[2]
+    against_it = mcnemar(pairs(5, 20), sided=1)[2]
+    # P(X <= 5 | n=25, p=1/2) and its complement: the same table read from the
+    # two ends, 0.0020 against 0.9980.
+    assert with_the_claim < 0.005
+    assert against_it > 0.99
+    assert with_the_claim + against_it == pytest.approx(
+        1 + math.comb(25, 5) / 2**25), "the two tails share the boundary term"
+
+
+def test_one_sided_is_half_of_two_sided_on_the_registered_side():
+    assert mcnemar(pairs(20, 5), sided=1)[2] == pytest.approx(
+        mcnemar(pairs(20, 5))[2] / 2)
+
+
+def test_no_discordant_pairs_is_no_evidence_rather_than_a_crash():
+    assert mcnemar(pairs(0, 0, both=40), sided=1) == (0, 0, 1.0)
+
+
+def test_wilson_does_not_run_off_the_end_near_one():
+    """The agreement cells sit at 0.99, where a Wald interval crosses 1.0."""
+
+    point, low, high = wilson(99, 100)
+    assert point == 0.99
+    assert high < 1.0
+    assert low > 0.9
+
+
+def test_a_trial_either_condition_abstained_on_is_not_scored_as_wrong():
+    """An abstention is the model declining, not failing. Counting it as an
+    error would make the prompted condition look worse for being cautious."""
+
+    def row(image, correct, abstain, source=CONFLICT):
+        return {"image_path": image, "question": "q?", "correct": correct,
+                "abstain": abstain, "gold_source": source}
+
+    blind = [row("a.png", True, False), row("b.png", True, False)]
+    told = [row("a.png", False, False), row("b.png", False, True)]
+    assert conflict_pairs(blind, told) == [(True, False)]
+
+
+def test_only_the_decisive_trials_enter():
+    """On agreement trials both hypotheses predict the same answer, so a pair
+    there carries no information about which one is right."""
+
+    def row(image, source):
+        return {"image_path": image, "question": "q?", "correct": True,
+                "abstain": False, "gold_source": source}
+
+    blind = [row("a.png", CONFLICT), row("b.png", AGREEMENT)]
+    told = [row("a.png", CONFLICT), row("b.png", AGREEMENT)]
+    assert len(conflict_pairs(blind, told)) == 1
