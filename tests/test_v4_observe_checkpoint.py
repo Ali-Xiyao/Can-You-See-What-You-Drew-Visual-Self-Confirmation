@@ -179,3 +179,95 @@ def test_argparse_still_defaults_the_new_flags_to_the_old_behaviour(monkeypatch,
     assert seen["checkpoint"] is None
     assert seen["config"] is None
     assert seen["condition"] == "image_only"
+
+
+# ------------------------------------------------- a different backbone
+
+
+def test_a_bigger_backbones_answers_do_not_overwrite_the_frozen_ones(tmp_path):
+    """The cross-scale check reuses the images the 1.5B drew, in the same
+    directory. Writing 7B rows into answers.jsonl would overwrite the result
+    every number in the paper's section 1 comes from."""
+
+    pipeline = _pipeline()
+    small = pipeline.answer_file(tmp_path, prompted=False)
+    large = pipeline.answer_file(tmp_path, prompted=False,
+                                 backbone="configs/backbones/showo2_7b.yaml")
+    assert small.name == "answers.jsonl"
+    assert large.name == "answers.showo2_7b.jsonl"
+
+
+def test_naming_the_default_backbone_explicitly_changes_nothing(tmp_path):
+    """Otherwise a resumed pass would start a second file half way through."""
+
+    pipeline = _pipeline()
+    implicit = pipeline.answer_file(tmp_path, prompted=True)
+    explicit = pipeline.answer_file(tmp_path, prompted=True,
+                                    backbone=pipeline.DEFAULT_BACKBONE)
+    assert implicit == explicit == tmp_path / "answers.prompted.jsonl"
+
+
+def test_a_checkpoint_from_another_backbone_is_refused(tmp_path):
+    """A 1.5B LoRA state dict poured into a 7B adapter names modules that exist
+    at both scales and are the wrong size at one of them."""
+
+    pipeline = _pipeline()
+    run = tmp_path / "run"
+    run.mkdir()
+    (run / "verified.jsonl").write_text("", encoding="utf-8")
+    (run / "manifest.jsonl").write_text("", encoding="utf-8")
+    args = SimpleNamespace(run=str(run), condition="image_only", device="cpu",
+                           overwrite=False, checkpoint="ck/round-003",
+                           config="configs/x.yaml",
+                           backbone_config="configs/backbones/showo2_7b.yaml")
+    with pytest.raises(SystemExit, match="is not that backbone"):
+        pipeline.stage_observe(args)
+
+
+def test_the_backbone_can_be_chosen_on_the_command_line(monkeypatch, tmp_path):
+    pipeline = _pipeline()
+    seen: dict = {}
+    monkeypatch.setattr(pipeline, "stage_observe", lambda args: seen.update(vars(args)))
+    monkeypatch.setattr(sys, "argv", ["v4_run_pipeline.py", "observe", "--run", str(tmp_path),
+                                      "--backbone-config", "configs/backbones/showo2_7b.yaml"])
+    pipeline.main()
+    assert seen["backbone_config"] == "configs/backbones/showo2_7b.yaml"
+
+
+def test_the_chosen_backbone_is_the_one_that_actually_answers(monkeypatch, tmp_path):
+    """Plumbing the flag through the filename and the row while still loading
+    the 1.5B would make the cross-scale check a second 1.5B run reported as a
+    7B one -- and it would show no scale effect, which is a publishable-looking
+    result and a false one."""
+
+    import json as _json
+
+    import selfsight.backbones.showo2 as showo2_module
+    from selfsight.v4.spec import SceneSpec, SpecObject
+
+    pipeline = _pipeline()
+    built: dict = {}
+
+    class Stub:
+        def __init__(self, **kwargs):
+            built.update(kwargs)
+
+    monkeypatch.setattr(showo2_module, "Showo2Adapter", Stub)
+
+    run = tmp_path / "run"
+    run.mkdir()
+    image = str(tmp_path / "a.png")
+    spec = SceneSpec(spec_id="v4a-0001", prompt="a red cube",
+                     objects=(SpecObject(object="cube", color="red", count=1),))
+    (run / "verified.jsonl").write_text(
+        _json.dumps({"image_path": image, "detections": [], "image_correct": True}) + "\n",
+        encoding="utf-8")
+    (run / "manifest.jsonl").write_text(
+        _json.dumps({"image_path": image, "candidate_index": 0, "seed": 1,
+                     "spec": spec.to_dict()}) + "\n", encoding="utf-8")
+
+    args = SimpleNamespace(run=str(run), condition="image_only", device="cpu",
+                           overwrite=False, checkpoint=None, config=None,
+                           backbone_config="configs/backbones/showo2_7b.yaml")
+    pipeline.stage_observe(args)
+    assert built["backbone_config"] == "configs/backbones/showo2_7b.yaml"

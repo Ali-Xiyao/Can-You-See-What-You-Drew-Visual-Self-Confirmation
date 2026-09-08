@@ -508,17 +508,37 @@ def wear_checkpoint(backbone: Any, *, checkpoint: Path, config: dict[str, Any]) 
                     expected_config_digest=sha256_json(config))
 
 
-def answer_file(run: Path, *, prompted: bool, checkpoint: str | None) -> Path:
+DEFAULT_BACKBONE = "configs/backbones/showo2_1p5b.yaml"
+
+
+def answer_file(run: Path, *, prompted: bool, checkpoint: str | None = None,
+                backbone: str | None = None) -> Path:
     """Where this condition's answers go.
 
-    A checkpoint's answers land beside the base model's rather than on top of
-    them. Overwriting would be the worst kind of quiet: `answers.jsonl` is the
-    file every existing analysis reads by name, and a curve point written into
-    it would silently restate the cross-sectional result as something else.
+    Answers from anything other than the untrained 1.5B land beside the ones
+    already there, never on top of them. Overwriting would be the worst kind of
+    quiet: `answers.jsonl` is the file every existing analysis reads by name,
+    and a 7B row or a curve point written into it would silently restate the
+    frozen cross-sectional result as something else.
+
+    The name carries which model produced it, so a directory holding four
+    conditions is readable without a manifest:
+
+        answers.jsonl                    the 1.5B, untrained -- every result
+                                         before 2026-09-08
+        answers.prompted.jsonl           the same, told what it drew
+        answers.self.jsonl               that arm's own checkpoint, blind
+        answers.showo2_7b.jsonl          a different backbone, blind
     """
 
-    stem = "answers.prompted" if prompted else "answers"
-    return run / (f"{stem}.jsonl" if checkpoint is None else f"{stem}.self.jsonl")
+    parts = ["answers"]
+    if prompted:
+        parts.append("prompted")
+    if backbone is not None and Path(backbone).stem != Path(DEFAULT_BACKBONE).stem:
+        parts.append(Path(backbone).stem)
+    if checkpoint is not None:
+        parts.append("self")
+    return run / (".".join(parts) + ".jsonl")
 
 
 def stage_observe(args: argparse.Namespace) -> None:
@@ -532,8 +552,12 @@ def stage_observe(args: argparse.Namespace) -> None:
     if checkpoint is not None and not getattr(args, "config", None):
         raise SystemExit("--checkpoint needs --config: the adapter shape and the "
                          "digest it is checked against both come from there")
+    backbone_config = getattr(args, "backbone_config", None) or DEFAULT_BACKBONE
+    if checkpoint is not None and Path(backbone_config).stem != Path(DEFAULT_BACKBONE).stem:
+        raise SystemExit("A checkpoint belongs to the backbone it was trained on; "
+                         f"{backbone_config} is not that backbone")
     prompted = args.condition == "prompted"
-    out = answer_file(run, prompted=prompted, checkpoint=checkpoint)
+    out = answer_file(run, prompted=prompted, checkpoint=checkpoint, backbone=backbone_config)
     done: set[str] = set()
     if out.exists() and not args.overwrite:
         done = {r["image_path"] for r in read_jsonl(out)}
@@ -544,7 +568,8 @@ def stage_observe(args: argparse.Namespace) -> None:
         print("nothing to do")
         return
 
-    backbone = Showo2Adapter(device=args.device, lazy=False)
+    backbone = Showo2Adapter(device=args.device, lazy=False,
+                             backbone_config=backbone_config)
     if checkpoint is not None:
         import yaml
 
@@ -587,6 +612,7 @@ def stage_observe(args: argparse.Namespace) -> None:
                     # these files and the analysis has to be able to tell which
                     # model produced which row without trusting the directory.
                     "checkpoint": checkpoint,
+                    "backbone_config": backbone_config,
                     "spec_id": spec.spec_id,
                     "image_path": image,
                     "candidate_index": row["candidate_index"],
@@ -681,6 +707,13 @@ def main() -> None:
     o.add_argument("--config", default=None,
                    help="the training config the checkpoint was written under; "
                         "required with --checkpoint")
+    o.add_argument("--backbone-config", default=None,
+                   help=f"which model answers, default {DEFAULT_BACKBONE}. "
+                        "configs/backbones/showo2_7b.yaml replicates the context "
+                        "ablation at 7B on the images the 1.5B drew, which is the "
+                        "cross-scale check and not a main-line result: the larger "
+                        "backbones are frozen negative controls and must be "
+                        "labelled as such wherever they are reported.")
     o.set_defaults(func=stage_observe)
 
     args = parser.parse_args()
