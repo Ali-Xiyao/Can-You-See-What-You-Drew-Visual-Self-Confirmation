@@ -54,6 +54,7 @@ from selfsight.v4.evaluate import (
 from selfsight.v4.train import (
     ARMS,
     RFO_SELF,
+    SELECTORS,
     build_schedule,
     completed_rounds,
     generate_candidates,
@@ -255,9 +256,37 @@ def adjudicate(
     return verified
 
 
+def resolve_arms(args: argparse.Namespace) -> tuple[str, ...]:
+    """The arms this invocation trains, defaulting to the registered pairing.
+
+    `ARMS` stayed a module constant for as long as there was exactly one
+    pairing. Blind-Self is a third selector over the same pools, and it is a
+    separate run rather than a third column of the registered one, so the set
+    has to come from the command line. The default is unchanged, which is what
+    keeps an existing command reproducing an existing run.
+    """
+
+    # getattr, matching how round_index and max_rounds are read a few lines
+    # below: stage_train is called with a hand-built namespace in the tests, and
+    # an arm set is exactly the kind of thing those callers have no opinion
+    # about. Validating here rather than at first use keeps a bad --arms a
+    # command-line error instead of a crash an hour into a round.
+    # `None` is "did not say"; `[]` is "said none", which is a mistake worth
+    # stopping on rather than quietly turning back into the registered pairing.
+    requested = getattr(args, "arms", None)
+    requested = list(ARMS if requested is None else requested)
+    arms = tuple(dict.fromkeys(requested))
+    if len(arms) != len(requested):
+        raise SystemExit(f"--arms repeats an arm: {requested}")
+    if not arms:
+        raise SystemExit("--arms needs at least one arm")
+    return arms
+
+
 def stage_train(args: argparse.Namespace) -> None:
     """Rounds of paired selection and SFT. Resumable at round granularity."""
 
+    arms = resolve_arms(args)
     config = load_config(args.config)
     out = Path(args.outdir)
     training = config["training"]
@@ -291,7 +320,7 @@ def stage_train(args: argparse.Namespace) -> None:
         max_epochs=args.max_epochs,
     )
 
-    for arm in ARMS:
+    for arm in arms:
         previous_checkpoint(out, arm, pending[0])
 
     # This stage needs the ladder on a different card and there is no way round
@@ -340,7 +369,7 @@ def stage_train(args: argparse.Namespace) -> None:
     # for a component that pass 1 never calls. The frozen-ness check still runs
     # whenever it *is* built, which is the part that matters.
     observer = None
-    if RFO_SELF in ARMS:
+    if RFO_SELF in arms:
         observer_config = yaml.safe_load(
             Path(RFO_OBSERVER_CONFIG).read_text(encoding="utf-8"))
         if observer_config.get("trainable", False):
@@ -357,18 +386,18 @@ def stage_train(args: argparse.Namespace) -> None:
     optimizers = {
         arm: torch.optim.AdamW(parameters, lr=float(training["learning_rate"]),
                                weight_decay=float(training["weight_decay"]))
-        for arm in ARMS
+        for arm in arms
     }
     total_steps = int(training["rounds"]) * int(training["optimizer_steps_per_round"])
     warmup = max(1, round(total_steps * float(training["warmup_ratio"])))
     schedulers = {
         arm: torch.optim.lr_scheduler.LambdaLR(
             optimizers[arm], lr_lambda=lambda step: min(1.0, float(step + 1) / warmup))
-        for arm in ARMS
+        for arm in arms
     }
     base_checkpoint = out / "checkpoints" / "base" / "round--01"
-    initialize_base_checkpoint(base_checkpoint, model=backbone.model, optimizer=optimizers[ARMS[0]],
-                               scheduler=schedulers[ARMS[0]], config=config)
+    initialize_base_checkpoint(base_checkpoint, model=backbone.model, optimizer=optimizers[arms[0]],
+                               scheduler=schedulers[arms[0]], config=config)
     base_state = capture_base_state(backbone.model)
 
     for round_index in pending:
@@ -382,7 +411,7 @@ def stage_train(args: argparse.Namespace) -> None:
         # comparison would be "which selector picks better from the naive arm's
         # images" rather than "which selector trains a better model".
         pools: dict[str, Any] = {}
-        for arm in ARMS:
+        for arm in arms:
             restore_arm_state(
                 previous_checkpoint(out, arm, round_index),
                 model=backbone.model, optimizer=optimizers[arm],
@@ -396,7 +425,7 @@ def stage_train(args: argparse.Namespace) -> None:
             )
 
         decisions: dict[str, Any] = {}
-        for arm in ARMS:
+        for arm in arms:
             if arm == "rfo_gold":
                 ladder_dir = round_dir / "ladder" / arm
                 write_candidate_manifest(ladder_dir, corpus=corpus, pools=pools[arm])
@@ -426,12 +455,12 @@ def stage_train(args: argparse.Namespace) -> None:
             "round": round_index,
             "decisions": {arm: [asdict(decision) for decision in values]
                           for arm, values in decisions.items()},
-            "paired_prompt_ids": [decision.prompt_id for decision in paired[ARMS[0]]],
+            "paired_prompt_ids": [decision.prompt_id for decision in paired[arms[0]]],
         }, indent=2), encoding="utf-8")
         print(f"    {kept}/{len(entries)} prompts survived pairing")
 
         reports = []
-        for arm in ARMS:
+        for arm in arms:
             checkpoint = out / "checkpoints" / arm / f"round-{round_index:03d}"
             # The one that was actually wrong: with no previous checkpoint the
             # old code did nothing, so round 0's second arm trained on top of
@@ -604,9 +633,9 @@ def stage_report(args: argparse.Namespace) -> None:
     out = Path(args.outdir)
     rows = read_metrics_csv(out / "checkpoint_metrics.csv")
     payload = {}
-    for arm in ARMS:
-        if not any(row.arm == arm for row in rows):
-            continue
+    # Off the table, not off ARMS: a blind-self run has neither of the
+    # registered arms in it and used to report nothing at all.
+    for arm in sorted({row.arm for row in rows}):
         try:
             report = divergence_report(rows, arm)
         except ValueError as exc:
@@ -669,6 +698,9 @@ def main() -> None:
     t.add_argument("--observer-python", default="envs/observer/python.exe",
                    help="the environment the detectors live in")
     t.add_argument("--core-python", default="envs/core/python.exe")
+    t.add_argument("--arms", nargs="+", default=list(ARMS), choices=list(SELECTORS),
+                   metavar="ARM",
+                   help="which selectors to train; default is the registered pairing")
     t.add_argument("--max-epochs", type=int, default=1,
                    help="passes over the prompt bank; >1 mixes memorisation into the curve")
     rounds = t.add_mutually_exclusive_group()
@@ -680,7 +712,7 @@ def main() -> None:
 
     g = sub.add_parser("generate", help="outcome images + internal curve for one checkpoint")
     common(g)
-    g.add_argument("--arm", choices=list(ARMS), required=True)
+    g.add_argument("--arm", choices=list(SELECTORS), required=True)
     g.add_argument("--round", type=int, required=True, help="-1 is the untrained step-0 baseline")
     g.add_argument("--device", default="cuda:0")
     g.set_defaults(func=stage_generate)
