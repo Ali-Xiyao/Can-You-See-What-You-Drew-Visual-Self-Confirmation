@@ -25,7 +25,13 @@ from types import SimpleNamespace
 import pytest
 
 from selfsight.schemas import AtomicObservation, CandidateRecord, ObservationResult
-from selfsight.v4.observe import PROMPTED_PREAMBLE, blind, observe_blind_self, observe_naive
+from selfsight.v4.observe import (
+    PROMPTED_PREAMBLE,
+    blind,
+    observe_blind_self,
+    observe_naive,
+    prompted,
+)
 from selfsight.v4.probe import spec_questions
 from selfsight.v4.spec import SceneSpec, SpecObject
 from selfsight.v4.train import ARMS, BLIND_SELF, RFO_SELF, SELECTORS, select_by_observation
@@ -262,3 +268,57 @@ def test_an_arm_nobody_implemented_is_refused_before_the_models_load(monkeypatch
     with pytest.raises(SystemExit) as refusal:
         runner.main()
     assert refusal.value.code == 2
+
+
+# ------------------------------------------------- the guard against real specs
+
+
+CORPUS_RUNS = ("runs/v4/main-2plus1", "runs/v4/main-1plus1plus1")
+
+
+def real_specs() -> list:
+    """Every spec in the bank, read out of the manifests that used them."""
+
+    import json
+
+    # runs/ is gitignored, so a worktree checkout does not have it and this
+    # skips there. The working directory is tried too: it is how the same test
+    # can be pointed at the tree the manifests actually live in.
+    roots = (Path(__file__).resolve().parents[1], Path.cwd())
+    found: dict[str, SceneSpec] = {}
+    for run in CORPUS_RUNS:
+        candidates = [root / run / "manifest.jsonl" for root in roots]
+        path = next((item for item in candidates if item.exists()), None)
+        if path is None:
+            pytest.skip(f"{run} is not in this checkout")
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line:
+                row = json.loads(line)
+                found.setdefault(row["spec"]["spec_id"], SceneSpec.from_dict(row["spec"]))
+    return [found[key] for key in sorted(found)]
+
+
+def test_no_spec_in_the_bank_trips_the_guard():
+    """PREREG E3 registers a raising guard as a reason to void a round. If a
+    description is a substring of one of its own questions -- "a red apple" in
+    "Is there a red apple?" -- that fires on round zero and every round after,
+    and the arm cannot run at all. Two days of GPU ride on this being false, and
+    it costs a second to check."""
+
+    tripped = []
+    for spec in real_specs():
+        try:
+            blind(spec.prompt, spec_questions(spec))
+        except ValueError as error:
+            tripped.append((spec.spec_id, spec.prompt, str(error)))
+    assert not tripped, tripped[:5]
+
+
+def test_the_guard_still_catches_a_leak_in_those_same_specs():
+    """The test above passes trivially if `blind` stopped looking. Wrapping the
+    real questions in the real preamble must still be rejected."""
+
+    specs = real_specs()[:20]
+    for spec in specs:
+        with pytest.raises(ValueError, match="carries the generating description"):
+            blind(spec.prompt, prompted(spec.prompt, spec_questions(spec)))
