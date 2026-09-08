@@ -114,13 +114,24 @@ envs/core/python.exe -u scripts/run_decoupling_pilot.py   --outdir runs/v4/blind
 预检已在 CPU 上过了(偏离 2):Show-o v1 与 Janus-Pro 都对不同的图给不同的答案。
 评分器缺陷已修,所以现在跑出来的行才是可用的。
 
+**从主树跑,但调 worktree 的脚本。** 两边各有对方没有的东西:
+分支的 `showo_v1.yaml` / `janus_pro_1b.yaml` 和修好的 grader 只在 worktree,
+`envs/` 和 `runs/` 只在主树,而 worktree 没有 `envs/`。
+驱动现在按「代码和配置跟脚本走,数据和环境跟工作目录走」解析,所以这样可行:
+
 ```
-python scripts/v4_cross_model.py preflight --device cuda:0
-python scripts/v4_cross_model.py observe   --device cuda:0
-python scripts/v4_cross_model.py report    --out review-packets/cross-model-20260910/cross_model.json
+cd "H:/Xiyao_Wang/062_Can You See What You Drew Visual Self-Confirmation"
+SELFSIGHT_MODEL_ROOT="H:\selfsight-models" envs/core/python.exe -u   H:/Xiyao_Wang/062_armB/scripts/v4_cross_model.py preflight --device cuda:0
 ```
 
-`observe` 会为每个模型起它自己 config 里 `environment` 指定的解释器。
+`observe` 与 `report` 同样写法。`--out` 给 report:
+`review-packets/cross-model-20260910/cross_model.json`。
+
+`observe` 会为每个模型起它自己 config 里 `environment` 指定的解释器,
+子进程的 `PYTHONPATH` 由 `child_env()` 钉到 worktree 的 `src`,
+所以 `v4_run_pipeline.py observe` 用的是修好的 grader,不是主树的旧的。
+`HF_HUB_OFFLINE=1` 也在那里设,缺快照会响亮地失败而不是去下载。
+
 判定按注册的三个模型算,Janus 单列不计入——这条在 `stage_report` 里,
 `tests/test_v4_cross_model.py` 有对照测试。
 
@@ -129,15 +140,30 @@ python scripts/v4_cross_model.py report    --out review-packets/cross-model-2026
 
 ---
 
-## 3. 合并顺序
+## 3. 合并顺序:现在被主运行挡着,但 E4 不再需要它
 
-worktree `codex/blind-self-arm-20260908` 领先主树 5 个提交。
-`selfsight` 在每个环境里都是 editable 装到**主树**的 `src`,
-而 `scripts/v4_run_pipeline.py` 不自己插 src 路径,
-所以**必须先合并再跑**,否则 worktree 的脚本 import 的是主树的旧库。
+原先这里写「必须先合并再跑」。**不再成立,而且方向反了。**
 
-合并前提:另一个 agent 的 `run_decoupling_pilot.py` 改动先提交。
-预期冲突只有那一个文件。
+不需要:`v4_cross_model.py` / `v4_context_curve.py` 给子进程显式传
+`PYTHONPATH`(见 §2),父子两端都读 worktree。修这个之前是真的会错——
+父进程读分支、`observe` 子进程读主树的旧 grader,静默。
+
+被挡着:`run_decoupling_pilot.py` 的 `run()` **每个阶段**都重核 SOURCES 摘要,
+
+```python
+if any(digest(ROOT / name) != expected
+       for name, expected in self.frozen["source_sha256"].items()):
+    raise RuntimeError("Experiment source changed during execution; review before resume")
+```
+
+`src/selfsight/v4/train.py` 和 `scripts/v4_train.py` 都在 SOURCES 里、
+也都在分支里改了。所以**主运行重启之前合并,重启会被拒**,
+除非带 `--accept-code-update`。
+
+顺序因此是:先裁定主运行(见 RUN-HALTED-20260908.md)→ 重启并跑完 →
+再合并 → 再起 arm B。E4 不在这条链上,随时可跑。
+
+合并前提不变:另一个 agent 的 `run_decoupling_pilot.py` 改动先提交。
 
 ---
 
