@@ -249,3 +249,36 @@ def conflict_pairs(blind: Sequence[dict], prompted: Sequence[dict]) -> list[tupl
     left, right = index(blind), index(prompted)
     return [(bool(left[key]["correct"]), bool(right[key]["correct"]))
             for key in sorted(left.keys() & right.keys())]
+
+
+def abstention_pairs(blind: Sequence[dict], prompted: Sequence[dict]) -> list[tuple[bool, bool]]:
+    """(blind abstained, prompted abstained) per decisive trial, keyed the same way.
+
+    `conflict_pairs` drops a trial either condition declined, which is right --
+    an abstention is not a wrong answer. What it cannot do is notice that the
+    surviving set is *selected*. Whether a trial survives depends on how the
+    model phrased itself, and the phrasing depends on the condition, which is
+    the one thing the comparison varies.
+
+    Measured on Janus-Pro-1B, 52 trials over 12 images: every reply was a
+    sentence, and the three that still could not be graded were all absence
+    questions answered as "The image does not contain any notebooks" -- correct,
+    unambiguous, and matching neither "no notebooks" nor "at least one
+    notebook". A model that phrases absence that way more often in one
+    condition than the other drops a different set of trials from each, and the
+    marginal accuracies are then over different subsets with nothing saying so.
+
+    So this returns the abstentions in the same paired form, for the same exact
+    test. It is a diagnostic, not a gate: a significant imbalance does not
+    invalidate the paired comparison -- that one only ever uses trials answered
+    in both -- it says the reported subset was chosen by the model and the
+    reader has to be told.
+    """
+
+    def index(rows: Sequence[dict]) -> dict[tuple[str, str], dict]:
+        return {(row["image_path"], row["question"]): row
+                for row in rows if row["gold_source"] == CONFLICT}
+
+    left, right = index(blind), index(prompted)
+    return [(bool(left[key]["abstain"]), bool(right[key]["abstain"]))
+            for key in sorted(left.keys() & right.keys())]

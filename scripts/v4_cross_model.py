@@ -39,6 +39,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from selfsight.analysis.context import (
     CONFLICT,
+    abstention_pairs,
     conflict_pairs,
     mcnemar,
     wilson,
@@ -202,6 +203,17 @@ def measure(runs: list[str], model: str) -> dict | None:
 
     pairs = conflict_pairs(rows["image_only"], rows["prompted"])
     blind_only, told_only, p_value = mcnemar(pairs, sided=1)
+
+    # Which trials survive to be paired is decided by how the model phrased
+    # itself, and the phrasing is not independent of the condition. Janus
+    # answers an absence question with "The image does not contain any
+    # notebooks", which is correct and matches neither option, so it abstains.
+    # If it does that more in one condition than the other, the two marginal
+    # accuracies are over different subsets. Two-sided: an imbalance either way
+    # is the same problem.
+    skipped = abstention_pairs(rows["image_only"], rows["prompted"])
+    blind_skipped, told_skipped, skip_p = mcnemar(skipped, sided=2)
+
     return {
         "model": model,
         "image_only": cells["image_only"],
@@ -211,6 +223,10 @@ def measure(runs: list[str], model: str) -> dict | None:
         "blind_only": blind_only,
         "told_only": told_only,
         "p_one_sided": p_value,
+        "decisive_trials": len(skipped),
+        "blind_only_abstained": blind_skipped,
+        "told_only_abstained": told_skipped,
+        "p_abstention_imbalance": skip_p,
         # Registered in PREREG E4: prompted below image_only on the decisive
         # trials, one-sided. Nothing about effect size -- E4 asks whether the
         # direction survives, and the size is reported for the reader.
@@ -244,6 +260,27 @@ def stage_report(args: argparse.Namespace) -> None:
         print(f"{model:<15}{value['pairs']:>7}{value['blind_only']:>12}"
               f"{value['told_only']:>11}{value['replicates']!s:>12}")
     print("\n'blind only' = right without the description in context, wrong with it.")
+
+    print("\nwhich trials were answerable at all, paired the same way\n")
+    print(f"{'model':<15}{'decisive':>9}{'paired':>8}{'blind only':>12}"
+          f"{'told only':>11}{'p (2s)':>11}")
+    for model, value in results.items():
+        if value is None:
+            continue
+        print(f"{model:<15}{value['decisive_trials']:>9}{value['pairs']:>8}"
+              f"{value['blind_only_abstained']:>12}{value['told_only_abstained']:>11}"
+              f"{value['p_abstention_imbalance']:>11.2e}")
+    lopsided = [model for model, value in results.items()
+                if value is not None and value["p_abstention_imbalance"] < 0.05]
+    if lopsided:
+        print(f"\n  {', '.join(lopsided)}: declines to answer at different rates in the "
+              "two conditions.\n  The paired test above is unaffected -- it only uses "
+              "trials answered in both --\n  but the two marginal accuracies are over "
+              "subsets the model chose. Report both\n  columns' n and say so; do not "
+              "drop the model and do not drop the row.")
+    else:
+        print("\n  no model declines to answer at a different rate in the two conditions,\n"
+              "  so the paired subset is not one the model selected.")
 
     # The registered verdict, computed over the registered three only.
     measured = [model for model in REGISTERED if results.get(model) is not None]

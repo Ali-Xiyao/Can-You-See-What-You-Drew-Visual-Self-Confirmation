@@ -76,7 +76,7 @@ def test_the_baseline_is_not_re_run(driver):
 # ------------------------------------------------------------- the verdict
 
 
-def measured(delta: float, p_value: float) -> dict:
+def measured(delta: float, p_value: float, *, skew: float = 1.0) -> dict:
     """A `measure` result with only the fields the verdict reads."""
 
     return {
@@ -85,6 +85,8 @@ def measured(delta: float, p_value: float) -> dict:
         "delta": delta,
         "pairs": 100, "blind_only": 30, "told_only": 5,
         "p_one_sided": p_value,
+        "decisive_trials": 120, "blind_only_abstained": 5, "told_only_abstained": 5,
+        "p_abstention_imbalance": skew,
         "replicates": delta < 0 and p_value < 0.05,
     }
 
@@ -177,3 +179,70 @@ def test_a_run_missing_from_the_pool_is_not_silently_dropped(driver, tmp_path):
     for condition in ("answers.showo2_7b.jsonl", "answers.prompted.showo2_7b.jsonl"):
         (first / condition).write_text("", encoding="utf-8")
     assert driver.measure([str(first), str(second)], "showo2_7b") is None
+
+
+# ------------------------------------------------- which trials were answerable
+#
+# `conflict_pairs` drops a trial either condition declined, which is right. What
+# it cannot do is notice the surviving set was chosen by the model: Janus answers
+# an absence question with "The image does not contain any notebooks", correct
+# and matching neither option, so it abstains -- and how often it phrases things
+# that way is not independent of the condition.
+
+
+def row(question, abstain, image="i.png", source="image_differs_from_spec"):
+    return {"image_path": image, "question": question, "abstain": abstain,
+            "correct": None if abstain else True, "gold_source": source}
+
+
+def test_abstention_is_counted_on_the_same_pairing_as_the_result(driver):
+    from selfsight.analysis.context import abstention_pairs
+
+    blind = [row("q1", False), row("q2", True), row("q3", False)]
+    prompted = [row("q1", True), row("q2", True), row("q3", False)]
+    assert abstention_pairs(blind, prompted) == [(False, True), (True, True), (False, False)]
+
+
+def test_the_same_question_about_two_pictures_is_two_trials(driver):
+    """The question text is templated, so it repeats across images.
+
+    Keyed on the words alone, one picture's trial silently overwrites the
+    other's and half the corpus vanishes from the diagnostic.
+    """
+
+    from selfsight.analysis.context import abstention_pairs
+
+    question = "Which of these is in this picture? Answer A or B only.\nA. plate\nB. banana"
+    blind = [row(question, False, image="a.png"), row(question, False, image="b.png")]
+    prompted = [row(question, True, image="a.png"), row(question, False, image="b.png")]
+    assert abstention_pairs(blind, prompted) == [(False, True), (False, False)]
+
+
+def test_a_trial_that_is_not_decisive_is_not_counted_either_way(driver):
+    """The result is measured on the conflict trials, so the abstention
+    diagnostic has to describe that same set and not a larger one."""
+
+    from selfsight.analysis.context import abstention_pairs
+
+    rows = [row("q1", True), row("q2", True, source="spec_matches_image")]
+    assert abstention_pairs(rows, rows) == [(True, True)]
+
+
+def test_a_model_that_declines_differently_in_the_two_conditions_is_named(verdict):
+    text = verdict({"showo2_1p5b": measured(-0.3, 1e-9),
+                    "showo2_7b": measured(-0.2, 1e-4, skew=1e-6),
+                    "showo_v1": measured(-0.2, 1e-4)})
+    assert "showo2_7b: declines to answer at different rates" in text
+    assert "subsets the model chose" in text
+    assert "do not drop the model" in text, (
+        "dropping it would be choosing the sample after seeing the numbers")
+
+
+def test_the_quiet_case_says_so_rather_than_saying_nothing(verdict):
+    """A diagnostic that only prints on failure reads as absent when it passes,
+    and the reader cannot tell it from one that was never run."""
+
+    text = verdict({"showo2_1p5b": measured(-0.3, 1e-9),
+                    "showo2_7b": measured(-0.2, 1e-4),
+                    "showo_v1": measured(-0.2, 1e-4)})
+    assert "no model declines to answer at a different rate" in text
