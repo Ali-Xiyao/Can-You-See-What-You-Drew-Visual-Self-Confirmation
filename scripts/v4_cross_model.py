@@ -106,10 +106,22 @@ def child_env() -> dict[str, str]:
     the reinstall is global -- it would move the running experiment's
     interpreter too, and that run's manifest already recorded the digests of
     the sources it started with.
+
+    The four settings after PYTHONPATH are the ones `run_decoupling_pilot.py`
+    gives its own stages, and they are here for the same reasons.
+    `HF_HUB_OFFLINE` is the load-bearing one: without it an adapter that cannot
+    find a snapshot locally reaches for the network and fetches weights, and no
+    measurement in this project may acquire a model on its own.
+    `CUDA_VISIBLE_DEVICES` is dropped because every stage is told which card to
+    use by `--device`, and an inherited mask renumbers the cards underneath
+    that flag without saying so.
     """
     env = os.environ.copy()
     inherited = env.get("PYTHONPATH")
     env["PYTHONPATH"] = f"{SRC}{os.pathsep}{inherited}" if inherited else str(SRC)
+    env.update(PYTHONUTF8="1", PYTHONNOUSERSITE="1", HF_HUB_OFFLINE="1",
+               TOKENIZERS_PARALLELISM="false")
+    env.pop("CUDA_VISIBLE_DEVICES", None)
     return env
 
 

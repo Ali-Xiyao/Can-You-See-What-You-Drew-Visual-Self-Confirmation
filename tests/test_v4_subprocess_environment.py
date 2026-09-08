@@ -131,3 +131,58 @@ def test_the_stage_script_does_not_depend_on_the_working_directory(driver):
     assert pipeline.is_absolute(), "a relative PIPELINE follows the cwd, not this file"
     assert pipeline == ROOT / "scripts" / "v4_run_pipeline.py"
     assert pipeline.exists()
+
+
+def test_a_stage_cannot_reach_the_network_for_weights(driver):
+    """The hard rule this project runs under, enforced where it can be broken.
+
+    An adapter that cannot find a snapshot locally will fetch one, and E4 loads
+    three models this driver has never loaded before. Offline turns a missing
+    checkout into a loud failure instead of a quiet download.
+    """
+
+    assert driver.child_env()["HF_HUB_OFFLINE"] == "1"
+
+
+def test_an_inherited_device_mask_does_not_renumber_the_cards(driver):
+    """`--device cuda:1` means the second card, not the second visible one.
+
+    A shell that exported CUDA_VISIBLE_DEVICES=1 would make `cuda:0` name
+    physical card 1 and `cuda:1` fail outright, and the arms in this project are
+    pinned per card. Dropping the mask keeps `--device` meaning what it says.
+    """
+
+    saved = os.environ.get("CUDA_VISIBLE_DEVICES")
+    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+    try:
+        env = driver.child_env()
+    finally:
+        if saved is None:
+            os.environ.pop("CUDA_VISIBLE_DEVICES", None)
+        else:
+            os.environ["CUDA_VISIBLE_DEVICES"] = saved
+    assert "CUDA_VISIBLE_DEVICES" not in env
+
+
+def test_the_stage_environment_matches_the_supervisor(driver):
+    """The two drivers and run_decoupling_pilot.py launch the same stages.
+
+    Read out of the supervisor rather than restated here, so that a setting
+    added there for a reason does not stay missing from E4 for none. PYTHONPATH
+    is excluded because the supervisor points it at the main tree by definition
+    and these drivers point it at themselves -- that difference is the fix.
+    """
+
+    supervisor = ROOT / "scripts" / "run_decoupling_pilot.py"
+    tree = ast.parse(supervisor.read_text(encoding="utf-8"))
+    updates = [node for node in ast.walk(tree)
+               if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+               and node.func.attr == "update"
+               and isinstance(node.func.value, ast.Attribute) and node.func.value.attr == "env"]
+    assert len(updates) == 1, "the supervisor builds its stage environment in one place"
+    expected = {keyword.arg: keyword.value.value for keyword in updates[0].keywords
+                if keyword.arg != "PYTHONPATH"}
+    assert expected, "nothing to compare against; this test has gone stale"
+    env = driver.child_env()
+    for key, value in expected.items():
+        assert env.get(key) == value, f"the supervisor sets {key}={value}; E4 does not"
