@@ -26,11 +26,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
+sys.path.insert(0, str(SRC))
 
 from selfsight.analysis.context import (
     context_effect,
@@ -40,8 +43,40 @@ from selfsight.analysis.context import (
     selection_gain,
 )
 
-PIPELINE = "scripts/v4_run_pipeline.py"
+# Absolute, from this file rather than from the working directory. As a relative
+# path it named whichever checkout the shell happened to be sitting in, which is
+# not necessarily the one this script came from.
+PIPELINE = str(ROOT / "scripts" / "v4_run_pipeline.py")
 CONDITIONS = {"image_only": "answers.self.jsonl", "prompted": "answers.prompted.self.jsonl"}
+
+
+def child_env() -> dict[str, str]:
+    """The environment for a stage subprocess, pinned to the checkout this file is in.
+
+    Every interpreter under `envs/` has selfsight installed editable against the
+    MAIN tree's `src`, so a child that simply imports selfsight gets the main
+    tree's copy regardless of which checkout launched it. The parent does not:
+    the `sys.path.insert` above binds it to its own. Run this script from a
+    worktree and the two disagree -- the parent reads the branch, while
+    `v4_run_pipeline.py observe`, which is where every answer is actually
+    graded, reads main.
+
+    Nothing announces that. The preflight passes, the worktree's tests pass, and
+    the answers come back graded by whichever grader main happens to hold.
+    Measured before this was written: with no PYTHONPATH the janus interpreter
+    resolves selfsight to the main tree, whose `questions` has no
+    `LABELLED_CHOICE`; with PYTHONPATH set to this checkout's `src` it resolves
+    here, and it does. The mismatch was reachable, not hypothetical.
+
+    PYTHONPATH rather than reinstalling editable against this checkout, because
+    the reinstall is global -- it would move the running experiment's
+    interpreter too, and that run's manifest already recorded the digests of
+    the sources it started with.
+    """
+    env = os.environ.copy()
+    inherited = env.get("PYTHONPATH")
+    env["PYTHONPATH"] = f"{SRC}{os.pathsep}{inherited}" if inherited else str(SRC)
+    return env
 
 
 def read_jsonl(path: Path) -> list[dict]:
@@ -89,7 +124,7 @@ def stage_observe(args: argparse.Namespace) -> None:
                 if args.overwrite:
                     command.append("--overwrite")
                 print(f"{arm} step {step} {condition}: {' '.join(command)}", flush=True)
-                subprocess.run(command, check=True)
+                subprocess.run(command, check=True, env=child_env())
 
 
 def load_yaml(path: str) -> dict:

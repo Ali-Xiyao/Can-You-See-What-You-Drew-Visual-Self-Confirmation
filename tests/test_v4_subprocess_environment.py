@@ -1,0 +1,133 @@
+"""A stage subprocess must import the checkout that launched it.
+
+Every interpreter under `envs/` has selfsight installed editable against the
+main tree. The E4 drivers put their own `src` on `sys.path` for themselves, but
+the stages they shell out to are separate processes and inherit nothing, so
+before this was fixed a driver running from a worktree read the branch while
+`v4_run_pipeline.py observe` -- which is where every answer is graded -- read
+main.
+
+That failure is silent in the way that matters: the preflight passes, the
+worktree's own tests pass, and the answers come back graded by whichever copy
+of `grade` the main tree happens to hold.
+"""
+from __future__ import annotations
+
+import ast
+import importlib.util
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+DRIVERS = ("v4_cross_model.py", "v4_context_curve.py")
+
+
+def _load(name: str, relative: str):
+    spec = importlib.util.spec_from_file_location(name, ROOT / relative)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules.setdefault(name, module)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.fixture(scope="module", params=DRIVERS)
+def driver(request):
+    return _load(f"_driver_{request.param.replace('.', '_')}", f"scripts/{request.param}")
+
+
+def test_a_child_reads_the_checkout_that_launched_it(driver):
+    """The point of the whole fix, measured rather than asserted.
+
+    Spawns a real interpreter and asks it where selfsight came from. Passing
+    `child_env()` has to override the editable install, which is a claim about
+    sys.path precedence, so it is checked against the interpreter instead of
+    being reasoned about.
+    """
+
+    probe = ("import selfsight, pathlib, json; "
+             "print(json.dumps(str(pathlib.Path(selfsight.__file__).resolve().parent.parent)))")
+    with_env = subprocess.run([sys.executable, "-c", probe], capture_output=True,
+                              text=True, check=True, env=driver.child_env())
+    assert Path(json.loads(with_env.stdout.strip())) == driver.SRC
+
+
+def test_the_editable_install_is_what_it_overrides(driver):
+    """Without the fix the child lands somewhere else -- unless it cannot.
+
+    Once the branch is merged the main tree and this checkout are the same
+    directory and there is nothing to override, so the test says so rather than
+    passing for a reason that has stopped being true.
+    """
+
+    probe = ("import selfsight, pathlib, json; "
+             "print(json.dumps(str(pathlib.Path(selfsight.__file__).resolve().parent.parent)))")
+    bare = os.environ.copy()
+    bare.pop("PYTHONPATH", None)
+    plain = subprocess.run([sys.executable, "-c", probe], capture_output=True,
+                           text=True, check=True, env=bare)
+    landed = Path(json.loads(plain.stdout.strip()))
+    if landed == driver.SRC:
+        pytest.skip("this checkout is the one the interpreters are installed against")
+    assert landed != driver.SRC, "the override is doing work; keep it"
+
+
+def test_an_inherited_pythonpath_is_kept_behind_ours(driver):
+    """A caller's PYTHONPATH survives, but does not get to win.
+
+    Dropping it would break anyone running these from a shell that sets it;
+    appending ours after it would put the main tree first again on the machines
+    where PYTHONPATH already names it.
+    """
+
+    borrowed = str(Path(os.getcwd()) / "somewhere-else")
+    env = dict(os.environ, PYTHONPATH=borrowed)
+    saved = os.environ.get("PYTHONPATH")
+    os.environ["PYTHONPATH"] = borrowed
+    try:
+        result = driver.child_env()["PYTHONPATH"]
+    finally:
+        if saved is None:
+            os.environ.pop("PYTHONPATH", None)
+        else:
+            os.environ["PYTHONPATH"] = saved
+    assert result.split(os.pathsep)[0] == str(driver.SRC)
+    assert borrowed in result.split(os.pathsep)
+    assert env["PYTHONPATH"] == borrowed
+
+
+def test_every_stage_subprocess_gets_the_environment(driver):
+    """One call site without `env=` is the whole defect back.
+
+    Reads the source because the observe stages cannot be run in a test. What
+    it pins is that no `subprocess.run` in these drivers is left inheriting the
+    ambient environment.
+    """
+
+    path = ROOT / "scripts" / Path(driver.__file__).name
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    calls = [node for node in ast.walk(tree)
+             if isinstance(node, ast.Call)
+             and isinstance(node.func, ast.Attribute) and node.func.attr == "run"
+             and isinstance(node.func.value, ast.Name) and node.func.value.id == "subprocess"]
+    assert calls, "the driver launches stages; if it stopped, this test is stale"
+    for call in calls:
+        passed = {keyword.arg: keyword.value for keyword in call.keywords}
+        assert "env" in passed, f"{path.name}:{call.lineno} inherits the ambient environment"
+        value = passed["env"]
+        assert (isinstance(value, ast.Call) and isinstance(value.func, ast.Name)
+                and value.func.id == "child_env"), (
+            f"{path.name}:{call.lineno} must use child_env(), not an ad-hoc dict")
+
+
+def test_the_stage_script_does_not_depend_on_the_working_directory(driver):
+    """PIPELINE was relative, so it named whichever checkout the shell sat in."""
+
+    pipeline = Path(driver.PIPELINE)
+    assert pipeline.is_absolute(), "a relative PIPELINE follows the cwd, not this file"
+    assert pipeline == ROOT / "scripts" / "v4_run_pipeline.py"
+    assert pipeline.exists()
