@@ -440,6 +440,53 @@ codex/blind-self-arm-20260908` 干净出树(`a0169af`),没有冲突。会动 26 
 
 ---
 
+## 5. 一个会在论文里露头的不对称,以及它带来的一个陷阱(2026-09-09 登记)
+
+**arm B 会有两条敏感性分析,主运行(A + C)不会。** `v4_decoupling_report.py`
+只从 `audit-splits/` 读 outcome 侧的排除集,而那个位置按定义只接受
+prospective 的 audit。arm B 现在有(supervisor 在第一个 round 之前就造,§1);
+主运行没有,它的 audit 是 09-08 停机时补造的 retrospective,放在
+`retrospective-scene-audit/`,只服务梯度探针的排除,不服务 outcome 子集。
+
+**补不上,而且拒绝补是对的。** 给主运行补一份 prospective 的,意思是「这个
+子集是在这个运行产生任何东西之前定下的」——那句话现在已经不真。
+`v4_scene_audit.py --prospective` 会当场拒绝,`Pilot.resolve_audit()` 也会。
+
+### 能诚实做的一件事(**这是他的决定,我只登记选项**)
+
+把同一套排除集用在主运行上,**显式标注为 post hoc**。支持这样做的事实:
+
+- 排除规则**不读任何 outcome 值**。造 audit 的脚本不打开 `evaluations/`,
+  而且它用白名单——运行目录里出现任何不在白名单上的东西就拒绝签 prospective。
+- 集合是 split 的确定性函数,两个运行共用同一份 split(§1 的核对项 1)。
+  `review-packets/armB-audit-preimage-20260909/` 里那份**就是用主运行自己的
+  `split.json` 算出来的**。
+- 报告不信任这个文件:representative 规则它自己按父 audit 重算一遍,
+  outcome 总体要和 `split.json` 完全一致,不符就拒。
+- 这套集合 **2026-09-09 已提交进 git**(`67fad38`)。那时主运行 12 个检查点
+  只出了 2 个,所以对后 10 个检查点它确实先于数据。
+
+剩下唯一的污染通道是「人选择什么时候去算这个 audit」。这个通道关不掉,
+所以要**标注**,不是要藏。论文里的说法应当是:arm B 的这两条是预注册的,
+主运行的同两条是事后的、集合与 arm B 逐字节相同、且冻结于其 12 个检查点中
+的第 3 个之前。
+
+### 陷阱:那两个文件不要拷进主运行目录
+
+`review-packets/armB-audit-preimage-20260909/` 里的 `scene_overlap.json` 和
+`scene_representatives.json` 拷进 `runs/v4/decoupling-main-20260908/audit-splits/`
+会**通过报告的每一道检查**——config_sha256 对得上、split_sha256 对得上、
+`created_before_any_outcome_evaluation_artifact` 是 `true`——然后把一份事后的
+子集当成开跑前的冻结写进结论。白名单只在**造**的时候查,读的时候不查。
+
+这个洞是我自己造出那份产物之后才存在的,所以补上了守卫(worktree `6f71820`):
+audit 的 `provenance.run` 记着它在哪个运行目录里造出来,报告现在核对目录名。
+按目录名而不是全路径比,是因为 outcome 存在之后 audit 造不出第二份,
+搬一次目录不该让它读不了。没有记 `run` 的 audit 照读——pilot 那份早于这个字段,
+而它是唯一一份手工核对过的 prospective 冻结。4 个变异全杀,测试先验红。
+
+---
+
 ## 4. 不做的事
 
 - 不因为 `nvidia-smi` 显示 0% 就去抢卡。
