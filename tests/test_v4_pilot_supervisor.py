@@ -283,17 +283,101 @@ def _constructible_run(tmp_path, monkeypatch):
                               through_round=None, accept_code_update=False)
 
 
-def test_a_run_without_a_scene_audit_stops_before_it_reserves_a_card(tmp_path, monkeypatch):
-    """The stage that needs it runs after the first checkpoint, hours in.
+class _StopAtTrain(Exception):
+    """The first stage that would touch a card, and the end of what we watch."""
+
+
+def _opening_stages(runner, monkeypatch, *, the_stage_writes_the_audit=True):
+    """Drive execute() up to the first training stage, recording what it ran."""
+
+    calls = []
+
+    def fake_run(stage, environment, script, stage_args):
+        calls.append((stage, script, stage_args))
+        if stage == "scene-audit" and the_stage_writes_the_audit:
+            _write_audit(runner.out, prospective=True)
+        if stage.endswith(".train"):
+            raise _StopAtTrain(stage)
+
+    monkeypatch.setattr(runner, "run", fake_run)
+    with pytest.raises(_StopAtTrain):
+        runner.execute()
+    return calls
+
+
+def test_a_run_without_a_scene_audit_builds_one_before_it_reserves_a_card(tmp_path,
+                                                                         monkeypatch):
+    """The stage that reads it runs after the first checkpoint, hours in.
 
     runs/v4/decoupling-main-20260908 died that way on 2026-09-08 with 5.83 h of
-    compute already spent, so the file is required at construction instead.
+    compute already spent. Requiring the file at construction fixed the cost of
+    the mistake but left it a mistake to make; the split and the probe bank the
+    audit reads are this run's own first two stages, so it can be built here.
     """
 
+    runner = MODULE.Pilot(_constructible_run(tmp_path, monkeypatch))
+    assert runner.audit_path is None, "a run starting from nothing cannot have one yet"
+
+    stages = [stage for stage, _script, _args in _opening_stages(runner, monkeypatch)]
+
+    assert "scene-audit" in stages
+    assert stages.index("freeze-probe") < stages.index("scene-audit"), "it reads the bank"
+    first_train = next(i for i, stage in enumerate(stages) if stage.endswith(".train"))
+    assert stages.index("scene-audit") < first_train, "before anything is an outcome"
+    assert runner.audit_path == runner.out / "audit-splits" / "scene_overlap.json"
+
+
+def test_the_audit_the_supervisor_builds_is_the_kind_the_report_can_read(tmp_path,
+                                                                        monkeypatch):
+    """Only the prospective kind is automatic. Settling for the retrospective
+    one is a decision about what the run's evidence may support, and the audit
+    script refuses to call a started run prospective anyway."""
+
+    runner = MODULE.Pilot(_constructible_run(tmp_path, monkeypatch))
+    calls = _opening_stages(runner, monkeypatch)
+
+    stage_args = next(a for stage, _script, a in calls if stage == "scene-audit")
+    assert "--prospective" in stage_args
+    assert str(runner.out / "audit-splits" / "scene_overlap.json") in stage_args
+    assert str(runner.config_path) in stage_args, "provenance is checked against it"
+
+
+@pytest.mark.parametrize("prospective", [True, False])
+def test_an_audit_this_run_already_has_is_not_rebuilt(tmp_path, monkeypatch, prospective):
+    """Rebuilding a retrospective audit as a prospective one would upgrade the
+    claim without anyone deciding to, and rebuilding the prospective one on a
+    resume would date it after the outcomes it is supposed to predate."""
+
     args = _constructible_run(tmp_path, monkeypatch)
-    with pytest.raises(FileNotFoundError) as failure:
-        MODULE.Pilot(args)
-    assert "v4_scene_audit.py" in str(failure.value), "say which script writes it"
+    audit = _write_audit(args.outdir, prospective=prospective)
+    runner = MODULE.Pilot(args)
+
+    stages = [stage for stage, _script, _args in _opening_stages(runner, monkeypatch)]
+
+    assert "scene-audit" not in stages
+    assert runner.audit_path == audit
+
+
+def test_a_scene_audit_stage_that_wrote_nothing_is_not_taken_for_success(tmp_path,
+                                                                        monkeypatch):
+    """Exit code 0 and no file is the shape of a bad --output. The next reader
+    is the gradient stage, which would be handed the string "None"."""
+
+    runner = MODULE.Pilot(_constructible_run(tmp_path, monkeypatch))
+    with pytest.raises(FileNotFoundError):
+        _opening_stages(runner, monkeypatch, the_stage_writes_the_audit=False)
+
+
+def test_every_script_the_opening_stages_shell_is_a_frozen_source(tmp_path, monkeypatch):
+    """run() re-digests SOURCES before each stage, so a script that is not in it
+    can be edited mid-run. The audit is written once and read by two consumers
+    that check the artifact's provenance but not its producer's."""
+
+    runner = MODULE.Pilot(_constructible_run(tmp_path, monkeypatch))
+    scripts = {script for _stage, script, _args in _opening_stages(runner, monkeypatch)}
+
+    assert scripts, "the opening stages shell something"
+    assert scripts <= set(MODULE.SOURCES), f"unfrozen: {sorted(scripts - set(MODULE.SOURCES))}"
 
 
 def test_the_registered_audit_is_not_the_one_the_report_reads(tmp_path, monkeypatch):
@@ -429,10 +513,15 @@ def test_a_prospectively_frozen_audit_is_accepted_where_the_report_reads_it(tmp_
 
 
 def test_neither_audit_says_how_to_make_either(tmp_path, monkeypatch):
+    """Reachable from the stage that just tried and left nothing behind, which
+    is where knowing the flag is worth most."""
+
     args = _constructible_run(tmp_path, monkeypatch)
+    runner = MODULE.Pilot(args)
     with pytest.raises(FileNotFoundError) as failure:
-        MODULE.Pilot(args)
+        runner.resolve_audit()
     assert "--prospective" in str(failure.value)
+    assert "v4_scene_audit.py" in str(failure.value), "say which script writes it"
 
 
 def test_both_audits_present_is_refused_rather_than_resolved(tmp_path, monkeypatch):

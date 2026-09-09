@@ -55,6 +55,7 @@ SOURCES = [
     "scripts/v4_decoupling_report.py", "src/selfsight/v4/factual_truth.py",
     "src/selfsight/training/checkpoint.py", "scripts/run_decoupling_pilot.py",
     "scripts/v4_decoupling_plot.py", "scripts/v4_gradient_sensitivity.py",
+    "scripts/v4_scene_audit.py",
 ]
 
 
@@ -178,10 +179,15 @@ class Pilot:
                        "--runs", *RUNS]
         self.done_stages = self.out / "stage-completion"
         self.done_stages.mkdir(exist_ok=True)
-        self.audit_path = self.resolve_audit()
+        # None is legal and means "not built yet": a run starting from nothing
+        # cannot have one, because the audit reads the split and the probe bank
+        # that this run's first two stages produce. execute() builds it there,
+        # before any round. What is not legal is a mislabelled one, and
+        # resolve_audit refuses that here rather than hours in.
+        self.audit_path = self.resolve_audit(required=False)
         self.state("ready", "preflight")
 
-    def resolve_audit(self) -> Path:
+    def resolve_audit(self, *, required: bool = True) -> Path | None:
         """The scene audit, and which of the two kinds this run has.
 
         Checked at construction rather than where it is read: gradient
@@ -202,6 +208,8 @@ class Pilot:
         prospective = self.out / "audit-splits" / "scene_overlap.json"
         retrospective = self.out / "retrospective-scene-audit" / "scene_overlap.json"
         present = [path for path in (prospective, retrospective) if path.exists()]
+        if not present and not required:
+            return None
         if not present:
             raise FileNotFoundError(
                 f"No scene audit at {prospective} or {retrospective}; build one with "
@@ -394,6 +402,26 @@ class Pilot:
         self.run(f"step-{step:05d}.plot", "core", "scripts/v4_decoupling_plot.py",
                  ["--outdir", str(self.out)])
 
+    def freeze_scene_audit(self) -> None:
+        """Build the audit here or nowhere: after the two stages that make its
+        inputs, and before the first thing that could be an outcome.
+
+        Only the prospective kind is built automatically. A run that has
+        already produced outcomes cannot honestly have one, and the audit
+        script refuses -- which is the right answer, arriving seconds into a
+        relaunch instead of after a checkpoint. Getting the weaker
+        retrospective audit instead is a decision about what the evidence is
+        allowed to support, so it stays a thing a person does on purpose.
+        """
+
+        if self.audit_path is not None:
+            return
+        self.run("scene-audit", "core", "scripts/v4_scene_audit.py",
+                 ["--outdir", str(self.out), "--config", str(self.config_path),
+                  "--output", str(self.out / "audit-splits" / "scene_overlap.json"),
+                  "--prospective"])
+        self.audit_path = self.resolve_audit()
+
     def validate_round(self, index: int) -> None:
         path = self.out / "rounds" / f"round-{index:03d}" / "DONE.json"
         row = json.loads(path.read_text(encoding="utf-8"))
@@ -421,6 +449,7 @@ class Pilot:
                   "--source", self.config["gradient_probe"]["source"],
                   "--outdir", str(self.out / "probe-bank"),
                   "--max-prompts", str(self.config["gradient_probe"]["size"])])
+        self.freeze_scene_audit()
         for index in range(self.limit):
             # Round 0 also persists the exact untrained adapter. Measuring that
             # saved base afterwards cannot change its weights or feed outcomes
