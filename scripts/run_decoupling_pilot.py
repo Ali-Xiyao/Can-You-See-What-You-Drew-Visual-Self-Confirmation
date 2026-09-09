@@ -129,6 +129,21 @@ class Pilot:
         if len(self.arms) != len(ARM_CARDS):
             raise ValueError(f"--arms takes exactly {len(ARM_CARDS)} arms, one per card; "
                              f"got {self.arms}")
+        # `training.arms` is written in every config and read by nothing: the
+        # arm set comes from --arms, whose default is the registered pairing.
+        # A launch that forgets the flag therefore trains naive and rfo_gold
+        # while the config says naive and blind_self, the outdir is named
+        # after the replicate, and nothing disagrees until someone reads the
+        # manifest. The frozen-manifest check below catches it on resume,
+        # which is a checkpoint too late. Same shape as `training.seeds`, and
+        # the same answer: a key that is ignored and contradicts the flag is
+        # an error, not a preference.
+        registered_arms = self.config["training"].get("arms")
+        if registered_arms is not None and list(registered_arms) != self.arms:
+            raise ValueError(
+                f"config training.arms={list(registered_arms)} but --arms={self.arms}; "
+                f"training.arms is not read by the supervisor, so this run would train "
+                f"{self.arms}. Pass --arms {' '.join(registered_arms)}, or change the config")
         self.arm_device = dict(zip(self.arms, ARM_CARDS))
         self.env = os.environ.copy()
         self.env.update(PYTHONPATH=str(ROOT / "src"), PYTHONUTF8="1",

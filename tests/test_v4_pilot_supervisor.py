@@ -435,6 +435,57 @@ def test_a_repeated_arm_is_refused_rather_than_collapsed(tmp_path, monkeypatch):
         MODULE.Pilot(_blind_self_run(tmp_path, monkeypatch, ("naive", "naive")))
 
 
+def _with_config_arms(args, arms):
+
+    """Add training.arms to the fixture config, the way every replicate has it."""
+
+    text = args.config.read_text(encoding="utf-8")
+    listed = ", ".join(arms)
+    args.config.write_text(
+        text.replace("training:\n",
+                     f"training:\n  arms: [{listed}]\n", 1),
+        encoding="utf-8")
+    return args
+
+
+def test_a_config_arm_set_that_contradicts_the_flag_is_refused(tmp_path, monkeypatch):
+    """training.arms is read by nothing. The five replicate configs all carry
+    it, so a launch that forgets --arms trains the registered pairing while
+    the config, the outdir name and every log agree it is arm B. The frozen
+    manifest catches it on resume, which is a whole checkpoint too late."""
+
+    args = _with_config_arms(_blind_self_run(tmp_path, monkeypatch), ["naive", "blind_self"])
+    args.arms = ["naive", "rfo_gold"]
+
+    with pytest.raises(ValueError, match="training.arms"):
+        MODULE.Pilot(args)
+
+
+def test_a_config_arm_set_that_agrees_with_the_flag_is_fine(tmp_path, monkeypatch):
+    args = _with_config_arms(_blind_self_run(tmp_path, monkeypatch), ["naive", "blind_self"])
+
+    assert MODULE.Pilot(args).arms == ["naive", "blind_self"]
+
+
+def test_the_order_of_the_config_arm_set_matters_because_it_is_the_card_order(
+        tmp_path, monkeypatch):
+    """ARM_CARDS is positional, so [naive, blind_self] and [blind_self, naive]
+    put different arms on the gen3 x4 card. Treating them as the same set
+    would let the flag silently swap the cards."""
+
+    args = _with_config_arms(_blind_self_run(tmp_path, monkeypatch), ["blind_self", "naive"])
+    args.arms = ["naive", "blind_self"]
+
+    with pytest.raises(ValueError, match="training.arms"):
+        MODULE.Pilot(args)
+
+
+def test_a_config_without_training_arms_still_runs(tmp_path, monkeypatch):
+    """decoupling-main-20260908 has no such key and has to stay resumable."""
+
+    assert MODULE.Pilot(_blind_self_run(tmp_path, monkeypatch)).arms == ["naive", "blind_self"]
+
+
 def test_round_validation_asks_for_the_arms_this_run_trains(tmp_path, monkeypatch):
     """Against the module constant, a blind-self round reported naive and
     blind_self and was rejected for not being naive and rfo_gold."""
