@@ -257,13 +257,25 @@ envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/blind-s
    probe, seed) 的纯函数,同 config 必然复现;**要核对,不要相信**)。主运行的值是
    `83b7eaa696726a1f6261327a5ac70c2d494629e5e736bcae7799eed0482f7094`,
    它既是 `runs/v4/decoupling-main-20260908/split.json` 的 sha256,也是那份
-   retrospective audit 里记的 `provenance.split_sha256`。arm B 的 split stage
-   一跑完就核对这一个数,不一致就停,不要往下走。
+   audit 里记的 `provenance.split_sha256`。另有一个 `provenance.split_digest`
+   `9bab14d427f2b61bea001b710126dcf18d610972985f723665534209231f9d58`,
+   那是 split **内容**的规范摘要,和文件字节摘要是两个数,别混。
+   arm B 的 split stage 一跑完就核对,不一致就停,不要往下走。
 2. `audit-splits/scene_overlap.json` 落地后,`kind` 是
    `prospective_scene_overlap_sensitivity_freeze`、
    `created_before_any_outcome_evaluation_artifact` 是 `true`。supervisor 的
    `resolve_audit()` 已经查了旗标与目录一致这一条;这里重复,是因为它是主运行
    没有、arm B 独有的东西,而 `v4_decoupling_report.py` 会拿它去挑 outcome 子集。
+
+   **这份 audit 的内容已经先算出来了**,见
+   `review-packets/armB-audit-preimage-20260909/`:排除集是 split 的纯函数,
+   而 arm B 现在什么都还没产生,所以现在是「prospective」唯一成立的时点。
+   要核对的是 `scene_disjoint_outcome_sensitivity.spec_ids_sha256` =
+   `8c638fb3efd86258fbc6e51146e18086e5c517acaa48d017a208a4e24bcb5264`,
+   以及 `summary` 的 outcome 64 / scene-disjoint 54 / probe bank 排除 2 /
+   train 132-of-132。那份 NOTE 里还记着一件顺带验到的事:主 config 排满
+   132/132,所以保守口径和实际日程口径重合,排除集不依赖日程种子——
+   pilot 不是这样(120/132)。
 3. `configs/v4_decoupling_main_20260908.yaml` 至今仍未纳入 git(主树 `??`)。
    manifest 会冻结它的 sha256,所以两个运行用的是不是同一份 config 事后查得出来,
    但文件本身没有版本记录。
