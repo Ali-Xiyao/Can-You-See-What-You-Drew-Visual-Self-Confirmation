@@ -35,7 +35,15 @@ ARMS = ["naive", "rfo_gold"]
 # Deliberately NOT parallelised: `train`, which already spans both cards
 # (backbone on cuda:1, adjudication ladder on cuda:0), and `report`, which is
 # CPU and reads the one metrics table both arms write into.
-ARM_DEVICE = {"naive": "cuda:0", "rfo_gold": "cuda:1"}
+# Positional, and paired with --arms in the order it was given. Two cards, so
+# two arms: `chains` would start a third thread quite happily and it would land
+# on a card that already has one, which is why __init__ refuses the arity rather
+# than letting zip() drop the extra arm in silence.
+#
+# Which arm gets cuda:1 is not neutral -- it is the gen3 x4 card (STATUS 32) --
+# but it does not change the block's wall clock, which is the slower chain
+# whichever way round they are. See EXECUTION 0.2.
+ARM_CARDS = ["cuda:0", "cuda:1"]
 
 # Roughly a third of a second of retries in total, which is far longer than any
 # reader holds state.json and far shorter than any stage.
@@ -47,6 +55,7 @@ SOURCES = [
     "scripts/v4_decoupling_report.py", "src/selfsight/v4/factual_truth.py",
     "src/selfsight/training/checkpoint.py", "scripts/run_decoupling_pilot.py",
     "scripts/v4_decoupling_plot.py", "scripts/v4_gradient_sensitivity.py",
+    "scripts/v4_scene_audit.py",
 ]
 
 
@@ -113,6 +122,14 @@ class Pilot:
                          self.config["training"]["rounds"])
         if args.through_round is not None and args.through_round < 1:
             raise ValueError("--through-round must be positive")
+        requested = list(args.arms)
+        self.arms = list(dict.fromkeys(requested))
+        if len(self.arms) != len(requested):
+            raise ValueError(f"--arms repeats an arm: {requested}")
+        if len(self.arms) != len(ARM_CARDS):
+            raise ValueError(f"--arms takes exactly {len(ARM_CARDS)} arms, one per card; "
+                             f"got {self.arms}")
+        self.arm_device = dict(zip(self.arms, ARM_CARDS))
         self.env = os.environ.copy()
         self.env.update(PYTHONPATH=str(ROOT / "src"), PYTHONUTF8="1",
                         PYTHONNOUSERSITE="1", HF_HUB_OFFLINE="1",
@@ -124,13 +141,23 @@ class Pilot:
         manifest = {"config_sha256": digest(self.config_path),
                     "protocol_sha256": digest(self.protocol_path),
                     "protocol_path": str(self.protocol_path.relative_to(ROOT)),
-                    "source_sha256": fingerprint, "runs": RUNS,
+                    "source_sha256": fingerprint, "runs": RUNS, "arms": self.arms,
                     "started_unix": time.time(), "config": self.config}
         if self.manifest_path.exists():
             old = json.loads(self.manifest_path.read_text(encoding="utf-8"))
             for key in ("config_sha256", "protocol_sha256", "runs"):
                 if old[key] != manifest[key]:
                     raise ValueError(f"Frozen run {key} changed; use a new run version")
+            # Defaulted rather than required, because the runs written before
+            # --arms existed have no such key and were all the registered
+            # pairing. Resuming without --arms is the likely mistake: the
+            # command is long, the default is the pairing, and a blind-self run
+            # relaunched that way would train two different arms into the same
+            # directory and only look wrong in the round reports.
+            if old.get("arms", ARMS) != manifest["arms"]:
+                raise ValueError(
+                    f"Frozen run trains {old.get('arms', ARMS)}, not {manifest['arms']}; "
+                    f"pass --arms {' '.join(old.get('arms', ARMS))} or use a new run version")
             if old["source_sha256"] != fingerprint:
                 if not args.accept_code_update:
                     raise ValueError("Source changed; review and record the repair before resume")
@@ -152,15 +179,57 @@ class Pilot:
                        "--runs", *RUNS]
         self.done_stages = self.out / "stage-completion"
         self.done_stages.mkdir(exist_ok=True)
-        # Checked at construction, not where it is read. gradient-sensitivity runs
-        # after the first checkpoint lands, so a missing audit takes hours of GPU
-        # time to discover; scripts/v4_scene_audit.py writes it in seconds.
-        self.audit_path = self.out / "retrospective-scene-audit" / "scene_overlap.json"
-        if not self.audit_path.exists():
-            raise FileNotFoundError(
-                f"No scene audit at {self.audit_path}; build it first with "
-                f"scripts/v4_scene_audit.py --outdir {self.out} --config {self.config_path}")
+        # None is legal and means "not built yet": a run starting from nothing
+        # cannot have one, because the audit reads the split and the probe bank
+        # that this run's first two stages produce. execute() builds it there,
+        # before any round. What is not legal is a mislabelled one, and
+        # resolve_audit refuses that here rather than hours in.
+        self.audit_path = self.resolve_audit(required=False)
         self.state("ready", "preflight")
+
+    def resolve_audit(self, *, required: bool = True) -> Path | None:
+        """The scene audit, and which of the two kinds this run has.
+
+        Checked at construction rather than where it is read: gradient
+        sensitivity runs after the first checkpoint lands, so a missing audit
+        costs hours of GPU time to discover and scripts/v4_scene_audit.py
+        writes one in seconds.
+
+        Two admissible locations, and which one exists is how the run says
+        what it is. A prospective freeze at audit-splits/ was fixed before the
+        run produced anything, so it serves the report's outcome subsets as
+        well as the gradient exclusions. A retrospective one was not, so it
+        lives off the path the report reads and serves the gradient instrument
+        only. Both present is refused rather than resolved: the report would
+        read one file and this stage the other, and nothing downstream would
+        say so.
+        """
+
+        prospective = self.out / "audit-splits" / "scene_overlap.json"
+        retrospective = self.out / "retrospective-scene-audit" / "scene_overlap.json"
+        present = [path for path in (prospective, retrospective) if path.exists()]
+        if not present and not required:
+            return None
+        if not present:
+            raise FileNotFoundError(
+                f"No scene audit at {prospective} or {retrospective}; build one with "
+                f"scripts/v4_scene_audit.py --outdir {self.out} --config {self.config_path}"
+                f" (add --prospective if this run has not started)")
+        if len(present) == 2:
+            raise ValueError(
+                f"Both {prospective} and {retrospective} exist; the report reads the first "
+                "implicitly and this run would measure against the second. Keep one.")
+        audit = present[0]
+        # The flag and the path have to agree. The report enforces half of this
+        # hours later; a mislabelled file caught here costs nothing.
+        frozen = json.loads(audit.read_text(encoding="utf-8")).get(
+            "created_before_any_outcome_evaluation_artifact")
+        if bool(frozen) is not (audit == prospective):
+            raise ValueError(
+                f"{audit} declares created_before_any_outcome_evaluation_artifact={frozen}, "
+                f"which does not match where it is. audit-splits/ is for a prospective "
+                f"freeze and retrospective-scene-audit/ is for everything else.")
+        return audit
 
     def state(self, status: str, stage: str, **extra) -> None:
         """Serialised because the two arm chains write this from two threads.
@@ -274,8 +343,8 @@ class Pilot:
         from the enclosing loop.
         """
 
-        self.evaluate(arm, round_index, ARM_DEVICE[arm])
-        self.probe(arm, round_index, ARM_DEVICE[arm])
+        self.evaluate(arm, round_index, self.arm_device[arm])
+        self.probe(arm, round_index, self.arm_device[arm])
 
     def adjudicate(self, directory: Path, label: str, device: str) -> None:
         for detector in ("qwen3vl", "internvl"):
@@ -321,16 +390,37 @@ class Pilot:
         self.run(f"step-{step:05d}.report", "core", "scripts/v4_decoupling_report.py",
                  ["--outdir", str(self.out), "--config", str(self.config_path),
                   "--protocol", str(self.protocol_path)])
-        # --audit is passed because the default is RUN/audit-splits/scene_overlap.json,
-        # and v4_decoupling_report.py reads that same path implicitly to choose an
-        # outcome subset -- which is only sound for an audit frozen before any outcome
-        # existed. This run's audit was built mid-run and declares so, so it is named
-        # here explicitly and stays out of the path the report would pick it up from.
+        # Named rather than defaulted. v4_gradient_sensitivity.py falls back to
+        # RUN/audit-splits/scene_overlap.json, which is also the path
+        # v4_decoupling_report.py reads implicitly to choose an outcome subset, and
+        # that is only sound for an audit frozen before any outcome existed. A run
+        # whose audit is retrospective keeps it off that path entirely, so the
+        # fallback would silently find nothing where this finds the right file.
         self.run(f"step-{step:05d}.gradient-sensitivity", "core",
                  "scripts/v4_gradient_sensitivity.py",
                  ["--outdir", str(self.out), "--audit", str(self.audit_path)])
         self.run(f"step-{step:05d}.plot", "core", "scripts/v4_decoupling_plot.py",
                  ["--outdir", str(self.out)])
+
+    def freeze_scene_audit(self) -> None:
+        """Build the audit here or nowhere: after the two stages that make its
+        inputs, and before the first thing that could be an outcome.
+
+        Only the prospective kind is built automatically. A run that has
+        already produced outcomes cannot honestly have one, and the audit
+        script refuses -- which is the right answer, arriving seconds into a
+        relaunch instead of after a checkpoint. Getting the weaker
+        retrospective audit instead is a decision about what the evidence is
+        allowed to support, so it stays a thing a person does on purpose.
+        """
+
+        if self.audit_path is not None:
+            return
+        self.run("scene-audit", "core", "scripts/v4_scene_audit.py",
+                 ["--outdir", str(self.out), "--config", str(self.config_path),
+                  "--output", str(self.out / "audit-splits" / "scene_overlap.json"),
+                  "--prospective"])
+        self.audit_path = self.resolve_audit()
 
     def validate_round(self, index: int) -> None:
         path = self.out / "rounds" / f"round-{index:03d}" / "DONE.json"
@@ -338,7 +428,7 @@ class Pilot:
         if row["paired"] < self.config["pilot"]["min_paired_prompts"]:
             raise RuntimeError(f"Round {index} has too few paired prompts")
         reports = row.get("arms", [])
-        if sorted(report.get("arm", "") for report in reports) != sorted(ARMS):
+        if sorted(report.get("arm", "") for report in reports) != sorted(self.arms):
             raise RuntimeError(f"Round {index}: missing or duplicate arm reports")
         for report in row["arms"]:
             if report.get("round") != index or report.get("optimizer_steps") != self.config["training"]["optimizer_steps_per_round"]:
@@ -359,23 +449,25 @@ class Pilot:
                   "--source", self.config["gradient_probe"]["source"],
                   "--outdir", str(self.out / "probe-bank"),
                   "--max-prompts", str(self.config["gradient_probe"]["size"])])
+        self.freeze_scene_audit()
         for index in range(self.limit):
             # Round 0 also persists the exact untrained adapter. Measuring that
             # saved base afterwards cannot change its weights or feed outcomes
             # into training, and reaches the first optimizer update sooner.
             self.run(f"round-{index:03d}.train", "showo2", "scripts/v4_train.py",
                      ["train", *self.common, "--device", "cuda:1", "--ladder-device", "cuda:0",
-                      "--max-epochs", "1", "--round-index", str(index)])
+                      "--max-epochs", "1", "--round-index", str(index),
+                      "--arms", *self.arms])
             self.validate_round(index)
             if index == 0:
                 # Both arms measure the same untrained adapter here, so the two
                 # chains draw identical images. They are still kept apart so the
                 # per-arm directory layout is uniform across every checkpoint.
-                self.chains({arm: partial(self.evaluate, arm, -1, ARM_DEVICE[arm])
-                             for arm in ARMS})
+                self.chains({arm: partial(self.evaluate, arm, -1, self.arm_device[arm])
+                             for arm in self.arms})
                 self.probe("base", -1, "cuda:1")
                 self.report(0)
-            self.chains({arm: partial(self.measure_arm, arm, index) for arm in ARMS})
+            self.chains({arm: partial(self.measure_arm, arm, index) for arm in self.arms})
             self.report((index + 1) * self.config["training"]["optimizer_steps_per_round"])
         self.state("pilot_complete" if self.limit == self.config["training"]["rounds"] else "canary_complete",
                    "review_results", completed_rounds=self.limit,
@@ -392,6 +484,12 @@ def main() -> None:
     # mismatch stops the resume.
     parser.add_argument("--protocol", type=Path,
                         default=ROOT / "docs/prereg/2026-09-06-decoupling-pilot.md")
+    # The pairing is the registered default; arm B is the same config with
+    # `--arms naive blind_self` and a new outdir. Not validated against SELECTORS
+    # here -- v4_train.py owns that list and rejects an unknown arm with the
+    # choices in the message, and duplicating it would give two places to update.
+    parser.add_argument("--arms", nargs="+", default=list(ARMS), metavar="ARM",
+                        help="the two arms to train, one per card, in card order")
     parser.add_argument("--through-round", type=int)
     parser.add_argument("--accept-code-update", action="store_true")
     args = parser.parse_args()

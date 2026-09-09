@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import replace
+from pathlib import Path
 
 import pytest
 from PIL import Image
@@ -18,6 +19,8 @@ from selfsight.v4.train import (
     pending_rounds, prepare_round, previous_checkpoint, restrict_replay,
     seed_training, select_by_observation, train_arm, trainable_snapshot,
 )
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _spec(name="p"):
@@ -125,15 +128,65 @@ def test_partial_round_checkpoints_are_archived_and_done_rounds_are_untouched(tm
     checkpoint = tmp_path / "checkpoints" / ARMS[0] / "round-000"
     checkpoint.mkdir(parents=True)
     (checkpoint / "adapter.pt").write_text("first arm result", encoding="utf-8")
-    restarted = prepare_round(tmp_path, 0)
+    restarted = prepare_round(tmp_path, 0, arms=ARMS)
     abandoned = list(restarted.parent.glob("round-000.abandoned-*"))
     assert len(abandoned) == 1 and not checkpoint.exists()
     assert (abandoned[0] / "failure.log").is_file()
     assert (abandoned[0] / "checkpoints" / ARMS[0] / "adapter.pt").read_text() == "first arm result"
     (restarted / "DONE.json").write_text("{}", encoding="utf-8")
     with pytest.raises(FileExistsError, match="completed round"):
-        prepare_round(tmp_path, 0)
+        prepare_round(tmp_path, 0, arms=ARMS)
     assert (restarted / "DONE.json").is_file()
+
+
+def test_an_arm_outside_the_registered_pairing_is_archived_too(tmp_path):
+    """A blind-self run trains naive and blind_self, and `ARMS` is neither.
+
+    Left behind, `checkpoints/blind_self/round-NNN` is what the retry resumes
+    from: weights written by the attempt that crashed, carried forward with
+    nothing in the output saying the round was ever restarted. The trajectory
+    the paper reads for arm B would be wrong from that round on.
+    """
+
+    (tmp_path / "rounds" / "round-000").mkdir(parents=True)
+    saved = {}
+    for arm in ("naive", "blind_self"):
+        checkpoint = tmp_path / "checkpoints" / arm / "round-000"
+        checkpoint.mkdir(parents=True)
+        (checkpoint / "adapter.pt").write_text(f"{arm} result", encoding="utf-8")
+        saved[arm] = checkpoint
+
+    restarted = prepare_round(tmp_path, 0, arms=("naive", "blind_self"))
+    abandoned = list(restarted.parent.glob("round-000.abandoned-*"))
+    assert len(abandoned) == 1
+    for arm, checkpoint in saved.items():
+        assert not checkpoint.exists(), f"{arm} was left where the retry will find it"
+        archived = abandoned[0] / "checkpoints" / arm / "adapter.pt"
+        assert archived.read_text() == f"{arm} result"
+
+
+def test_stage_train_archives_the_arms_it_resolved(tmp_path):
+    """The argument has to reach the call, and the call is not unit-testable.
+
+    `stage_train` loads a backbone before it gets here, so this reads the source
+    the way tests/test_round_zero_weights.py does. What it pins is that
+    `prepare_round` is called with `arms=arms` -- the set `resolve_arms`
+    returned -- and not with a literal or nothing at all.
+    """
+
+    import ast
+
+    tree = ast.parse((ROOT / "scripts" / "v4_train.py").read_text(encoding="utf-8"))
+    stage = next(node for node in ast.walk(tree)
+                 if isinstance(node, ast.FunctionDef) and node.name == "stage_train")
+    calls = [node for node in ast.walk(stage)
+             if isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+             and node.func.id == "prepare_round"]
+    assert len(calls) == 1, "one round loop, one archive point"
+    passed = {keyword.arg: keyword.value for keyword in calls[0].keywords}
+    assert "arms" in passed, "prepare_round would archive the registered pairing instead"
+    assert isinstance(passed["arms"], ast.Name) and passed["arms"].id == "arms", (
+        "the arm set has to be the one resolve_arms returned, not a literal")
 
 
 def _candidate(index):

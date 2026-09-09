@@ -24,6 +24,7 @@ SPEC.loader.exec_module(MODULE)
 def test_done_with_invalid_updates_is_rejected(tmp_path, field, value):
     runner = object.__new__(MODULE.Pilot)
     runner.out = tmp_path
+    runner.arms = list(MODULE.ARMS)
     runner.config = {"pilot": {"min_paired_prompts": 2}, "training": {"optimizer_steps_per_round": 8}}
     arm = {"mean_t2i_loss": 1, "mean_gradient_norm_before_clip": .2, "parameter_delta_l2": .1}
     arm[field] = value
@@ -38,6 +39,7 @@ def test_done_with_invalid_updates_is_rejected(tmp_path, field, value):
 def test_done_with_too_few_paired_prompts_is_rejected(tmp_path):
     runner = object.__new__(MODULE.Pilot)
     runner.out = tmp_path
+    runner.arms = list(MODULE.ARMS)
     runner.config = {"pilot": {"min_paired_prompts": 2}}
     target = tmp_path / "rounds/round-000/DONE.json"
     target.parent.mkdir(parents=True)
@@ -50,6 +52,7 @@ def test_done_with_too_few_paired_prompts_is_rejected(tmp_path):
 def test_done_does_not_hide_missing_independent_training_arm(tmp_path, names):
     runner = object.__new__(MODULE.Pilot)
     runner.out = tmp_path
+    runner.arms = list(MODULE.ARMS)
     runner.config = {"pilot": {"min_paired_prompts": 2}, "training": {"optimizer_steps_per_round": 8}}
     target = tmp_path / "rounds/round-000/DONE.json"
     target.parent.mkdir(parents=True)
@@ -78,6 +81,8 @@ def _resume_after_unrecorded_train(tmp_path, monkeypatch, through_round):
     runner.audit_path = tmp_path / "retrospective-scene-audit" / "scene_overlap.json"
     runner.audit_path.parent.mkdir()
     runner.audit_path.write_text("{}", encoding="utf-8")
+    runner.arms = list(MODULE.ARMS)
+    runner.arm_device = dict(zip(runner.arms, MODULE.ARM_CARDS))
     runner.config = {
         "training": {"rounds": 4, "optimizer_steps_per_round": 8},
         "pilot": {"min_paired_prompts": 2, "min_free_gib": 0},
@@ -247,6 +252,17 @@ def test_gradient_sensitivity_is_told_which_scene_audit_to_read(tmp_path):
     assert args[args.index("--audit") + 1] == str(runner.audit_path)
 
 
+def _write_audit(outdir, *, prospective: bool):
+    """A scene audit where its own flag says it belongs."""
+
+    folder = "audit-splits" if prospective else "retrospective-scene-audit"
+    path = outdir / folder / "scene_overlap.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(
+        {"created_before_any_outcome_evaluation_artifact": prospective}), encoding="utf-8")
+    return path
+
+
 def _constructible_run(tmp_path, monkeypatch):
     """The smallest tree `Pilot.__init__` accepts, with no scene audit in it yet."""
 
@@ -257,35 +273,298 @@ def _constructible_run(tmp_path, monkeypatch):
         source.parent.mkdir(parents=True, exist_ok=True)
         source.write_text("", encoding="utf-8")
     config = tmp_path / "config.yaml"
-    config.write_text("training:\n  rounds: 2\npilot:\n  max_wall_hours: 1\n", encoding="utf-8")
+    config.write_text("training:\n  rounds: 2\n  optimizer_steps_per_round: 8\n"
+                      "pilot:\n  max_wall_hours: 1\n  min_paired_prompts: 2\n"
+                      "gradient_probe:\n  source: fixture\n  size: 2\n", encoding="utf-8")
     protocol = tmp_path / "protocol.md"
     protocol.write_text("# protocol\n", encoding="utf-8")
     return argparse.Namespace(outdir=tmp_path / "runs" / "v4" / "audit-guard",
-                              config=config, protocol=protocol,
+                              config=config, protocol=protocol, arms=list(MODULE.ARMS),
                               through_round=None, accept_code_update=False)
 
 
-def test_a_run_without_a_scene_audit_stops_before_it_reserves_a_card(tmp_path, monkeypatch):
-    """The stage that needs it runs after the first checkpoint, hours in.
+class _StopAtTrain(Exception):
+    """The first stage that would touch a card, and the end of what we watch."""
+
+
+def _opening_stages(runner, monkeypatch, *, the_stage_writes_the_audit=True):
+    """Drive execute() up to the first training stage, recording what it ran."""
+
+    calls = []
+
+    def fake_run(stage, environment, script, stage_args):
+        calls.append((stage, script, stage_args))
+        if stage == "scene-audit" and the_stage_writes_the_audit:
+            _write_audit(runner.out, prospective=True)
+        if stage.endswith(".train"):
+            raise _StopAtTrain(stage)
+
+    monkeypatch.setattr(runner, "run", fake_run)
+    with pytest.raises(_StopAtTrain):
+        runner.execute()
+    return calls
+
+
+def test_a_run_without_a_scene_audit_builds_one_before_it_reserves_a_card(tmp_path,
+                                                                         monkeypatch):
+    """The stage that reads it runs after the first checkpoint, hours in.
 
     runs/v4/decoupling-main-20260908 died that way on 2026-09-08 with 5.83 h of
-    compute already spent, so the file is required at construction instead.
+    compute already spent. Requiring the file at construction fixed the cost of
+    the mistake but left it a mistake to make; the split and the probe bank the
+    audit reads are this run's own first two stages, so it can be built here.
     """
 
+    runner = MODULE.Pilot(_constructible_run(tmp_path, monkeypatch))
+    assert runner.audit_path is None, "a run starting from nothing cannot have one yet"
+
+    stages = [stage for stage, _script, _args in _opening_stages(runner, monkeypatch)]
+
+    assert "scene-audit" in stages
+    assert stages.index("freeze-probe") < stages.index("scene-audit"), "it reads the bank"
+    first_train = next(i for i, stage in enumerate(stages) if stage.endswith(".train"))
+    assert stages.index("scene-audit") < first_train, "before anything is an outcome"
+    assert runner.audit_path == runner.out / "audit-splits" / "scene_overlap.json"
+
+
+def test_the_audit_the_supervisor_builds_is_the_kind_the_report_can_read(tmp_path,
+                                                                        monkeypatch):
+    """Only the prospective kind is automatic. Settling for the retrospective
+    one is a decision about what the run's evidence may support, and the audit
+    script refuses to call a started run prospective anyway."""
+
+    runner = MODULE.Pilot(_constructible_run(tmp_path, monkeypatch))
+    calls = _opening_stages(runner, monkeypatch)
+
+    stage_args = next(a for stage, _script, a in calls if stage == "scene-audit")
+    assert "--prospective" in stage_args
+    assert str(runner.out / "audit-splits" / "scene_overlap.json") in stage_args
+    assert str(runner.config_path) in stage_args, "provenance is checked against it"
+
+
+@pytest.mark.parametrize("prospective", [True, False])
+def test_an_audit_this_run_already_has_is_not_rebuilt(tmp_path, monkeypatch, prospective):
+    """Rebuilding a retrospective audit as a prospective one would upgrade the
+    claim without anyone deciding to, and rebuilding the prospective one on a
+    resume would date it after the outcomes it is supposed to predate."""
+
     args = _constructible_run(tmp_path, monkeypatch)
-    with pytest.raises(FileNotFoundError) as failure:
-        MODULE.Pilot(args)
-    assert "v4_scene_audit.py" in str(failure.value), "say which script writes it"
+    audit = _write_audit(args.outdir, prospective=prospective)
+    runner = MODULE.Pilot(args)
+
+    stages = [stage for stage, _script, _args in _opening_stages(runner, monkeypatch)]
+
+    assert "scene-audit" not in stages
+    assert runner.audit_path == audit
+
+
+def test_a_scene_audit_stage_that_wrote_nothing_is_not_taken_for_success(tmp_path,
+                                                                        monkeypatch):
+    """Exit code 0 and no file is the shape of a bad --output. The next reader
+    is the gradient stage, which would be handed the string "None"."""
+
+    runner = MODULE.Pilot(_constructible_run(tmp_path, monkeypatch))
+    with pytest.raises(FileNotFoundError):
+        _opening_stages(runner, monkeypatch, the_stage_writes_the_audit=False)
+
+
+def test_every_script_the_opening_stages_shell_is_a_frozen_source(tmp_path, monkeypatch):
+    """run() re-digests SOURCES before each stage, so a script that is not in it
+    can be edited mid-run. The audit is written once and read by two consumers
+    that check the artifact's provenance but not its producer's."""
+
+    runner = MODULE.Pilot(_constructible_run(tmp_path, monkeypatch))
+    scripts = {script for _stage, script, _args in _opening_stages(runner, monkeypatch)}
+
+    assert scripts, "the opening stages shell something"
+    assert scripts <= set(MODULE.SOURCES), f"unfrozen: {sorted(scripts - set(MODULE.SOURCES))}"
 
 
 def test_the_registered_audit_is_not_the_one_the_report_reads(tmp_path, monkeypatch):
     """Same file for both consumers is the thing this whole arrangement avoids."""
 
     args = _constructible_run(tmp_path, monkeypatch)
-    audit = args.outdir / "retrospective-scene-audit" / "scene_overlap.json"
-    audit.parent.mkdir(parents=True)
-    audit.write_text("{}", encoding="utf-8")
+    audit = _write_audit(args.outdir, prospective=False)
 
     runner = MODULE.Pilot(args)
     assert runner.audit_path == audit
     assert "audit-splits" not in runner.audit_path.parts
+
+
+# ------------------------------------------------------- arm B's --arms
+
+
+def _blind_self_run(tmp_path, monkeypatch, arms=("naive", "blind_self")):
+    """A constructible run for the arm the prereg pairs against naive."""
+
+    args = _constructible_run(tmp_path, monkeypatch)
+    args.arms = list(arms)
+    _write_audit(args.outdir, prospective=False)
+    return args
+
+
+def test_each_arm_gets_its_own_card_whatever_the_arms_are(tmp_path, monkeypatch):
+    """ARM_DEVICE was a literal keyed on naive and rfo_gold, so arm B raised
+    KeyError on blind_self at the first evaluate -- after the round had trained."""
+
+    runner = MODULE.Pilot(_blind_self_run(tmp_path, monkeypatch))
+    assert runner.arm_device == {"naive": "cuda:0", "blind_self": "cuda:1"}
+    assert len(set(runner.arm_device.values())) == 2, "two chains, two cards"
+
+
+def test_the_cards_follow_the_order_the_arms_were_named(tmp_path, monkeypatch):
+    runner = MODULE.Pilot(_blind_self_run(tmp_path, monkeypatch, ("blind_self", "naive")))
+    assert runner.arm_device == {"blind_self": "cuda:0", "naive": "cuda:1"}
+
+
+@pytest.mark.parametrize("arms", [
+    ["naive"],
+    ["naive", "blind_self", "rfo_gold"],
+])
+def test_an_arm_set_that_does_not_fit_the_cards_is_refused_at_construction(
+        tmp_path, monkeypatch, arms):
+    """zip() truncates in silence: three arms would have started three chains
+    and quietly given the third one no card of its own."""
+
+    with pytest.raises(ValueError, match="one per card"):
+        MODULE.Pilot(_blind_self_run(tmp_path, monkeypatch, arms))
+
+
+def test_a_repeated_arm_is_refused_rather_than_collapsed(tmp_path, monkeypatch):
+    with pytest.raises(ValueError, match="repeats"):
+        MODULE.Pilot(_blind_self_run(tmp_path, monkeypatch, ("naive", "naive")))
+
+
+def test_round_validation_asks_for_the_arms_this_run_trains(tmp_path, monkeypatch):
+    """Against the module constant, a blind-self round reported naive and
+    blind_self and was rejected for not being naive and rfo_gold."""
+
+    runner = MODULE.Pilot(_blind_self_run(tmp_path, monkeypatch))
+    report = {"round": 0, "optimizer_steps": 8, "mean_t2i_loss": 1,
+              "mean_gradient_norm_before_clip": .2, "parameter_delta_l2": .1}
+    MODULE.write_json(runner.out / "rounds" / "round-000" / "DONE.json",
+                      {"paired": 3, "arms": [dict(report, arm=arm) for arm in runner.arms]})
+    runner.validate_round(0)
+
+    MODULE.write_json(runner.out / "rounds" / "round-000" / "DONE.json",
+                      {"paired": 3, "arms": [dict(report, arm=arm)
+                                             for arm in MODULE.ARMS]})
+    with pytest.raises(RuntimeError, match="missing or duplicate"):
+        runner.validate_round(0)
+
+
+def test_the_training_stage_is_told_which_arms_to_train(tmp_path, monkeypatch):
+    """v4_train.py's --arms defaults to the registered pairing, so a supervisor
+    that does not pass it trains rfo_gold no matter what it was launched with."""
+
+    runner = MODULE.Pilot(_blind_self_run(tmp_path, monkeypatch))
+    commands = []
+    monkeypatch.setattr(runner, "run",
+                        lambda stage, env, script, args: commands.append((script, args)))
+    for name in ("validate_round", "chains", "probe", "report", "state"):
+        monkeypatch.setattr(runner, name, lambda *a, **k: None)
+    runner.limit = 1
+    runner.execute()
+
+    train = [args for script, args in commands
+             if script.endswith("v4_train.py") and args[0] == "train"]
+    assert len(train) == 1, commands
+    assert "--arms" in train[0], "without it the round trains the registered pairing"
+    assert train[0][train[0].index("--arms") + 1:] == ["naive", "blind_self"]
+
+
+def test_relaunching_with_different_arms_does_not_resume_the_run(tmp_path, monkeypatch):
+    """The launch command is long and --arms defaults to the pairing, so the
+    likely mistake is relaunching arm B without it. That would train rfo_gold
+    into a directory holding blind_self checkpoints and show up only in a round
+    report, days later."""
+
+    args = _blind_self_run(tmp_path, monkeypatch)
+    MODULE.Pilot(args).lock.close()
+
+    args.arms = list(MODULE.ARMS)
+    with pytest.raises(ValueError, match="not"):
+        MODULE.Pilot(args)
+
+
+def test_a_run_frozen_before_arms_existed_still_resumes(tmp_path, monkeypatch):
+    """decoupling-main-20260908's manifest has no `arms` key and was the
+    registered pairing. Requiring the key would refuse to resume it."""
+
+    args = _blind_self_run(tmp_path, monkeypatch, MODULE.ARMS)
+    first = MODULE.Pilot(args)
+    manifest = json.loads(first.manifest_path.read_text(encoding="utf-8"))
+    del manifest["arms"]
+    first.manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    first.lock.close()
+
+    assert MODULE.Pilot(args).arms == list(MODULE.ARMS)
+
+
+def test_a_prospectively_frozen_audit_is_accepted_where_the_report_reads_it(tmp_path,
+                                                                           monkeypatch):
+    """arm B can have one: it has not run, so nothing in its directory could
+    have been seen when the audit was fixed. The main run could not, and the
+    supervisor was written when only that case existed."""
+
+    args = _constructible_run(tmp_path, monkeypatch)
+    audit = _write_audit(args.outdir, prospective=True)
+    assert MODULE.Pilot(args).audit_path == audit
+
+
+def test_neither_audit_says_how_to_make_either(tmp_path, monkeypatch):
+    """Reachable from the stage that just tried and left nothing behind, which
+    is where knowing the flag is worth most."""
+
+    args = _constructible_run(tmp_path, monkeypatch)
+    runner = MODULE.Pilot(args)
+    with pytest.raises(FileNotFoundError) as failure:
+        runner.resolve_audit()
+    assert "--prospective" in str(failure.value)
+    assert "v4_scene_audit.py" in str(failure.value), "say which script writes it"
+
+
+def test_both_audits_present_is_refused_rather_than_resolved(tmp_path, monkeypatch):
+    """v4_decoupling_report.py reads audit-splits/ implicitly and this stage
+    would be told the other one. Picking a winner here would leave the two
+    halves of one run measured against two different exclusion sets."""
+
+    args = _constructible_run(tmp_path, monkeypatch)
+    _write_audit(args.outdir, prospective=True)
+    _write_audit(args.outdir, prospective=False)
+    with pytest.raises(ValueError, match="Keep one"):
+        MODULE.Pilot(args)
+
+
+@pytest.mark.parametrize("prospective", [True, False])
+def test_an_audit_whose_flag_contradicts_its_location_is_refused(tmp_path, monkeypatch,
+                                                                 prospective):
+    """The report checks half of this, hours into the run. Flipping the flag by
+    hand and moving the file are the two ways to get a retrospective exclusion
+    set into an outcome curve, and both are one edit."""
+
+    args = _constructible_run(tmp_path, monkeypatch)
+    path = _write_audit(args.outdir, prospective=prospective)
+    path.write_text(json.dumps(
+        {"created_before_any_outcome_evaluation_artifact": not prospective}),
+        encoding="utf-8")
+    with pytest.raises(ValueError, match="does not match where it is"):
+        MODULE.Pilot(args)
+
+
+def test_the_gradient_stage_is_told_the_audit_rather_than_left_to_default(tmp_path,
+                                                                         monkeypatch):
+    """The default is audit-splits/, so a run with a retrospective audit would
+    get no exclusions at all and say nothing about it."""
+
+    args = _constructible_run(tmp_path, monkeypatch)
+    audit = _write_audit(args.outdir, prospective=False)
+    runner = MODULE.Pilot(args)
+    calls = []
+    monkeypatch.setattr(runner, "run",
+                        lambda stage, env, script, args_: calls.append((script, args_)))
+    runner.report(0)
+
+    sensitivity = [a for script, a in calls if script.endswith("v4_gradient_sensitivity.py")]
+    assert len(sensitivity) == 1
+    assert sensitivity[0][sensitivity[0].index("--audit") + 1] == str(audit)

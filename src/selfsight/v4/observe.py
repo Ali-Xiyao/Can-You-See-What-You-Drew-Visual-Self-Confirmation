@@ -48,6 +48,33 @@ def prompted(prompt: str, questions: Sequence[AtomicQuestion]) -> tuple[AtomicQu
     )
 
 
+def blind(prompt: str, questions: Sequence[AtomicQuestion]) -> tuple[AtomicQuestion, ...]:
+    """The same questions with nothing prepended -- and that checked, not trusted.
+
+    `observe_rfo` gets its blindness from the wire: `assert_blind_wire_payload`
+    rejects a payload carrying a description, so "this observer never saw the
+    prompt" is a property of the transport rather than of the caller. The
+    blind-self arm calls the backbone directly, so there is no wire to enforce
+    it and the same guarantee has to be asserted here instead. `prompt` is a
+    parameter for exactly one reason: to be looked for and not found.
+
+    Whitespace is normalised on both sides before comparing, because
+    `PROMPTED_PREAMBLE` wraps the description across lines and a leak that
+    survives reflowing is still a leak.
+    """
+
+    needle = " ".join(prompt.split()).casefold()
+    if not needle:
+        raise ValueError("Blind-self needs the prompt in order to check it is absent")
+    for question in questions:
+        if needle in " ".join(question.text.split()).casefold():
+            raise ValueError(
+                f"Blind-self question carries the generating description: "
+                f"{question.question_id}"
+            )
+    return tuple(questions)
+
+
 def observe_naive(
     backbone: Any,
     *,
@@ -58,6 +85,30 @@ def observe_naive(
     """The leaky arm: the backbone judging its own drawing, told what it drew."""
 
     return backbone.observe_atoms(str(image_path), prompted(prompt, questions))
+
+
+def observe_blind_self(
+    backbone: Any,
+    *,
+    prompt: str,
+    questions: Sequence[AtomicQuestion],
+    image_path: str | Path,
+) -> ObservationResult:
+    """The missing cell: the backbone judging its own drawing, not told what it drew.
+
+    Naive and RFO differ in two ways at once -- who is looking (the backbone
+    itself against a frozen external observer) and what they are told (the
+    description against nothing) -- so neither arm alone says which factor
+    matters. This holds the model fixed and removes only the description, which
+    makes the naive/blind-self difference attributable to context and nothing
+    else.
+
+    It is worth being concrete about how small the difference is: naive calls
+    `observe_atoms` with `prompted(...)` and this calls it with `blind(...)`.
+    One string is prepended to each question, or it is not.
+    """
+
+    return backbone.observe_atoms(str(image_path), blind(prompt, questions))
 
 
 def observe_rfo(

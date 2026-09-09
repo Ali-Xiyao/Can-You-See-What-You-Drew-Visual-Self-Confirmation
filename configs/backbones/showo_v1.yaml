@@ -1,0 +1,44 @@
+# Show-o v1 as a READER ONLY, for E4 of .planning/2026-09-08-iclr-redesign.
+#
+# THIS MODEL IS A FROZEN NEGATIVE CONTROL. It does not train, it does not draw,
+# it does not enter arm A/B/C or the main results table. It answers questions
+# about images Show-o2-1.5B drew, to test whether "a verifier that shares the
+# generator's context is not an independent verifier" is a property of unified
+# models or a quirk of one checkpoint. Any number produced through this config
+# must be labelled as an inference-time replication on a negative-control model.
+#
+# THE ADAPTER DOES NOT READ THIS FILE. ShowoAdapter resolves every path from
+# configs/models.lock.yaml. The ids below are duplicated here so the run
+# manifest records what was supposed to answer, and build_observer refuses the
+# run if what actually loaded disagrees. Editing a revision here does not
+# change what loads -- it changes what the mismatch check compares against.
+
+schema_version: 1
+family: showo_v1
+environment: envs/core/python.exe
+role: frozen_negative_control
+
+backbone_id: showlab/show-o-w-clip-vit-512x512
+revision: ff3abf7fb8cd9b3b3647aafdbfa80c8805ae9665
+
+source:
+  repository_id: showlab/Show-o
+  revision: 45a5a2de01d1ebd10cd5864d29310a76476cdf23
+  subtree: .
+
+dependencies:
+  showlab/show-o-w-clip-vit-512x512: ff3abf7fb8cd9b3b3647aafdbfa80c8805ae9665
+  showlab/magvitv2: 5c3fa78f8b3523347c5cd1a4c97f3c4e96f33d5d
+  microsoft/phi-1_5: 77aa61eeac94fbf33d492b9f2744c98b42d5b5eb
+  openai/clip-vit-large-patch14-336: ce19dc912ca5cd21c8a653c79e251e808ccabcd1
+
+official_profile:
+  # Understanding goes through the CLIP tower, not through magvitv2: this is
+  # the "-w-clip-vit" checkpoint, which is the one Show-o's own inference_mmu.py
+  # uses for question answering.
+  resolution: 512
+  weight_dtype: bfloat16
+  language_base_id: microsoft/phi-1_5
+  vision_tower_id: openai/clip-vit-large-patch14-336
+  mmu_max_new_tokens: 16
+  decoding: greedy
