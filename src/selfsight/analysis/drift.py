@@ -88,6 +88,15 @@ class Columns:
         return SEPARABLE if self.separable else NOT_SEPARABLE
 
 
+# `split.json` records when the split stage ran. That stamp is not part of
+# what the split is: `v4_train.split_digest` is a function of (runs, seed,
+# outcome, probe) and says "and nothing else". Two runs that hold out the
+# same prompts under the same config write `created` at two different times
+# by construction -- the main run's says 2026-09-08T14:33:14Z -- so hashing
+# it makes the guard below fire on every legitimate pair.
+IDENTITY_EXCLUDES = ("created",)
+
+
 def split_digest(run: Path) -> str:
     """The evaluation split's identity, which is what makes two runs comparable.
 
@@ -95,6 +104,12 @@ def split_digest(run: Path) -> str:
     `theta_A` and `theta_A'` are rates over different questions and the
     subtraction means nothing. It says a digest check will confirm it, so this
     is that check rather than a comment saying it holds.
+
+    Everything the file records except the timestamp goes into the hash, which
+    is stricter than reading the `digest` field it already carries: that field
+    is a hash of the recipe, and this is a hash of the recipe together with the
+    prompt lists the recipe produced. They can only come apart if something
+    edited the file, which is exactly the case a guard is for.
     """
 
     path = Path(run) / "split.json"
@@ -103,8 +118,10 @@ def split_digest(run: Path) -> str:
                                 f"measured the same prompts (deviation 7.2)")
     import hashlib
 
-    payload = json.dumps(json.loads(path.read_text(encoding="utf-8")),
-                         sort_keys=True, separators=(",", ":"))
+    identity = {key: value
+                for key, value in json.loads(path.read_text(encoding="utf-8")).items()
+                if key not in IDENTITY_EXCLUDES}
+    payload = json.dumps(identity, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 

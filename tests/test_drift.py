@@ -29,7 +29,10 @@ from selfsight.analysis.drift import (
 )
 from selfsight.analysis.endpoint1 import load_checkpoint, paired_difference
 
-SPLIT = {"train": ["p1", "p2"], "outcome": ["p3", "p4"]}
+# The shape a real split.json has: a wall clock stamp, the recipe hash, and
+# the three prompt lists. The stamp used to be in the identity hash.
+SPLIT = {"created": "2026-09-08T14:33:14Z", "digest": "s" * 64,
+         "train": ["p1", "p2"], "outcome": ["p3", "p4"]}
 
 
 def _write(path: Path, rows: list[dict]) -> None:
@@ -379,3 +382,45 @@ def test_the_effect_is_endpoint_1_s_paired_difference(tmp_path: Path):
     endpoint = paired_difference(load_checkpoint(replicate, 8, "naive", "blind_self"))
     assert columns.effect == pytest.approx(endpoint)
     assert columns.effect == pytest.approx(0.5)
+
+
+def test_two_runs_split_at_different_times_have_the_same_identity(tmp_path: Path):
+    """`created` is a wall clock stamp, and the guard must not read it.
+
+    Every real split.json carries one -- the main run's says
+    2026-09-08T14:33:14Z -- and two runs that hold out the same prompts under
+    the same config write it at two different times by construction. A digest
+    that includes it makes deviation 7.2's guard fire on every legitimate
+    pair, at analysis time, after the GPU work is already spent.
+    """
+
+    first = _run(tmp_path, "main", split={**SPLIT, "created": "2026-09-08T14:33:14Z"})
+    second = _run(tmp_path, "replicate", split={**SPLIT, "created": "2026-09-11T02:07:55Z"})
+    assert split_digest(first) == split_digest(second)
+
+
+def test_the_recorded_digest_alone_is_not_what_is_compared(tmp_path: Path):
+    """Same recipe hash, different prompt lists, and the guard must still fire.
+
+    `split.json` carries a `digest` field and reading it would be the cheaper
+    check. That field hashes (runs, seed, outcome, probe) -- the recipe -- so
+    a file whose prompt lists were edited afterwards keeps it. Deviation 7.2
+    needs the two runs to have measured the same questions, not to have been
+    configured the same way.
+    """
+
+    first = _run(tmp_path, "main",
+                 split={**SPLIT, "created": "2026-09-08T14:33:14Z", "outcome": ["p3", "p4"]})
+    second = _run(tmp_path, "replicate",
+                  split={**SPLIT, "created": "2026-09-11T02:07:55Z", "outcome": ["p3", "p9"]})
+    assert first.name != second.name
+    assert split_digest(first) != split_digest(second)
+
+
+def test_the_train_side_is_in_the_identity_too(tmp_path: Path):
+    # Held-in prompts decide what the two runs trained on; two runs that split
+    # the same corpus differently are not comparable even if their evaluation
+    # lists happen to coincide.
+    first = _run(tmp_path, "main", split={**SPLIT, "train": ["p1", "p2"]})
+    second = _run(tmp_path, "replicate", split={**SPLIT, "train": ["p1", "p5"]})
+    assert split_digest(first) != split_digest(second)
