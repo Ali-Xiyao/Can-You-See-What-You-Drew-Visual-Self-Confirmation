@@ -1,6 +1,7 @@
 # Replicate 5 of 5 for E3 endpoint 1, registered in
 # .planning/2026-09-08-iclr-redesign/PREREG.md deviation 9.1. Identical to
-# v4_decoupling_main_20260908.yaml except for `profile` and `training.seed`.
+# v4_decoupling_main_20260908.yaml except for `profile`, `training.arms`
+# and `training.seed`.
 #
 # The top-level `seed` deliberately does NOT move: it fixes the split, the
 # split digest and the evaluation latents, so all five replicates are measured

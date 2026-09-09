@@ -20,6 +20,8 @@
 | A800 服务器 | 09-09 不可用,**明后天可用**(用户告知)。3 个 seed 靠它并行 | — |
 | 主运行源码未提交 | **已解决**(`90431bf`):`scripts/v4_train.py` 与 `src/selfsight/v4/evaluate.py` 的工作树字节与 `run_manifest.json` 的 launch 摘要逐位相同,却不在任何分支上。提交不改磁盘字节(已复核 23adcc98 / 636c498a 未变),同时解开了 arm B 合并的唯一阻塞 | 不影响在跑的运行 |
 | arm B 合并 | **已预演并验通**(探针 worktree `H:/Xiyao_Wang/062_mt`):唯一冲突在 `scripts/v4_train.py` 一处,解法见 §3.1;`test_v4_training_seed` / `test_v4_evaluate` / `test_v4_verify_replicates` / `test_v4_pilot_supervisor` / `test_v4_blind_self_arm` 共 103 通过 2 跳过 | — |
+| `training.arms` 是死配置 | **已修**(`staging/arm-b-merged` `1eccc20`):五份 replicate config 都写了 `training.arms`,而 supervisor 的臂集只来自 `--arms`(缺省是注册的 naive+rfo_gold)。漏了这个 flag 就会在 `e3-s20260906` 目录下训 naive+rfo_gold,config、日志、目录名一致地说它是 arm B,而 manifest 只在 **resume** 时才发现。现在构造时就拒绝矛盾,顺序也查(ARM_CARDS 是位置相关的)。4 个测试,拒绝那两个已对旧代码验红 | 这是本项目第三次同型失败 |
+| 五份 replicate config | **已修字面缺陷**:`s20260906` 的头注释块重复了一遍(生成脚本没剥掉继承的头),`s20260906` 与 `s20260907` 都标着「Replicate 2 of 5」,头注释还漏数了 `training.arms` 这处差异。现在五份各 193 行,编号 1–5,与主 config 的差异是 `profile` + `training.{arms, seed, seeds}` | — |
 | E3 端点 1 最终分析脚本 | **已写并验通**:`src/selfsight/analysis/endpoint1.py` + `scripts/v4_e3_endpoint1.py` + 29 个测试,**20/20 变异全杀**。按偏离 6.4 的 20000 / 20260908(不复用 report 的 2000 / 20260906),按偏离 9.3 的五 seed 精确符号检验(拒绝对 5 个值 bootstrap、拒绝非注册 seed 集冒充确证),按偏离 10 的成对剔除。在合成的五 seed 夹具上端到端跑通 | CPU,不占卡 |
 | bootstrap 种子/次数不一致 | **已登记,代码不动**(偏离 6.4):在跑的 report 是 20260906 / 2000,§3 注册的 20260908 只活在已降级的 breakpoints 模块里。端点 1 的最终脚本按 20000 / 20260908 新写 | 不动在跑的脚本 |
 
@@ -395,6 +397,10 @@ B 若单臂跑会训练 100%,A–B 差异就带上 prompt 集混淆,而 A vs B �
 
 测试:66 个通过(supervisor 34 + scene audit 32)。新写的都先对旧代码验红过
 (`--arms` 11 红、audit 解析 5 红、audit stage 5 红),对新增代码的变异测试 11/11 击杀。
+
+**启动前的闸现在是一个脚本**:`scripts/v4_e3_launch_preflight.py`。
+下面这段散文是它的规格,脚本是它的实现;不接触 GPU,任一条不过就非零退出。
+`--skip <闸名>` 可以放行某一条,但会在末尾把放行清单打出来,绿不掉。
 
 **启动前的三道闸,按顺序**(2026-09-09 补,见 §0.5):
 

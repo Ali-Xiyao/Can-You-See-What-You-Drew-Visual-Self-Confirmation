@@ -1,6 +1,7 @@
-# Replicate 2 of 5 for E3 endpoint 1, registered in
+# Replicate 1 of 5 for E3 endpoint 1, registered in
 # .planning/2026-09-08-iclr-redesign/PREREG.md deviation 9.1. Identical to
-# v4_decoupling_main_20260908.yaml except for `profile` and `training.seed`.
+# v4_decoupling_main_20260908.yaml except for `profile`, `training.arms`
+# and `training.seed`.
 #
 # The top-level `seed` deliberately does NOT move: it fixes the split, the
 # split digest and the evaluation latents, so all five replicates are measured
@@ -12,32 +13,6 @@
 # training.seed from commit da5ce71 onward; against an older copy this key is
 # silently ignored and all five replicates train on 20260906. Check first:
 #   envs/core/python.exe -c "import pathlib,sys; sys.exit(0 if 'def training_seed(' in pathlib.Path('scripts/v4_train.py').read_text(encoding='utf-8') else 'no training_seed: every replicate would be identical')"
-# v4 decoupling main run -- 12 checkpoints x 64 outcome prompts x 4 images.
-#
-# THIS IS NOT "240 PROMPTS x 24 CHECKPOINTS". THAT CONFIGURATION DOES NOT EXIST.
-#
-# The power table in review-packets/no-break-null-20260908 is indexed by two
-# numbers, and both of them turn out to be blocked by the corpus rather than by
-# the budget:
-#
-#   240 outcome prompts. The bank holds 228 specs, total. split_prompts raises
-#   if outcome + probe >= 228, and the frozen split already spends 64 + 32 to
-#   leave 132 for training. The 240 in that table counts adjudicated IMAGES,
-#   not prompts; this config reaches it as 64 prompts x 4 images = 256 drawn,
-#   ~230 adjudicated at the 10% loss the pilot measured.
-#
-#   24 checkpoints. build_schedule enforces max_epochs=1, so rounds x
-#   prompts_per_round <= 132. At 12 prompts per round that is 11 rounds, which
-#   is 12 checkpoints counting the untrained baseline. Getting to 24 means
-#   either halving prompts_per_round -- which trains ten repeats of six images
-#   per round, i.e. memorisation, the confound D* is about -- or authoring more
-#   specs. It is not a budget decision and no wall-clock allowance fixes it.
-#
-# What makes 12 checkpoints defensible anyway is that the binomial noise model
-# behind that table is wrong here, in our favour. See section "noise" below.
-#
-# Inherits every model and hardware setting from v4_decoupling_pilot.yaml.
-
 # v4 decoupling main run -- 12 checkpoints x 64 outcome prompts x 4 images.
 #
 # THIS IS NOT "240 PROMPTS x 24 CHECKPOINTS". THAT CONFIGURATION DOES NOT EXIST.
