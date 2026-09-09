@@ -20,6 +20,7 @@
 | A800 服务器 | 09-09 不可用,**明后天可用**(用户告知)。3 个 seed 靠它并行 | — |
 | 主运行源码未提交 | **已解决**(`90431bf`):`scripts/v4_train.py` 与 `src/selfsight/v4/evaluate.py` 的工作树字节与 `run_manifest.json` 的 launch 摘要逐位相同,却不在任何分支上。提交不改磁盘字节(已复核 23adcc98 / 636c498a 未变),同时解开了 arm B 合并的唯一阻塞 | 不影响在跑的运行 |
 | arm B 合并 | **已预演并验通**(探针 worktree `H:/Xiyao_Wang/062_mt`):唯一冲突在 `scripts/v4_train.py` 一处,解法见 §3.1;`test_v4_training_seed` / `test_v4_evaluate` / `test_v4_verify_replicates` / `test_v4_pilot_supervisor` / `test_v4_blind_self_arm` 共 103 通过 2 跳过 | — |
+| E3 端点 1 最终分析脚本 | **已写并验通**:`src/selfsight/analysis/endpoint1.py` + `scripts/v4_e3_endpoint1.py` + 29 个测试,**20/20 变异全杀**。按偏离 6.4 的 20000 / 20260908(不复用 report 的 2000 / 20260906),按偏离 9.3 的五 seed 精确符号检验(拒绝对 5 个值 bootstrap、拒绝非注册 seed 集冒充确证),按偏离 10 的成对剔除。在合成的五 seed 夹具上端到端跑通 | CPU,不占卡 |
 | bootstrap 种子/次数不一致 | **已登记,代码不动**(偏离 6.4):在跑的 report 是 20260906 / 2000,§3 注册的 20260908 只活在已降级的 breakpoints 模块里。端点 1 的最终脚本按 20000 / 20260908 新写 | 不动在跑的脚本 |
 
 两张 3090 都被主运行占着,而且它按 checkpoint 在两张卡之间来回。
