@@ -252,6 +252,17 @@ def test_gradient_sensitivity_is_told_which_scene_audit_to_read(tmp_path):
     assert args[args.index("--audit") + 1] == str(runner.audit_path)
 
 
+def _write_audit(outdir, *, prospective: bool):
+    """A scene audit where its own flag says it belongs."""
+
+    folder = "audit-splits" if prospective else "retrospective-scene-audit"
+    path = outdir / folder / "scene_overlap.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(
+        {"created_before_any_outcome_evaluation_artifact": prospective}), encoding="utf-8")
+    return path
+
+
 def _constructible_run(tmp_path, monkeypatch):
     """The smallest tree `Pilot.__init__` accepts, with no scene audit in it yet."""
 
@@ -289,9 +300,7 @@ def test_the_registered_audit_is_not_the_one_the_report_reads(tmp_path, monkeypa
     """Same file for both consumers is the thing this whole arrangement avoids."""
 
     args = _constructible_run(tmp_path, monkeypatch)
-    audit = args.outdir / "retrospective-scene-audit" / "scene_overlap.json"
-    audit.parent.mkdir(parents=True)
-    audit.write_text("{}", encoding="utf-8")
+    audit = _write_audit(args.outdir, prospective=False)
 
     runner = MODULE.Pilot(args)
     assert runner.audit_path == audit
@@ -306,9 +315,7 @@ def _blind_self_run(tmp_path, monkeypatch, arms=("naive", "blind_self")):
 
     args = _constructible_run(tmp_path, monkeypatch)
     args.arms = list(arms)
-    audit = args.outdir / "retrospective-scene-audit" / "scene_overlap.json"
-    audit.parent.mkdir(parents=True)
-    audit.write_text("{}", encoding="utf-8")
+    _write_audit(args.outdir, prospective=False)
     return args
 
 
@@ -408,3 +415,67 @@ def test_a_run_frozen_before_arms_existed_still_resumes(tmp_path, monkeypatch):
     first.lock.close()
 
     assert MODULE.Pilot(args).arms == list(MODULE.ARMS)
+
+
+def test_a_prospectively_frozen_audit_is_accepted_where_the_report_reads_it(tmp_path,
+                                                                           monkeypatch):
+    """arm B can have one: it has not run, so nothing in its directory could
+    have been seen when the audit was fixed. The main run could not, and the
+    supervisor was written when only that case existed."""
+
+    args = _constructible_run(tmp_path, monkeypatch)
+    audit = _write_audit(args.outdir, prospective=True)
+    assert MODULE.Pilot(args).audit_path == audit
+
+
+def test_neither_audit_says_how_to_make_either(tmp_path, monkeypatch):
+    args = _constructible_run(tmp_path, monkeypatch)
+    with pytest.raises(FileNotFoundError) as failure:
+        MODULE.Pilot(args)
+    assert "--prospective" in str(failure.value)
+
+
+def test_both_audits_present_is_refused_rather_than_resolved(tmp_path, monkeypatch):
+    """v4_decoupling_report.py reads audit-splits/ implicitly and this stage
+    would be told the other one. Picking a winner here would leave the two
+    halves of one run measured against two different exclusion sets."""
+
+    args = _constructible_run(tmp_path, monkeypatch)
+    _write_audit(args.outdir, prospective=True)
+    _write_audit(args.outdir, prospective=False)
+    with pytest.raises(ValueError, match="Keep one"):
+        MODULE.Pilot(args)
+
+
+@pytest.mark.parametrize("prospective", [True, False])
+def test_an_audit_whose_flag_contradicts_its_location_is_refused(tmp_path, monkeypatch,
+                                                                 prospective):
+    """The report checks half of this, hours into the run. Flipping the flag by
+    hand and moving the file are the two ways to get a retrospective exclusion
+    set into an outcome curve, and both are one edit."""
+
+    args = _constructible_run(tmp_path, monkeypatch)
+    path = _write_audit(args.outdir, prospective=prospective)
+    path.write_text(json.dumps(
+        {"created_before_any_outcome_evaluation_artifact": not prospective}),
+        encoding="utf-8")
+    with pytest.raises(ValueError, match="does not match where it is"):
+        MODULE.Pilot(args)
+
+
+def test_the_gradient_stage_is_told_the_audit_rather_than_left_to_default(tmp_path,
+                                                                         monkeypatch):
+    """The default is audit-splits/, so a run with a retrospective audit would
+    get no exclusions at all and say nothing about it."""
+
+    args = _constructible_run(tmp_path, monkeypatch)
+    audit = _write_audit(args.outdir, prospective=False)
+    runner = MODULE.Pilot(args)
+    calls = []
+    monkeypatch.setattr(runner, "run",
+                        lambda stage, env, script, args_: calls.append((script, args_)))
+    runner.report(0)
+
+    sensitivity = [a for script, a in calls if script.endswith("v4_gradient_sensitivity.py")]
+    assert len(sensitivity) == 1
+    assert sensitivity[0][sensitivity[0].index("--audit") + 1] == str(audit)

@@ -178,15 +178,50 @@ class Pilot:
                        "--runs", *RUNS]
         self.done_stages = self.out / "stage-completion"
         self.done_stages.mkdir(exist_ok=True)
-        # Checked at construction, not where it is read. gradient-sensitivity runs
-        # after the first checkpoint lands, so a missing audit takes hours of GPU
-        # time to discover; scripts/v4_scene_audit.py writes it in seconds.
-        self.audit_path = self.out / "retrospective-scene-audit" / "scene_overlap.json"
-        if not self.audit_path.exists():
-            raise FileNotFoundError(
-                f"No scene audit at {self.audit_path}; build it first with "
-                f"scripts/v4_scene_audit.py --outdir {self.out} --config {self.config_path}")
+        self.audit_path = self.resolve_audit()
         self.state("ready", "preflight")
+
+    def resolve_audit(self) -> Path:
+        """The scene audit, and which of the two kinds this run has.
+
+        Checked at construction rather than where it is read: gradient
+        sensitivity runs after the first checkpoint lands, so a missing audit
+        costs hours of GPU time to discover and scripts/v4_scene_audit.py
+        writes one in seconds.
+
+        Two admissible locations, and which one exists is how the run says
+        what it is. A prospective freeze at audit-splits/ was fixed before the
+        run produced anything, so it serves the report's outcome subsets as
+        well as the gradient exclusions. A retrospective one was not, so it
+        lives off the path the report reads and serves the gradient instrument
+        only. Both present is refused rather than resolved: the report would
+        read one file and this stage the other, and nothing downstream would
+        say so.
+        """
+
+        prospective = self.out / "audit-splits" / "scene_overlap.json"
+        retrospective = self.out / "retrospective-scene-audit" / "scene_overlap.json"
+        present = [path for path in (prospective, retrospective) if path.exists()]
+        if not present:
+            raise FileNotFoundError(
+                f"No scene audit at {prospective} or {retrospective}; build one with "
+                f"scripts/v4_scene_audit.py --outdir {self.out} --config {self.config_path}"
+                f" (add --prospective if this run has not started)")
+        if len(present) == 2:
+            raise ValueError(
+                f"Both {prospective} and {retrospective} exist; the report reads the first "
+                "implicitly and this run would measure against the second. Keep one.")
+        audit = present[0]
+        # The flag and the path have to agree. The report enforces half of this
+        # hours later; a mislabelled file caught here costs nothing.
+        frozen = json.loads(audit.read_text(encoding="utf-8")).get(
+            "created_before_any_outcome_evaluation_artifact")
+        if bool(frozen) is not (audit == prospective):
+            raise ValueError(
+                f"{audit} declares created_before_any_outcome_evaluation_artifact={frozen}, "
+                f"which does not match where it is. audit-splits/ is for a prospective "
+                f"freeze and retrospective-scene-audit/ is for everything else.")
+        return audit
 
     def state(self, status: str, stage: str, **extra) -> None:
         """Serialised because the two arm chains write this from two threads.
@@ -347,11 +382,12 @@ class Pilot:
         self.run(f"step-{step:05d}.report", "core", "scripts/v4_decoupling_report.py",
                  ["--outdir", str(self.out), "--config", str(self.config_path),
                   "--protocol", str(self.protocol_path)])
-        # --audit is passed because the default is RUN/audit-splits/scene_overlap.json,
-        # and v4_decoupling_report.py reads that same path implicitly to choose an
-        # outcome subset -- which is only sound for an audit frozen before any outcome
-        # existed. This run's audit was built mid-run and declares so, so it is named
-        # here explicitly and stays out of the path the report would pick it up from.
+        # Named rather than defaulted. v4_gradient_sensitivity.py falls back to
+        # RUN/audit-splits/scene_overlap.json, which is also the path
+        # v4_decoupling_report.py reads implicitly to choose an outcome subset, and
+        # that is only sound for an audit frozen before any outcome existed. A run
+        # whose audit is retrospective keeps it off that path entirely, so the
+        # fallback would silently find nothing where this finds the right file.
         self.run(f"step-{step:05d}.gradient-sensitivity", "core",
                  "scripts/v4_gradient_sensitivity.py",
                  ["--outdir", str(self.out), "--audit", str(self.audit_path)])
