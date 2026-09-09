@@ -20,8 +20,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -42,27 +44,77 @@ def _yaml(path: Path) -> dict:
     return yaml.safe_load(path.read_text(encoding="utf-8"))
 
 
-def gate_main_run_finished(state_path: Path = MAIN_RUN / "state.json") -> Gate:
-    """Finished, not stopped.
+def _supervisor_alive(pid: object) -> bool | None:
+    """True, False, or None when the platform will not answer.
 
-    The 96 h wall clock and the projected finish are within hours of each
-    other (EXECUTION 0.5), so `pilot_complete` and `canary_complete` are both
-    live outcomes and they mean opposite things. Launching replicates off a
-    truncated main run would spend 400 GPU-hours replicating an experiment
-    whose own arm C never finished.
+    Deliberately not `os.kill(pid, 0)`. On Windows CPython implements os.kill
+    by opening the process and calling TerminateProcess for any signal that
+    is not a console-control event, so the portable liveness idiom would kill
+    the run this gate exists to protect.
+    """
+
+    if not isinstance(pid, int) or os.name != "nt":
+        return None
+    try:
+        out = subprocess.run(["tasklist", "/FI", f"PID eq {pid}", "/NH"],
+                             capture_output=True, text=True, timeout=30, check=True).stdout
+    except Exception:  # noqa: BLE001 - any failure here is "cannot tell"
+        return None
+    # Windows reuses pids, so this can be wrong. It can only be wrong about
+    # the wording: every branch below returns False either way, and the gate
+    # never passes on the strength of a live pid.
+    return str(pid) in out
+
+
+def gate_main_run_finished(state_path: Path = MAIN_RUN / "state.json") -> Gate:
+    """Finished, not stopped, and not still going.
+
+    Four outcomes have to be told apart and only the first is a finished run.
+
+    - `pilot_complete` with completed_rounds == 11 -- the loop reached its end.
+    - `canary_complete` -- the supervisor was launched with --through-round
+      below training.rounds and stopped where it was told to. STATUS 43.15
+      calls this 有界运行结束. It is *not* the 96 h line; an earlier draft of
+      this gate and of EXECUTION section 1 both said it was, and both were
+      wrong about the code.
+    - `running` and not moving -- that is what the 96 h line looks like.
+      `run()` raises at the next stage boundary, the exception leaves the
+      round loop above the terminal `state()` call, and nothing ever
+      rewrites state.json. It says running for as long as the disk survives.
+      A traceback in any stage, a killed supervisor and a reboot all leave
+      the same file.
+    - `running` and moving -- the ordinary case while this is being read.
+
+    The verdict is identical for the last three: refuse. The message is not,
+    and the message is what this gate is for.
     """
 
     if not state_path.exists():
         return False, f"no {state_path}"
     state = json.loads(state_path.read_text(encoding="utf-8"))
     status, rounds = state.get("status"), state.get("completed_rounds")
-    if status != "pilot_complete":
-        return False, (f"status is {status!r}, not 'pilot_complete'"
-                       + (" -- the 96 h stop line fired, this is not a finished run"
-                          if status == "canary_complete" else ""))
-    if rounds != 11:
-        return False, f"completed_rounds is {rounds}, not 11"
-    return True, f"pilot_complete, 11 rounds, {state.get('elapsed_hours', 0):.1f} h"
+    if status == "pilot_complete" and rounds == 11:
+        return True, f"pilot_complete, 11 rounds, {state.get('elapsed_hours', 0):.1f} h"
+    if status == "pilot_complete":
+        # completed_rounds is written only by the terminal state() call, so
+        # its absence beside a terminal status means a hand-edited file.
+        return False, f"status is 'pilot_complete' but completed_rounds is {rounds!r}, not 11"
+    if status == "canary_complete":
+        return False, (f"status is 'canary_complete' (completed_rounds={rounds!r}): launched "
+                       f"with --through-round below training.rounds and stopped where it was "
+                       f"told to. A bounded run, not a finished one")
+    if status == "running":
+        age_min = (time.time() - float(state.get("updated_unix") or 0)) / 60
+        pid = state.get("supervisor_pid")
+        if _supervisor_alive(pid) is False:
+            return False, (f"status is 'running' but supervisor pid {pid} is gone and "
+                           f"state.json has not moved for {age_min:.0f} min -- the run "
+                           f"stopped without writing a terminal status. That is what the "
+                           f"96 h line, a stage traceback and a reboot all look like. Read "
+                           f"the supervisor log before deciding anything")
+        return False, (f"still running: {state.get('stage')}, {age_min:.0f} min since the "
+                       f"last state write, {state.get('elapsed_hours', 0):.1f} h elapsed")
+    return False, f"status is {status!r}, not 'pilot_complete'"
 
 
 def gate_merge_landed(root: Path = ROOT) -> Gate:
@@ -180,8 +232,6 @@ def gate_card_schedule_decided(root: Path = ROOT) -> Gate:
 
 
 def gate_model_root() -> Gate:
-    import os
-
     root = os.environ.get("SELFSIGHT_MODEL_ROOT")
     if not root:
         return False, "SELFSIGHT_MODEL_ROOT is unset"

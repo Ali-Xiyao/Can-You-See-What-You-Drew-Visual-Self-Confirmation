@@ -23,6 +23,7 @@
 | `training.arms` 是死配置 | **已修**(`staging/arm-b-merged` `1eccc20`):五份 replicate config 都写了 `training.arms`,而 supervisor 的臂集只来自 `--arms`(缺省是注册的 naive+rfo_gold)。漏了这个 flag 就会在 `e3-s20260906` 目录下训 naive+rfo_gold,config、日志、目录名一致地说它是 arm B,而 manifest 只在 **resume** 时才发现。现在构造时就拒绝矛盾,顺序也查(ARM_CARDS 是位置相关的)。4 个测试,拒绝那两个已对旧代码验红 | 这是本项目第三次同型失败 |
 | 五份 replicate config | **已修字面缺陷**:`s20260906` 的头注释块重复了一遍(生成脚本没剥掉继承的头),`s20260906` 与 `s20260907` 都标着「Replicate 2 of 5」,头注释还漏数了 `training.arms` 这处差异。现在五份各 193 行,编号 1–5,与主 config 的差异是 `profile` + `training.{arms, seed, seeds}` | — |
 | E3 端点 1 最终分析脚本 | **已写并验通**:`src/selfsight/analysis/endpoint1.py` + `scripts/v4_e3_endpoint1.py` + 29 个测试,**20/20 变异全杀**。按偏离 6.4 的 20000 / 20260908(不复用 report 的 2000 / 20260906),按偏离 9.3 的五 seed 精确符号检验(拒绝对 5 个值 bootstrap、拒绝非注册 seed 集冒充确证),按偏离 10 的成对剔除。在合成的五 seed 夹具上端到端跑通 | CPU,不占卡 |
+| 启动闸把 96 h 停止线认错了 | **已修**(`v4_e3_launch_preflight.py` 与本文 §1 的判据文字一起改):`canary_complete` 在这份代码里只表示 supervisor 是带 `--through-round N`(N < `training.rounds`)起的,停在被告知的地方——STATUS §43.15 早就这么记着,是我在 §1 和闸里把它写成「96 h 停止线触发」。真的 96 h 停止线走 `run()` 里那次 `raise`,异常从轮循环出去,走不到第 380 行的终态 `state()`,`state.json` 永远停在 `running`;stage traceback、被 kill、重启留下的文件一模一样。三种情况裁定相同(拒绝)、现场不同,所以现在按 supervisor pid 还在不在,把「停了」和「在跑」分开报。**存活探针不能用 `os.kill(pid, 0)`**:Windows 上 CPython 的 `os.kill` 对非控制台信号是开进程 + `TerminateProcess`,那条可移植写法会杀掉它要保护的运行;用 `tasklist`,并有一条 AST 测试钉住。13 个测试,3 条对旧代码验红,8/8 变异全杀 | CPU,不占卡 |
 | bootstrap 种子/次数不一致 | **已登记,代码不动**(偏离 6.4):在跑的 report 是 20260906 / 2000,§3 注册的 20260908 只活在已降级的 breakpoints 模块里。端点 1 的最终脚本按 20000 / 20260908 新写 | 不动在跑的脚本 |
 
 两张 3090 都被主运行占着,而且它按 checkpoint 在两张卡之间来回。
@@ -406,7 +407,15 @@ B 若单臂跑会训练 100%,A–B 差异就带上 prompt 集混淆,而 A vs B �
 
 1. **主运行必须是正常跑完的**。`runs/v4/decoupling-main-20260908/state.json`
    的 `status` 要是 `pilot_complete` 且 `completed_rounds == 11`。
-   `canary_complete`(96 h 停止线触发)或 traceback 都**不**触发自动启动——
+   「不是」有三种,裁定相同(都不触发自动启动)、现场不同
+   (2026-09-09 更正,初稿这里把前两种搞混了):
+   - `canary_complete`:supervisor 带 `--through-round N`(N < `training.rounds`)起的,
+     停在被告知的地方。**不是** 96 h 停止线。STATUS §43.15 记的「有界运行结束」就是它。
+   - `status` 停在 `running` 不动:**这才是 96 h 停止线的样子**。`run()` 在下一个 stage
+     边界 `raise`,异常从轮循环里出去,走不到终态 `state()`,`state.json` 再没人改写。
+     stage traceback、被 kill、机器重启,留下的文件长得一样。闸按 supervisor pid
+     还在不在把这一种和下一种分开。
+   - `status` 是 `running` 而且在动:就是还在跑。
    96 h 余量只剩不到 4 h,这不再是形式上的判据。
 2. **合并**(§3),然后跑下面第 0 条的 `training_seed` 源码闸。
 3. **两张卡都空的那一刻先跑 §0.3 的空载基准**,按预注册判据决定 detect 排期,
