@@ -1,0 +1,218 @@
+# Replicate 2 of 5 for E3 endpoint 1, registered in
+# .planning/2026-09-08-iclr-redesign/PREREG.md deviation 9.1. Identical to
+# v4_decoupling_main_20260908.yaml except for `profile` and `training.seed`.
+#
+# The top-level `seed` deliberately does NOT move: it fixes the split, the
+# split digest and the evaluation latents, so all five replicates are measured
+# on one partition, the same 64 outcome specs and the same frozen latents.
+# `training.seed` moves the round schedule, the LoRA init and the optimizer
+# RNG, which is what a replicate is supposed to vary.
+#
+# REFUSES TO WORK BEFORE THE ARM B MERGE. scripts/v4_train.py only reads
+# training.seed from commit da5ce71 onward; against an older copy this key is
+# silently ignored and all five replicates train on 20260906. Check first:
+#   envs/core/python.exe -c "import pathlib,sys; sys.exit(0 if 'def training_seed(' in pathlib.Path('scripts/v4_train.py').read_text(encoding='utf-8') else 'no training_seed: every replicate would be identical')"
+# v4 decoupling main run -- 12 checkpoints x 64 outcome prompts x 4 images.
+#
+# THIS IS NOT "240 PROMPTS x 24 CHECKPOINTS". THAT CONFIGURATION DOES NOT EXIST.
+#
+# The power table in review-packets/no-break-null-20260908 is indexed by two
+# numbers, and both of them turn out to be blocked by the corpus rather than by
+# the budget:
+#
+#   240 outcome prompts. The bank holds 228 specs, total. split_prompts raises
+#   if outcome + probe >= 228, and the frozen split already spends 64 + 32 to
+#   leave 132 for training. The 240 in that table counts adjudicated IMAGES,
+#   not prompts; this config reaches it as 64 prompts x 4 images = 256 drawn,
+#   ~230 adjudicated at the 10% loss the pilot measured.
+#
+#   24 checkpoints. build_schedule enforces max_epochs=1, so rounds x
+#   prompts_per_round <= 132. At 12 prompts per round that is 11 rounds, which
+#   is 12 checkpoints counting the untrained baseline. Getting to 24 means
+#   either halving prompts_per_round -- which trains ten repeats of six images
+#   per round, i.e. memorisation, the confound D* is about -- or authoring more
+#   specs. It is not a budget decision and no wall-clock allowance fixes it.
+#
+# What makes 12 checkpoints defensible anyway is that the binomial noise model
+# behind that table is wrong here, in our favour. See section "noise" below.
+#
+# Inherits every model and hardware setting from v4_decoupling_pilot.yaml.
+
+# v4 decoupling main run -- 12 checkpoints x 64 outcome prompts x 4 images.
+#
+# THIS IS NOT "240 PROMPTS x 24 CHECKPOINTS". THAT CONFIGURATION DOES NOT EXIST.
+#
+# The power table in review-packets/no-break-null-20260908 is indexed by two
+# numbers, and both of them turn out to be blocked by the corpus rather than by
+# the budget:
+#
+#   240 outcome prompts. The bank holds 228 specs, total. split_prompts raises
+#   if outcome + probe >= 228, and the frozen split already spends 64 + 32 to
+#   leave 132 for training. The 240 in that table counts adjudicated IMAGES,
+#   not prompts; this config reaches it as 64 prompts x 4 images = 256 drawn,
+#   ~230 adjudicated at the 10% loss the pilot measured.
+#
+#   24 checkpoints. build_schedule enforces max_epochs=1, so rounds x
+#   prompts_per_round <= 132. At 12 prompts per round that is 11 rounds, which
+#   is 12 checkpoints counting the untrained baseline. Getting to 24 means
+#   either halving prompts_per_round -- which trains ten repeats of six images
+#   per round, i.e. memorisation, the confound D* is about -- or authoring more
+#   specs. It is not a budget decision and no wall-clock allowance fixes it.
+#
+# What makes 12 checkpoints defensible anyway is that the binomial noise model
+# behind that table is wrong here, in our favour. See section "noise" below.
+#
+# Inherits every model and hardware setting from v4_decoupling_pilot.yaml.
+
+profile: v4_e3_replicate_s20260906
+
+# UNCHANGED FROM THE PILOT ON PURPOSE. split_digest is sha256 over exactly
+# {runs, seed, data.local_outcome, data.local_probe}, so holding these four
+# byte-identical means this run reuses the frozen 2026-09-05 partition instead
+# of quietly re-drawing it. The outcome set is the same 64 specs the pilot's
+# external curve was measured on, which is what makes the two curves
+# comparable. Changing `seed` here silently re-splits.
+seed: 20260906
+
+paths:
+  cache_root: ${SELFSIGHT_CACHE_ROOT}
+  data_root: ${SELFSIGHT_DATA_ROOT}
+  run_root: ${SELFSIGHT_RUN_ROOT}
+  model_root: ${SELFSIGHT_MODEL_ROOT}
+  tmp_root: ${SELFSIGHT_TMP_ROOT}
+
+hardware:
+  generator_device: cuda:1
+  observer_device: cuda:0
+  precision: bf16
+  attention: sdpa
+  distributed: false
+
+model:
+  trainable_id: showlab/show-o2-1.5B
+  backbone_config: configs/backbones/showo2_1p5b.yaml
+  frozen_negative_control_id: showlab/show-o-w-clip-vit-512x512
+  language_base_id: Qwen/Qwen2.5-1.5B-Instruct
+  vision_tower_id: google/siglip-so400m-patch14-384
+  image_autoencoder_id: Wan-AI/Wan2.1-T2V-14B
+  image_resolution: 432
+  generation_timesteps: 50
+  guidance_scale: 5.0
+  temperature: 1.0
+
+data:
+  local_train_prompts: 132
+  local_outcome: 64
+  local_probe: 32
+  images_per_prompt: 1
+
+  # THE ONE KNOB THIS CONFIG ACTUALLY TURNS, and the only one the corpus
+  # leaves free. R draws per outcome prompt per checkpoint, each with its own
+  # latent, all R fixed across checkpoints. 64 x 4 = 256 images per checkpoint
+  # per arm against the pilot's 64.
+  #
+  # REQUIRES A CODE CHANGE -- this key is inert until it is made. See
+  # review-packets/outcome-budget-20260908/NOTES.md section 4. The manifest
+  # schema already carries candidate_index (the corpus pools use it for K=8),
+  # so the change is additive and detect/verify need no modification.
+  images_per_outcome_prompt: 4
+
+training:
+  arms: [naive, blind_self]
+  seed: 20260906
+
+  # 11 rounds x 12 prompts = 132 slots against exactly 132 training prompts.
+  # This is max_epochs=1 to the prompt: one more round and build_schedule
+  # raises rather than quietly starting a second pass. 11 rounds is 12
+  # checkpoints counting round -1, the untrained baseline.
+  rounds: 11
+  prompts_per_round: 12
+  candidate_k: 8
+  optimizer_steps_per_round: 8
+
+  micro_batch_size: 1
+  gradient_accumulation_steps: 8
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  warmup_ratio: 0.10
+  max_grad_norm: 1.0
+  understanding_replay_ratio: 0.25
+  gradient_checkpointing: true
+  lora:
+    rank: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: []
+    target_selection_required: true
+    forbidden_trainable: [embed_tokens, lm_head, image_embedder_und, und_trans, fusion_proj]
+
+evaluation:
+  # This is where the extra power comes from, and it is worth being explicit
+  # because it is the reason 12 checkpoints is not obviously too few.
+  #
+  # fixed_latents pins evaluation_seed's step component to 0, so every
+  # checkpoint re-renders the SAME (prompt, latent) pairs. The between-spec
+  # difficulty spread -- which is most of the binomial variance, since per-spec
+  # correctness runs from 21 dead specs to a 0.25 median -- is then a fixed
+  # effect that the pairing cancels. Only what the model actually changed can
+  # flip an outcome.
+  #
+  # Measured on the pilot's own five checkpoints, both arms: residuals about a
+  # fitted line are 2.33 pt where the binomial model predicts 6.13 pt. Pooled
+  # over 6 df that is chi2 = 0.87, p = 0.010 against binomial noise. Ratio 0.38,
+  # 95% CI [0.25, 0.84] -- wide, so this config is sized against the pessimistic
+  # end, not the point estimate.
+  fixed_latents: true
+  selector_missing_policy: zero_over_all_questions
+
+  # Not read by the code: divergence_report hard-defaults to 0.05 and the
+  # internal/external floors are measured per run. Recorded here so the run
+  # manifest says which gate produced the D* verdict.
+  documented_only_max_break_p_value: 0.05
+
+gradient_probe:
+  source: runs/v4/gate-b-openct2
+  size: 16
+  minimum_size: 4
+  criteria: [naive, rfo, gold]
+  resamples: 2000
+  reference: base
+  fixed_candidate_bank: true
+
+# KEY NAME IS `pilot` BECAUSE run_decoupling_pilot.py reads
+# config['pilot']['max_wall_hours'] / ['min_free_gib'] / ['min_paired_prompts']
+# directly. Renaming it to something more accurate crashes the supervisor at
+# preflight, which is a worse trade than an inherited key name.
+pilot:
+  status: confirmatory_for_dstar_only
+  # Pilot delivered 5 checkpoints per arm in 14.8 h at R=1, both arms in
+  # parallel on the two cards: 2.96 h per checkpoint. Image-proportional work
+  # is 38.8 s/img measured (generate 20.5, internvl 9.0, qwen3vl 7.6, crop 1.8).
+  # The pilot measured 2.96 h per checkpoint at R=1, of which 1.38 h was image
+  # work for both arms (38.8 s/img: generate 20.5, internvl 9.0, qwen3vl 7.6,
+  # crop 1.8). run_decoupling_pilot.py now runs the two arms' evaluate-and-probe
+  # chains concurrently, one card each, so that term is per arm rather than for
+  # both: 256 x 38.8 s = 2.76 h, against 1.58 h of training and reporting that
+  # stays sequential.
+  #   12 ck at R=4, sequential  ~ 85 h
+  #   12 ck at R=4, per-arm cards  ~ 52 h   <- this run
+  # R=4 is chosen on power, not on cost: at the measured noise it is 92.7% for
+  # a 0.10 rise where R=2 is 75.3% and R=1 is 44.7%. The cap moves to fit the
+  # design rather than the design shrinking to fit the cap, which is the
+  # failure mode section 7 of the 2026-09-08 prereg forbids.
+  max_wall_hours: 96
+  min_free_gib: 8
+  min_paired_prompts: 2
+  effect_window_checkpoints: 3
+  internal_change_margin: 0.02
+  external_improvement_margin: 0.02
+  gradient_drop_margin: 0.01
+  gradient_confirmation_checkpoints: 2
+
+  # SELECTOR IS UNCHANGED. select_by_observation still uses fixed_atomic_score.
+  # cycle passed the frozen 2026-09-04 thresholds on 2026-09-08 (92.7% / 0.0% /
+  # 0.0%, see review-packets/cycle-selector-resolution-20260908), but swapping
+  # it is a training-loop change registered in docs/prereg/2026-09-08-cycle
+  # -selector.md section 5 and not yet approved. It is also not a config knob:
+  # the scorer is called directly in src/selfsight/v4/train.py:488.
+  selector: observe_naive_fixed_atomic

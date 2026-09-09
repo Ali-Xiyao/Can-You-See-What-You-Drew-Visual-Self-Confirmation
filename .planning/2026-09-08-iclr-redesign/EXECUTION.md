@@ -324,9 +324,32 @@ B 若单臂跑会训练 100%,A–B 差异就带上 prompt 集混淆,而 A vs B �
 `ROOT` 是脚本自己所在的树;`H:/Xiyao_Wang/062_armB` 底下没有 `envs/`,
 在那里启动会在第一个 stage 就找不到解释器。这也是合并必须排在启动前面的原因。
 
+**这条命令现在跑 5 次,不是 1 次**(偏离 9:5 个 seed)。五份 config 已备好,
+彼此只差 `profile` 与 `training.seed`,顶层 `seed` 一律 20260906——
+所以五次共享同一份 split、同一批 64 个 outcome spec、同一批固定 latent。
+已核对:五份的 split 输入摘要完全相同,五个 `training.seed` 互不相同。
+
 ```
-envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/blind-self-<启动日> --config configs/v4_decoupling_main_20260908.yaml --arms naive blind_self
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260906 --config configs/v4_e3_replicate_s20260906.yaml --arms naive blind_self
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260907 --config configs/v4_e3_replicate_s20260907.yaml --arms naive blind_self
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260909 --config configs/v4_e3_replicate_s20260909.yaml --arms naive blind_self
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260910 --config configs/v4_e3_replicate_s20260910.yaml --arms naive blind_self
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260911 --config configs/v4_e3_replicate_s20260911.yaml --arms naive blind_self
 ```
+
+**0. 先查这一条,它排在所有检查前面。** 合并前的 `scripts/v4_train.py` 不读
+`training.seed`,读不到不会报错——它会**静默忽略**,五个 replicate 于是全部
+训练在 20260906 上,而目录名、config 和日志会一致地声称它们是五个 seed。
+那是本计划里最难事后发现的一种失败:
+
+```bash
+envs/core/python.exe -c "import pathlib,sys; sys.exit(0 if 'def training_seed(' in pathlib.Path('scripts/v4_train.py').read_text(encoding='utf-8') else 'no training_seed: every replicate would train on the same seed')"
+```
+
+退出码非 0 就停,回去做 §3 的合并。跑完之后再验一次,这次验产物而不是源码:
+五个 run 的 `rounds/round-000/done.json` 里 `initialization_seed` 必须是五个
+不同的值,而 `split.json` 的 `digest` 必须五个完全相同。**两个都对才算五个 seed。**
+
 
 启动前必查:
 
