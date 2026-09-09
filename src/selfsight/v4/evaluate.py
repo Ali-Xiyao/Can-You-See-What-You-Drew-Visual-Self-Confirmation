@@ -137,15 +137,25 @@ def split_prompts(
 # --------------------------------------------------------------------------
 
 
-def evaluation_seed(*, seed: int, arm: str, step: int, prompt_id: str) -> int:
-    """One latent per (checkpoint, prompt), shared by both arms.
+def evaluation_seed(
+    *, seed: int, arm: str, step: int, prompt_id: str, candidate_index: int = 0
+) -> int:
+    """One latent per (checkpoint, prompt, draw), shared by both arms.
 
     Both arms drawing the outcome set from the same latents means a difference
     between their external curves is a difference between the models, not
     between two draws from the same model.
+
+    `candidate_index=0` deliberately hashes the parts it hashed before this
+    parameter existed. `_seed_from_parts` joins on ":" before sha256, so
+    appending a zero would move every first draw onto a different latent, and
+    the one-draw subset of a multi-draw run would stop being comparable to the
+    curves recorded before it.
     """
 
-    return _seed_from_parts(seed, "eval", step, prompt_id)
+    if candidate_index == 0:
+        return _seed_from_parts(seed, "eval", step, prompt_id)
+    return _seed_from_parts(seed, "eval", step, prompt_id, candidate_index)
 
 
 def write_evaluation_manifest(
@@ -153,15 +163,18 @@ def write_evaluation_manifest(
     *,
     specs: dict[str, SceneSpec],
     prompt_ids: Sequence[str],
-    images: dict[str, str],
-    seeds: dict[str, int],
+    images: dict[tuple[str, int], str],
+    seeds: dict[tuple[str, int], int],
 ) -> Path:
     """A manifest in the shape `detect` and `verify` already read.
 
-    `candidate_index` is 0 for every row: evaluation draws one image per prompt,
-    where the corpus drew K. The verifier does not care, and reusing its schema
-    exactly is the point -- the moment this file invents its own, the external
-    curve stops being the same measurement as section 27's.
+    Keyed by (prompt_id, candidate_index) because evaluation may now draw R
+    images per prompt where it once drew one. `candidate_index` is the corpus
+    pools' own field and the detectors were built against pool manifests where
+    it already ran 0..K-1, so R > 1 needs no schema change and no detector
+    change. Reusing that schema exactly is the point -- the moment this file
+    invents its own, the external curve stops being the same measurement as
+    section 27's.
     """
 
     directory = Path(directory)
@@ -169,17 +182,19 @@ def write_evaluation_manifest(
     path = directory / "manifest.jsonl"
     rows = []
     for prompt_id in prompt_ids:
-        if prompt_id not in images:
+        draws = sorted(index for held, index in images if held == prompt_id)
+        if not draws:
             raise KeyError(f"No generated image for evaluation prompt {prompt_id}")
         spec = specs[prompt_id]
-        rows.append({
-            "spec_id": spec.spec_id,
-            "candidate_index": 0,
-            "seed": int(seeds[prompt_id]),
-            "prompt": spec.prompt,
-            "image_path": images[prompt_id],
-            "spec": spec.to_dict(),
-        })
+        for candidate_index in draws:
+            rows.append({
+                "spec_id": spec.spec_id,
+                "candidate_index": candidate_index,
+                "seed": int(seeds[(prompt_id, candidate_index)]),
+                "prompt": spec.prompt,
+                "image_path": images[(prompt_id, candidate_index)],
+                "spec": spec.to_dict(),
+            })
     path.write_text("".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
     return path
 
@@ -466,6 +481,8 @@ class DivergenceReport:
     arm: str
     checkpoints: int
     min_internal_slope: float
+    min_external_slope: float
+    max_break_p_value: float | None
     divergence: DivergenceEstimate
     warning: GradientWarningEstimate | None
     lead: float | None
@@ -475,9 +492,22 @@ class DivergenceReport:
             "arm": self.arm,
             "checkpoints": self.checkpoints,
             "min_internal_slope": self.min_internal_slope,
+            "min_external_slope": self.min_external_slope,
+            "max_break_p_value": self.max_break_p_value,
             "d_star": self.divergence.d_star,
             "internal_post_slope": self.divergence.internal_post_slope,
             "external_post_slope": self.divergence.external_post_slope,
+            "external_pre_slope": self.divergence.external_pre_slope,
+            "coupled_candidates": self.divergence.coupled_candidates,
+            "break_p_value": (
+                None if self.divergence.break_support is None
+                else self.divergence.break_support.p_value
+            ),
+            "break_sse_reduction": (
+                None if self.divergence.break_support is None
+                else self.divergence.break_support.reduction
+            ),
+            "admissible_candidates": self.divergence.admissible_candidates,
             "reason": self.divergence.reason,
             "d_g": None if self.warning is None else self.warning.d_g,
             "d_g_reason": None if self.warning is None else self.warning.reason,
@@ -513,6 +543,42 @@ def internal_noise_slope(rows: Sequence[CheckpointMetrics], arm: str) -> float:
     return float(sorted(sems)[len(sems) // 2]) / span
 
 
+def external_noise_slope(rows: Sequence[CheckpointMetrics], arm: str) -> float:
+    """The steepest external slope that measurement noise alone could produce.
+
+    The mirror of `internal_noise_slope`, for the precondition rather than the
+    conclusion. D* means training broke a coupling, which presupposes a coupling
+    was there: `estimate_d_star` now requires the external curve to have been
+    rising into the knot. That requirement needs a floor for the same reason the
+    internal one does -- a flat external curve fits at a slope of order 1e-05,
+    and a bare sign test would read that as "was improving."
+
+    External correctness is a proportion over adjudicated prompts rather than a
+    mean carrying its own SEM, so precision comes from the binomial:
+    `sqrt(p(1-p)/n)` per checkpoint, median across the run, over the step span.
+    Checkpoints at p=0 or p=1 contribute a zero SEM honestly -- with no variation
+    observed there is no evidence of movement -- and the median keeps one such
+    checkpoint from collapsing the floor.
+    """
+
+    usable = sorted((row for row in rows if row.arm == arm), key=lambda row: row.step)
+    sems = []
+    for row in usable:
+        if row.external_correct is None or row.external_n <= 0:
+            continue
+        share = float(row.external_correct)
+        sems.append(math.sqrt(max(0.0, share * (1.0 - share)) / row.external_n))
+    if len(usable) < 2 or not sems:
+        raise ValueError(
+            f"Cannot derive an external noise floor for arm {arm}: need at least two checkpoints "
+            f"carrying external_correct over external_n > 0, found {len(sems)}"
+        )
+    span = float(usable[-1].step - usable[0].step)
+    if span <= 0:
+        raise ValueError(f"Arm {arm} has no step span to measure a slope against")
+    return float(sorted(sems)[len(sems) // 2]) / span
+
+
 def divergence_report(
     rows: Sequence[CheckpointMetrics],
     arm: str,
@@ -521,6 +587,8 @@ def divergence_report(
     noise_low: float | Sequence[float] | None = None,
     noise_high: float | Sequence[float] | None = None,
     min_internal_slope: float | None = None,
+    min_external_slope: float | None = None,
+    max_break_p_value: float | None = 0.05,
 ) -> DivergenceReport:
     """D*, and D_g when a gradient curve is supplied alongside its noise floor.
 
@@ -529,15 +597,28 @@ def divergence_report(
     was not measured on the same run -- would turn "we could not estimate this"
     into a number.
 
-    `min_internal_slope` defaults to `internal_noise_slope`. Passing it
+    `min_internal_slope` and `min_external_slope` default to the measured floors
+    from `internal_noise_slope` and `external_noise_slope`. Passing them
     explicitly is for sensitivity analysis; passing zero reproduces the
-    estimator's own default and is not a defensible headline number.
+    estimator's own defaults and is not a defensible headline number.
+
+    `max_break_p_value` defaults to 0.05 and sends the external curve through
+    the no-break null. Passing None turns the check off, which restores a false
+    D* rate of 32% to 54% depending on how many checkpoints were run
+    (review-packets/no-break-null-20260908/calibration.json). It is an
+    instrument threshold, not a significance level: clearing it says the knot
+    beat noise, not that the trajectory means anything.
     """
 
     steps, internal, external = curves(rows, arm)
     floor = internal_noise_slope(rows, arm) if min_internal_slope is None else min_internal_slope
+    coupled_floor = (
+        external_noise_slope(rows, arm) if min_external_slope is None else min_external_slope
+    )
     divergence = estimate_d_star(steps, internal, external,
-                                 min_positive_internal_slope=floor)
+                                 min_positive_internal_slope=floor,
+                                 min_coupled_external_slope=coupled_floor,
+                                 max_break_p_value=max_break_p_value)
     warning = None
     if gda_free is not None:
         if noise_low is None or noise_high is None:
@@ -551,6 +632,8 @@ def divergence_report(
         arm=arm,
         checkpoints=len(steps),
         min_internal_slope=floor,
+        min_external_slope=coupled_floor,
+        max_break_p_value=max_break_p_value,
         divergence=divergence,
         warning=warning,
         lead=estimate_lead(divergence.d_star, None if warning is None else warning.d_g),

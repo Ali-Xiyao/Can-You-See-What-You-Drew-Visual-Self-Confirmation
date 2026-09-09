@@ -519,40 +519,65 @@ def stage_generate(args: argparse.Namespace) -> None:
 
     prompt_ids = list(split["outcome"])
     seed_step = 0 if config.get("evaluation", {}).get("fixed_latents", False) else step
-    seeds = {prompt_id: evaluation_seed(seed=int(config["seed"]), arm=args.arm,
-                                        step=seed_step, prompt_id=prompt_id)
-             for prompt_id in prompt_ids}
+    # R draws per outcome prompt. The bank holds 228 specs and the frozen split
+    # spends 64 of them here, so the only way to put more adjudicated images
+    # under each checkpoint is to draw each prompt more than once. Every draw
+    # keeps its own latent and every latent is fixed across checkpoints, which
+    # is what makes the external curve a paired measurement rather than a fresh
+    # sample each time.
+    draws = int(config.get("data", {}).get("images_per_outcome_prompt", 1))
+    if draws < 1:
+        raise SystemExit("data.images_per_outcome_prompt must be at least 1")
+    keys = [(prompt_id, index) for prompt_id in prompt_ids for index in range(draws)]
+    seeds = {key: evaluation_seed(seed=int(config["seed"]), arm=args.arm,
+                                  step=seed_step, prompt_id=key[0], candidate_index=key[1])
+             for key in keys}
     drawn = backbone.generate_images(
-        [corpus.specs[prompt_id].prompt for prompt_id in prompt_ids],
-        [seeds[prompt_id] for prompt_id in prompt_ids],
+        [corpus.specs[prompt_id].prompt for prompt_id, _ in keys],
+        [seeds[key] for key in keys],
         eval_dir / "images",
         f"{args.arm}-s{step:05d}",
         skip_existing=True,
     )
-    images = {prompt_id: record.image_path for prompt_id, record in zip(prompt_ids, drawn)}
+    # zip() truncates silently, and a short draw list would show up only as a
+    # checkpoint with fewer images -- i.e. as extra noise on the external curve,
+    # which is the one thing this whole configuration exists to avoid.
+    if len(drawn) != len(keys):
+        raise SystemExit(f"Asked for {len(keys)} images, generator returned {len(drawn)}")
+    images = {key: record.image_path for key, record in zip(keys, drawn)}
 
     write_evaluation_manifest(eval_dir, specs=corpus.specs, prompt_ids=prompt_ids,
                               images=images, seeds=seeds)
 
+    # The internal curve stays on the first draw of each prompt, so it remains
+    # the same measurement the pilot's internal curve was rather than silently
+    # becoming an R-times-larger one halfway through the project. The extra
+    # draws exist to quiet the external curve, which is the one short of power.
+    first_draw = {prompt_id: images[(prompt_id, 0)] for prompt_id in prompt_ids}
+
     selection_rows = self_selection_scores(
-        backbone, specs=corpus.specs, images=images,
+        backbone, specs=corpus.specs, images=first_draw,
         output_path=eval_dir / "s_select.jsonl", metadata={
             "arm": args.arm, "round": args.round, "step": step,
             "config_digest": sha256_json(config), "parameter_digest": model_digest,
             "initialization_seed": int(config["seed"]),
             "evaluation_seed_step": seed_step,
+            "outcome_draws_per_prompt": draws,
+            "internal_curve_scope": "first_draw_only",
             "score_policy": "fixed_question_denominator_v1"})
     selection_summary = summarize_selection(selection_rows)
     (eval_dir / "s_select.json").write_text(json.dumps(selection_summary, indent=2), encoding="utf-8")
-    scores = cycle_scores(backbone, specs=corpus.specs, images=images)
+    scores = cycle_scores(backbone, specs=corpus.specs, images=first_draw)
     mean, sem, count = summarize_cycle(scores)
     (eval_dir / "cycle.json").write_text(json.dumps({
         "arm": args.arm, "round": args.round, "step": step,
         "mean": mean, "sem": sem, "n": count, "scores": scores,
         "parameter_digest": model_digest, "initialization_seed": int(config["seed"]),
     }, indent=2), encoding="utf-8")
-    print(f"{args.arm} step {step}: cycle {mean} +/- {sem} over {count} images; "
+    print(f"{args.arm} step {step}: cycle {mean} +/- {sem} over {count} images "
+          f"(first draw of {len(prompt_ids)} prompts); "
           f"s_select {selection_summary['mean']}, coverage {selection_summary['coverage']}")
+    print(f"    external set: {len(prompt_ids)} prompts x {draws} draws = {len(keys)} images")
     print(f"next: v4_run_pipeline.py detect --manifest {eval_dir / 'manifest.jsonl'} "
           f"--detector qwen3vl --device cuda:0")
 
@@ -617,7 +642,8 @@ def stage_report(args: argparse.Namespace) -> None:
         star = report.divergence.d_star
         print(f"{arm}: D* = {star if star is not None else 'not estimable'} "
               f"over {report.checkpoints} checkpoints "
-              f"(floor {report.min_internal_slope:.3e})")
+              f"(internal floor {report.min_internal_slope:.3e}, "
+              f"coupling floor {report.min_external_slope:.3e})")
         if star is None:
             print(f"    {report.divergence.reason}")
     path = out / "divergence.json"
