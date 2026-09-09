@@ -152,6 +152,14 @@ class Pilot:
                        "--runs", *RUNS]
         self.done_stages = self.out / "stage-completion"
         self.done_stages.mkdir(exist_ok=True)
+        # Checked at construction, not where it is read. gradient-sensitivity runs
+        # after the first checkpoint lands, so a missing audit takes hours of GPU
+        # time to discover; scripts/v4_scene_audit.py writes it in seconds.
+        self.audit_path = self.out / "retrospective-scene-audit" / "scene_overlap.json"
+        if not self.audit_path.exists():
+            raise FileNotFoundError(
+                f"No scene audit at {self.audit_path}; build it first with "
+                f"scripts/v4_scene_audit.py --outdir {self.out} --config {self.config_path}")
         self.state("ready", "preflight")
 
     def state(self, status: str, stage: str, **extra) -> None:
@@ -313,8 +321,14 @@ class Pilot:
         self.run(f"step-{step:05d}.report", "core", "scripts/v4_decoupling_report.py",
                  ["--outdir", str(self.out), "--config", str(self.config_path),
                   "--protocol", str(self.protocol_path)])
-        self.run(f"step-{step:05d}.gradient-sensitivity", "core", "scripts/v4_gradient_sensitivity.py",
-                 ["--outdir", str(self.out)])
+        # --audit is passed because the default is RUN/audit-splits/scene_overlap.json,
+        # and v4_decoupling_report.py reads that same path implicitly to choose an
+        # outcome subset -- which is only sound for an audit frozen before any outcome
+        # existed. This run's audit was built mid-run and declares so, so it is named
+        # here explicitly and stays out of the path the report would pick it up from.
+        self.run(f"step-{step:05d}.gradient-sensitivity", "core",
+                 "scripts/v4_gradient_sensitivity.py",
+                 ["--outdir", str(self.out), "--audit", str(self.audit_path)])
         self.run(f"step-{step:05d}.plot", "core", "scripts/v4_decoupling_plot.py",
                  ["--outdir", str(self.out)])
 
