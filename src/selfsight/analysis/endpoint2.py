@@ -67,6 +67,15 @@ ALPHA = 0.05
 # blind file's name is an error rather than a silent substitution.
 BLIND_CONDITION = "image_only"
 
+# The registered consequence of failure condition 2, kept as a string so the
+# driver prints it rather than leaving it to whoever reads the slopes.
+# Deviation 15.1: "B also collapses" had no code path at all -- not the
+# sentence, and not the quantity the sentence is about.
+FALSIFIED = ("BSV does not prevent perception from being eaten: arm B's blind "
+             "discrimination gap collapses too, so the mechanism in section 2 "
+             "is falsified and the paper must say so "
+             "(pre-registration, failure condition 2)")
+
 # Scores are floats; labels are 1, 0, or this.
 ABSENT = -1
 
@@ -227,8 +236,10 @@ class SeedVerdict:
     slope_a: float
     slope_b: float
     a_interval: tuple[float, float]
+    b_interval: tuple[float, float]
     difference_interval: tuple[float, float]
     a_collapses: bool
+    b_collapses: bool
     b_exceeds_a: bool
     dropped_checkpoints: int
     discarded_resamples: int
@@ -247,6 +258,11 @@ def seed_verdict(series_a: BlindSeries, series_b: BlindSeries, draws: SlopeDraws
     of the paired difference lying above zero. Both are one-sided readings of
     a 95% percentile interval, which is how endpoint 1 reads its interval too.
 
+    "B also collapses" is deviation 15.1, and it is the same reading applied to
+    B's own draws, on the same resampled prompt multiset. It is not the
+    negation of `b_exceeds_a`: B can fail to beat A without collapsing, and
+    failure condition 2 is about the collapse and not about the contrast.
+
     `missing_steps` is carried rather than recomputed: deviation 13.1 point 6
     requires the fit to say how many checkpoints it used and which it could
     not get, and a verdict that silently described a shorter series as the
@@ -258,12 +274,14 @@ def seed_verdict(series_a: BlindSeries, series_b: BlindSeries, draws: SlopeDraws
     point_a = ols_slope(steps, gap_series(series_a, every))
     point_b = ols_slope(steps, gap_series(series_b, every))
     a_low, a_high = (float(value) for value in np.percentile(draws.arm_a, [2.5, 97.5]))
+    b_low, b_high = (float(value) for value in np.percentile(draws.arm_b, [2.5, 97.5]))
     d_low, d_high = (float(value) for value in np.percentile(draws.difference, [2.5, 97.5]))
     return SeedVerdict(
         seed=seed, steps=series_a.steps, missing_steps=missing_steps,
         slope_a=point_a, slope_b=point_b,
-        a_interval=(a_low, a_high), difference_interval=(d_low, d_high),
-        a_collapses=a_high < 0.0, b_exceeds_a=d_low > 0.0,
+        a_interval=(a_low, a_high), b_interval=(b_low, b_high),
+        difference_interval=(d_low, d_high),
+        a_collapses=a_high < 0.0, b_collapses=b_high < 0.0, b_exceeds_a=d_low > 0.0,
         dropped_checkpoints=draws.dropped_checkpoints,
         discarded_resamples=draws.discarded_resamples)
 
@@ -273,16 +291,30 @@ class AcrossSeeds:
     """Deviation 9.4's two halves, and the conjunction they have to reach."""
 
     collapsing: int
+    b_collapsing: int
     total: int
     sign_supporting: int
     sign_p: float
     a_half: bool
     b_half: bool
+    b_collapse_half: bool
     confirmatory: bool
 
     @property
     def confirmed(self) -> bool:
         return self.confirmatory and self.a_half and self.b_half
+
+    @property
+    def falsified(self) -> bool:
+        """Failure condition 2, read at the study level (deviation 15.1).
+
+        The registered sentence is "only A collapsing while B also collapses",
+        so A's half has to hold as well: with A intact there was nothing for
+        BSV to prevent and the mechanism is not falsified. Confirmed and
+        falsified are not each other's negation and both can be false.
+        """
+
+        return self.a_half and self.b_collapse_half
 
 
 def across_seeds(verdicts: list[SeedVerdict], *, alpha: float = ALPHA) -> AcrossSeeds:
@@ -294,17 +326,28 @@ def across_seeds(verdicts: list[SeedVerdict], *, alpha: float = ALPHA) -> Across
     and deviation 9.3 bans bootstrapping them, so they enter as five signs and
     nothing else. A difference of exactly 0 stays in the denominator and
     counts against, matching `endpoint1.sign_test`.
+
+    `b_collapsing` counts the seeds where B collapses on its own terms, and
+    deviation 15.1 reads failure condition 2 off the same 4-of-5 threshold.
+    Deviation 14.3 refused to borrow that 4 for deviation 7.2, and the reason
+    the two differ is written there: 7.2 is a differently shaped quantity,
+    while this is the same endpoint, the same slope and the same seeds with
+    the arms swapped. Between 4 and 5 it is also the threshold the unfavourable
+    reading reaches more easily.
     """
 
     if not verdicts:
         raise ValueError("Endpoint 2 across seeds needs at least one seed")
     total = len(verdicts)
     collapsing = sum(1 for verdict in verdicts if verdict.a_collapses)
+    b_collapsing = sum(1 for verdict in verdicts if verdict.b_collapses)
     supporting = sum(1 for verdict in verdicts if verdict.slope_b - verdict.slope_a > 0)
     p_value = float(binomtest(supporting, total, 0.5, alternative="greater").pvalue)
     return AcrossSeeds(
-        collapsing=collapsing, total=total, sign_supporting=supporting, sign_p=p_value,
+        collapsing=collapsing, b_collapsing=b_collapsing, total=total,
+        sign_supporting=supporting, sign_p=p_value,
         a_half=collapsing >= A_SLOPE_MAJORITY, b_half=p_value <= alpha,
+        b_collapse_half=b_collapsing >= A_SLOPE_MAJORITY,
         confirmatory=total == REGISTERED_SEED_COUNT)
 
 

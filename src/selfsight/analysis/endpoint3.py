@@ -211,8 +211,14 @@ def checkpoint_point(rows: list[dict], *, seed: int, arm: str, step: int) -> Che
                            conflict_trials=counts)
 
 
-def fit_slope(points: list[CheckpointPoint]) -> float:
+def fit_slope(points: list[CheckpointPoint], *, first_index: bool = False) -> float:
     """Least squares slope of selection gain on context effect.
+
+    `first_index` swaps the y axis to the strict tie-break. Section 3 registers
+    the uniform-random expectation as primary and the first index as a
+    robustness contrast, and says to report both; deviation 15.3 reads that as
+    both fits rather than both columns, because a slope and an interval are
+    what endpoint 3 reports.
 
     NaN when x has no spread. That is arithmetic rather than a rule: with every
     checkpoint at the same dose there is no dose-response to measure, and the
@@ -232,7 +238,8 @@ def fit_slope(points: list[CheckpointPoint]) -> float:
     if len(points) < 2:
         return float("nan")
     x = np.array([point.context_effect for point in points], dtype=float)
-    y = np.array([point.selection_gain for point in points], dtype=float)
+    y = np.array([point.selection_gain_first_index if first_index
+                  else point.selection_gain for point in points], dtype=float)
     usable = ~(np.isnan(x) | np.isnan(y))
     if int(usable.sum()) < 2:
         return float("nan")
@@ -249,6 +256,7 @@ def fit_slope(points: list[CheckpointPoint]) -> float:
 @dataclass(frozen=True)
 class SlopeDraws:
     slopes: np.ndarray
+    slopes_first_index: np.ndarray
     discarded_resamples: int
     resamples: int
     seeds: int
@@ -279,6 +287,7 @@ def nested_bootstrap(points: list[CheckpointPoint], *,
 
     rng = np.random.default_rng(seed)
     slopes: list[float] = []
+    strict: list[float] = []
     discarded = 0
     for _ in range(resamples):
         drawn: list[CheckpointPoint] = []
@@ -288,13 +297,21 @@ def nested_bootstrap(points: list[CheckpointPoint], *,
             for inner in rng.integers(0, len(steps), size=len(steps)):
                 drawn.extend(by_seed[chosen][steps[int(inner)]])
         slope = fit_slope(drawn)
-        if np.isnan(slope):
+        # Both tie-breaks come off the same draw, so the two intervals are a
+        # contrast between calibers and not between resamples. Either failing
+        # voids the draw for both, the way endpoint 2 voids a pair when either
+        # arm's slope is undefined -- otherwise the robustness fit would quietly
+        # rest on a different set of resamples than the one it is compared to.
+        strict_slope = fit_slope(drawn, first_index=True)
+        if np.isnan(slope) or np.isnan(strict_slope):
             discarded += 1
             continue
         slopes.append(slope)
+        strict.append(strict_slope)
     if not slopes:
         raise ValueError(f"All {resamples} resamples were discarded; nothing to fit")
-    return SlopeDraws(slopes=np.array(slopes), discarded_resamples=discarded,
+    return SlopeDraws(slopes=np.array(slopes), slopes_first_index=np.array(strict),
+                      discarded_resamples=discarded,
                       resamples=resamples, seeds=len(seeds), clusters=clusters)
 
 
@@ -306,10 +323,25 @@ class Endpoint3Verdict:
     interval: tuple[float, float]
     dose_response: bool
     wording: str
+    slope_first_index: float
+    interval_first_index: tuple[float, float]
+    dose_response_first_index: bool
     points: int
     seeds: int
     clusters: int
     discarded_resamples: int
+
+    @property
+    def tie_breaks_agree(self) -> bool:
+        """Section 3 says report both; deviation 15.3 says say so when they part.
+
+        The verdict is the primary fit either way -- section 3 writes the
+        uniform-random expectation as primary and the first index as the
+        robustness contrast, so a disagreement is a sentence in the paper and
+        not a second chance at the decision.
+        """
+
+        return self.dose_response == self.dose_response_first_index
 
 
 def verdict(points: list[CheckpointPoint], draws: SlopeDraws) -> Endpoint3Verdict:
@@ -320,15 +352,23 @@ def verdict(points: list[CheckpointPoint], draws: SlopeDraws) -> Endpoint3Verdic
     a slope that is large and positive with an interval that spans zero --
     "the point estimate is encouraging" is not a clause the pre-registration
     contains.
+
+    The first-index fit is computed and reported beside it (section 3, read by
+    deviation 15.3) and decides nothing.
     """
 
     slope = fit_slope(points)
     low, high = (float(value) for value in np.percentile(draws.slopes, [2.5, 97.5]))
     positive = low > 0.0
+    strict = fit_slope(points, first_index=True)
+    strict_low, strict_high = (float(value) for value
+                               in np.percentile(draws.slopes_first_index, [2.5, 97.5]))
     return Endpoint3Verdict(
         slope=slope, interval=(low, high), dose_response=positive,
         wording=("dose-response: selection gain scales with the context effect"
                  if positive else DOWNGRADE),
+        slope_first_index=strict, interval_first_index=(strict_low, strict_high),
+        dose_response_first_index=strict_low > 0.0,
         points=len(points), seeds=draws.seeds, clusters=draws.clusters,
         discarded_resamples=draws.discarded_resamples)
 

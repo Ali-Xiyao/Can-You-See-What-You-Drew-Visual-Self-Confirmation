@@ -20,6 +20,7 @@ import pytest
 from selfsight.analysis.endpoint2 import (
     A_SLOPE_MAJORITY,
     BLIND_CONDITION,
+    FALSIFIED,
     FINAL_BOOTSTRAP_SEED,
     FINAL_RESAMPLES,
     MIN_CHECKPOINTS_PER_FIT,
@@ -375,12 +376,15 @@ def test_the_verdict_carries_the_checkpoints_it_could_not_get():
 # --- across seeds -----------------------------------------------------------
 
 
-def _verdict(*, a_collapses: bool, difference: float) -> SeedVerdict:
+def _verdict(*, a_collapses: bool, difference: float,
+             b_collapses: bool = False) -> SeedVerdict:
     return SeedVerdict(seed=0, steps=STEPS, missing_steps=(),
                        slope_a=0.0, slope_b=difference,
                        a_interval=(-1.0, -0.1 if a_collapses else 0.1),
+                       b_interval=(-1.0, -0.1 if b_collapses else 0.1),
                        difference_interval=(-1.0, 1.0),
-                       a_collapses=a_collapses, b_exceeds_a=difference > 0,
+                       a_collapses=a_collapses, b_collapses=b_collapses,
+                       b_exceeds_a=difference > 0,
                        dropped_checkpoints=0, discarded_resamples=0)
 
 
@@ -467,11 +471,118 @@ def test_across_seeds_needs_at_least_one_seed():
         across_seeds([])
 
 
+def _across(*, a_half: bool, b_half: bool, confirmatory: bool,
+            b_collapse_half: bool = False) -> AcrossSeeds:
+    return AcrossSeeds(collapsing=5, b_collapsing=5 if b_collapse_half else 0,
+                       total=5, sign_supporting=5, sign_p=0.03,
+                       a_half=a_half, b_half=b_half,
+                       b_collapse_half=b_collapse_half, confirmatory=confirmatory)
+
+
 def test_across_seeds_is_a_conjunction():
-    assert AcrossSeeds(5, 5, 5, 0.03, True, False, True).confirmed is False
-    assert AcrossSeeds(5, 5, 5, 0.03, False, True, True).confirmed is False
-    assert AcrossSeeds(5, 5, 5, 0.03, True, True, False).confirmed is False
-    assert AcrossSeeds(5, 5, 5, 0.03, True, True, True).confirmed is True
+    assert _across(a_half=True, b_half=False, confirmatory=True).confirmed is False
+    assert _across(a_half=False, b_half=True, confirmatory=True).confirmed is False
+    assert _across(a_half=True, b_half=True, confirmatory=False).confirmed is False
+    assert _across(a_half=True, b_half=True, confirmatory=True).confirmed is True
+
+
+# --- failure condition 2, deviation 15.1 -------------------------------------
+
+
+def test_b_collapsing_is_read_off_b_s_own_draws_not_the_difference():
+    """A can beat B without either collapsing, and B can collapse while still
+    beating A. `b_exceeds_a` answers neither question, which is why failure
+    condition 2 had no code path until deviation 15.1."""
+
+    both = _verdict(a_collapses=True, difference=0.01, b_collapses=True)
+    assert both.b_collapses is True
+    assert both.b_exceeds_a is True
+    assert both.confirmed is True
+
+
+def test_failure_condition_2_needs_a_to_collapse_as_well():
+    # "only A collapsing while B also collapses" -- with A intact there was
+    # nothing for BSV to prevent, so the mechanism is not falsified.
+    assert _across(a_half=False, b_half=False, confirmatory=True,
+                   b_collapse_half=True).falsified is False
+    assert _across(a_half=True, b_half=False, confirmatory=True,
+                   b_collapse_half=True).falsified is True
+
+
+def test_confirmed_and_falsified_are_not_each_other_s_negation():
+    neither = _across(a_half=True, b_half=False, confirmatory=True)
+    assert neither.confirmed is False
+    assert neither.falsified is False
+
+
+def test_falsification_does_not_wait_for_the_registered_seed_count():
+    """`confirmatory` gates the positive claim, not the downgrade.
+
+    Requiring the full five seeds before a failure condition may fire would
+    make an interrupted study unable to report the unfavourable outcome, which
+    is the asymmetry the pre-registration exists to prevent.
+    """
+
+    assert _across(a_half=True, b_half=False, confirmatory=False,
+                   b_collapse_half=True).falsified is True
+
+
+def test_b_collapse_takes_the_same_four_of_five_as_a():
+    four = [_verdict(a_collapses=True, difference=0.01, b_collapses=True)] * 4
+    four.append(_verdict(a_collapses=True, difference=0.01, b_collapses=False))
+    result = across_seeds(four)
+    assert result.b_collapsing == 4
+    assert result.b_collapse_half is True
+    assert result.falsified is True
+    three = [_verdict(a_collapses=True, difference=0.01, b_collapses=True)] * 3
+    three.extend([_verdict(a_collapses=True, difference=0.01)] * 2)
+    assert across_seeds(three).falsified is False
+
+
+def test_b_collapsing_comes_out_of_a_real_bootstrap():
+    """End to end through `paired_bootstrap`, not a hand-built dataclass.
+
+    Both arms fall, B a little more slowly. The registered reading says both
+    collapse, and it also says B does not exceed A -- endpoint 2 is neither
+    confirmed nor rescued by the fact that B fell less far in point estimate.
+    """
+
+    falling = [0.30, 0.20, 0.10, 0.00]
+    slower = [0.30, 0.22, 0.14, 0.06]
+    weights = [0.8, 0.9, 1.0, 1.1, 1.2]
+    series_a = _varied_series("naive", falling, weights)
+    series_b = _varied_series("blind_self", slower, weights)
+    draws = paired_bootstrap(series_a, series_b, resamples=400, seed=11)
+    result = seed_verdict(series_a, series_b, draws, seed=20260906)
+    assert result.a_collapses is True
+    assert result.b_collapses is True
+    assert result.b_interval[1] < 0.0
+    assert across_seeds([result] * 5).falsified is True
+
+
+def test_a_b_interval_that_spans_zero_is_not_a_collapse():
+    """B falls in point estimate and its interval still contains 0.
+
+    Significance is the interval, not the sign of the fit -- the same reading
+    13.1 point 2 gave A. Reading the 2.5th percentile instead would call every
+    downward-sloping B a collapse and fire failure condition 2 on noise.
+    """
+
+    falling = [0.30, 0.20, 0.10, 0.00]
+    noisy = [0.30, 0.05, 0.25, 0.00]
+    weights = [-1.0, 0.2, 1.0, 1.8, 2.6]
+    series_a = _varied_series("naive", falling, weights)
+    series_b = _varied_series("blind_self", noisy, weights)
+    draws = paired_bootstrap(series_a, series_b, resamples=400, seed=13)
+    result = seed_verdict(series_a, series_b, draws, seed=20260906)
+    assert result.b_interval[0] < 0.0 < result.b_interval[1]
+    assert result.b_collapses is False
+    assert across_seeds([result] * 5).falsified is False
+
+
+def test_the_falsified_sentence_is_the_registered_one():
+    assert "mechanism in section 2 is falsified" in FALSIFIED
+    assert "failure condition 2" in FALSIFIED
 
 
 # --- the loader -------------------------------------------------------------

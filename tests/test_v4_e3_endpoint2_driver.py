@@ -16,6 +16,8 @@ from pathlib import Path
 
 import pytest
 
+from selfsight.analysis.endpoint2 import FALSIFIED, SeedVerdict, across_seeds
+
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPT = ROOT / "scripts" / "v4_e3_endpoint2.py"
 
@@ -121,3 +123,127 @@ def test_not_done_has_its_own_exit_code():
     # Not 0: a wrapper must not carry on as though endpoint 2 had an answer.
     # Not 1: it is a registered outcome, not a crash.
     assert driver.NOT_DONE == 2
+
+
+# --- failure condition 2, deviation 15.1 -------------------------------------
+
+
+def _seed_verdict(seed: int, *, a_collapses: bool, b_collapses: bool,
+                  b_exceeds_a: bool) -> SeedVerdict:
+    return SeedVerdict(seed=seed, steps=(0, 8, 16), missing_steps=(),
+                       slope_a=-0.01, slope_b=-0.005 if b_collapses else 0.01,
+                       a_interval=(-0.02, -0.005 if a_collapses else 0.005),
+                       b_interval=(-0.02, -0.001 if b_collapses else 0.005),
+                       difference_interval=(0.001 if b_exceeds_a else -0.01, 0.02),
+                       a_collapses=a_collapses, b_collapses=b_collapses,
+                       b_exceeds_a=b_exceeds_a,
+                       dropped_checkpoints=0, discarded_resamples=0)
+
+
+def _text(*, a_collapses: bool, b_collapses: bool, b_exceeds_a: bool = False) -> str:
+    verdicts = [_seed_verdict(seed, a_collapses=a_collapses, b_collapses=b_collapses,
+                              b_exceeds_a=b_exceeds_a)
+                for seed in driver.REGISTERED_SEEDS]
+    return driver.report(verdicts, across_seeds(verdicts), arm_a="naive",
+                         arm_b="blind_self", resamples=200, bootstrap_seed=1)
+
+
+def test_failure_condition_2_prints_the_registered_sentence():
+    text = _text(a_collapses=True, b_collapses=True)
+    assert "FAILURE CONDITION 2 HOLDS" in text
+    assert FALSIFIED in text
+    assert "5/5 seeds" in text
+
+
+def test_b_collapsing_without_a_does_not_trigger_it():
+    # "only A collapsing while B also collapses" -- both clauses, and the
+    # report has to say which one is missing rather than print nothing.
+    text = _text(a_collapses=False, b_collapses=True)
+    assert "FAILURE CONDITION 2 HOLDS" not in text
+    assert "B collapses but A does not" in text
+
+
+def test_a_holding_b_leaves_the_condition_untriggered():
+    text = _text(a_collapses=True, b_collapses=False)
+    assert "not triggered" in text
+    assert FALSIFIED not in text
+
+
+def test_the_per_seed_row_carries_b_s_own_clause():
+    text = _text(a_collapses=True, b_collapses=True, b_exceeds_a=True)
+    # All three clauses on one row: B can collapse and still beat A.
+    assert "A collapses, B collapses, B > A" in text
+
+
+def test_the_condition_is_read_even_when_the_endpoint_confirms():
+    """Confirmation does not suppress it. A and B can both collapse with B
+    collapsing more slowly, which confirms endpoint 2's contrast and falsifies
+    section 2's mechanism at the same time -- and the paper owes both.
+    """
+
+    text = _text(a_collapses=True, b_collapses=True, b_exceeds_a=True)
+    assert "CONFIRMED across seeds" in text
+    assert "FAILURE CONDITION 2 HOLDS" in text
+
+
+def _collapsing_run(tmp_path: Path, seed: int, *, gaps_a: list[float],
+                    gaps_b: list[float], steps=(0, 8, 16, 24)) -> Path:
+    """A whole replicate: six prompts, half labelled right, both arms.
+
+    The right half scores `gap` above the wrong half at each step, so each
+    arm's blind gap follows the list it was given and its fitted slope is the
+    trend in that list. Enough for `main()` to reach the payload, which is the
+    only place `failure_condition_2` is written.
+    """
+
+    run = tmp_path / f"e3-s{seed}"
+    prompts = [f"p{index:02d}" for index in range(6)]
+    for arm, gaps in (("naive", gaps_a), ("blind_self", gaps_b)):
+        for column, step in enumerate(steps):
+            directory = run / "evaluations" / arm / f"step-{step:05d}"
+            directory.mkdir(parents=True, exist_ok=True)
+            (directory / "verified.jsonl").write_text(
+                "".join(json.dumps({"spec_id": prompt, "candidate_index": 0,
+                                    "image_correct": index < 3,
+                                    "resolution": "agreed"}) + "\n"
+                        for index, prompt in enumerate(prompts)), encoding="utf-8")
+            blind = run / "analysis" / "blind_observe" / arm
+            blind.mkdir(parents=True, exist_ok=True)
+            (blind / f"step-{step:05d}.jsonl").write_text(
+                "".join(json.dumps({
+                    "prompt_id": prompt, "candidate_index": 0,
+                    "condition": "image_only",
+                    # A per-prompt tilt so the bootstrap has spread to find.
+                    "s_select": (gaps[column] * (0.6 + 0.2 * index) if index < 3 else 0.0),
+                }) + "\n" for index, prompt in enumerate(prompts)), encoding="utf-8")
+    return run
+
+
+def _run_main(monkeypatch, tmp_path: Path, runs: list[Path]) -> dict:
+    outdir = tmp_path / "out"
+    monkeypatch.setattr("sys.argv", [
+        "v4_e3_endpoint2.py", "--outdir", str(outdir), "--resamples", "300",
+        "--runs", *[str(run) for run in runs]])
+    assert driver.main() == 0
+    return json.loads((outdir / "endpoint2.json").read_text(encoding="utf-8"))
+
+
+def test_the_payload_records_failure_condition_2_when_both_arms_collapse(
+        monkeypatch, tmp_path: Path):
+    both = [0.60, 0.40, 0.20, 0.00]
+    runs = [_collapsing_run(tmp_path, seed, gaps_a=both, gaps_b=both)
+            for seed in driver.REGISTERED_SEEDS]
+    payload = _run_main(monkeypatch, tmp_path, runs)
+    assert payload["across_seeds"]["b_collapsing"] == 5
+    assert payload["failure_condition_2"]["holds"] is True
+    assert payload["failure_condition_2"]["wording"] == FALSIFIED
+
+
+def test_the_payload_leaves_it_unset_when_b_holds(monkeypatch, tmp_path: Path):
+    runs = [_collapsing_run(tmp_path, seed, gaps_a=[0.60, 0.40, 0.20, 0.00],
+                            gaps_b=[0.55, 0.58, 0.61, 0.64])
+            for seed in driver.REGISTERED_SEEDS]
+    payload = _run_main(monkeypatch, tmp_path, runs)
+    assert payload["across_seeds"]["b_collapsing"] == 0
+    assert payload["failure_condition_2"]["holds"] is False
+    assert payload["failure_condition_2"]["wording"] is None

@@ -30,6 +30,7 @@ from selfsight.analysis.endpoint1 import (
     DETECTABLE_EFFECT,
     FINAL_BOOTSTRAP_SEED,
     FINAL_RESAMPLES,
+    NOT_DETECTED_CONSEQUENCE,
     SeedResult,
     between_seed_spread,
     bootstrap_interval,
@@ -122,6 +123,14 @@ def report(results: list[SeedResult], *, confirmatory: bool,
                  "bootstrapping them")
     lines.append("  " + ", ".join(f"{value:+.4f}" for value in differences))
     lines.append("")
+    lines.append("Failure condition 1 -- read at the study level (deviations 14.6, 15.2)")
+    if confirmatory and supporting == total:
+        lines.append("  not triggered: endpoint 1 is detected across the registered seeds")
+    else:
+        lines.append(f"  TRIGGERED: {NOT_DETECTED_CONSEQUENCE}")
+        lines.append("  Per-seed `detected` is reported above and does not change this;")
+        lines.append("  deviation 14.6 fixes the study level as the layer that decides.")
+    lines.append("")
     lines.append("Per-seed trajectories (deviation 9.3: five curves, no mean band)")
     for result in results:
         drawn = " ".join(f"{step}:{value:+.3f}" for step, value in result.trajectory)
@@ -201,6 +210,12 @@ def main() -> None:
                       "confirmed": bool(confirmatory and supporting == total),
                       "registered_by": "deviation 9.3"},
         "between_seed": {"sd": spread, "sd_over_effect": ratio, "reported_not_tested": True},
+        "failure_condition_1": {
+            "holds": not bool(confirmatory and supporting == total),
+            "wording": (None if confirmatory and supporting == total
+                        else NOT_DETECTED_CONSEQUENCE),
+            "read_at": "study level, sign_test.confirmed",
+            "registered_by": "deviations 14.6 and 15.2"},
     }
     (args.outdir / "endpoint1.json").write_text(
         json.dumps(payload, indent=2) + "\n", encoding="utf-8")

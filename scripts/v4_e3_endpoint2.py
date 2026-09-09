@@ -31,6 +31,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from selfsight.analysis.endpoint1 import completed_steps
 from selfsight.analysis.endpoint2 import (
+    FALSIFIED,
     FINAL_BOOTSTRAP_SEED,
     FINAL_RESAMPLES,
     MIN_CHECKPOINTS_PER_FIT,
@@ -99,6 +100,7 @@ def report(verdicts: list[SeedVerdict], summary, *, arm_a: str, arm_b: str,
                  f"{'slope B':>9} {'95% CI B-A':>20}  clauses")
     for verdict in verdicts:
         clauses = ("A collapses" if verdict.a_collapses else "A does not collapse")
+        clauses += ", " + ("B collapses" if verdict.b_collapses else "B holds")
         clauses += ", " + ("B > A" if verdict.b_exceeds_a else "B not > A")
         lines.append(
             f"{verdict.seed:>9} {len(verdict.steps):>6} {verdict.slope_a:>+9.5f} "
@@ -110,6 +112,8 @@ def report(verdicts: list[SeedVerdict], summary, *, arm_a: str, arm_b: str,
     lines.append("Significance is the interval, not the point estimate: A collapses when the")
     lines.append("97.5th percentile of its slope draws is below 0, and B exceeds A when the")
     lines.append("2.5th percentile of the paired difference is above 0 (deviation 13.1).")
+    lines.append("B collapses on the same reading of B's own draws (deviation 15.1); it is")
+    lines.append("not the negation of B > A, and both can be true at once.")
     lines.append("")
     for verdict in verdicts:
         lines.append(f"  seed {verdict.seed}: fitted on {len(verdict.steps)} checkpoints "
@@ -141,6 +145,18 @@ def report(verdicts: list[SeedVerdict], summary, *, arm_a: str, arm_b: str,
     else:
         lines.append("  NOT confirmed. Deviation 9.3 forbids a rescue: no two-sided test, "
                      "no other test, no seed removed as an outlier.")
+    lines.append("")
+    lines.append("Failure condition 2 -- read whether or not the endpoint confirmed")
+    lines.append(f"  B's slope significantly negative in {summary.b_collapsing}/"
+                 f"{summary.total} seeds; deviation 15.1 takes the same 4 of 5 "
+                 f"-> {'met' if summary.b_collapse_half else 'not met'}")
+    if summary.falsified:
+        lines.append(f"  FAILURE CONDITION 2 HOLDS: {FALSIFIED}")
+    elif summary.b_collapse_half:
+        lines.append("  B collapses but A does not, so the registered sentence does not "
+                     "apply: it reads 'only A collapsing while B also collapses'.")
+    else:
+        lines.append("  not triggered")
     return "\n".join(lines) + "\n"
 
 
@@ -225,6 +241,11 @@ def main() -> int:
         "seeds": [asdict(verdict) for verdict in verdicts],
         "across_seeds": {**asdict(summary), "confirmed": summary.confirmed,
                          "registered_by": "deviation 9.4"},
+        "failure_condition_2": {"holds": summary.falsified,
+                                "b_collapsing": summary.b_collapsing,
+                                "total": summary.total,
+                                "wording": FALSIFIED if summary.falsified else None,
+                                "registered_by": "deviation 15.1"},
     }
     (args.outdir / "endpoint2.json").write_text(
         json.dumps(payload, indent=2) + "\n", encoding="utf-8")

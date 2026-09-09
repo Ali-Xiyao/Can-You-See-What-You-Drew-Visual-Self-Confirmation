@@ -204,12 +204,16 @@ def _point(step: int, dose: float, gain: float) -> CheckpointPoint:
                            conflict_trials={"blind_trials": 2, "prompted_trials": 2})
 
 
-def _verdict(low: float, high: float) -> Endpoint3Verdict:
+def _verdict(low: float, high: float,
+             strict: tuple[float, float] | None = None) -> Endpoint3Verdict:
     positive = low > 0.0
+    strict_low, strict_high = strict if strict is not None else (low, high)
     return Endpoint3Verdict(
         slope=0.42, interval=(low, high), dose_response=positive,
         wording=("dose-response: selection gain scales with the context effect"
                  if positive else DOWNGRADE),
+        slope_first_index=0.40, interval_first_index=(strict_low, strict_high),
+        dose_response_first_index=strict_low > 0.0,
         points=2, seeds=1, clusters=2, discarded_resamples=0)
 
 
@@ -236,6 +240,38 @@ def test_an_interval_that_spans_zero_takes_the_registered_downgrade():
     assert "DOWNGRADED" in text
     assert DOWNGRADE in text
     assert "SUPPORTED" not in text
+
+
+def test_both_tie_break_fits_are_printed():
+    # Section 3 registers both; printing one and calling it "the slope" is the
+    # reading deviation 15.3 exists to rule out.
+    text = _report(0.05, 0.80)
+    assert "uniform-random expectation (primary)" in text
+    assert "first index (robustness)" in text
+
+
+def test_calibers_that_agree_say_so():
+    text = _report(0.05, 0.80)
+    assert "the two calibers agree" in text
+    assert "DISAGREE" not in text
+
+
+def test_calibers_that_part_are_reported_as_parting():
+    """The primary fit supports it and the strict one does not.
+
+    The verdict still stands on the primary fit -- section 3 writes it as
+    primary -- so the only thing at stake is whether the reader is told. A
+    silent disagreement is the paper choosing the favourable caliber without
+    saying that there was a choice.
+    """
+
+    text = driver.report([_point(0, 0.1, 0.2), _point(8, 0.3, 0.4)],
+                         _verdict(0.05, 0.80, strict=(-0.10, 0.60)),
+                         arms=["naive", "blind_self"], resamples=20000,
+                         bootstrap_seed=20260908, confirmatory=True)
+    assert "THE TWO CALIBERS DISAGREE" in text
+    assert "SUPPORTED" in text
+    assert "must report the disagreement" in text
 
 
 def test_the_downgrade_wording_is_the_analysis_module_s():

@@ -244,10 +244,97 @@ def test_a_checkpoint_with_no_scorable_prompt_is_refused():
 # --- the fit ----------------------------------------------------------------
 
 
-def _point(seed: int, arm: str, step: int, x: float, y: float) -> CheckpointPoint:
+def _point(seed: int, arm: str, step: int, x: float, y: float,
+           strict: float | None = None) -> CheckpointPoint:
     return CheckpointPoint(seed=seed, arm=arm, step=step, context_effect=x,
-                           selection_gain=y, selection_gain_first_index=y,
+                           selection_gain=y,
+                           selection_gain_first_index=y if strict is None else strict,
                            pools=8, candidates=32)
+
+
+# --- section 3's two tie-breaks, read by deviation 15.3 ----------------------
+
+
+def _parting(seed: int = 1) -> list[CheckpointPoint]:
+    """Gain rises with the dose under the primary caliber and falls under the
+    strict one, which is the case where reporting only one of them would be a
+    choice about the conclusion."""
+
+    return [_point(seed, "naive", step, x, 2 * x, strict=-2 * x)
+            for step, x in enumerate([0.1, 0.2, 0.3, 0.4])]
+
+
+def test_the_strict_tie_break_is_a_different_fit():
+    points = _parting()
+    assert fit_slope(points) == pytest.approx(2.0)
+    assert fit_slope(points, first_index=True) == pytest.approx(-2.0)
+
+
+def test_both_tie_breaks_come_off_the_same_resamples():
+    # A contrast between calibers, not between resamples: the two arrays are
+    # the same length and drawn in step with each other.
+    points = [_point(1, "naive", step, x, 2 * x, strict=1.5 * x)
+              for step, x in enumerate([0.1, 0.2, 0.3, 0.4])]
+    draws = nested_bootstrap(points, resamples=64, seed=5)
+    assert len(draws.slopes) == len(draws.slopes_first_index)
+    assert len(draws.slopes) + draws.discarded_resamples == 64
+
+
+def test_the_verdict_is_the_primary_fit_even_when_the_strict_one_disagrees():
+    points = _parting()
+    draws = nested_bootstrap(points, resamples=400, seed=5)
+    result = verdict(points, draws)
+    assert result.dose_response is True
+    assert result.dose_response_first_index is False
+    assert result.tie_breaks_agree is False
+    assert result.wording != DOWNGRADE
+    assert result.slope_first_index == pytest.approx(-2.0)
+
+
+def test_a_resample_the_strict_fit_cannot_take_is_discarded_from_both():
+    """Two of the four checkpoints have no first-index gain to fit.
+
+    A resample that lands on fewer than two of the usable ones leaves the
+    strict fit undefined while the primary one is fine. Keeping the draw would
+    leave a NaN in the robustness distribution, and every percentile of it
+    would come back NaN -- a downgrade produced by a missing number rather
+    than by a measurement.
+    """
+
+    points = [_point(1, "naive", step, x, 2 * x,
+                     strict=float("nan") if step < 2 else 1.5 * x)
+              for step, x in enumerate([0.1, 0.2, 0.3, 0.4])]
+    draws = nested_bootstrap(points, resamples=200, seed=5)
+    assert draws.discarded_resamples > 0
+    assert len(draws.slopes) == len(draws.slopes_first_index)
+    assert not np.isnan(draws.slopes_first_index).any()
+    assert not np.isnan(draws.slopes).any()
+
+
+def test_a_strict_interval_that_spans_zero_is_not_a_dose_response():
+    """The strict fit is read at the same end as the primary one.
+
+    Its point estimate is positive here and its interval contains zero, which
+    is the shape the primary fit's own test pins for the downgrade. Reading
+    the upper end would report a robustness contrast that always agrees.
+    """
+
+    points = [_point(1, "naive", step, x, 2 * x, strict=strict)
+              for step, (x, strict) in enumerate(
+                  [(0.1, 0.30), (0.2, 0.05), (0.3, 0.35), (0.4, 0.22)])]
+    draws = nested_bootstrap(points, resamples=600, seed=5)
+    result = verdict(points, draws)
+    assert result.slope_first_index > 0.0
+    assert result.interval_first_index[0] < 0.0 < result.interval_first_index[1]
+    assert result.dose_response_first_index is False
+
+
+def test_agreeing_tie_breaks_say_so():
+    points = [_point(1, "naive", step, x, 2 * x, strict=1.9 * x)
+              for step, x in enumerate([0.1, 0.2, 0.3, 0.4])]
+    result = verdict(points, nested_bootstrap(points, resamples=400, seed=5))
+    assert result.tie_breaks_agree is True
+    assert result.dose_response is True
 
 
 def test_the_slope_is_gain_on_dose():

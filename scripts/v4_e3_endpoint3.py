@@ -113,7 +113,12 @@ def report(points: list[CheckpointPoint], result, *, arms: list[str],
                      f"{conflicts:>9}")
     lines.append("")
     lines.append(f"slope {result.slope:+.5f}  95% CI "
-                 f"[{result.interval[0]:+.5f}, {result.interval[1]:+.5f}]")
+                 f"[{result.interval[0]:+.5f}, {result.interval[1]:+.5f}]"
+                 "   <- ties broken by uniform-random expectation (primary)")
+    lines.append(f"slope {result.slope_first_index:+.5f}  95% CI "
+                 f"[{result.interval_first_index[0]:+.5f}, "
+                 f"{result.interval_first_index[1]:+.5f}]"
+                 "   <- ties broken by first index (robustness)")
     lines.append(f"{result.points} points, {result.seeds} seeds, {result.clusters} clusters, "
                  f"{result.discarded_resamples} degenerate resamples discarded")
     lines.append("")
@@ -123,6 +128,16 @@ def report(points: list[CheckpointPoint], result, *, arms: list[str],
         lines.append("DOWNGRADED: " + result.wording)
         lines.append("The registered downgrade is not a hedge to be softened. A positive")
         lines.append("point estimate whose interval spans zero takes it as well.")
+    lines.append("")
+    lines.append("Tie-breaking -- section 3 registers both, deviation 15.3 fits both")
+    if result.tie_breaks_agree:
+        lines.append("  the two calibers agree on the verdict; both fits are printed above "
+                     "and only the primary one decides")
+    else:
+        lines.append("  THE TWO CALIBERS DISAGREE. The verdict stands on the primary fit "
+                     "(section 3 writes it as primary),")
+        lines.append("  and the paper must report the disagreement rather than the half "
+                     "that suits the claim.")
     if not confirmatory:
         lines.append("")
         lines.append(f"NOT THE REGISTERED ANALYSIS: it takes seeds "
@@ -206,7 +221,12 @@ def main() -> int:
                       "unit": "(seed, checkpoint)", "nesting": "seeds, then checkpoints",
                       "registered_by": "deviation 13.2 point 5"},
         "downgrade_wording": DOWNGRADE,
-        "verdict": {**asdict(result), "interval": list(result.interval)},
+        "verdict": {**asdict(result), "interval": list(result.interval),
+                    "interval_first_index": list(result.interval_first_index),
+                    "tie_breaks_agree": result.tie_breaks_agree,
+                    "tie_break_registered_by": "section 3, read by deviation 15.3",
+                    "decided_by": "the uniform-random expectation fit; the first-index "
+                                  "fit is a robustness contrast and decides nothing"},
         "points": [{**asdict(point), "cluster": list(point.cluster)} for point in points],
     }
     (args.outdir / "endpoint3.json").write_text(

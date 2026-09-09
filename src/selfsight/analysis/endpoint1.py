@@ -57,6 +57,17 @@ DETECTABLE_EFFECT = 0.042
 # is free to change. A test pins the two together so the copy cannot drift.
 UNADJUDICATED = {"pending_human", "unnameable"}
 
+# The registered consequence of failure condition 1. Endpoint 3 keeps its
+# downgrade wording as a constant and deviation 7.2 keeps both of its
+# verdicts; this one -- the heaviest of the four -- lived only in the
+# pre-registration until deviation 15.2, which is a rule waiting to be
+# executed by hand after the number is on screen.
+NOT_DETECTED_CONSEQUENCE = (
+    "the paper may not claim that BSV improves generation; it may claim only "
+    "that BSV improves the quality of the selection signal, which the offline "
+    "replay already supports, and the claim retreats to inference time "
+    "(pre-registration, failure condition 1)")
+
 
 @dataclass(frozen=True)
 class Coverage:
