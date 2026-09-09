@@ -339,6 +339,13 @@ def cell(value: dict) -> str:
 
 
 def stage_report(args: argparse.Namespace) -> None:
+    # Resolved up here rather than at the write below: everything between is
+    # minutes of reading answer files, and a --out whose directory does not
+    # exist used to raise only after the whole report had been computed and
+    # printed, throwing away the artifact and keeping none of the work.
+    output = Path(args.out or Path(args.runs[0]) / "cross_model.json")
+    output.parent.mkdir(parents=True, exist_ok=True)
+
     results = {model: measure(args.runs, model) for model in args.models}
 
     print("accuracy on the decisive trials (image_differs_from_spec), Wilson 95%")
@@ -369,6 +376,9 @@ def stage_report(args: argparse.Namespace) -> None:
         print(f"{model:<15}{value['decisive_trials']:>9}{value['pairs']:>8}"
               f"{value['blind_only_abstained']:>12}{value['told_only_abstained']:>11}"
               f"{value['p_abstention_imbalance']:>11.2e}")
+    print("\n'blind only' here counts abstentions, not right answers: it is the "
+          "trials\nthe model declined without the description in context and answered "
+          "with it.\nSame column name as the table above, opposite sense.")
     lopsided = [model for model, value in results.items()
                 if value is not None and value["p_abstention_imbalance"] < 0.05]
     if lopsided:
@@ -404,7 +414,6 @@ def stage_report(args: argparse.Namespace) -> None:
         print(f"\nbeyond the registered set: {model} {outcome}. Deviation 1 added it as "
               "a cross-family check; it is reported, not counted toward the 2-of-3.")
 
-    output = Path(args.out or Path(args.runs[0]) / "cross_model.json")
     output.write_text(json.dumps(
         {"runs": args.runs, "registered": list(REGISTERED),
          "results": {k: v for k, v in results.items() if v is not None}}, indent=2),

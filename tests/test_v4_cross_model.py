@@ -355,3 +355,59 @@ def test_the_preflight_compares_what_the_model_said_not_what_it_normalises_to():
     read = {node.attr for node in ast.walk(stage) if isinstance(node, ast.Attribute)}
     assert "raw_answer" in read
     assert "normalized_answer" not in read, "a four-colour enum decides the gate again"
+
+
+# ------------------------------------------------- the report as an artifact
+
+
+def test_the_report_survives_an_out_whose_directory_does_not_exist_yet(driver, monkeypatch,
+                                                                      tmp_path, capsys):
+    """`measure` is minutes of reading answer files across four models.
+
+    The write used to be the first thing that touched the path, so a --out one
+    directory deep raised FileNotFoundError after the whole report had been
+    computed and printed, and the run had to be repeated to keep the JSON.
+    """
+
+    monkeypatch.setattr(driver, "measure",
+                        lambda runs, model: measured(-0.3, 1e-9) if model == "showo2_1p5b"
+                        else None)
+    out = tmp_path / "review-packets" / "cross-model-20260908" / "cross_model.json"
+    assert not out.parent.exists()
+    driver.stage_report(SimpleNamespace(runs=["runs/v4/main-2plus1"],
+                                        models=list(driver.MODELS), out=str(out)))
+    capsys.readouterr()
+    assert json.loads(out.read_text(encoding="utf-8"))["results"]["showo2_1p5b"]["pairs"] == 100
+
+
+def test_a_bad_out_is_reported_before_the_measuring_not_after(driver, monkeypatch, tmp_path):
+    """Fail-fast is the point of resolving the path first, and a directory
+    where the file goes is the failure mkdir cannot paper over."""
+
+    calls = []
+    monkeypatch.setattr(driver, "measure",
+                        lambda runs, model: calls.append(model) or None)
+    blocker = tmp_path / "taken"
+    blocker.write_text("not a directory", encoding="utf-8")
+    with pytest.raises(OSError):
+        driver.stage_report(SimpleNamespace(runs=["runs/v4/main-2plus1"],
+                                            models=list(driver.MODELS),
+                                            out=str(blocker / "cross_model.json")))
+    assert calls == [], "the models were measured before the path was checked"
+
+
+def test_the_third_table_says_its_blind_only_column_counts_abstentions(verdict):
+    """Two tables, one column name, opposite senses: in the paired table
+    `blind only` is trials the model got right only without the description,
+    in the abstention table it is trials it declined only without it. The
+    second table shipped without a legend and the column was misread as the
+    first one's."""
+
+    text = verdict({"showo2_1p5b": measured(-0.3, 1e-9),
+                    "showo2_7b": measured(-0.2, 1e-4),
+                    "showo_v1": measured(-0.08, 1e-4)})
+    paired_legend = text.index("right without the description in context")
+    abstention_legend = text.index("counts abstentions")
+    assert paired_legend < abstention_legend, "each legend belongs under its own table"
+    assert text.index("which trials were answerable at all") < abstention_legend
+    assert "opposite sense" in text[abstention_legend:]
