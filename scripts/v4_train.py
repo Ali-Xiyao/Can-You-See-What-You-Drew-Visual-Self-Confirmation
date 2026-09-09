@@ -90,6 +90,39 @@ def load_config(path: str | Path) -> dict[str, Any]:
     return yaml.safe_load(Path(path).read_text(encoding="utf-8"))
 
 
+def partition_seed(config: dict[str, Any]) -> int:
+    """The seed the split and the evaluation latents use, which replicates share."""
+
+    return int(config["seed"])
+
+
+def training_seed(config: dict[str, Any]) -> int:
+    """The seed for what differs between replicate runs of one design.
+
+    Deliberately not the seed above. Three seeds have to land on one partition
+    with one set of frozen latents, or they are three experiments on three
+    populations rather than three draws of the same one, and nothing pairs
+    across them.
+
+    Absent, this is the top-level seed, so a config written before the key
+    existed behaves to the byte as it did.
+    """
+
+    training = config.get("training", {})
+    if "seed" in training:
+        return int(training["seed"])
+    # `training.seeds` is the plural key the v2.x formal pipeline reads. Nothing
+    # in v4 has ever read it, so setting it to a new value is a request that
+    # gets silently ignored -- and silently training every replicate on one seed
+    # is the single failure this helper exists to prevent.
+    registered = [int(item) for item in training.get("seeds", [])]
+    if registered and registered != [partition_seed(config)]:
+        raise ValueError(
+            f"training.seeds={registered} is read by the v2.x formal pipeline, never by v4; "
+            f"set training.seed (singular) to move the training seed, or leave both alone")
+    return partition_seed(config)
+
+
 def split_digest(config: dict[str, Any], runs: tuple[str, ...]) -> str:
     """What the split is a function of, and nothing else.
 
@@ -100,7 +133,7 @@ def split_digest(config: dict[str, Any], runs: tuple[str, ...]) -> str:
 
     return sha256_json({
         "runs": sorted(runs),
-        "seed": int(config["seed"]),
+        "seed": partition_seed(config),
         "outcome": int(config["data"]["local_outcome"]),
         "probe": int(config["data"]["local_probe"]),
     })
@@ -116,7 +149,7 @@ def stage_split(args: argparse.Namespace) -> None:
         corpus.prompt_ids,
         outcome=int(config["data"]["local_outcome"]),
         probe=int(config["data"]["local_probe"]),
-        seed=int(config["seed"]),
+        seed=partition_seed(config),
     )
     out = Path(args.outdir)
     out.mkdir(parents=True, exist_ok=True)
@@ -129,7 +162,7 @@ def stage_split(args: argparse.Namespace) -> None:
         "created": now(),
         "digest": split_digest(config, tuple(args.runs)),
         "runs": list(args.runs),
-        "seed": int(config["seed"]),
+        "seed": partition_seed(config),
         "train": list(split.train),
         "outcome": list(split.outcome),
         "probe": list(split.probe),
@@ -316,7 +349,7 @@ def stage_train(args: argparse.Namespace) -> None:
         rounds=int(training["rounds"]),
         prompts_per_round=int(training["prompts_per_round"]),
         candidate_k=int(training["candidate_k"]),
-        seed=int(config["seed"]),
+        seed=training_seed(config),
         max_epochs=args.max_epochs,
     )
 
@@ -342,7 +375,7 @@ def stage_train(args: argparse.Namespace) -> None:
             f"train needs the ladder on another card: --device {args.device} and "
             f"--ladder-device {args.ladder_device} are the same one. The backbone is "
             f"resident for the whole round and the adjudicator cannot load beside it.")
-    seed_training(int(config["seed"]))
+    seed_training(training_seed(config))
     backbone = Showo2Adapter(device=args.device, lazy=False)
     targets = json.loads(Path(LORA_TARGETS).read_text(encoding="utf-8"))
     lora = training["lora"]
@@ -354,7 +387,7 @@ def stage_train(args: argparse.Namespace) -> None:
     leaked = sorted(targets.get("forbidden_modules_selected", []))
     if leaked:
         raise SystemExit(f"{LORA_TARGETS} selects forbidden modules: {leaked}")
-    seed_training(int(config["seed"]))
+    seed_training(training_seed(config))
     backbone.attach_lora(
         target_modules=targets["target_modules"],
         rank=int(lora["rank"]),
@@ -480,7 +513,7 @@ def stage_train(args: argparse.Namespace) -> None:
                 candidates=[c for pool in pools[arm].values() for c in pool],
                 corpus=corpus,
                 training=training,
-                seed=int(config["seed"]),
+                seed=training_seed(config),
                 round_index=round_index,
             )
             save_checkpoint(
@@ -499,7 +532,7 @@ def stage_train(args: argparse.Namespace) -> None:
         write_done(round_dir, {
             "round": round_index, "finished": now(),
             "prompts": len(entries), "paired": kept, "arms": reports,
-            "initialization_seed": int(config["seed"]), "train_replay_examples": len(corpus.replay),
+            "initialization_seed": training_seed(config), "train_replay_examples": len(corpus.replay),
         })
     print(f"=== {now()} invocation complete: rounds {pending}; "
           f"{len(done) + len(pending)}/{training['rounds']} total ===")
@@ -529,11 +562,11 @@ def stage_generate(args: argparse.Namespace) -> None:
     if args.round >= 0 and not checkpoint.is_dir():
         raise SystemExit(f"No checkpoint at {checkpoint}")
 
-    seed_training(int(config["seed"]))
+    seed_training(training_seed(config))
     backbone = Showo2Adapter(device=args.device, lazy=False)
     targets = json.loads(Path(LORA_TARGETS).read_text(encoding="utf-8"))
     lora = config["training"]["lora"]
-    seed_training(int(config["seed"]))
+    seed_training(training_seed(config))
     backbone.attach_lora(target_modules=targets["target_modules"], rank=int(lora["rank"]),
                          alpha=int(lora["alpha"]), dropout=float(lora["dropout"]),
                          gradient_checkpointing=False)
@@ -548,7 +581,7 @@ def stage_generate(args: argparse.Namespace) -> None:
 
     prompt_ids = list(split["outcome"])
     seed_step = 0 if config.get("evaluation", {}).get("fixed_latents", False) else step
-    seeds = {prompt_id: evaluation_seed(seed=int(config["seed"]), arm=args.arm,
+    seeds = {prompt_id: evaluation_seed(seed=partition_seed(config), arm=args.arm,
                                         step=seed_step, prompt_id=prompt_id)
              for prompt_id in prompt_ids}
     drawn = backbone.generate_images(
@@ -568,7 +601,7 @@ def stage_generate(args: argparse.Namespace) -> None:
         output_path=eval_dir / "s_select.jsonl", metadata={
             "arm": args.arm, "round": args.round, "step": step,
             "config_digest": sha256_json(config), "parameter_digest": model_digest,
-            "initialization_seed": int(config["seed"]),
+            "initialization_seed": training_seed(config),
             "evaluation_seed_step": seed_step,
             "score_policy": "fixed_question_denominator_v1"})
     selection_summary = summarize_selection(selection_rows)
@@ -578,7 +611,7 @@ def stage_generate(args: argparse.Namespace) -> None:
     (eval_dir / "cycle.json").write_text(json.dumps({
         "arm": args.arm, "round": args.round, "step": step,
         "mean": mean, "sem": sem, "n": count, "scores": scores,
-        "parameter_digest": model_digest, "initialization_seed": int(config["seed"]),
+        "parameter_digest": model_digest, "initialization_seed": training_seed(config),
     }, indent=2), encoding="utf-8")
     print(f"{args.arm} step {step}: cycle {mean} +/- {sem} over {count} images; "
           f"s_select {selection_summary['mean']}, coverage {selection_summary['coverage']}")
