@@ -305,15 +305,16 @@ def test_a_seed_set_that_is_not_the_five_is_refused_without_allow_partial(
 
 
 def test_the_registered_seeds_are_the_ones_every_other_script_uses():
-    """Four literal copies of one registered fact, pinned to each other.
+    """Five literal copies of one registered fact, pinned to each other.
 
     Deviation 9 fixed these five in advance and they are what "confirmatory"
-    means in three drivers and what the launch gate checks the configs against.
+    means in four drivers and what the launch gate checks the configs against.
     A copy drifting would not fail anything: it would relabel a confirmatory
     result as exploratory, or the reverse, and print the sentence for it.
     """
 
-    names = ("v4_e3_endpoint1", "v4_e3_endpoint2", "v4_e3_launch_preflight")
+    names = ("v4_e3_endpoint1", "v4_e3_endpoint2", "v4_e3_launch_preflight",
+             "v4_e3_drift")
     for name in names:
         spec = importlib.util.spec_from_file_location(name, ROOT / "scripts" / f"{name}.py")
         module = importlib.util.module_from_spec(spec)
