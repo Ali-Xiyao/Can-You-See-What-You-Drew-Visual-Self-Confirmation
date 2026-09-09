@@ -34,11 +34,24 @@ from selfsight.analysis.endpoint1 import (
 )
 
 
-def _write_arm(run: Path, arm: str, step: int, rows: list[dict]) -> None:
+def _write_arm(run: Path, arm: str, step: int, rows: list[dict],
+               *, manifest: list[tuple[str, int]] | None = None) -> None:
+    """One arm's checkpoint on disk.
+
+    `manifest` defaults to exactly the keys in `rows`, which is the case where
+    nothing was skipped. Passing it explicitly is how a test says "the run
+    asked for this image and no verdict came back" -- deviation 12's case.
+    """
+
     directory = run / "evaluations" / arm / f"step-{step:05d}"
     directory.mkdir(parents=True, exist_ok=True)
     (directory / "verified.jsonl").write_text(
         "".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
+    keys = manifest if manifest is not None else [
+        (row["spec_id"], row["candidate_index"]) for row in rows]
+    (directory / "manifest.jsonl").write_text(
+        "".join(json.dumps({"spec_id": spec, "candidate_index": draw}) + "\n"
+                for spec, draw in keys), encoding="utf-8")
 
 
 def _row(spec: str, draw: int, correct: bool | None) -> dict:
@@ -140,19 +153,26 @@ def test_unnameable_counts_as_unadjudicated_exactly_as_the_instrument_says():
     assert UNADJUDICATED == INSTRUMENT
 
 
-def test_arms_covering_different_keys_is_refused(tmp_path):
+def test_arms_asked_for_different_keys_is_refused(tmp_path):
     """A paired estimand over two different populations is not a smaller
-    sample, it is a different quantity. It has to stop, not shrink."""
+    sample, it is a different quantity. It has to stop, not shrink.
+
+    Deviation 12.2 point 4 moves this check onto the manifests. The verdict
+    files are exactly what a detector skip is allowed to shorten, so a
+    difference there is no longer evidence that the arms drew different
+    things -- but a difference in what they were *asked* for still is.
+    """
 
     _write_arm(tmp_path, "naive", 8, [_row("p1", 0, True), _row("p1", 1, True)])
     _write_arm(tmp_path, "blind_self", 8, [_row("p1", 0, True)])
 
-    with pytest.raises(ValueError, match="different .prompt, draw. keys"):
+    with pytest.raises(ValueError, match="asked for different .prompt, draw. keys"):
         load_checkpoint(tmp_path, 8, "naive", "blind_self")
 
 
 def test_a_duplicate_verdict_row_is_refused(tmp_path):
-    _write_arm(tmp_path, "naive", 8, [_row("p1", 0, True), _row("p1", 0, False)])
+    _write_arm(tmp_path, "naive", 8, [_row("p1", 0, True), _row("p1", 0, False)],
+               manifest=[("p1", 0)])
     _write_arm(tmp_path, "blind_self", 8, [_row("p1", 0, True)])
 
     with pytest.raises(ValueError, match="duplicate verdict"):
@@ -163,6 +183,89 @@ def test_a_missing_arm_directory_is_refused(tmp_path):
     _write_arm(tmp_path, "naive", 8, [_row("p1", 0, True)])
 
     with pytest.raises(FileNotFoundError, match="blind_self"):
+        load_checkpoint(tmp_path, 8, "naive", "blind_self")
+
+
+# --------------------------------------------------------------------------
+# Deviation 12: an absent row, as opposed to an undecided one
+
+
+def test_a_skipped_row_drops_the_pair_instead_of_stopping_the_analysis(tmp_path):
+    """Deviation 12.2 point 1.
+
+    `skipped_no_detection` makes the row vanish rather than arrive undecided,
+    and this used to raise. It has already happened once in the main run
+    (rfo_gold step 16, key (v4a-0001, 1)); over 13 checkpoints x 2 arms x 5
+    seeds it will happen again, and raising there means the final analysis
+    fails at the last possible moment.
+    """
+
+    _write_arm(tmp_path, "naive", 8, [_row("p1", 0, True), _row("p1", 1, True)])
+    _write_arm(tmp_path, "blind_self", 8, [_row("p1", 0, False)],
+               manifest=[("p1", 0), ("p1", 1)])
+
+    checkpoint = load_checkpoint(tmp_path, 8, "naive", "blind_self")
+
+    assert checkpoint.coverage.pairs_kept == 1
+    assert checkpoint.outcomes["p1"].tolist() == [[1, 0]]
+
+
+def test_a_skip_is_counted_apart_from_an_undecided_row(tmp_path):
+    """Deviation 12.2 point 2. Summing them would hide which instrument gave
+    up: the adjudicator hesitating and the detector seeing nothing in the
+    picture are different facts, and only the second is about the image."""
+
+    _write_arm(tmp_path, "naive", 8, [_row("p1", 0, True), _row("p1", 1, None)])
+    _write_arm(tmp_path, "blind_self", 8, [_row("p1", 0, True)],
+               manifest=[("p1", 0), ("p1", 1)])
+
+    coverage = load_checkpoint(tmp_path, 8, "naive", "blind_self").coverage
+
+    assert (coverage.unadjudicated_a, coverage.unadjudicated_b) == (1, 0)
+    assert (coverage.skipped_a, coverage.skipped_b) == (0, 1)
+
+
+def test_the_denominator_comes_from_the_manifest(tmp_path):
+    """Deviation 12.2 point 3.
+
+    Counting pairs_total off verified.jsonl lets a skipped image delete
+    itself from the denominator as well as the numerator, so however many
+    rows go missing the deletion rate still reads zero -- and the low
+    coverage disclosure never fires.
+    """
+
+    keys = [("p1", 0), ("p1", 1), ("p2", 0), ("p2", 1)]
+    _write_arm(tmp_path, "naive", 8, [_row("p1", 0, True)], manifest=keys)
+    _write_arm(tmp_path, "blind_self", 8, [_row("p1", 0, True)], manifest=keys)
+
+    coverage = load_checkpoint(tmp_path, 8, "naive", "blind_self").coverage
+
+    assert coverage.pairs_total == 4, "three vanished rows took the denominator with them"
+    assert coverage.prompts_total == 2
+    assert (coverage.pairs_kept, coverage.prompts_kept) == (1, 1)
+    assert (coverage.skipped_a, coverage.skipped_b) == (3, 3)
+
+
+def test_a_verdict_no_manifest_asked_for_is_refused(tmp_path):
+    """The inverse of a skip, and it is not benign: a verdict for an image
+    the run never requested means the directory holds output from something
+    else."""
+
+    _write_arm(tmp_path, "naive", 8, [_row("p1", 0, True), _row("p9", 0, True)],
+               manifest=[("p1", 0)])
+    _write_arm(tmp_path, "blind_self", 8, [_row("p1", 0, True)])
+
+    with pytest.raises(ValueError, match="no manifest asked for"):
+        load_checkpoint(tmp_path, 8, "naive", "blind_self")
+
+
+def test_a_missing_manifest_is_refused(tmp_path):
+    directory = tmp_path / "evaluations" / "naive" / "step-00008"
+    directory.mkdir(parents=True)
+    (directory / "verified.jsonl").write_text(
+        json.dumps(_row("p1", 0, True)) + "\n", encoding="utf-8")
+
+    with pytest.raises(FileNotFoundError, match="No manifest"):
         load_checkpoint(tmp_path, 8, "naive", "blind_self")
 
 

@@ -103,7 +103,14 @@ def report(results: list[SeedResult], *, confirmatory: bool,
         lines.append(
             f"  seed {result.seed}: {coverage.pairs_kept}/{coverage.pairs_total} pairs kept, "
             f"{coverage.prompts_kept}/{coverage.prompts_total} prompts, "
-            f"unadjudicated {coverage.unadjudicated_a} in A / {coverage.unadjudicated_b} in B")
+            f"unadjudicated {coverage.unadjudicated_a} in A / {coverage.unadjudicated_b} in B, "
+            f"skipped {coverage.skipped_a} in A / {coverage.skipped_b} in B")
+        if coverage.skipped_a or coverage.skipped_b:
+            # Deviation 12.2 point 5: a skip is the detector finding nothing in
+            # the picture, which is not missing at random and need not be
+            # symmetric between the arms.
+            lines.append("    ^ skipped rows are not missing at random; "
+                         "deviation 12.2 point 5 requires listing them in the appendix")
     lines.append("")
 
     differences = [result.point for result in results]

@@ -1,0 +1,78 @@
+What endpoint 2 measures, and three things wrong with measuring it that way.
+
+Endpoint 2 (PREREG, E3) registers the blind discrimination gap: the amount by
+which `s_select` is higher on images that turned out externally correct than
+on images that turned out wrong, with the generating prompt removed from the
+question. Its ¿Ú¾¶ pointer is `review-packets/dg-power-20260908/prompt_recital.py`.
+
+Running that pointer against the runs it names turns up three separate
+problems. This script is the evidence for all three; it reads only saved
+artifacts, touches no GPU, and does not write into any run directory.
+
+==============================================================================
+D1/D2  pilot, R=1 -- the two pairings cannot differ, and none of it
+       collapses to zero (PREREG endpoint 2 says +0.047 -> 0.000)
+==============================================================================
+arm        step   gap cand0  gap last row  difference  n right  n wrong  draws
+naive         0     +0.0697       +0.0697     +0.0000       20       44      1
+naive         8     +0.0925       +0.0925     +0.0000       21       43      1
+naive        16     +0.0833       +0.0833     +0.0000       23       41      1
+naive        24     +0.1131       +0.1131     +0.0000       22       42      1
+naive        32     +0.0493       +0.0493     +0.0000       24       40      1
+rfo_gold      0     +0.0697       +0.0697     +0.0000       20       44      1
+rfo_gold      8     +0.1219       +0.1219     +0.0000       21       43      1
+rfo_gold     16     +0.0833       +0.0833     +0.0000       23       41      1
+rfo_gold     24     +0.1022       +0.1022     +0.0000       26       38      1
+rfo_gold     32     +0.0456       +0.0456     +0.0000       23       41      1
+
+==============================================================================
+D1  main run, R=4 -- the two pairings differ, by more than the effect
+    endpoint 1 was powered to detect (+0.042)
+==============================================================================
+arm        step   gap cand0  gap last row  difference  n right  n wrong  draws
+naive         0     +0.0697       -0.0091     +0.0788       20       44      4
+naive         8     +0.0770       -0.0111     +0.0881       21       43      4
+naive        16     +0.0795       +0.0231     +0.0564       21       43      4
+rfo_gold      0     +0.0697       -0.0091     +0.0788       20       44      4
+rfo_gold      8     +0.0644       -0.0292     +0.0936       19       45      4
+rfo_gold     16     +0.0894       +0.0347     +0.0547       23       41    3-4
+
+==============================================================================
+D3  which observation condition the artifacts hold
+==============================================================================
+  evaluate.py calls observe_naive : 1 time(s)
+  evaluate.py calls observe_rfo   : 0 time(s)
+  observe_naive wraps every question in PROMPTED_PREAMBLE, so the
+  per-checkpoint s_select is the prompted score for every arm.
+  The blind gap endpoint 2 registers is not in any run directory.
+
+  Recoverable offline: the images and the per-round adapters are both
+  saved, so the blind pass is a re-observation and needs no retraining.
+
+==============================================================================
+D4  how many rows are absent, and how many are present but unadjudicated
+==============================================================================
+run                       arm        step  rows  skipped  pending  unnameable
+decoupling-pilot-20260906 naive         0    64        0        7           0
+decoupling-pilot-20260906 naive         8    64        0       10           0
+decoupling-pilot-20260906 naive        16    64        0        3           0
+decoupling-pilot-20260906 naive        24    64        0        5           0
+decoupling-pilot-20260906 naive        32    64        0        7           0
+decoupling-pilot-20260906 rfo_gold      0    64        0        7           0
+decoupling-pilot-20260906 rfo_gold      8    64        0        6           0
+decoupling-pilot-20260906 rfo_gold     16    64        0        5           0
+decoupling-pilot-20260906 rfo_gold     24    64        0        7           0
+decoupling-pilot-20260906 rfo_gold     32    64        0        7           0
+decoupling-main-20260908  naive         0   256        0       18           0
+decoupling-main-20260908  naive         8   256        0       17           0
+decoupling-main-20260908  naive        16   256        0       14           0
+decoupling-main-20260908  rfo_gold      0   256        0       18           0
+decoupling-main-20260908  rfo_gold      8   256        0       23           0
+decoupling-main-20260908  rfo_gold     16   255        1       16           0
+
+  A skipped image is not missing at random: the detector found nothing
+  in it. Deleting it silently removes a likely-failed generation from
+  the denominator, and the arms need not skip the same ones.
+
+    decoupling-pilot-20260906: 4 adapter(s), 5 image directory(ies)
+    decoupling-main-20260908: 3 adapter(s), 4 image directory(ies)

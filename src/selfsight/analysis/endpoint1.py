@@ -15,6 +15,13 @@ endpoint 1, with three later amendments this module implements literally:
 - **deviation 10** -- a (prompt, draw) unadjudicated in either arm is
   dropped from both, because a paired estimand cannot rest on two arms whose
   denominators are different images.
+- **deviation 12** -- a (prompt, draw) that is *absent* from an arm's
+  verdicts is dropped the same way. The detector returning nothing for an
+  image makes the row vanish rather than arrive undecided
+  (`skipped_no_detection`), which deviation 10 did not cover and this module
+  used to raise on. The two causes are counted separately, and the
+  denominator comes from the manifest so that a vanished row cannot take its
+  own denominator with it.
 
 The estimand is fixed in advance and so is the threshold: a point estimate
 below +0.042 whose interval contains 0 is *not detected*, and there is no
@@ -61,6 +68,11 @@ class Coverage:
     prompts_total: int
     unadjudicated_a: int
     unadjudicated_b: int
+    # Deviation 12.2 point 2. Not folded into unadjudicated_*: an undecided
+    # row is the adjudicator hesitating, an absent row is the detector seeing
+    # nothing in the picture. The second is evidence about the image.
+    skipped_a: int = 0
+    skipped_b: int = 0
 
     @property
     def low(self) -> bool:
@@ -114,6 +126,20 @@ def _verdicts(path: Path) -> dict[tuple[str, int], bool | None]:
     return out
 
 
+def _manifest_keys(run: Path, arm: str, step: int) -> set[tuple[str, int]]:
+    """The (prompt, draw) universe the run set out to measure.
+
+    Deviation 12.2 point 3. Counting the denominator off verified.jsonl would
+    let a skipped image delete itself from both numerator and denominator, so
+    the deletion rate would read 0 however many rows went missing.
+    """
+
+    path = Path(run) / "evaluations" / arm / f"step-{step:05d}" / "manifest.jsonl"
+    if not path.exists():
+        raise FileNotFoundError(f"No manifest for arm {arm} at step {step}: {path}")
+    return {(str(row["spec_id"]), int(row["candidate_index"])) for row in _rows(path)}
+
+
 def load_checkpoint(run: Path, step: int, arm_a: str, arm_b: str) -> PairedCheckpoint:
     """Read one checkpoint from both arms and apply deviation 10's rule."""
 
@@ -123,33 +149,48 @@ def load_checkpoint(run: Path, step: int, arm_a: str, arm_b: str) -> PairedCheck
             raise FileNotFoundError(f"No verdicts for arm {arm} at step {step}: {path}")
         return _verdicts(path)
 
-    left, right = verdicts(arm_a), verdicts(arm_b)
-    # Both arms draw the same prompts from the same frozen latents, so a key
-    # in one and not the other is a missing or extra image, not a design
-    # choice. Endpoint 1 is a paired estimand; letting that through would
-    # quietly compare two arms over different populations.
-    if set(left) != set(right):
-        only_a = sorted(set(left) - set(right))[:3]
-        only_b = sorted(set(right) - set(left))[:3]
+    # Deviation 12.2 point 4. Two arms drawing different (prompt, draw) sets
+    # is not a detector skipping an image -- it means they did not draw the
+    # same things, and endpoint 1's paired estimand has no premise left. That
+    # still stops the analysis. It is checked on the manifests, because the
+    # verdict files are exactly what a skip is allowed to shorten.
+    universe = _manifest_keys(run, arm_a, step)
+    other = _manifest_keys(run, arm_b, step)
+    if universe != other:
+        only_a = sorted(universe - other)[:3]
+        only_b = sorted(other - universe)[:3]
         raise ValueError(
-            f"step {step}: arms cover different (prompt, draw) keys; "
-            f"{len(set(left) ^ set(right))} differ, e.g. only in {arm_a}: {only_a}, "
+            f"step {step}: arms were asked for different (prompt, draw) keys; "
+            f"{len(universe ^ other)} differ, e.g. only in {arm_a}: {only_a}, "
             f"only in {arm_b}: {only_b}")
 
+    left, right = verdicts(arm_a), verdicts(arm_b)
+    stray = (set(left) | set(right)) - universe
+    if stray:
+        raise ValueError(
+            f"step {step}: {len(stray)} verdict(s) for keys no manifest asked for, "
+            f"e.g. {sorted(stray)[:3]}")
+
     grouped: dict[str, list[tuple[int, int]]] = defaultdict(list)
-    for key in left:
-        a, b = left[key], right[key]
+    for key in universe:
+        # Absent and undecided both arrive here as None, and deviation 12.2
+        # point 1 gives them the same fate. They are counted apart below.
+        a, b = left.get(key), right.get(key)
         if a is None or b is None:
             continue
         grouped[key[0]].append((int(a), int(b)))
 
     coverage = Coverage(
         pairs_kept=sum(len(rows) for rows in grouped.values()),
-        pairs_total=len(left),
+        pairs_total=len(universe),
         prompts_kept=len(grouped),
-        prompts_total=len({key[0] for key in left}),
-        unadjudicated_a=sum(1 for value in left.values() if value is None),
-        unadjudicated_b=sum(1 for value in right.values() if value is None),
+        prompts_total=len({key[0] for key in universe}),
+        unadjudicated_a=sum(1 for key, value in left.items()
+                            if value is None and key in universe),
+        unadjudicated_b=sum(1 for key, value in right.items()
+                            if value is None and key in universe),
+        skipped_a=len(universe - set(left)),
+        skipped_b=len(universe - set(right)),
     )
     outcomes = {prompt: np.asarray(rows, dtype=np.int8) for prompt, rows in grouped.items()}
     return PairedCheckpoint(step=step, outcomes=outcomes, coverage=coverage)
