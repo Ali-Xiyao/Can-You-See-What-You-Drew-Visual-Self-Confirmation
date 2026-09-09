@@ -9,15 +9,17 @@
 
 | | 状态 | 卡上 |
 |---|---|---|
-| E3 arm A + C(`decoupling-main-20260908`)| **在跑**,**round 1 / 11 训完**,正在测它的 step-00016;09-08 07:33 起,已用 19.9 h | cuda:0 观察 + cuda:1 生成,两张都占 |
+| E3 arm A + C(`decoupling-main-20260908`)| **在跑**,**round 1 / 11 训完**,正在测它的 step-00016;09-08 07:33 起,已用 **23.0 h**。按实测吞吐外推 **~92 h,余量不到 4%**(§0.5)| 两张都占,但卡 0 每块空转约 37%(§0.5)|
 | E3 arm B(`naive` + `blind_self` 配对新跑)| 代码就绪(含新的 audit stage,§1),**等卡** | — |
 | E4 三个新模型作答 | **已完成**,3/3 复现,见 §2 | 已释放 |
 | 评分器缺陷 | **已修**(worktree 99b7c0f,登记为偏离 3) | 无 |
 | arm B 的轮次恢复路径 | **已修**(worktree 93379c8) | 无 |
-| 排卡的空载基准(§0.3)| 脚本就绪并已预注册判据,**等两张卡都空** | — |
+| 排卡的空载基准(§0.3)| 脚本就绪并已预注册判据,**等两张卡都空**。窗口唯一:主运行结束到 replicate 1 启动之间,约 1.5 h,换 55 个块的排期收益(§0.5)| — |
 | seed 数 | **已定:5 seed**(2026-09-09;偏离 9 取代 8.1)。取值定死 20260906 / 20260907 / 20260909 / 20260910 / 20260911(跳过 20260908,§3 已占)。增量 4 次运行,304–352 h | 等 A800 |
 | `training.seed` 旋钮 | **已实现并验证**(偏离 8.5;arm B worktree `da5ce71`):10 个测试先验红、10 个变异全杀。split / 评测 latent 归 `partition_seed`,轮次调度 / LoRA init / 优化器 RNG 归 `training_seed`,缺省逐位不变 | 完成 |
 | A800 服务器 | 09-09 不可用,**明后天可用**(用户告知)。3 个 seed 靠它并行 | — |
+| 主运行源码未提交 | **已解决**(`90431bf`):`scripts/v4_train.py` 与 `src/selfsight/v4/evaluate.py` 的工作树字节与 `run_manifest.json` 的 launch 摘要逐位相同,却不在任何分支上。提交不改磁盘字节(已复核 23adcc98 / 636c498a 未变),同时解开了 arm B 合并的唯一阻塞 | 不影响在跑的运行 |
+| arm B 合并 | **已预演并验通**(探针 worktree `H:/Xiyao_Wang/062_mt`):唯一冲突在 `scripts/v4_train.py` 一处,解法见 §3.1;`test_v4_training_seed` / `test_v4_evaluate` / `test_v4_verify_replicates` / `test_v4_pilot_supervisor` / `test_v4_blind_self_arm` 共 103 通过 2 跳过 | — |
 | bootstrap 种子/次数不一致 | **已登记,代码不动**(偏离 6.4):在跑的 report 是 20260906 / 2000,§3 注册的 20260908 只活在已降级的 breakpoints 模块里。端点 1 的最终脚本按 20000 / 20260908 新写 | 不动在跑的脚本 |
 
 两张 3090 都被主运行占着,而且它按 checkpoint 在两张卡之间来回。
@@ -275,6 +277,74 @@ arm B 若也在不干净的条件下跑,实际收益可能与判据算出来的�
 
 ---
 
+## 0.5 96 h 只剩约 4 h 余量,卡 0 每块空转约三分之一(2026-09-09 07:10 实测)
+
+§0.1 的外推是 `11 x 1.77 + 12 x 3.95 ~ 67 h`。**两个因子实测都偏低。**
+下面的数全部来自 `supervisor-relaunch-20260908.log` 的 stage 起始时刻,
+只读,没碰运行。
+
+注意日志有两行被两个线程同时写而粘在一起
+(`naive.step-00008.generate2026-09-08`)——被吃掉的是 rfo_gold 的
+`generate` 起始行,两臂的 generate 本来就同刻启动,所以时刻仍可还原。
+
+| | 注册外推 | round 0 检查点块 | round 1 检查点块 |
+|---|---|---|---|
+| train | 1.77 h | — | **2.18 h** |
+| 块墙钟(= 慢的那条链) | 3.95 h | **5.48 h** | **~5.3 h**(在跑) |
+
+一轮的真实代价是 **2.18 + 5.3 ~ 7.5 h**,不是 5.7 h。
+
+### 到期日推算
+
+step-00016 块约 08:45 结束(elapsed ~24.9 h),此后还剩 9 轮:
+
+```
+24.9 + 9 x 7.5  =  92.4 h        上限 96 h,截止 2026-09-12 07:33
+```
+
+**余量约 3.6 h,不到 4%。** 96 h 是停止线不是预算(§0.1 已裁定),
+`run()` 到点在下一个 stage 边界 raise,主运行会停在半轮上。
+**这不需要现在做任何事**——没有合规的加速手段可以用在正在跑的运行上,
+§0.2 三条理由仍然成立。但它把「主运行完成」从默认结果变成了约 4% 余量的事件,
+所以「主运行完了就自动合并起 seed 1」这条指令要带一个前置判据:
+`state.json` 的 `status` 必须是 `pilot_complete` 且 `completed_rounds == 11`,
+`canary_complete` 或 traceback 都不触发。
+
+### 卡 0 的空转,量出来了
+
+一条链按臂钉死在一张卡上(§0.2),两条链在 `chains()` 的 `join()` 汇合,
+所以块墙钟取大者,快的那条打完就干等。round 1 块里:
+
+| | naive(cuda:0)| rfo_gold(cuda:1)|
+|---|---|---|
+| generate | 76.6 min | 102.6 min |
+| detect qwen3vl | 38.4 min | 85.1 min |
+| detect internvl | 30.0 min | 在跑(06:35 起)|
+| crop + verify | 4.2 min | — |
+| gradient | 05:56 起,已完 | — |
+
+07:10 查 `nvidia-smi`:**卡 0 = 0 MiB / 0% / 9.2 W,卡 1 = 16965 MiB / 38% / 99 W。**
+naive 整条链约 06:30 就打完了,rfo_gold 还剩 internvl + crop + verify + gradient,
+约到 08:20。**卡 0 这一块空转约 1.8 h,占块墙钟约 37%。**
+
+这不是「没用上两张卡」——两张卡都在用,是**两条链的长度不等**,
+而不等的原因就是 §0.2 那条:整条链(含传输受限的 detect)跟着臂走,
+rfo_gold 那条整条压在 gen3 x4 的卡 1 上。
+
+### 对 5 个 replicate 的意义
+
+一个 replicate 自己就要两张卡:`ARM_CARDS` 定死两张、`__init__` 拒绝别的 arity,
+而 `train` 阶段 backbone 在 cuda:1、裁决梯队在 cuda:0 且拒绝同卡(STATUS 37)。
+**所以 5 个 replicate 在 2x3090 上只能串行**,并行不是排期问题,是结构问题。
+
+能省的是每个块里那 37%。按上表,5 个 replicate x 11 个块 = 55 个块,
+每块哪怕只收回 1 h 就是 **55 h**。这正是 §0.3 已注册的判据要裁的事,
+而它要求两张卡都空——**唯一的窗口就是主运行结束到 replicate 1 启动之间**。
+`card_benchmark.py` 按 N=64 x 2 检测器 x 3 组合估约 1.5 h,
+换 55 h 的期望值,先测再起。
+
+---
+
 ## 1. arm B 的启动:代码已就位,只等主运行让出卡
 
 预注册钉死了跑法:**同一份 config,`--arms naive blind_self`,新输出目录**。
@@ -317,6 +387,18 @@ B 若单臂跑会训练 100%,A–B 差异就带上 prompt 集混淆,而 A vs B �
 
 测试:66 个通过(supervisor 34 + scene audit 32)。新写的都先对旧代码验红过
 (`--arms` 11 红、audit 解析 5 红、audit stage 5 红),对新增代码的变异测试 11/11 击杀。
+
+**启动前的三道闸,按顺序**(2026-09-09 补,见 §0.5):
+
+1. **主运行必须是正常跑完的**。`runs/v4/decoupling-main-20260908/state.json`
+   的 `status` 要是 `pilot_complete` 且 `completed_rounds == 11`。
+   `canary_complete`(96 h 停止线触发)或 traceback 都**不**触发自动启动——
+   96 h 余量只剩不到 4 h,这不再是形式上的判据。
+2. **合并**(§3),然后跑下面第 0 条的 `training_seed` 源码闸。
+3. **两张卡都空的那一刻先跑 §0.3 的空载基准**,按预注册判据决定 detect 排期,
+   再起 replicate 1。这一步约 1.5 h;它换的是 5 x 11 = 55 个检查点块的排期,
+   §0.5 估每块可收回约 1 h。基准要求两卡皆空,而这是唯一的窗口:
+   replicate 1 一起,两张卡又满了,直到 5 个 replicate 全部跑完。
 
 **启动**(等主运行释放两张卡、并且 §3 的合并做完之后):
 
@@ -464,6 +546,60 @@ codex/blind-self-arm-20260908` 干净出树(`a0169af`),没有冲突。会动 26 
 `v4_scene_audit.py`、`v4_train.py`、`src/selfsight/v4/train.py`——
 和上面那段说的一致。空跑只用 `merge-tree`,没有建分支、没有动工作区。
 两边还会再动,合并前要重跑一次。
+
+---
+
+### 3.1 重跑了,现在有一个冲突,解法已经验过(2026-09-09 07:2x)
+
+上面那次空跑之所以干净,是因为当时主树的 `scripts/v4_train.py` 还是脏的、
+不在 `HEAD` 上,`merge-tree` 比的是提交而不是工作树。把它提交之后
+(`90431bf`,理由见下)再跑,**恰好一个冲突**:
+
+```
+git merge-tree --write-tree --name-only paper/iclr-2028 codex/blind-self-arm-20260908
+CONFLICT (content): Merge conflict in scripts/v4_train.py
+```
+
+冲突就一处,在 `generate` 里造评测 latent 的那几行,两边改的是同一个表达式:
+
+- `paper/iclr-2028`:R 次抽样,键从 `prompt_id` 变成 `(prompt_id, draw)`,
+  多传一个 `candidate_index`,种子仍写 `int(config["seed"])`。
+- `codex/blind-self-arm-20260908`:键不变,种子改成 `partition_seed(config)`。
+
+**解法是两边都要,不是二选一**:保留 R 次抽样的键和 `candidate_index`,
+种子取 `partition_seed`。理由写进了代码注释——这批 latent 是配对设计里配对的
+那一半,五个 replicate 必须抽到同一批图,所以它归 partition 不归 training。
+`evaluation_seed` 的 `candidate_index: int = 0` 有默认值,而且它定义在
+`evaluate.py` 里、arm B 根本没动那个文件,所以签名在合并后仍然成立。
+
+已在探针 worktree `H:/Xiyao_Wang/062_mt` 上真做了一次合并并按此解决,
+然后跑测试(主树的解释器 + `PYTHONPATH` 指向探针树,worktree 里没有 `envs/`):
+`test_v4_training_seed` / `test_v4_evaluate` / `test_v4_verify_replicates` /
+`test_v4_pilot_supervisor` / `test_v4_blind_self_arm` **103 通过 2 跳过**。
+其中 `test_every_seed_a_call_site_hands_out_comes_from_one_of_the_two_helpers`
+是这个解法的守门人:它按 AST 检查每一处传出去的 seed 都来自那两个 helper,
+所以「合并时顺手留下 `int(config["seed"])`」这种解法过不了。
+全量套件另有一处失败,`test_v4_checkpoint_probe.py::test_end_to_end_...`,
+原因是探针 worktree 没有 `runs/`(未跟踪产物),与合并无关。
+
+**探针 worktree 是一次性的,合并真正落地后删掉。**
+
+### 3.2 为什么主运行的源码先要提交(`90431bf`)
+
+`run_manifest.json` 冻结了 12 个 SOURCES 文件的逐文件 sha256。其中
+`scripts/v4_train.py`(23adcc98)和 `src/selfsight/v4/evaluate.py`(636c498a)
+与工作树逐位相同,**而与任何分支上的任何提交都不同**——主运行跑的这份代码
+不在历史里。它的测试也不在。
+
+提交不改磁盘:`git add` 规范化的是索引里的行尾,不是工作树,
+提交前后两个摘要复核过没变,所以每个 stage 重新读盘起的子进程读到的还是同一份。
+一并进去的还有 `analysis/breakpoints.py` 的 `break_support` 和
+`tests/test_v4_evaluate.py`——`evaluate.py` 在模块级 import 了 `break_support`,
+拆成两个提交的话中间那个 import 不了。
+
+先例是 `4fee432`(把一直在跑却没提交的并发重写提交掉)。**第二次发生,
+这本身就是发现**:supervisor 会在每个 stage 重核源码摘要、resume 时拒绝改动,
+但没有任何东西拒绝「从一棵从未提交过的树上启动」。
 
 ---
 
