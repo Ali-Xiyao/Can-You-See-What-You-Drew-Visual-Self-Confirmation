@@ -7,6 +7,7 @@ failed stage pauses the run for diagnosis instead of silently changing scale.
 from __future__ import annotations
 
 import argparse
+from functools import partial
 import hashlib
 import json
 import math
@@ -15,13 +16,30 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import threading
 import time
+from typing import Any
 
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNS = ["runs/v4/main-2plus1", "runs/v4/main-1plus1plus1"]
 ARMS = ["naive", "rfo_gold"]
+
+# One card per arm for the whole evaluate-and-probe chain. The two arms share
+# nothing there -- separate checkpoints, image directories, manifests, logs and
+# completion markers -- so running them one after the other left a 3090 idle
+# through the entire generate-and-adjudicate pass of the other. That pass is
+# most of the wall clock: 256 images at 38.8 s each, twice per checkpoint.
+#
+# Deliberately NOT parallelised: `train`, which already spans both cards
+# (backbone on cuda:1, adjudication ladder on cuda:0), and `report`, which is
+# CPU and reads the one metrics table both arms write into.
+ARM_DEVICE = {"naive": "cuda:0", "rfo_gold": "cuda:1"}
+
+# Roughly a third of a second of retries in total, which is far longer than any
+# reader holds state.json and far shorter than any stage.
+REPLACE_ATTEMPTS = 5
 SOURCES = [
     "scripts/v4_train.py", "src/selfsight/v4/train.py",
     "src/selfsight/v4/evaluate.py", "src/selfsight/v4/probe.py",
@@ -33,10 +51,31 @@ SOURCES = [
 
 
 def write_json(path: Path, value: dict) -> None:
+    """Atomic publish, safe against a concurrent writer and a concurrent reader.
+
+    The tmp name carries the thread id because the two arm chains write from two
+    threads and a single shared `.tmp` would let one truncate the other's
+    half-written bytes before either replace ran.
+
+    The retry is for Windows: os.replace refuses with WinError 5 while anything
+    holds a handle on the destination, and the destination here is the file a
+    human checks to see how the run is doing. Losing the run because someone
+    read its status is not a trade worth making, so the replace is attempted a
+    few times before the error is allowed out.
+    """
+
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp = path.with_suffix(f"{path.suffix}.{os.getpid()}.{threading.get_ident()}.tmp")
     tmp.write_text(json.dumps(value, indent=2, allow_nan=False), encoding="utf-8")
-    os.replace(tmp, path)
+    for attempt in range(REPLACE_ATTEMPTS):
+        try:
+            os.replace(tmp, path)
+            return
+        except PermissionError:
+            if attempt == REPLACE_ATTEMPTS - 1:
+                tmp.unlink(missing_ok=True)
+                raise
+            time.sleep(0.05 * (attempt + 1))
 
 
 def digest(path: Path) -> str:
@@ -44,6 +83,13 @@ def digest(path: Path) -> str:
 
 
 class Pilot:
+    # Class level, not per instance, because the supervisor tests build a Pilot
+    # with object.__new__ to exercise resume logic without a config or a lock
+    # file, and state() must not depend on __init__ having run. One Pilot per
+    # process is guaranteed by the supervisor.lock flock anyway, so there is no
+    # instance for a shared lock to be wrong about.
+    state_lock = threading.Lock()
+
     def __init__(self, args: argparse.Namespace):
         self.args = args
         self.out = args.outdir.resolve()
@@ -74,8 +120,10 @@ class Pilot:
         self.env.pop("CUDA_VISIBLE_DEVICES", None)
         self.manifest_path = self.out / "run_manifest.json"
         fingerprint = {name: digest(ROOT / name) for name in SOURCES}
+        self.protocol_path = args.protocol.resolve()
         manifest = {"config_sha256": digest(self.config_path),
-                    "protocol_sha256": digest(ROOT / "docs/prereg/2026-09-06-decoupling-pilot.md"),
+                    "protocol_sha256": digest(self.protocol_path),
+                    "protocol_path": str(self.protocol_path.relative_to(ROOT)),
                     "source_sha256": fingerprint, "runs": RUNS,
                     "started_unix": time.time(), "config": self.config}
         if self.manifest_path.exists():
@@ -104,9 +152,37 @@ class Pilot:
                        "--runs", *RUNS]
         self.done_stages = self.out / "stage-completion"
         self.done_stages.mkdir(exist_ok=True)
+        # Checked at construction, not where it is read. gradient-sensitivity runs
+        # after the first checkpoint lands, so a missing audit takes hours of GPU
+        # time to discover; scripts/v4_scene_audit.py writes it in seconds.
+        self.audit_path = self.out / "retrospective-scene-audit" / "scene_overlap.json"
+        if not self.audit_path.exists():
+            raise FileNotFoundError(
+                f"No scene audit at {self.audit_path}; build it first with "
+                f"scripts/v4_scene_audit.py --outdir {self.out} --config {self.config_path}")
         self.state("ready", "preflight")
 
     def state(self, status: str, stage: str, **extra) -> None:
+        """Serialised because the two arm chains write this from two threads.
+
+        write_json goes through one fixed tmp path before os.replace, so
+        concurrent callers would interleave into it and could publish a
+        truncated status file -- the one artifact used to check on an
+        unattended multi-day run from outside.
+        """
+
+        with self.state_lock:
+            try:
+                self._write_state(status, stage, **extra)
+            except OSError as exc:
+                # Telemetry, not evidence. Every artifact the results rest on is
+                # written by the stage subprocesses and by write_json calls that
+                # still raise; this one file only reports progress, and killing
+                # a multi-day run because a status line could not be published
+                # would be the more expensive failure by a wide margin.
+                print(f"warning: could not publish state.json ({exc})", flush=True)
+
+    def _write_state(self, status: str, stage: str, **extra) -> None:
         write_json(self.out / "state.json", {
             "status": status, "stage": stage, "supervisor_pid": os.getpid(),
             "updated_unix": time.time(), "started_unix": self.started,
@@ -136,8 +212,13 @@ class Pilot:
         with log.open("a", encoding="utf-8") as handle:
             handle.write("\nCOMMAND " + subprocess.list2cmdline(command) + "\n")
             handle.flush()
-            process = subprocess.Popen(command, cwd=ROOT, env=self.env, stdout=handle,
-                                       stderr=subprocess.STDOUT,
+            # The stage name rides in the child's environment rather than being
+            # looked up in state.json. Two arm chains publish that file from two
+            # threads, so a reader can only learn which stage is "current", not
+            # which stage it is itself -- and with concurrency those differ.
+            process = subprocess.Popen(command, cwd=ROOT,
+                                       env={**self.env, "SELFSIGHT_STAGE": stage},
+                                       stdout=handle, stderr=subprocess.STDOUT,
                                        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
             self.state("running", stage, child_pid=process.pid, log=str(log), command=command)
             try:
@@ -153,29 +234,72 @@ class Pilot:
             raise RuntimeError(f"{stage} failed with exit {result}; see {log}")
         write_json(complete, {"stage": stage, "completed_unix": time.time(), "command": command})
 
-    def adjudicate(self, directory: Path, label: str) -> None:
+    def chains(self, bodies: dict[str, Any]) -> None:
+        """Run one stage chain per arm at the same time, each pinned to a card.
+
+        Every stage inside a chain still runs in order and still writes its own
+        completion marker, so a crash resumes exactly where the sequential
+        version would have. What changes is only that the other arm has stopped
+        waiting for this one.
+
+        A failure in one chain does not kill the other mid-stage. The survivor
+        finishes what it started -- a half-written manifest costs more than the
+        few minutes saved -- and then the first error is re-raised, so the
+        supervisor still pauses for diagnosis instead of continuing.
+        """
+
+        errors: dict[str, BaseException] = {}
+
+        def guard(name: str, body: Any) -> None:
+            try:
+                body()
+            except BaseException as exc:  # noqa: BLE001 - re-raised after the join
+                errors[name] = exc
+
+        threads = [threading.Thread(target=guard, args=(name, body), name=name)
+                   for name, body in sorted(bodies.items())]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+        if errors:
+            first = min(errors)
+            raise RuntimeError(f"{first} chain failed: {errors[first]}") from errors[first]
+
+    def measure_arm(self, arm: str, round_index: int) -> None:
+        """One arm's whole per-checkpoint chain, on that arm's card.
+
+        This is the body `chains` runs in a thread. It exists as a method rather
+        than a lambda so the arm and round are bound as arguments, not captured
+        from the enclosing loop.
+        """
+
+        self.evaluate(arm, round_index, ARM_DEVICE[arm])
+        self.probe(arm, round_index, ARM_DEVICE[arm])
+
+    def adjudicate(self, directory: Path, label: str, device: str) -> None:
         for detector in ("qwen3vl", "internvl"):
             self.run(f"{label}.detect.{detector}", "observer", "scripts/v4_run_pipeline.py",
                      ["detect", "--manifest", str(directory / "manifest.jsonl"),
-                      "--detector", detector, "--device", "cuda:0"])
+                      "--detector", detector, "--device", device])
         self.run(f"{label}.crop", "observer", "scripts/v4_run_pipeline.py",
-                 ["crop", "--run", str(directory), "--device", "cuda:0"])
+                 ["crop", "--run", str(directory), "--device", device])
         self.run(f"{label}.verify", "core", "scripts/v4_run_pipeline.py",
                  ["verify", "--run", str(directory)])
 
-    def evaluate(self, arm: str, round_index: int) -> None:
+    def evaluate(self, arm: str, round_index: int, device: str) -> None:
         step = (round_index + 1) * self.config["training"]["optimizer_steps_per_round"]
         label = f"{arm}.step-{step:05d}"
         self.run(f"{label}.generate", "showo2", "scripts/v4_train.py",
                  ["generate", *self.common, "--arm", arm, "--round", str(round_index),
-                  "--device", "cuda:1"])
-        self.adjudicate(self.out / "evaluations" / arm / f"step-{step:05d}", label)
+                  "--device", device])
+        self.adjudicate(self.out / "evaluations" / arm / f"step-{step:05d}", label, device)
 
-    def probe(self, arm: str, round_index: int) -> None:
+    def probe(self, arm: str, round_index: int, device: str) -> None:
         step = (round_index + 1) * self.config["training"]["optimizer_steps_per_round"]
         target = self.out / "gradient-probes" / arm / f"step-{step:05d}"
         args = ["run", "--config", str(self.config_path), "--bank", str(self.out / "probe-bank"),
-                "--outdir", str(target), "--device", "cuda:1", "--arm", arm,
+                "--outdir", str(target), "--device", device, "--arm", arm,
                 "--resamples", str(self.config["gradient_probe"]["resamples"])]
         if round_index == -1:
             args += ["--checkpoint", str(self.out / "checkpoints/base/round--01")]
@@ -187,11 +311,24 @@ class Pilot:
     def report(self, step: int) -> None:
         self.run(f"step-{step:05d}.score", "core", "scripts/v4_train.py",
                  ["score", "--outdir", str(self.out)])
+        # self.protocol_path, not a literal. The manifest records the protocol the
+        # run was launched under and refuses to start if it changes; hardcoding a
+        # different one here put the pilot's document into every report's frozen
+        # provenance block while run_manifest.json named the main-run protocol.
+        # The two disagreed for the whole of 2026-09-08, and because
+        # v4_decoupling_report.py freezes provenance across steps, the first
+        # report to land would have locked the wrong one in for all twelve.
         self.run(f"step-{step:05d}.report", "core", "scripts/v4_decoupling_report.py",
                  ["--outdir", str(self.out), "--config", str(self.config_path),
-                  "--protocol", str(ROOT / "docs/prereg/2026-09-06-decoupling-pilot.md")])
-        self.run(f"step-{step:05d}.gradient-sensitivity", "core", "scripts/v4_gradient_sensitivity.py",
-                 ["--outdir", str(self.out)])
+                  "--protocol", str(self.protocol_path)])
+        # --audit is passed because the default is RUN/audit-splits/scene_overlap.json,
+        # and v4_decoupling_report.py reads that same path implicitly to choose an
+        # outcome subset -- which is only sound for an audit frozen before any outcome
+        # existed. This run's audit was built mid-run and declares so, so it is named
+        # here explicitly and stays out of the path the report would pick it up from.
+        self.run(f"step-{step:05d}.gradient-sensitivity", "core",
+                 "scripts/v4_gradient_sensitivity.py",
+                 ["--outdir", str(self.out), "--audit", str(self.audit_path)])
         self.run(f"step-{step:05d}.plot", "core", "scripts/v4_decoupling_plot.py",
                  ["--outdir", str(self.out)])
 
@@ -231,13 +368,14 @@ class Pilot:
                       "--max-epochs", "1", "--round-index", str(index)])
             self.validate_round(index)
             if index == 0:
-                for arm in ARMS:
-                    self.evaluate(arm, -1)
-                self.probe("base", -1)
+                # Both arms measure the same untrained adapter here, so the two
+                # chains draw identical images. They are still kept apart so the
+                # per-arm directory layout is uniform across every checkpoint.
+                self.chains({arm: partial(self.evaluate, arm, -1, ARM_DEVICE[arm])
+                             for arm in ARMS})
+                self.probe("base", -1, "cuda:1")
                 self.report(0)
-            for arm in ARMS:
-                self.evaluate(arm, index)
-                self.probe(arm, index)
+            self.chains({arm: partial(self.measure_arm, arm, index) for arm in ARMS})
             self.report((index + 1) * self.config["training"]["optimizer_steps_per_round"])
         self.state("pilot_complete" if self.limit == self.config["training"]["rounds"] else "canary_complete",
                    "review_results", completed_rounds=self.limit,
@@ -248,6 +386,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--outdir", type=Path, default=ROOT / "runs/v4/decoupling-pilot-20260906")
     parser.add_argument("--config", type=Path, default=ROOT / "configs/v4_decoupling_pilot.yaml")
+    # The protocol a run records itself against. Defaulted rather than derived
+    # so a new config cannot quietly inherit the pilot's provenance: the hash
+    # of whatever is passed here is frozen into run_manifest.json and a later
+    # mismatch stops the resume.
+    parser.add_argument("--protocol", type=Path,
+                        default=ROOT / "docs/prereg/2026-09-06-decoupling-pilot.md")
     parser.add_argument("--through-round", type=int)
     parser.add_argument("--accept-code-update", action="store_true")
     args = parser.parse_args()

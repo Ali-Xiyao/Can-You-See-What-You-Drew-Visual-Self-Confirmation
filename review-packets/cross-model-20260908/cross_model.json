@@ -1,0 +1,113 @@
+{
+  "runs": [
+    "runs/v4/main-2plus1",
+    "runs/v4/main-1plus1plus1"
+  ],
+  "registered": [
+    "showo2_1p5b",
+    "showo2_7b",
+    "showo_v1"
+  ],
+  "results": {
+    "showo2_1p5b": {
+      "model": "showo2_1p5b",
+      "image_only": {
+        "point": 0.6536731634182908,
+        "low": 0.61677684306823,
+        "high": 0.6888094533093351,
+        "n": 667
+      },
+      "prompted": {
+        "point": 0.3357771260997067,
+        "low": 0.30134012941452526,
+        "high": 0.37205384377111994,
+        "n": 682
+      },
+      "delta": -0.3178960373185841,
+      "pairs": 667,
+      "blind_only": 221,
+      "told_only": 9,
+      "p_one_sided": 2.558255145291621e-54,
+      "decisive_trials": 682,
+      "blind_only_abstained": 15,
+      "told_only_abstained": 0,
+      "p_abstention_imbalance": 6.103515625e-05,
+      "replicates": true
+    },
+    "showo2_7b": {
+      "model": "showo2_7b",
+      "image_only": {
+        "point": 0.5835777126099707,
+        "low": 0.5462121960695071,
+        "high": 0.6200069425770843,
+        "n": 682
+      },
+      "prompted": {
+        "point": 0.312316715542522,
+        "low": 0.27866751115542376,
+        "high": 0.3480684581995994,
+        "n": 682
+      },
+      "delta": -0.2712609970674487,
+      "pairs": 682,
+      "blind_only": 186,
+      "told_only": 1,
+      "p_one_sided": 9.584040937372833e-55,
+      "decisive_trials": 682,
+      "blind_only_abstained": 0,
+      "told_only_abstained": 0,
+      "p_abstention_imbalance": 1.0,
+      "replicates": true
+    },
+    "showo_v1": {
+      "model": "showo_v1",
+      "image_only": {
+        "point": 0.6336477987421384,
+        "low": 0.5955037299316718,
+        "high": 0.6701870285310477,
+        "n": 636
+      },
+      "prompted": {
+        "point": 0.554675118858954,
+        "low": 0.515681126080565,
+        "high": 0.5930074034675931,
+        "n": 631
+      },
+      "delta": -0.07897267988318435,
+      "pairs": 596,
+      "blind_only": 81,
+      "told_only": 37,
+      "p_one_sided": 3.145945284416356e-05,
+      "decisive_trials": 682,
+      "blind_only_abstained": 35,
+      "told_only_abstained": 40,
+      "p_abstention_imbalance": 0.644463913894226,
+      "replicates": true
+    },
+    "janus_pro_1b": {
+      "model": "janus_pro_1b",
+      "image_only": {
+        "point": 0.6762917933130699,
+        "low": 0.639606842291545,
+        "high": 0.7109302046393219,
+        "n": 658
+      },
+      "prompted": {
+        "point": 0.5014749262536873,
+        "low": 0.46393628055606806,
+        "high": 0.5389969520305034,
+        "n": 678
+      },
+      "delta": -0.1748168670593826,
+      "pairs": 654,
+      "blind_only": 194,
+      "told_only": 67,
+      "p_one_sided": 8.434106047253784e-16,
+      "decisive_trials": 682,
+      "blind_only_abstained": 24,
+      "told_only_abstained": 4,
+      "p_abstention_imbalance": 0.00017999112606048584,
+      "replicates": true
+    }
+  }
+}

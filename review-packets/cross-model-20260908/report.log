@@ -1,0 +1,38 @@
+accuracy on the decisive trials (image_differs_from_spec), Wilson 95%
+pooled over main-2plus1, main-1plus1plus1
+
+model          image_only                 prompted                     delta     p (1s)
+showo2_1p5b    0.654 [0.617,0.689] n=667  0.336 [0.301,0.372] n=682   -0.318   2.56e-54
+showo2_7b      0.584 [0.546,0.620] n=682  0.312 [0.279,0.348] n=682   -0.271   9.58e-55
+showo_v1       0.634 [0.596,0.670] n=636  0.555 [0.516,0.593] n=631   -0.079   3.15e-05
+janus_pro_1b   0.676 [0.640,0.711] n=658  0.501 [0.464,0.539] n=678   -0.175   8.43e-16
+
+paired on (image, question), exact one-sided McNemar
+
+model            pairs  blind only  told only  replicates
+showo2_1p5b        667         221          9        True
+showo2_7b          682         186          1        True
+showo_v1           596          81         37        True
+janus_pro_1b       654         194         67        True
+
+'blind only' = right without the description in context, wrong with it.
+
+which trials were answerable at all, paired the same way
+
+model           decisive  paired  blind only  told only     p (2s)
+showo2_1p5b          682     667          15          0   6.10e-05
+showo2_7b            682     682           0          0   1.00e+00
+showo_v1             682     596          35         40   6.44e-01
+janus_pro_1b         682     654          24          4   1.80e-04
+
+  showo2_1p5b, janus_pro_1b: declines to answer at different rates in the two conditions.
+  The paired test above is unaffected -- it only uses trials answered in both --
+  but the two marginal accuracies are over subsets the model chose. Report both
+  columns' n and say so; do not drop the model and do not drop the row.
+
+registered set ('showo2_1p5b', 'showo2_7b', 'showo_v1'): 3/3 replicate (showo2_1p5b, showo2_7b, showo_v1)
+  PREREG E4 met: the generalisation claim in section 6 stands, labelled as an inference-time replication on frozen negative controls
+
+beyond the registered set: janus_pro_1b replicates. Deviation 1 added it as a cross-family check; it is reported, not counted toward the 2-of-3.
+
+wrote review-packets\cross-model-20260908\cross_model.json
