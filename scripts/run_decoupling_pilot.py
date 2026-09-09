@@ -35,7 +35,15 @@ ARMS = ["naive", "rfo_gold"]
 # Deliberately NOT parallelised: `train`, which already spans both cards
 # (backbone on cuda:1, adjudication ladder on cuda:0), and `report`, which is
 # CPU and reads the one metrics table both arms write into.
-ARM_DEVICE = {"naive": "cuda:0", "rfo_gold": "cuda:1"}
+# Positional, and paired with --arms in the order it was given. Two cards, so
+# two arms: `chains` would start a third thread quite happily and it would land
+# on a card that already has one, which is why __init__ refuses the arity rather
+# than letting zip() drop the extra arm in silence.
+#
+# Which arm gets cuda:1 is not neutral -- it is the gen3 x4 card (STATUS 32) --
+# but it does not change the block's wall clock, which is the slower chain
+# whichever way round they are. See EXECUTION 0.2.
+ARM_CARDS = ["cuda:0", "cuda:1"]
 
 # Roughly a third of a second of retries in total, which is far longer than any
 # reader holds state.json and far shorter than any stage.
@@ -113,6 +121,14 @@ class Pilot:
                          self.config["training"]["rounds"])
         if args.through_round is not None and args.through_round < 1:
             raise ValueError("--through-round must be positive")
+        requested = list(args.arms)
+        self.arms = list(dict.fromkeys(requested))
+        if len(self.arms) != len(requested):
+            raise ValueError(f"--arms repeats an arm: {requested}")
+        if len(self.arms) != len(ARM_CARDS):
+            raise ValueError(f"--arms takes exactly {len(ARM_CARDS)} arms, one per card; "
+                             f"got {self.arms}")
+        self.arm_device = dict(zip(self.arms, ARM_CARDS))
         self.env = os.environ.copy()
         self.env.update(PYTHONPATH=str(ROOT / "src"), PYTHONUTF8="1",
                         PYTHONNOUSERSITE="1", HF_HUB_OFFLINE="1",
@@ -124,13 +140,23 @@ class Pilot:
         manifest = {"config_sha256": digest(self.config_path),
                     "protocol_sha256": digest(self.protocol_path),
                     "protocol_path": str(self.protocol_path.relative_to(ROOT)),
-                    "source_sha256": fingerprint, "runs": RUNS,
+                    "source_sha256": fingerprint, "runs": RUNS, "arms": self.arms,
                     "started_unix": time.time(), "config": self.config}
         if self.manifest_path.exists():
             old = json.loads(self.manifest_path.read_text(encoding="utf-8"))
             for key in ("config_sha256", "protocol_sha256", "runs"):
                 if old[key] != manifest[key]:
                     raise ValueError(f"Frozen run {key} changed; use a new run version")
+            # Defaulted rather than required, because the runs written before
+            # --arms existed have no such key and were all the registered
+            # pairing. Resuming without --arms is the likely mistake: the
+            # command is long, the default is the pairing, and a blind-self run
+            # relaunched that way would train two different arms into the same
+            # directory and only look wrong in the round reports.
+            if old.get("arms", ARMS) != manifest["arms"]:
+                raise ValueError(
+                    f"Frozen run trains {old.get('arms', ARMS)}, not {manifest['arms']}; "
+                    f"pass --arms {' '.join(old.get('arms', ARMS))} or use a new run version")
             if old["source_sha256"] != fingerprint:
                 if not args.accept_code_update:
                     raise ValueError("Source changed; review and record the repair before resume")
@@ -274,8 +300,8 @@ class Pilot:
         from the enclosing loop.
         """
 
-        self.evaluate(arm, round_index, ARM_DEVICE[arm])
-        self.probe(arm, round_index, ARM_DEVICE[arm])
+        self.evaluate(arm, round_index, self.arm_device[arm])
+        self.probe(arm, round_index, self.arm_device[arm])
 
     def adjudicate(self, directory: Path, label: str, device: str) -> None:
         for detector in ("qwen3vl", "internvl"):
@@ -338,7 +364,7 @@ class Pilot:
         if row["paired"] < self.config["pilot"]["min_paired_prompts"]:
             raise RuntimeError(f"Round {index} has too few paired prompts")
         reports = row.get("arms", [])
-        if sorted(report.get("arm", "") for report in reports) != sorted(ARMS):
+        if sorted(report.get("arm", "") for report in reports) != sorted(self.arms):
             raise RuntimeError(f"Round {index}: missing or duplicate arm reports")
         for report in row["arms"]:
             if report.get("round") != index or report.get("optimizer_steps") != self.config["training"]["optimizer_steps_per_round"]:
@@ -365,17 +391,18 @@ class Pilot:
             # into training, and reaches the first optimizer update sooner.
             self.run(f"round-{index:03d}.train", "showo2", "scripts/v4_train.py",
                      ["train", *self.common, "--device", "cuda:1", "--ladder-device", "cuda:0",
-                      "--max-epochs", "1", "--round-index", str(index)])
+                      "--max-epochs", "1", "--round-index", str(index),
+                      "--arms", *self.arms])
             self.validate_round(index)
             if index == 0:
                 # Both arms measure the same untrained adapter here, so the two
                 # chains draw identical images. They are still kept apart so the
                 # per-arm directory layout is uniform across every checkpoint.
-                self.chains({arm: partial(self.evaluate, arm, -1, ARM_DEVICE[arm])
-                             for arm in ARMS})
+                self.chains({arm: partial(self.evaluate, arm, -1, self.arm_device[arm])
+                             for arm in self.arms})
                 self.probe("base", -1, "cuda:1")
                 self.report(0)
-            self.chains({arm: partial(self.measure_arm, arm, index) for arm in ARMS})
+            self.chains({arm: partial(self.measure_arm, arm, index) for arm in self.arms})
             self.report((index + 1) * self.config["training"]["optimizer_steps_per_round"])
         self.state("pilot_complete" if self.limit == self.config["training"]["rounds"] else "canary_complete",
                    "review_results", completed_rounds=self.limit,
@@ -392,6 +419,12 @@ def main() -> None:
     # mismatch stops the resume.
     parser.add_argument("--protocol", type=Path,
                         default=ROOT / "docs/prereg/2026-09-06-decoupling-pilot.md")
+    # The pairing is the registered default; arm B is the same config with
+    # `--arms naive blind_self` and a new outdir. Not validated against SELECTORS
+    # here -- v4_train.py owns that list and rejects an unknown arm with the
+    # choices in the message, and duplicating it would give two places to update.
+    parser.add_argument("--arms", nargs="+", default=list(ARMS), metavar="ARM",
+                        help="the two arms to train, one per card, in card order")
     parser.add_argument("--through-round", type=int)
     parser.add_argument("--accept-code-update", action="store_true")
     args = parser.parse_args()
