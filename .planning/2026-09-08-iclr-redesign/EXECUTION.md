@@ -9,9 +9,9 @@
 
 | | 状态 | 卡上 |
 |---|---|---|
-| E3 arm A + C(`decoupling-main-20260908`)| **在跑**,round 0 / 11,07:33 起 | cuda:0 观察 + cuda:1 生成,两张都占 |
+| E3 arm A + C(`decoupling-main-20260908`)| **在跑**,step-00008 / 11,07:33 起 | cuda:0 观察 + cuda:1 生成,两张都占 |
 | E3 arm B(`naive` + `blind_self` 配对新跑)| 代码就绪,**等卡** | — |
-| E4 三个新模型作答 | 代码就绪、预检通过,**等卡** | — |
+| E4 三个新模型作答 | **已完成**,3/3 复现,见 §2 | 已释放 |
 | 评分器缺陷 | **已修**(worktree 99b7c0f,登记为偏离 3) | 无 |
 | arm B 的轮次恢复路径 | **已修**(worktree 93379c8) | 无 |
 
@@ -34,8 +34,9 @@ rfo_gold step-00000 整条链          +3.95 h(同上,两臂本应并行)
 两臂各占一张卡,但**一次双臂评测的墙钟由慢的那条决定,3.95 h,
 而不是单臂的 1.90 h**。§2b 的并行化把两条链拆开了,可它们在检测阶段
 仍然没有真正同时跑满:naive 的 internvl 用 0.38 h,rfo_gold 的用 1.19 h,
-而后者跑的时候 naive 整条链已经结束了——所以这不是简单的抢卡,原因未查明,
-也没有为了查它去动正在跑的作业。
+而后者跑的时候 naive 整条链已经结束了——所以这不是简单的抢卡。
+**原因已于 2026-09-08 深夜查明,见 §0.2。**(查的过程只用只读查询,
+没有动正在跑的作业。)
 
 按 11 轮训练 + 12 次评测外推:
 
@@ -68,6 +69,51 @@ rfo_gold step-00000 整条链          +3.95 h(同上,两臂本应并行)
 - 认 60:60 h 时停,登记 traceback,按失败条件处理。
 
 **我不替你选**,因为事后按结果挑上限就是在挑停止规则。
+
+**已裁定(2026-09-08):认 96。** 写成 `PREREG.md` 偏离 5,失败条件 4 的原文
+一字未动。同时登记的两件事:96 h 是停止线不是预算;墙钟按 run 计,
+重启不清零(`started_unix` 从 manifest 读回),停机时间照算。
+截止时刻 2026-09-12 07:33。
+
+---
+
+## 0.2 两臂不对称的原因:卡 1 挂在 PCIe 3.0 x4 上
+
+§0.1 记的「rfo_gold 的 internvl 用 1.19 h,naive 的用 0.38 h,而且不是抢卡」,
+原因不在软件。只读查询(`nvidia-smi --query-gpu=...`,没有碰任何作业):
+
+```
+index  name       temp  power        clocks.sm  clocks.max.sm  pcie.width  pcie.gen
+0      RTX 3090   36C     9.05 W /350      0 MHz       2100 MHz    16 / 16     4 / 4
+1      RTX 3090   42C    88.11 W /350   1245 MHz       2130 MHz     4 / 16     3 / 3
+```
+
+**卡 0 是 PCIe 4.0 x16,卡 1 是 PCIe 3.0 x4**,主机↔显存带宽差约 8 倍
+(31.5 vs 3.9 GB/s)。这是主板插槽的物理限制,软件改不了。
+
+不是过热也不是功耗墙:卡 1 满负荷时 `clocks_throttle_reasons` 全部 `Not Active`,
+功耗只有 88 W(上限 350),SM 频率 1245 MHz(上限 2130)。算力受限会顶频,
+**它在等数据**。逐图推理和多分片权重加载是带宽敏感的,吃亏最大。
+
+同一检测器、同样 256 张图的实测:
+
+| 阶段 | cuda:0 (naive) | cuda:1 (rfo_gold) | 比 |
+|---|---|---|---|
+| internvl | 10.0 s/img | 14.6 s/img | 1.46x |
+| qwen3vl | 12.6 s/img | 19.8 s/img | 1.57x |
+
+**对排期的影响。** `run_decoupling_pilot.py` 的 `ARM_DEVICE` 把 naive 钉在 cuda:0、
+rfo_gold 钉在 cuda:1,而一个 checkpoint 的墙钟由慢的那臂决定,所以卡 0 每个 block
+空转约 2 h。这就是 §0.1 里 3.95 h 与 1.90 h 的来源。**估两卡并行作业时按 max 算,
+不要按平均;要平衡就给 cuda:0 多分活(容量比约 1 : 0.7),不要对半分。**
+起 arm B 前的预检里,除了「卡是不是空的」再加一条:
+
+```
+nvidia-smi --query-gpu=index,clocks.sm,clocks.max.sm,power.draw,pcie.link.width.current,pcie.link.gen.current --format=csv
+```
+
+顺带排除掉的一个猜测:桌面端应用在卡 1 上做 UI 渲染确实有影响,但关掉后只快约 10%,
+不是主因。当时我先归因于它,是错的,已向用户更正。
 
 ---
 
@@ -109,7 +155,14 @@ envs/core/python.exe -u scripts/run_decoupling_pilot.py   --outdir runs/v4/blind
 
 ---
 
-## 2. E4 的三条命令
+## 2. E4 的三条命令 —— 已跑完,3/3 复现
+
+**结果在 `review-packets/cross-model-20260908/`。** 注册的三个模型全部复现,
+PREREG E4 达成;Janus-Pro-1B 单列不计入。要带进论文的两条限定:
+showo_v1 的效应小一个数量级(−0.079 对 −0.318 / −0.271);
+showo2_1p5b 与 janus_pro_1b 在两个条件下的弃答率有显著差异
+(p=6.1e−5 / 1.8e−4),两个 n 都必须报。第三张表 `blind only` 列的含义
+见该目录的 `NOTE.md`。下面的命令原样保留,是复跑用的。
 
 预检已在 CPU 上过了(偏离 2):Show-o v1 与 Janus-Pro 都对不同的图给不同的答案。
 评分器缺陷已修,所以现在跑出来的行才是可用的。
@@ -125,7 +178,7 @@ SELFSIGHT_MODEL_ROOT="H:\selfsight-models" envs/core/python.exe -u H:/Xiyao_Wang
 ```
 
 `observe` 与 `report` 同样写法。`--out` 给 report:
-`review-packets/cross-model-20260910/cross_model.json`。
+`review-packets/cross-model-20260908/cross_model.json`。
 
 `observe` 会为每个模型起它自己 config 里 `environment` 指定的解释器,
 子进程的 `PYTHONPATH` 由 `child_env()` 钉到 worktree 的 `src`,
