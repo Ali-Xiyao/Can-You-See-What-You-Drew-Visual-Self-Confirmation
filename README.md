@@ -4,22 +4,84 @@
 
 ## 文档地图
 
+**现在做的是哪条线:`.planning/2026-09-08-iclr-redesign/` —— Blind Self-Verification,
+目标 ICLR 2028。** 2026-09-08 起,它取代了原来围绕 D* / D_g / Lead 的路线
+(理由在 `PREREG.md` §1:拐点类估计量 SD 11.3 步而训练跨度只有 88 步,加 checkpoint
+救不回来;论文改用比例类估计量)。**被取代的东西一件不删**,原始记录保留,
+D* / D_g / Lead 降为附录里的仪器负结果。
+
+下面分三层:**一、现在这条线** / **二、长期规范的四份** / **三、保留不删的历史**。
+
+### 一、现在这条线(2026-09-08 起,活的)
+
+| 文件 | 内容 | 状态 |
+|---|---|---|
+| `.planning/2026-09-08-iclr-redesign/PROPOSAL.md` | 为什么换路线,依据全部是既有数据上实测的 | 冻结 |
+| `.planning/2026-09-08-iclr-redesign/PREREG.md` | **预注册**:E3 三臂协同进化、E4 跨模型复制、失败条件。偏离 1–5 只追加不改写 | 冻结 |
+| `.planning/2026-09-08-iclr-redesign/EXECUTION.md` | 每一步在等什么。**§0 是这条线的实时状态** | 活的 |
+| `.planning/2026-09-08-iclr-redesign/ICLR-2028.md` | 能不能发:三种结局在看到数字之前先定死。§8 是 09-09 追记 | 活的 |
+| `.planning/2026-09-08-iclr-redesign/PAPER.md` | 论文结构(取代 PROPOSAL 里的实验编号) | 活的 |
+| `.planning/2026-09-08-iclr-redesign/RUN-HALTED-20260908.md` | 主运行 5.83 h 停机的记录 | 冻结 |
+
+这条线上的运行、产物与代码:
+
+| 位置 | 是什么 | 状态 |
+|---|---|---|
+| `runs/v4/decoupling-main-20260908` | E3 的 arm A(`naive`)+ arm C(`rfo_gold`) | **在跑** |
+| `runs/v4/blind-self-<启动日>`(待建) | E3 的 arm B(`naive` + `blind_self` 配对) | 代码就绪,等卡 |
+| worktree `H:/Xiyao_Wang/062_armB`,分支 `codex/blind-self-arm-20260908` | arm B 的全部代码改动 | 未合并 |
+| `review-packets/cross-model-20260908/` | E4 跨模型复制,注册的三个模型 3/3 | 已完成 |
+| `review-packets/armB-audit-preimage-20260909/` | arm B 的场景排除集,在 arm B 存在之前冻结 | 已冻结 |
+| `review-packets/bsv-selection-20260908/` | BSV 离线重放:盲验证选出更好的图 | 已冻结 |
+| `review-packets/context-ablation-20260908/` | 上下文消融,论文第一张图的来源 | 已冻结 |
+| `review-packets/dg-power-20260908/` | 换路线的依据:D_g 找不到,两个独立原因 | 已冻结 |
+| `review-packets/e4-preflight-20260908/` | E4 预检:三个模型都真的读到了图 | 已冻结 |
+
+### 二、长期规范的四份(职责不变)
+
 | 文件 | 内容 |
 |---|---|
-| **`STATUS.md`** | **从这里开始。** 现状、锁定选择、决策树、成立/作废的结论、Hard Stops |
-| `Can You See What You Drew Visual Self-Confirmation.md` | **Proposal v3.0，唯一规范来源**（含 Gate A–D 判据） |
-| `docs/EVIDENCE_LOG.md` | 全部实测证据（只读，不重新解释）。开头有逐节状态表 |
+| **`STATUS.md`** | 现状、锁定选择、决策树、成立/作废的结论、Hard Stops |
+| `Can You See What You Drew Visual Self-Confirmation.md` | **Proposal v3.0**(含 Gate A–D 判据) |
+| `docs/EVIDENCE_LOG.md` | 全部实测证据(只读,不重新解释)。开头有逐节状态表 |
 | `docs/RUNBOOK.md` | 2×3090 + 2×A800 操作手册 |
 | `docs/source-notes/` | 改变过设计的用户输入原件 |
 
-四份文档各有一个职责，互不重复：**规范**（proposal）/ **现状**（STATUS）/ **证据**（EVIDENCE_LOG）/ **操作**（RUNBOOK）。
-不要再新增计划类文档——`task_plan.md`、`docs/EXPERIMENT_PLAN.md`、`docs/archive/*` 已于
-2026-08-30 删除，它们的内容要么过期、要么与 proposal 重复且已开始互相矛盾。
+四份文档各有一个职责,互不重复:**规范**(proposal)/ **现状**(STATUS)/
+**证据**(EVIDENCE_LOG)/ **操作**(RUNBOOK)。**不要再新增计划类文档**——
+`task_plan.md`、`docs/EXPERIMENT_PLAN.md`、`docs/archive/*` 已于 2026-08-30 删除,
+它们的内容要么过期、要么与 proposal 重复且已开始互相矛盾。
+`.planning/<日期>-<主题>/` 是这条规矩的**唯一例外**:一次路线变更一个目录、
+带日期、预注册在里面冻结,不与上面四份争职责。
+
+两处要当心:
+
+- **`STATUS.md` 的「正在跑」段落停在 2026-09-07/08 的 generator-repair 阶段**,
+  不是当前这条线。当前状态看 `EXECUTION.md` §0。
+- Proposal v3.0 仍是规范,但**它的实验编号已被 `PAPER.md` 取代**(E1 不用做了,
+  数据在盘上)。PROPOSAL 原样保留,不改写。
+
+### 三、保留不删的历史
+
+| 位置 | 是什么 |
+|---|---|
+| `docs/prereg/` | 六份更早的预注册(qwen 难度规则、选择器裁定、decoupling pilot、cycle selector、D* 主运行) |
+| `.planning/2026-09-04-project-audit/` | 2026-09-04 的项目审计:findings / progress / task_plan |
+| `review-packets/*-20260906/`、`*-20260907/` | pilot 期与生成器修复期的产物(step24/step32 复核、replay 消融、选择增益、事实性诊断、生成响应修复验证) |
+| `review-packets/no-break-null-20260908/`、`dstar-precondition-fix-20260908/`、`outcome-budget-20260908/` | D* 路线上的最后一批工作,**它们是换路线的证据,不是废纸** |
+| `review-packets/bon-coupling-20260908/`、`high-n-bon-20260908/`、`grader-seam-20260908/`、`cycle-selector-resolution-20260908/` | 评分器与 BoN 侧的冻结设计和裁定 |
+| 分支 `experiment/v2.2-joint-readiness`、`experiment/v2.3-rfo-gold`;`runs/v2.3-rfo-gold/` | v2.x 时代。**红色结论冻结,不覆盖、不重新决策** |
+| `runs/_archive/`、`runs/v4/_archive/` | 归档的运行工件。清理一律归档,不 `rm` |
+
 
 ## 当前状态
 
-见 **`STATUS.md`** —— 正在跑什么、哪些结论还成立、哪些已作废，只在那一页维护，避免多处副本
-互相矛盾。
+**当前这条线正在跑什么:`.planning/2026-09-08-iclr-redesign/EXECUTION.md` §0。**
+`runs/v4/decoupling-main-20260908` 在跑 E3 的 arm A + C,arm B 的代码就绪、等卡。
+
+**哪些结论还成立、哪些已作废:`STATUS.md`。** 那一页是长期的实验室笔记
+(§1..§43+,机器与方法的事实),不是当前进度摘要;它的「正在跑」段落停在
+2026-09-07/08 的 generator-repair 阶段。两页各维护一处,不互相复制。
 
 已冻结的红色结论保留为不可变证据，不覆盖、不重新决策。发现仪器缺陷时的正确做法是：旧记录原样
 保留 + 缺陷作为新证据登记 + 重新测量并注明来源。
