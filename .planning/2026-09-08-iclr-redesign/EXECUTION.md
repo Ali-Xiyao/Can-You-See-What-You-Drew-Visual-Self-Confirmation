@@ -10,10 +10,11 @@
 | | 状态 | 卡上 |
 |---|---|---|
 | E3 arm A + C(`decoupling-main-20260908`)| **在跑**,step-00008 / 11,07:33 起 | cuda:0 观察 + cuda:1 生成,两张都占 |
-| E3 arm B(`naive` + `blind_self` 配对新跑)| 代码就绪,**等卡** | — |
+| E3 arm B(`naive` + `blind_self` 配对新跑)| 代码就绪(含新的 audit stage,§1),**等卡** | — |
 | E4 三个新模型作答 | **已完成**,3/3 复现,见 §2 | 已释放 |
 | 评分器缺陷 | **已修**(worktree 99b7c0f,登记为偏离 3) | 无 |
 | arm B 的轮次恢复路径 | **已修**(worktree 93379c8) | 无 |
+| 排卡的空载基准(§0.3)| 脚本就绪并已预注册判据,**等两张卡都空** | — |
 
 两张 3090 都被主运行占着,而且它按 checkpoint 在两张卡之间来回。
 `nvidia-smi` 显示 GPU 0 空闲**不代表它是空的**——那是 detect 和 crop
@@ -197,7 +198,7 @@ internvl `(26×6.2 − 10.3)/25`,qwen3vl `(26×4.4 − 7.8)/25`。)
 
 ---
 
-## 1. arm B 的启动命令,以及它还差的那一处代码
+## 1. arm B 的启动:代码已就位,只等主运行让出卡
 
 预注册钉死了跑法:**同一份 config,`--arms naive blind_self`,新输出目录**。
 理由不是省事——pilot 实测 `rfo_gold` 只在 7–9/12 个 prompt 上给出选择,
@@ -207,31 +208,65 @@ B 若单臂跑会训练 100%,A–B 差异就带上 prompt 集混淆,而 A vs B �
 `scripts/v4_train.py` 已经有 `--arms`(worktree 41a9170,choices 取自 `SELECTORS`),
 `prepare_round` 也已经按传入的臂集归档(93379c8)。
 
-**还差的是 supervisor**:`scripts/run_decoupling_pilot.py` 有自己的
-模块常量 `ARMS = ["naive", "rfo_gold"]` 和 `ARM_DEVICE`,不往下传 `--arms`。
-主树的这份文件正被另一个 agent 改着(未提交,而且正在监督主运行),
-**不要现在动它**。等它提交后按下面改,四处:
+**supervisor 的那四处已经改完**(worktree `39f4d83`),原样落地:
 
-1. `--arms nargs="+" default=["naive","rfo_gold"]`,加进 argparse。
-2. `ARMS` 常量 → 实例属性 `self.arms`(`validate_round` 的
-   `sorted(...) != sorted(ARMS)` 一并改)。
-3. `ARM_DEVICE` 由臂集派生:`dict(zip(self.arms, ["cuda:0", "cuda:1"]))`,
-   而不是写死的两个键——`blind_self` 不在现在的字典里,会 KeyError。
-4. `self.run("round-....train", ..., "scripts/v4_train.py", [... "--arms", *self.arms])`。
+1. `--arms nargs="+" default=["naive","rfo_gold"]` 进了 argparse。
+2. `ARMS` 常量 → 实例属性 `self.arms`,`validate_round` 的比较一并改。
+3. `ARM_DEVICE` 由臂集派生:`dict(zip(self.arms, ARM_CARDS))`。
+4. train stage 带上 `"--arms", *self.arms`。
 
-改完要有测试:臂集为 `naive blind_self` 时,(a) 两条链各拿到一张卡,
-(b) `validate_round` 要求的正是这两个臂的报告,(c) 传给 `v4_train.py`
-的命令行里带 `--arms`。前两条对照旧实现会红。
+改的时候另外加了两条原计划里没有的护栏:
 
-**启动**(等主运行释放两张卡之后):
+- **臂数不等于卡数就在构造时拒绝**。`zip` 会静默丢掉第三个臂,而丢掉的那个
+  不训练、却仍然出现在 `validate_round` 的期望里,要到第一个 round 结束才炸。
+- **重复臂拒绝,不折叠**;`run_manifest.json` 冻结臂集,relaunch 时臂集不一致
+  就拒绝 resume。旧运行(`--arms` 之前起的)没有这个键,回退到注册的配对,
+  所以 `decoupling-main-20260908` 仍然 resume 得了。
+
+**scene audit 现在是 supervisor 的一个 stage**(worktree `3b4ef0f` → `a78f5b9` →
+`9095560`),不再是启动前要记得手跑的一步:
+
+- 位置在 `freeze-probe` 之后、第一个 round 之前。它读的 split 和 probe bank
+  正是前两个 stage 的产物,而第一个 round 之后就不再有「什么都还没产生」这回事。
+- **只自动造 prospective 那一种**(`audit-splits/scene_overlap.json`)。已经跑过的
+  运行造不出来,`v4_scene_audit.py` 会当场拒绝;退而用 retrospective 是
+  「这批证据允许支持什么」的决定,保持人工。
+- 目录里已有任一种 audit 就不重造——resume 时重造会把一份本该早于 outcome 的
+  freeze 重新盖上晚于 outcome 的时间。
+- 因此 `scripts/v4_scene_audit.py` 进了 `SOURCES`。**副作用**:在此之前冻结的运行
+  (包括 `decoupling-main-20260908`,它的 manifest 里没有这个键)合并后若要 resume,
+  需要 `--accept-code-update`,那会把这次改动记进 `code_repairs`。主运行现在跑的是
+  主树那一份,§3 的合并顺序保证它跑完之前碰不到这件事。
+
+测试:66 个通过(supervisor 34 + scene audit 32)。新写的都先对旧代码验红过
+(`--arms` 11 红、audit 解析 5 红、audit stage 5 红),对新增代码的变异测试 11/11 击杀。
+
+**启动**(等主运行释放两张卡、并且 §3 的合并做完之后):
+
+**在主树跑,不要在 worktree 跑。** `run()` 拼的是 `ROOT/envs/<环境>/python.exe`,
+`ROOT` 是脚本自己所在的树;`H:/Xiyao_Wang/062_armB` 底下没有 `envs/`,
+在那里启动会在第一个 stage 就找不到解释器。这也是合并必须排在启动前面的原因。
 
 ```
-envs/core/python.exe -u scripts/run_decoupling_pilot.py   --outdir runs/v4/blind-self-20260910   --config configs/v4_decoupling_main_20260908.yaml   --arms naive blind_self
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/blind-self-<启动日> --config configs/v4_decoupling_main_20260908.yaml --arms naive blind_self
 ```
 
-启动前必查:`split.json` 的 digest 要与主运行一致(预注册说它是
-(prompt_ids, outcome, probe, seed) 的纯函数,同 config 必然复现;
-**要核对,不要相信**)。
+启动前必查:
+
+1. `split.json` 的 digest 要与主运行一致(预注册说它是 (prompt_ids, outcome,
+   probe, seed) 的纯函数,同 config 必然复现;**要核对,不要相信**)。主运行的值是
+   `83b7eaa696726a1f6261327a5ac70c2d494629e5e736bcae7799eed0482f7094`,
+   它既是 `runs/v4/decoupling-main-20260908/split.json` 的 sha256,也是那份
+   retrospective audit 里记的 `provenance.split_sha256`。arm B 的 split stage
+   一跑完就核对这一个数,不一致就停,不要往下走。
+2. `audit-splits/scene_overlap.json` 落地后,`kind` 是
+   `prospective_scene_overlap_sensitivity_freeze`、
+   `created_before_any_outcome_evaluation_artifact` 是 `true`。supervisor 的
+   `resolve_audit()` 已经查了旗标与目录一致这一条;这里重复,是因为它是主运行
+   没有、arm B 独有的东西,而 `v4_decoupling_report.py` 会拿它去挑 outcome 子集。
+3. `configs/v4_decoupling_main_20260908.yaml` 至今仍未纳入 git(主树 `??`)。
+   manifest 会冻结它的 sha256,所以两个运行用的是不是同一份 config 事后查得出来,
+   但文件本身没有版本记录。
 
 ---
 
@@ -291,10 +326,16 @@ if any(digest(ROOT / name) != expected
 
 `src/selfsight/v4/train.py` 和 `scripts/v4_train.py` 都在 SOURCES 里、
 也都在分支里改了。所以**主运行重启之前合并,重启会被拒**,
-除非带 `--accept-code-update`。
+除非带 `--accept-code-update`。分支后来又往 `SOURCES` 里加了
+`scripts/v4_scene_audit.py`(§1),这条只会让上面那句更硬:主运行的 manifest
+里根本没有这个键,合并后再 resume 一定要 `--accept-code-update`。
 
 顺序因此是:先裁定主运行(见 RUN-HALTED-20260908.md)→ 重启并跑完 →
 再合并 → 再起 arm B。E4 不在这条链上,随时可跑。
+
+「再合并 → 再起 arm B」这一步现在是**硬依赖**,不只是整洁:supervisor 用
+`ROOT/envs/<环境>/python.exe` 起每个子进程,而 worktree 里没有 `envs/`,
+所以 arm B 只能从主树启动,也就只能在合并之后。
 
 合并前提不变:另一个 agent 的 `run_decoupling_pilot.py` 改动先提交。
 
