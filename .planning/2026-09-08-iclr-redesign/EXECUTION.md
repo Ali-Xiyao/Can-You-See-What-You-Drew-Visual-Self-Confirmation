@@ -424,6 +424,13 @@ if any(digest(ROOT / name) != expected
 
 合并前提不变:另一个 agent 的 `run_decoupling_pilot.py` 改动先提交。
 
+**2026-09-09 01:1x 空跑过一次合并**,`git merge-tree --write-tree HEAD
+codex/blind-self-arm-20260908` 干净出树(`a0169af`),没有冲突。会动 26 个文件、
++4986/−114,其中落在 `SOURCES` 里的正好四个:`run_decoupling_pilot.py`、
+`v4_scene_audit.py`、`v4_train.py`、`src/selfsight/v4/train.py`——
+和上面那段说的一致。空跑只用 `merge-tree`,没有建分支、没有动工作区。
+两边还会再动,合并前要重跑一次。
+
 ---
 
 ## 4. 不做的事
