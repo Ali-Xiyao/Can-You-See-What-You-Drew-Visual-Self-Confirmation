@@ -1,0 +1,52 @@
+{
+  "created_utc": "2026-09-06T10:34:47.323267+00:00",
+  "stage": "post-result explanatory verification",
+  "checks": [
+    {
+      "arm": "naive",
+      "condition": "prompt_on",
+      "raw_yes": 202,
+      "negative_questions": 202,
+      "n_unchanged_pool_selections": 16
+    },
+    {
+      "arm": "naive",
+      "condition": "prompt_blank",
+      "raw_yes": 202,
+      "negative_questions": 202,
+      "n_unchanged_pool_selections": 16
+    },
+    {
+      "arm": "naive",
+      "condition": "prompt_off",
+      "raw_yes": 202,
+      "negative_questions": 202,
+      "n_unchanged_pool_selections": 16
+    },
+    {
+      "arm": "rfo_gold",
+      "condition": "prompt_on",
+      "raw_yes": 202,
+      "negative_questions": 202,
+      "n_unchanged_pool_selections": 16
+    },
+    {
+      "arm": "rfo_gold",
+      "condition": "prompt_blank",
+      "raw_yes": 202,
+      "negative_questions": 202,
+      "n_unchanged_pool_selections": 16
+    },
+    {
+      "arm": "rfo_gold",
+      "condition": "prompt_off",
+      "raw_yes": 202,
+      "negative_questions": 202,
+      "n_unchanged_pool_selections": 16
+    }
+  ],
+  "n_pool_checks": 96,
+  "identity": "Every requested group contributes two old questions and one negative question. At step32 all negative answers mismatch expected no, so expanded_score=(2/3)*original_score for every candidate.",
+  "interpretation": "Ceiling rates can fall without any ranking information being added. No causal attribution to a particular loss follows.",
+  "results_sha256": "ef93ad79bbf51ea2330720a611a5228d238a291df8aeea8478626954c7a7d606"
+}

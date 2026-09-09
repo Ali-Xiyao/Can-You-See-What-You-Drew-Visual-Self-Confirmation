@@ -1,0 +1,4 @@
+{"at_unix": 1788684734.438844, "event": "parent_only_stopped", "pid": 18576, "child_pid": 27272, "child_terminated": false, "normal_parent_exit": false}
+{"at_unix": 1788684749.9236002, "event": "original_measurement_child_exited", "pid": 27272, "exit_code": 0}
+{"at_unix": 1788684750.050688, "event": "bounded_supervisor_started", "pid": 21696, "through_round": 4}
+{"at_unix": 1788684760.3189213, "event": "step32_measurement_complete_training_paused"}

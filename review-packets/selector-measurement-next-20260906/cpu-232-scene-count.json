@@ -1,0 +1,8 @@
+{
+  "n_pools": 232,
+  "n_spec_ids": 166,
+  "n_canonical_scenes": 147,
+  "n_scenes_appearing_in_multiple_pools": 63,
+  "max_pools_per_scene": 8,
+  "scope": "Object/color/count scene definition; no claim that 232 developer pools are independent."
+}

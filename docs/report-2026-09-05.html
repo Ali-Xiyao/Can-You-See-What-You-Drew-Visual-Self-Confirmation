@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-palette="#2a78d6,#eb6834">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>视觉自我确认项目 · 阶段汇报（2026-09-05）</title>
+<style>
+  :root {
+    color-scheme: light;
+    --plane:        #f9f9f7;
+    --surface-1:    #fcfcfb;
+    --text-primary: #0b0b0b;
+    --text-secondary:#52514e;
+    --text-muted:   #898781;
+    --grid:         #e1e0d9;
+    --axis:         #c3c2b7;
+    --border:       rgba(11,11,11,0.10);
+    --series-1:     #2a78d6;
+    --series-2:     #eb6834;
+    --good:         #0ca30c;
+    --warning:      #fab219;
+    --serious:      #ec835a;
+    --critical:     #d03b3b;
+    --good-ink:     #006300;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --plane:        #0d0d0d;
+      --surface-1:    #1a1a19;
+      --text-primary: #ffffff;
+      --text-secondary:#c3c2b7;
+      --text-muted:   #898781;
+      --grid:         #2c2c2a;
+      --axis:         #383835;
+      --border:       rgba(255,255,255,0.10);
+      --series-1:     #3987e5;
+      --series-2:     #d95926;
+      --good-ink:     #0ca30c;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --plane:        #0d0d0d;
+    --surface-1:    #1a1a19;
+    --text-primary: #ffffff;
+    --text-secondary:#c3c2b7;
+    --text-muted:   #898781;
+    --grid:         #2c2c2a;
+    --axis:         #383835;
+    --border:       rgba(255,255,255,0.10);
+    --series-1:     #3987e5;
+    --series-2:     #d95926;
+    --good-ink:     #0ca30c;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--plane);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 56px 28px 96px; }
+
+  header.masthead { margin-bottom: 12px; }
+  .kicker {
+    font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--text-muted); margin: 0 0 10px;
+  }
+  h1 { font-size: 34px; line-height: 1.3; margin: 0 0 14px; letter-spacing: -.01em; }
+  .subtitle { font-size: 18px; color: var(--text-secondary); margin: 0 0 22px; }
+  .meta {
+    font-size: 13.5px; color: var(--text-muted);
+    display: flex; flex-wrap: wrap; gap: 6px 22px;
+    padding-bottom: 26px; border-bottom: 1px solid var(--border);
+  }
+  .meta code { font-size: 12.5px; }
+
+  h2 {
+    font-size: 23px; margin: 54px 0 4px; letter-spacing: -.01em;
+    padding-top: 26px; border-top: 1px solid var(--border);
+  }
+  h2 .num { color: var(--text-muted); font-weight: 600; margin-right: .5em; }
+  h2 + .lede { color: var(--text-secondary); margin: 0 0 20px; font-size: 16.5px; }
+  h3 { font-size: 17px; margin: 30px 0 8px; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 1.4em; }
+  li { margin-bottom: 7px; }
+  strong { font-weight: 650; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 13px; background: var(--surface-1);
+    border: 1px solid var(--border); border-radius: 4px; padding: .1em .35em;
+  }
+  a { color: var(--series-1); }
+
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 10px; padding: 22px 24px; margin: 22px 0;
+  }
+  .card > :last-child { margin-bottom: 0; }
+  .card-title { font-size: 15px; font-weight: 650; margin: 0 0 10px; }
+
+  .callout {
+    border-left: 3px solid var(--series-1);
+    background: var(--surface-1);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px; margin: 22px 0;
+  }
+  .callout.alarm { border-left-color: var(--critical); }
+  .callout.note  { border-left-color: var(--axis); }
+  .callout > :last-child { margin-bottom: 0; }
+
+  /* ---- stat tiles ---- */
+  .tiles {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px; margin: 24px 0;
+  }
+  .tile {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .tile .label { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+  .tile .value { font-size: 30px; font-weight: 640; line-height: 1.15; letter-spacing: -.02em; }
+  .tile .foot  { font-size: 12.5px; color: var(--text-secondary); margin-top: 6px; }
+
+  /* ---- tables ---- */
+  table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 14.5px; }
+  caption {
+    caption-side: top; text-align: left; font-size: 13px;
+    color: var(--text-muted); padding-bottom: 8px;
+  }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--grid); }
+  thead th {
+    font-size: 12.5px; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--axis);
+  }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:last-child td { border-bottom: none; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; font-weight: 600; white-space: nowrap;
+  }
+  .pill .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .pill.good     .dot { background: var(--good); }
+  .pill.warning  .dot { background: var(--warning); }
+  .pill.serious  .dot { background: var(--serious); }
+  .pill.critical .dot { background: var(--critical); }
+
+  /* ---- charts ---- */
+  figure { margin: 26px 0; }
+  .chart-frame {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 22px 14px;
+  }
+  .chart-title { font-size: 15.5px; font-weight: 650; margin: 0 0 3px; }
+  .chart-sub { font-size: 13px; color: var(--text-secondary); margin: 0 0 16px; }
+  figcaption { font-size: 13px; color: var(--text-muted); margin-top: 10px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0 0 14px; }
+  .legend .item { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; color: var(--text-secondary); }
+  .legend .swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+  .legend .rule { width: 16px; height: 0; border-top: 2px dashed var(--text-muted); flex: none; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .bar { transition: opacity .12s ease; }
+  .bar:hover { opacity: .78; cursor: default; }
+  .tick { font-size: 12px; fill: var(--text-muted); }
+  .vlabel { font-size: 12.5px; font-weight: 620; fill: var(--text-secondary); }
+  .glabel { font-size: 13px; fill: var(--text-secondary); }
+  .gridline { stroke: var(--grid); stroke-width: 1; }
+  .baseline { stroke: var(--axis); stroke-width: 1; }
+  .refline { stroke: var(--text-muted); stroke-width: 2; stroke-dasharray: 5 4; }
+
+  details.tableview { margin-top: 12px; }
+  details.tableview summary {
+    font-size: 13px; color: var(--text-secondary); cursor: pointer;
+    padding: 4px 0;
+  }
+  details.tableview table { margin-top: 4px; }
+
+  .footnote { font-size: 13px; color: var(--text-muted); }
+  .steps { counter-reset: step; list-style: none; padding: 0; }
+  .steps > li {
+    counter-increment: step; position: relative;
+    padding: 14px 0 14px 46px; border-bottom: 1px solid var(--grid);
+  }
+  .steps > li:last-child { border-bottom: none; }
+  .steps > li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 15px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--surface-1); border: 1px solid var(--axis);
+    color: var(--text-secondary);
+    font-size: 13px; font-weight: 650;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .steps .st { font-weight: 650; }
+  .steps .gpu {
+    font-size: 12px; color: var(--text-muted);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 1px 9px; margin-left: 8px; white-space: nowrap;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .wrap { padding: 0; max-width: none; }
+    h2 { break-after: avoid; }
+    figure, .card, .callout, table { break-inside: avoid; }
+  }
+  @media (max-width: 640px) {
+    .wrap { padding: 36px 18px 64px; }
+    h1 { font-size: 27px; }
+    .tile .value { font-size: 25px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="kicker">阶段汇报</p>
+  <h1>模型能看见自己画的东西吗？</h1>
+  <p class="subtitle">统一多模态模型中的视觉自我确认 —— 项目进展、已成立的结论、以及刚查出的一个根本性问题</p>
+  <div class="meta">
+    <span>2026-09-05</span>
+    <span>分支 <code>experiment/v2.3-rfo-gold</code></span>
+    <span>backbone <code>showlab/show-o2-1.5B</code> rev <code>07ec1658</code>（432px）</span>
+    <span>Proposal v3.5</span>
+  </div>
+</header>
+
+<h2><span class="num">01</span>这个项目在问什么</h2>
+<p class="lede">一句话：模型正在用自己的理解能力给自己的生成打分，而我们不知道这个分数什么时候开始骗人。</p>
+
+<p>现在的统一多模态模型（既能看图、又能画图的那一类）有一种很自然的自我改进方式：让它画一张图，
+再让它自己看这张图、回答关于图的问题；答对了就说明画对了，于是把这张图当成好样本拿去训练自己。
+这套做法已经被多个工作采用。</p>
+
+<p>问题在于：<strong>「模型说它画对了」和「它真的画对了」是两件事。</strong>
+如果模型在看图的时候还记得自己本来想画什么，它可能不是在读像素，而是在复述自己的意图。
+一旦如此，这个自训练信号就会奖励「说得好听」而不是「画得对」，而且外部看不出来——
+因为内部分数一直在涨。</p>
+
+<div class="callout">
+  <p><strong>我们把这个失效叫做「效果脱钩」（记作 D<sup>*</sup>）：</strong>
+  训练继续把<em>内部自评分</em>推高，而<em>外部可验证正确率</em>不再同步提高、甚至开始下降的最早训练步。</p>
+  <p class="footnote" style="margin-bottom:0">难点不在于看出两条曲线分开，而在于把它跟两件长得很像的事分开：
+  <strong>普通收敛</strong>（两条曲线都到顶了，谁也没背叛谁）和<strong>随机波动</strong>（两条本来就在抖）。</p>
+</div>
+
+<p>真正需要这个结论的人恰恰没有外部真值可用——如果有真值，直接拿真值训练就好了。
+所以项目的核心问题是：<strong>能不能在没有标签的情况下，提前预警脱钩即将发生。</strong></p>
+
+<h2><span class="num">02</span>要检验的三件事，以及它们现在各自的证据状态</h2>
+<p class="lede">这一节最要紧的是第三列。把「已经量到」和「打算去量」分开，是这次汇报的主要修正之一。</p>
+
+<table>
+  <caption>三条一级命题 · 状态截至 2026-09-05</caption>
+  <thead>
+    <tr><th style="width:12%">命题</th><th style="width:44%">内容</th><th style="width:20%">状态</th><th>依据</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>① 预测</strong></td>
+      <td>不依赖外部真值也能提前预警脱钩：两条更新方向的夹角变化会先于效果脱钩出现</td>
+      <td><span class="pill critical"><span class="dot"></span>待检验 · 零证据</span></td>
+      <td>需要训练回路；一次训练都还没跑过</td>
+    </tr>
+    <tr>
+      <td><strong>② 机理</strong></td>
+      <td>脱钩主要由「意图泄漏」驱动，共享感知盲点为次因</td>
+      <td><span class="pill good"><span class="dot"></span>静态部分已测到</span><br>
+          <span class="pill warning"><span class="dot"></span>训练部分待检验</span></td>
+      <td>训练前的配对对照，n=667，效应极大（见第 4 节）</td>
+    </tr>
+    <tr>
+      <td><strong>③ 延后</strong></td>
+      <td>RFO 反馈原则能把脱钩推后或消除</td>
+      <td><span class="pill critical"><span class="dot"></span>待检验 · 零证据</span></td>
+      <td>同①，依赖训练</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>②的静态半边是目前最硬的结果</strong>，但它测的是「泄漏让模型答错题」。
+①和③需要的是「泄漏让模型选错图」。这两件事此前没有被区分开——第 6 节会说明为什么这个区分是致命的。</p>
+
+<h2><span class="num">03</span>实验装置：怎么做到「有真值」</h2>
+<p class="lede">这个课题的成立与否，取决于能不能在自然场景上拿到可信的外部正确性判定。</p>
+
+<div class="tiles">
+  <div class="tile">
+    <div class="label">生成 backbone</div>
+    <div class="value">1.5B</div>
+    <div class="foot">Show-o2，432px 原生。7B 与 Show-o v1 已判红，冻结为负对照</div>
+  </div>
+  <div class="tile">
+    <div class="label">判别器 precision（盲审 n=72）</div>
+    <div class="value">0.981 / 0.985</div>
+    <div class="foot">Qwen3-VL-8B / InternVL3.5-8B，两个冻结的外部观察者</div>
+  </div>
+  <div class="tile">
+    <div class="label">人工裁定率</div>
+    <div class="value">6.0–9.5%</div>
+    <div class="foot">两模型意见不合的图全部送人眼，均在锁定的 ≤10% 内</div>
+  </div>
+</div>
+
+<p>关键设计是<strong>裁定阶梯</strong>：两个来自不同家族的冻结视觉模型各自回答原子事实问题（有没有这个物体、
+几个、什么颜色），一致则采纳，不一致则送人工裁定。这样每一张图都有覆盖，而不是靠「两个模型一致」
+去筛掉难判的图——被筛掉的恰恰是最需要判的那些。</p>
+
+<p class="footnote">两个外部模型始终是<strong>冻结的外部观察者</strong>，不是研究对象。
+它们的输出不能当作「统一 backbone 能看见自己的画」的证据。</p>
+
+<h2><span class="num">04</span>已经拿到的硬结果：意图泄漏是真的，而且极大</h2>
+<p class="lede">同一个模型、同一批图、同一套题，唯一的差别是问题前面有没有那句「你是照这个描述画的：……」。</p>
+
+<figure>
+  <div class="chart-frame">
+    <p class="chart-title">看得到提示词时，模型在自己画错的图上崩塌</p>
+    <p class="chart-sub">2AFC 配对试次的正确率 · 228 条 spec × K=4 = 912 张图 · 两个半边独立跑完同一条流水线</p>
+
+    <div class="legend">
+      <span class="item"><span class="swatch" style="background:var(--series-1)"></span>看不到提示词（只给图）</span>
+      <span class="item"><span class="swatch" style="background:var(--series-2)"></span>看得到提示词</span>
+    </div>
+
+    <svg viewBox="0 0 700 300" role="img" aria-label="图与描述一致时正确率 0.979 升到 0.991；图与描述冲突时 0.654 跌到 0.336">
+      <!-- gridlines -->
+      <g>
+        <line class="gridline" x1="52" y1="230" x2="690" y2="230"/>
+        <line class="gridline" x1="52" y1="185" x2="690" y2="185"/>
+        <line class="gridline" x1="52" y1="140" x2="690" y2="140"/>
+        <line class="gridline" x1="52" y1="95"  x2="690" y2="95"/>
+        <line class="gridline" x1="52" y1="50"  x2="690" y2="50"/>
+        <text class="tick" x="44" y="234" text-anchor="end">0</text>
+        <text class="tick" x="44" y="189" text-anchor="end">0.25</text>
+        <text class="tick" x="44" y="144" text-anchor="end">0.50</text>
+        <text class="tick" x="44" y="99"  text-anchor="end">0.75</text>
+        <text class="tick" x="44" y="54"  text-anchor="end">1.00</text>
+      </g>
+
+      <!-- group 1: consistent -->
+      <g>
+        <rect class="bar" x="120" y="53.8" width="72" height="176.2" rx="4" fill="var(--series-1)">
+          <title>图与描述一致 · 看不到提示词：0.979（n=2281）</title></rect>
+        <rect class="bar" x="194" y="51.6" width="72" height="178.4" rx="4" fill="var(--series-2)">
+          <title>图与描述一致 · 看得到提示词：0.991（n=2281）</title></rect>
+        <text class="vlabel" x="156" y="46"  text-anchor="middle">0.979</text>
+        <text class="vlabel" x="230" y="46"  text-anchor="middle">0.991</text>
+        <text class="glabel" x="193" y="252" text-anchor="middle">图与描述一致</text>
+        <text class="tick"   x="193" y="270" text-anchor="middle">2281 道 · 略有帮助 (+0.012)</text>
+      </g>
+
+      <!-- group 2: conflicting -->
+      <g>
+        <rect class="bar" x="440" y="112.3" width="72" height="117.7" rx="4" fill="var(--series-1)">
+          <title>图与描述冲突 · 看不到提示词：0.654（n=667）</title></rect>
+        <rect class="bar" x="514" y="169.5" width="72" height="60.5" rx="4" fill="var(--series-2)">
+          <title>图与描述冲突 · 看得到提示词：0.336（n=667）</title></rect>
+        <text class="vlabel" x="476" y="104" text-anchor="middle">0.654</text>
+        <text class="vlabel" x="550" y="161" text-anchor="middle">0.336</text>
+        <text class="glabel" x="513" y="252" text-anchor="middle">图与描述冲突</text>
+        <text class="tick"   x="513" y="270" text-anchor="middle">667 道 · 崩塌 (−0.318)</text>
+      </g>
+
+      <line class="baseline" x1="52" y1="230" x2="690" y2="230"/>
+    </svg>
+
+    <details class="tableview">
+      <summary>以表格查看</summary>
+      <table>
+        <thead><tr><th>条件</th><th class="num">道次</th><th class="num">看不到提示词</th><th class="num">看得到提示词</th><th>配对 McNemar</th></tr></thead>
+        <tbody>
+          <tr><td>图与描述一致</td><td class="num">2281</td><td class="num">0.979</td><td class="num">0.991</td><td>9 → 35 反向，χ²=14.2，p=1.6×10⁻⁴</td></tr>
+          <tr><td>图与描述冲突</td><td class="num">667</td><td class="num">0.654</td><td class="num">0.336</td><td>221 → 9，χ²=194，p=5.3×10⁻⁴⁴</td></tr>
+        </tbody>
+      </table>
+    </details>
+  </div>
+  <figcaption>两行方向相反，这是全部的分量所在。若那句描述只是干扰上下文、只是把 prompt 加长了，两行都该下降。</figcaption>
+</figure>
+
+<p><strong>为什么这个反向很关键。</strong>图和描述一致时，那句描述略微<em>帮忙</em>；只有在像素与描述冲突时才崩塌。
+加上描述之后有 221 道从对变错、只有 9 道从错变对。自我确认率（按被要求的场景而非画出的场景作答的比例，
+随机 = 0.5）从 <strong>0.346 升到 0.664</strong>。</p>
+
+<p>拆到最细的一格最说明问题：<strong>要求两个苹果、模型只画了一个，把描述放回上下文，
+它 95% 的时候回答「两个」</strong>——它在断言一个自己没有画出来的物体存在。</p>
+
+<h3>还做了一个因果对照，排除了「编辑痕迹」这个解释</h3>
+<p>我们拿外部验证为正确的图，用修图的方式删掉其中一个物体，做成「图与描述冲突」的样本；
+同时做一批 <strong>sham</strong> 对照：同一个填充器、同样大的面积、同一批图，但不删掉任何东西。</p>
+
+<table>
+  <caption>删除臂 vs sham 对照 · 97 对删除 + 70 对 sham</caption>
+  <thead><tr><th>条件</th><th class="num">看不到提示词</th><th class="num">看得到提示词</th><th>配对 McNemar</th></tr></thead>
+  <tbody>
+    <tr><td><strong>删除·编辑图</strong>（与描述冲突）</td><td class="num">0.979</td><td class="num"><strong>0.835</strong></td><td><strong>14 → 0，p = 5.1×10⁻⁴</strong></td></tr>
+    <tr><td>删除·原图（与描述一致）</td><td class="num">0.969</td><td class="num">0.990</td><td>0 → 2，p = 0.48</td></tr>
+    <tr><td>sham·编辑图</td><td class="num">0.957</td><td class="num">0.971</td><td>0 → 1，p = 1</td></tr>
+    <tr><td>sham·原图</td><td class="num">0.957</td><td class="num">0.971</td><td>0 → 1，p = 1</td></tr>
+  </tbody>
+</table>
+
+<p>sham 的两个成员都没有掉。删除对上的 14 次翻转不可能是修图痕迹造成的。</p>
+
+<h2><span class="num">05</span>两次预注册确证检验都没有通过 —— 如实记录</h2>
+<p class="lede">我们曾经有一个更细的假设，两轮新语料都没能确证它。它已被永久降级。</p>
+
+<p>探索性阶段观察到：<strong>服从跟着「这是不是我会犯的错」走</strong>——如果生成器自己在别的种子上
+漏画过这个物体，它在被问到时更容易顺着描述答。这个划分很有解释力，所以我们把它写成预注册，
+在两批全新语料上各检验了一次。</p>
+
+<table>
+  <caption>两次确证检验的结果</caption>
+  <thead><tr><th>批次</th><th class="num">n</th><th>方向</th><th class="num">单侧 p</th><th>判定</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>第二批（2026-09-03）</td><td class="num">139</td>
+      <td>对上了（掉幅 0.286 vs 0.161）</td><td class="num">0.062</td>
+      <td><span class="pill warning"><span class="dot"></span>未过 0.05，降为探索性</span></td>
+    </tr>
+    <tr>
+      <td>第三批（2026-09-04）</td><td class="num">322</td>
+      <td>对上了（0.121 vs 0.101）</td><td class="num">0.342</td>
+      <td><span class="pill critical"><span class="dot"></span>永久降为探索性观察</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout note">
+  <p style="margin-bottom:0">检验代码在<strong>任何答案存在之前</strong>就已提交（语料当时还在检测中），
+  所以它不可能是照着结果写的。两次预注册文本一字未改，红色结论原样保留。
+  <strong>「方向对了、显著性没到」不算通过</strong>——这一条在看到数据之前就写死了。</p>
+</div>
+
+<h2><span class="num">06</span>核心发现：训练用的选择器根本没有在选择</h2>
+<p class="lede">2026-09-04 查明。这是目前最重要的结果，它同时作废了好几个下游数字。</p>
+
+<p>整个方法依赖一个动作：<strong>让模型给自己的多个候选图打分，挑出最好的那张去训练。</strong>
+我们第一次直接去量这个动作的质量，结果是——它在随机猜。</p>
+
+<figure>
+  <div class="chart-frame">
+    <p class="chart-title">自评价选中「外部验证为正确」的图的比例，与瞎猜没有差别</p>
+    <p class="chart-sub">自然的「有对有错」候选池 · 两个独立子集 · 虚线为该批池子的均匀随机期望</p>
+
+    <div class="legend">
+      <span class="item"><span class="swatch" style="background:var(--series-1)"></span>naive 自评价（训练实际在用的）</span>
+      <span class="item"><span class="swatch" style="background:var(--series-2)"></span>冻结外部观察者（参照）</span>
+      <span class="item"><span class="rule"></span>均匀随机期望</span>
+    </div>
+
+    <svg viewBox="0 0 700 300" role="img" aria-label="K=4 时 naive 39.1% 对随机 40.2%；K=6 时 naive 34.0% 对随机 34.2%；外部观察者分别为 55.1% 和 51.1%">
+      <g>
+        <line class="gridline" x1="52" y1="230" x2="690" y2="230"/>
+        <line class="gridline" x1="52" y1="185" x2="690" y2="185"/>
+        <line class="gridline" x1="52" y1="140" x2="690" y2="140"/>
+        <line class="gridline" x1="52" y1="95"  x2="690" y2="95"/>
+        <line class="gridline" x1="52" y1="50"  x2="690" y2="50"/>
+        <text class="tick" x="44" y="234" text-anchor="end">0%</text>
+        <text class="tick" x="44" y="189" text-anchor="end">20%</text>
+        <text class="tick" x="44" y="144" text-anchor="end">40%</text>
+        <text class="tick" x="44" y="99"  text-anchor="end">60%</text>
+        <text class="tick" x="44" y="54"  text-anchor="end">80%</text>
+      </g>
+
+      <!-- K=4 -->
+      <g>
+        <rect class="bar" x="120" y="142.0" width="72" height="88.0" rx="4" fill="var(--series-1)">
+          <title>K=4 · naive 自评价：39.1%（54/138）</title></rect>
+        <rect class="bar" x="194" y="106.0" width="72" height="124.0" rx="4" fill="var(--series-2)">
+          <title>K=4 · 冻结外部观察者：55.1%（76/138）</title></rect>
+        <text class="vlabel" x="156" y="134" text-anchor="middle">39.1%</text>
+        <text class="vlabel" x="230" y="98"  text-anchor="middle">55.1%</text>
+        <line class="refline" x1="108" y1="139.6" x2="278" y2="139.6"/>
+        <text class="tick" x="284" y="143">随机 40.2%</text>
+        <text class="glabel" x="193" y="252" text-anchor="middle">K = 4</text>
+        <text class="tick"   x="193" y="270" text-anchor="middle">138 个池</text>
+      </g>
+
+      <!-- K=6 -->
+      <g>
+        <rect class="bar" x="440" y="153.5" width="72" height="76.5" rx="4" fill="var(--series-1)">
+          <title>K=6 · naive 自评价：34.0%（32/94）</title></rect>
+        <rect class="bar" x="514" y="115.0" width="72" height="115.0" rx="4" fill="var(--series-2)">
+          <title>K=6 · 冻结外部观察者：51.1%（48/94）</title></rect>
+        <text class="vlabel" x="476" y="145" text-anchor="middle">34.0%</text>
+        <text class="vlabel" x="550" y="107" text-anchor="middle">51.1%</text>
+        <line class="refline" x1="428" y1="153.1" x2="598" y2="153.1"/>
+        <text class="tick" x="604" y="157">随机 34.2%</text>
+        <text class="glabel" x="513" y="252" text-anchor="middle">K = 6</text>
+        <text class="tick"   x="513" y="270" text-anchor="middle">94 个池</text>
+      </g>
+
+      <line class="baseline" x1="52" y1="230" x2="690" y2="230"/>
+    </svg>
+
+    <details class="tableview">
+      <summary>以表格查看</summary>
+      <table>
+        <thead><tr><th>准则</th><th class="num">K=4（138 池）</th><th class="num">K=6（94 池）</th></tr></thead>
+        <tbody>
+          <tr><td>均匀随机期望</td><td class="num">40.2%</td><td class="num">34.2%</td></tr>
+          <tr><td><strong>naive 自评价</strong></td><td class="num"><strong>39.1%</strong>（54/138）</td><td class="num"><strong>34.0%</strong>（32/94）</td></tr>
+          <tr><td>冻结外部观察者</td><td class="num">55.1%（76/138）</td><td class="num">51.1%（48/94）</td></tr>
+        </tbody>
+      </table>
+    </details>
+  </div>
+  <figcaption>随机期望不是 1/K，而是该批池子里正确候选所占比例的均值 —— 池子有大有小、对错比例不同。
+  两个独立子集给出同一个答案，这不是偶然。</figcaption>
+</figure>
+
+<h3>原因不是模型笨，是判分规则的天花板</h3>
+
+<figure>
+  <div class="chart-frame">
+    <p class="chart-title">1116 个候选，分数只有三个取值，八成挤在满分</p>
+    <p class="chart-sub">232 个自然「有对有错」池上 naive 自评分的全部取值</p>
+
+    <svg viewBox="0 0 700 250" role="img" aria-label="分数 1.000 有 928 个候选占 83.2%，0.667 有 171 个占 15.3%，0.333 有 17 个占 1.5%">
+      <g>
+        <line class="gridline" x1="92" y1="196" x2="690" y2="196"/>
+        <line class="gridline" x1="92" y1="152" x2="690" y2="152"/>
+        <line class="gridline" x1="92" y1="108" x2="690" y2="108"/>
+        <line class="gridline" x1="92" y1="64"  x2="690" y2="64"/>
+        <text class="tick" x="84" y="200" text-anchor="end">0</text>
+        <text class="tick" x="84" y="156" text-anchor="end">300</text>
+        <text class="tick" x="84" y="112" text-anchor="end">600</text>
+        <text class="tick" x="84" y="68"  text-anchor="end">900</text>
+      </g>
+
+      <rect class="bar" x="140" y="59.9" width="120" height="136.1" rx="4" fill="var(--series-1)">
+        <title>分数 1.000（满分）：928 个候选，83.2%</title></rect>
+      <rect class="bar" x="330" y="170.9" width="120" height="25.1" rx="4" fill="var(--series-1)">
+        <title>分数 0.667：171 个候选，15.3%</title></rect>
+      <rect class="bar" x="520" y="193.5" width="120" height="2.5" rx="2" fill="var(--series-1)">
+        <title>分数 0.333：17 个候选，1.5%</title></rect>
+
+      <text class="vlabel" x="200" y="52"  text-anchor="middle">928 个 · 83.2%</text>
+      <text class="vlabel" x="390" y="163" text-anchor="middle">171 个 · 15.3%</text>
+      <text class="vlabel" x="580" y="186" text-anchor="middle">17 个 · 1.5%</text>
+
+      <text class="glabel" x="200" y="218" text-anchor="middle">1.000（满分）</text>
+      <text class="glabel" x="390" y="218" text-anchor="middle">0.667</text>
+      <text class="glabel" x="580" y="218" text-anchor="middle">0.333</text>
+
+      <line class="baseline" x1="92" y1="196" x2="690" y2="196"/>
+    </svg>
+  </div>
+  <figcaption>60.3% 的池子里所有候选完全同分；最高分唯一的池只有 8 个（3.4%）。
+  当没有唯一最高分时，「选择」实际上落在平分规则上，而不是分数上。</figcaption>
+</figure>
+
+<div class="callout alarm">
+  <p class="card-title" style="margin-bottom:8px">机制，在构造里一眼可见</p>
+  <p style="margin-bottom:0">每道题的正确答案都<strong>完全由用户的描述决定</strong>：问「有没有杯子」，
+  因为描述里要了杯子，答案永远是「有」；问「几个」，答案永远是描述里要的那个数。
+  <strong>于是一个根本不看图、只复述提示词的模型，在每一个候选上都能拿满分。</strong>
+  这是构造的数学后果，与题目多少、难易都无关——加题不解决它。</p>
+</div>
+
+<h3>这作废了什么</h3>
+<ul>
+  <li><strong>Gate B 的失败有了解释，它的补救办法也随之失效。</strong>梯度仪器的一项判据（两条更新方向的
+      夹角余弦 0.9699，置信区间宽 0.1285 &gt; 阈值 0.10）没有通过。原先注册的补救是「增加有区分度的池子直到区间收窄」——
+      而有区分度的池子只有 8 个。<strong>补救办法要求的东西，正是缺的那个东西。</strong>
+      真正的原因是不同准则几乎挑出同一批图，梯度自然指向同一个方向。</li>
+  <li><strong>此前的「选择一致率 0.444」不能再引用</strong>——当时 60% 的池全部同分，那个数量的是平分规则。</li>
+  <li><strong>依赖「自评价选出了更好的图」的所有下游数字</strong>，在评分器修好之前，量到的都不是它们声称的东西。</li>
+</ul>
+
+<h3>而且，有一个方向相反的观察</h3>
+<p>①和③都建立在同一个符号上：<strong>意图泄漏会腐蚀基于自评价的选样</strong>。
+在唯一一处能直接检验这个符号的地方，它是<strong>反的</strong>：</p>
+
+<div class="tiles">
+  <div class="tile">
+    <div class="label">看得到提示词 · 选中正确图</div>
+    <div class="value" style="color:var(--text-primary)">59.0%</div>
+    <div class="foot">79 / 134 池</div>
+  </div>
+  <div class="tile">
+    <div class="label">看不到提示词 · 选中正确图</div>
+    <div class="value">49.3%</div>
+    <div class="foot">66 / 134 池</div>
+  </div>
+  <div class="tile">
+    <div class="label">精确 McNemar</div>
+    <div class="value">p = 0.019</div>
+    <div class="foot">不一致 20 : 7 · 双侧</div>
+  </div>
+</div>
+
+<div class="callout note">
+  <p><strong>这是未预注册的事后比较，只能记为探索性观察</strong>：题集是从检测流程构造的（正确答案随图变化），
+  与训练选样用的那套不同；四个 run 里只有两个有这个条件；平分规则是分析时才选的。</p>
+  <p style="margin-bottom:0">它不推翻第 4 节。第 4 节测的是泄漏让模型<strong>答题</strong>答错，
+  这里量的是<strong>选样</strong>。<strong>答题和选样是两件事，项目此前没有区分。</strong>
+  这条把「泄漏 ⇒ 选样变差」从可以引用的机制，降级为必须在训练开始前正面处理的待检验问题。</p>
+</div>
+
+<h2><span class="num">07</span>门禁状态与其它已知阻塞</h2>
+
+<table>
+  <caption>四道 Go / No-Go 门 · 每道门只在有真实失败可能时才存在</caption>
+  <thead><tr><th style="width:16%">门</th><th style="width:26%">考什么</th><th style="width:20%">状态</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Gate A</strong></td><td>候选供给：能否稳定产出有对有错的候选池</td>
+      <td><span class="pill good"><span class="dot"></span>通过</span></td>
+      <td>在 v4 仪器上通过（p = 0.2201，138 个平衡池）</td>
+    </tr>
+    <tr>
+      <td><strong>Gate B</strong></td><td>仪器有效：判别器精度、梯度探针的置信区间</td>
+      <td><span class="pill critical"><span class="dot"></span>未通过</span></td>
+      <td>判别器精度达标；梯度区间宽 0.1285 &gt; 0.10。根因是评分器饱和，见第 6 节</td>
+    </tr>
+    <tr>
+      <td><strong>Gate C</strong></td><td>机制阳性对照：完美选择器能否带来训练优势</td>
+      <td><span class="pill warning"><span class="dot"></span>未开始 · 有四条前置条件</span></td>
+      <td>这是项目真正的生死实验。前置条件不满足时开门，会把仪器缺陷记成项目的失败</td>
+    </tr>
+    <tr>
+      <td><strong>Gate D</strong></td><td>三条主张成立</td>
+      <td><span class="pill warning"><span class="dot"></span>未开始</span></td>
+      <td>依赖 Gate C</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>另外三个必须在重跑之前解决的问题</h3>
+<div class="card">
+  <ol style="margin-bottom:0">
+    <li><strong>两臂第 0 轮起点不同。</strong>训练阶段共用一个 backbone，只在已存在 checkpoint 时才恢复权重，
+        因此第 0 轮的对照臂是从实验臂更新过的权重出发的。<strong>这是 bug，不是结果</strong>——不修，两臂的对比从第一轮起就不干净。</li>
+    <li><strong>训练选样和内部评估用的不是同一套口径。</strong>脱钩就是这两条曲线的关系；
+        口径不一致时，它们的关系不是脱钩，是记账错误。</li>
+    <li><strong>语料规模差约一个数量级。</strong>现有 228 条互不相同的描述，测脱钩需要约 1470 条。
+        修好评分器是<strong>必要</strong>条件，不是<strong>充分</strong>条件——之后还要扩语料并上更大的机器。</li>
+  </ol>
+</div>
+
+<h2><span class="num">08</span>接下来的五步</h2>
+<p class="lede">前四步一张 GPU 都不用起。顺序是刻意的：先把论证和判据定死，再动代码，最后才跑。</p>
+
+<ol class="steps">
+  <li>
+    <div class="st">定义与判据 <span class="gpu">已完成</span></div>
+    把选择器拆成三段写清楚——用户要求的事实（来自描述）、从图像观察到的事实（来自图）、
+    以及二者如何合成训练分数；<strong>并在改评分器之前把分辨力、并列率、相对随机选择的表现写成预注册</strong>，
+    避免边修边挪门槛。同时把第 6 节的每个数字做成可复算脚本：记录变了或口径漂了，它拒绝出数。
+  </li>
+  <li>
+    <div class="st">改论证 <span class="gpu">已完成</span></div>
+    Proposal 改到 v3.5：①③降为待检验命题，D<sup>*</sup> 重定义为效果脱钩并写明要与普通收敛、随机波动分开，
+    预警时间与事后估计的折点拆开，删掉会把阴性结果变成阳性的兜底定义，
+    收窄两道门的结论范围，并把方向相反的那个观察正面写进去。<strong>只改论证，不改设计。</strong>
+  </li>
+  <li>
+    <div class="st">清掉三个阻塞项 <span class="gpu">纯静态诊断</span></div>
+    第 0 轮权重污染、训练/评估口径统一、以及一个尚未查清的显存异常。
+  </li>
+  <li>
+    <div class="st">改评分规则 <span class="gpu">CPU 可验证</span></div>
+    刀落在<strong>回答方式</strong>，不落在题量：现在是「A. 两个 / B. 一个」的二选一，复述提示词就能答对；
+    要换成开放计数或高基数选项，让答案<strong>无法从提示词复原</strong>。
+    <strong>但比对仍然由用户的描述决定</strong>——如果把随图变化的事实直接换成正确答案，
+    奖励就变成了「看图回答准确」，那会奖励画错但容易识别的图片，研究对象被悄悄换掉。
+  </li>
+  <li>
+    <div class="st">重跑 <span class="gpu">才需要 GPU</span></div>
+    在同一批池子、同一批图上重测，过了预注册的前置检查，才谈重跑训练。
+  </li>
+</ol>
+
+<h2><span class="num">09</span>这个项目怎么保证自己不骗自己</h2>
+<p class="lede">课题本身研究的就是「内部分数会不会骗人」，所以方法上的自律是内容的一部分，不是附加的规矩。</p>
+
+<div class="tiles">
+  <div class="tile">
+    <div class="label">预注册</div>
+    <div class="value" style="font-size:19px;line-height:1.5">看到数据之前<br>定死判据</div>
+    <div class="foot">检验代码在答案存在之前提交；预注册文本此后一字不改</div>
+  </div>
+  <div class="tile">
+    <div class="label">红色记录不可变</div>
+    <div class="value" style="font-size:19px;line-height:1.5">发现缺陷时<br>不改旧记录</div>
+    <div class="foot">旧记录原样保留 + 缺陷登记为新证据 + 重新测量并注明来源</div>
+  </div>
+  <div class="tile">
+    <div class="label">数字可复算</div>
+    <div class="value" style="font-size:19px;line-height:1.5">拒绝出数<br>而不是给新数</div>
+    <div class="foot">脚本把已发表的数字写死，冻结记录不再复现时直接报错</div>
+  </div>
+</div>
+
+<p>还有几条一直在执行的硬约束：单 seed 的描述性轨迹不得写成显著性结论；
+探索性观察不得当作结论引用；两个外部视觉模型始终是冻结的观察者，不得当作「模型能看见自己的画」的证据；
+门判红之后不靠加算力、加 seed 或换 backbone 来抢救。</p>
+
+<div class="callout">
+  <p style="margin-bottom:0"><strong>这次汇报本身就是这套自律的一个例子。</strong>
+  第 6 节的发现让项目退回到修仪器的阶段，也让 Proposal 里两条写成结论的主张退回成待检验问题。
+  这不是好消息，但它是在训练开销花出去<em>之前</em>发现的——如果按原先的写法开 Gate C，
+  一个仪器缺陷会被记成项目的失败条件。</p>
+</div>
+
+<p class="footnote" style="margin-top:44px;padding-top:22px;border-top:1px solid var(--border)">
+本文所有数字均可从冻结记录复算。第 4 节来自训练前的静态配对对照；第 6 节由
+<code>scripts/v4_selector_resolution.py --expect</code> 在 2026-09-05 全部复现。
+明细见 <code>STATUS.md</code>（唯一入口）与 <code>docs/prereg/</code> 下的预注册文本。
+</p>
+
+</div>
+</body>
+</html>

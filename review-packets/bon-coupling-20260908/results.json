@@ -1,0 +1,719 @@
+{
+  "protocol": "review-packets/bon-coupling-20260908/PROTOCOL.md",
+  "population": {
+    "source": "runs/v4/gate-b-openct2 (read-only)",
+    "note": "candidate-availability filtered; every pool is mixed; NOT a natural population",
+    "composition": {
+      "all_232": {
+        "pools": 232,
+        "mixed": 232,
+        "all_correct": 0,
+        "all_wrong": 0,
+        "candidates": 1116,
+        "correct_candidates": 415,
+        "candidate_base_rate": 0.3718637992831541
+      },
+      "k4_138": {
+        "pools": 138,
+        "mixed": 138,
+        "all_correct": 0,
+        "all_wrong": 0,
+        "candidates": 552,
+        "correct_candidates": 222,
+        "candidate_base_rate": 0.40217391304347827
+      },
+      "k6_94": {
+        "pools": 94,
+        "mixed": 94,
+        "all_correct": 0,
+        "all_wrong": 0,
+        "candidates": 564,
+        "correct_candidates": 193,
+        "candidate_base_rate": 0.3421985815602837
+      }
+    }
+  },
+  "kl_axis": {
+    "1": 0.0,
+    "2": 0.1931471805599453,
+    "3": 0.43194562200144315,
+    "4": 0.6362943611198906,
+    "5": 0.8094379124341002,
+    "6": 0.9584261358947216
+  },
+  "scorers": {
+    "atomic_prompt_on": {
+      "all_232": {
+        "resolution": {
+          "n_pools": 232,
+          "n_candidates": 1116,
+          "perfect_score_candidates": 716,
+          "perfect_score_share": 0.6415770609318996,
+          "pools_with_unique_top": 34,
+          "unique_top_share": 0.14655172413793102,
+          "mean_top_tie_size": 3.2198275862068964,
+          "tie_size_histogram": {
+            "1": 34,
+            "2": 48,
+            "3": 46,
+            "4": 61,
+            "5": 23,
+            "6": 20
+          }
+        },
+        "by_n": {
+          "1": {
+            "n_pools": 232,
+            "point": 0.37787356321839083,
+            "gain": 0.0,
+            "gain_ci": [
+              0.0,
+              0.0
+            ],
+            "kl": 0.0,
+            "mean_top_size": 1.0,
+            "oracle": 0.37787356321839083
+          },
+          "2": {
+            "n_pools": 232,
+            "point": 0.4670258620689657,
+            "gain": 0.08915229885057464,
+            "gain_ci": [
+              0.07593390804597697,
+              0.10352011494252873
+            ],
+            "kl": 0.1931471805599453,
+            "mean_top_size": 1.5747126436781582,
+            "oracle": 0.6354885057471253
+          },
+          "3": {
+            "n_pools": 232,
+            "point": 0.5021910919540231,
+            "gain": 0.12431752873563219,
+            "gain_ci": [
+              0.10183189655172412,
+              0.1472341954022989
+            ],
+            "kl": 0.43194562200144315,
+            "mean_top_size": 2.145258620689655,
+            "oracle": 0.8120689655172423
+          },
+          "4": {
+            "n_pools": 232,
+            "point": 0.52088122605364,
+            "gain": 0.1430076628352491,
+            "gain_ci": [
+              0.11393678160919539,
+              0.17291666666666672
+            ],
+            "kl": 0.6362943611198906,
+            "mean_top_size": 2.7224137931034487,
+            "oracle": 0.9364942528735621
+          },
+          "5": {
+            "n_pools": 94,
+            "point": 0.48111702127659567,
+            "gain": 0.13891843971631201,
+            "gain_ci": [
+              0.09663120567375885,
+              0.18244680851063821
+            ],
+            "kl": 0.8094379124341002,
+            "mean_top_size": 3.3634751773049647,
+            "oracle": 0.9326241134751774
+          },
+          "6": {
+            "n_pools": 94,
+            "point": 0.4868794326241135,
+            "gain": 0.14468085106382977,
+            "gain_ci": [
+              0.09680851063829785,
+              0.1936170212765957
+            ],
+            "kl": 0.9584261358947216,
+            "mean_top_size": 3.9893617021276597,
+            "oracle": 1.0
+          }
+        },
+        "verdicts": {
+          "coupling_holds": true,
+          "coupling_rule": "95% lower bound of gain(N_max) > 0",
+          "gain_at_n_max": 0.1430076628352491,
+          "gain_ci_at_n_max": [
+            0.11393678160919539,
+            0.17291666666666672
+          ],
+          "resolution_insufficient": true,
+          "resolution_rule": "perfect-score share > 50% or mean top tie > K/2",
+          "unique_top_share": 0.14655172413793102,
+          "resolution_repaired": false,
+          "repair_rule": "unique-top share >= 90%"
+        },
+        "turnover": {
+          "peak_n": 6,
+          "peak_kl": 0.9584261358947216,
+          "peak_gain": 0.14468085106382977,
+          "last_n": 6,
+          "post_peak_change": 0.0,
+          "turnover_detected": false,
+          "d_star_lower_bound_nats": 0.9584261358947216,
+          "note": "K<=6 caps KL at 0.959 nats; no turnover is the pre-declared expected outcome"
+        }
+      },
+      "k4_138": {
+        "resolution": {
+          "n_pools": 138,
+          "n_candidates": 552,
+          "perfect_score_candidates": 345,
+          "perfect_score_share": 0.625,
+          "pools_with_unique_top": 26,
+          "unique_top_share": 0.18840579710144928,
+          "mean_top_tie_size": 2.6956521739130435,
+          "tie_size_histogram": {
+            "1": 26,
+            "2": 32,
+            "3": 38,
+            "4": 42
+          }
+        },
+        "by_n": {
+          "1": {
+            "n_pools": 138,
+            "point": 0.40217391304347827,
+            "gain": 0.0,
+            "gain_ci": [
+              0.0,
+              0.0
+            ],
+            "kl": 0.0,
+            "mean_top_size": 1.0,
+            "oracle": 0.40217391304347827
+          },
+          "2": {
+            "n_pools": 138,
+            "point": 0.4993961352657003,
+            "gain": 0.09722222222222224,
+            "gain_ci": [
+              0.0778985507246377,
+              0.11714975845410631
+            ],
+            "kl": 0.1931471805599453,
+            "mean_top_size": 1.5676328502415455,
+            "oracle": 0.6823671497584538
+          },
+          "3": {
+            "n_pools": 138,
+            "point": 0.5362318840579707,
+            "gain": 0.1340579710144927,
+            "gain_ci": [
+              0.10024154589371982,
+              0.16757246376811596
+            ],
+            "kl": 0.43194562200144315,
+            "mean_top_size": 2.128623188405797,
+            "oracle": 0.8713768115942029
+          },
+          "4": {
+            "n_pools": 138,
+            "point": 0.5555555555555552,
+            "gain": 0.15338164251207723,
+            "gain_ci": [
+              0.1099033816425121,
+              0.19746376811594205
+            ],
+            "kl": 0.6362943611198906,
+            "mean_top_size": 2.6956521739130435,
+            "oracle": 1.0
+          }
+        },
+        "verdicts": {
+          "coupling_holds": true,
+          "coupling_rule": "95% lower bound of gain(N_max) > 0",
+          "gain_at_n_max": 0.15338164251207723,
+          "gain_ci_at_n_max": [
+            0.1099033816425121,
+            0.19746376811594205
+          ],
+          "resolution_insufficient": true,
+          "resolution_rule": "perfect-score share > 50% or mean top tie > K/2",
+          "unique_top_share": 0.18840579710144928,
+          "resolution_repaired": false,
+          "repair_rule": "unique-top share >= 90%"
+        },
+        "turnover": {
+          "peak_n": 4,
+          "peak_kl": 0.6362943611198906,
+          "peak_gain": 0.15338164251207723,
+          "last_n": 4,
+          "post_peak_change": 0.0,
+          "turnover_detected": false,
+          "d_star_lower_bound_nats": 0.6362943611198906,
+          "note": "K<=6 caps KL at 0.959 nats; no turnover is the pre-declared expected outcome"
+        }
+      },
+      "k6_94": {
+        "resolution": {
+          "n_pools": 94,
+          "n_candidates": 564,
+          "perfect_score_candidates": 371,
+          "perfect_score_share": 0.6578014184397163,
+          "pools_with_unique_top": 8,
+          "unique_top_share": 0.0851063829787234,
+          "mean_top_tie_size": 3.9893617021276597,
+          "tie_size_histogram": {
+            "1": 8,
+            "2": 16,
+            "3": 8,
+            "4": 19,
+            "5": 23,
+            "6": 20
+          }
+        },
+        "by_n": {
+          "1": {
+            "n_pools": 94,
+            "point": 0.34219858156028365,
+            "gain": 0.0,
+            "gain_ci": [
+              0.0,
+              0.0
+            ],
+            "kl": 0.0,
+            "mean_top_size": 1.0,
+            "oracle": 0.34219858156028365
+          },
+          "2": {
+            "n_pools": 94,
+            "point": 0.41950354609929075,
+            "gain": 0.0773049645390071,
+            "gain_ci": [
+              0.06134751773049643,
+              0.09326241134751768
+            ],
+            "kl": 0.1931471805599453,
+            "mean_top_size": 1.5851063829787244,
+            "oracle": 0.5666666666666668
+          },
+          "3": {
+            "n_pools": 94,
+            "point": 0.45221631205673757,
+            "gain": 0.11001773049645384,
+            "gain_ci": [
+              0.08324468085106385,
+              0.13705673758865247
+            ],
+            "kl": 0.43194562200144315,
+            "mean_top_size": 2.1696808510638292,
+            "oracle": 0.7249999999999999
+          },
+          "4": {
+            "n_pools": 94,
+            "point": 0.46997635933806137,
+            "gain": 0.12777777777777774,
+            "gain_ci": [
+              0.09267139479905438,
+              0.16394799054373524
+            ],
+            "kl": 0.6362943611198906,
+            "mean_top_size": 2.7617021276595737,
+            "oracle": 0.8432624113475176
+          },
+          "5": {
+            "n_pools": 94,
+            "point": 0.48111702127659567,
+            "gain": 0.13891843971631201,
+            "gain_ci": [
+              0.09636524822695033,
+              0.1820921985815601
+            ],
+            "kl": 0.8094379124341002,
+            "mean_top_size": 3.3634751773049647,
+            "oracle": 0.9326241134751774
+          },
+          "6": {
+            "n_pools": 94,
+            "point": 0.4868794326241135,
+            "gain": 0.14468085106382977,
+            "gain_ci": [
+              0.09592198581560282,
+              0.1946808510638297
+            ],
+            "kl": 0.9584261358947216,
+            "mean_top_size": 3.9893617021276597,
+            "oracle": 1.0
+          }
+        },
+        "verdicts": {
+          "coupling_holds": true,
+          "coupling_rule": "95% lower bound of gain(N_max) > 0",
+          "gain_at_n_max": 0.14468085106382977,
+          "gain_ci_at_n_max": [
+            0.09592198581560282,
+            0.1946808510638297
+          ],
+          "resolution_insufficient": true,
+          "resolution_rule": "perfect-score share > 50% or mean top tie > K/2",
+          "unique_top_share": 0.0851063829787234,
+          "resolution_repaired": false,
+          "repair_rule": "unique-top share >= 90%"
+        },
+        "turnover": {
+          "peak_n": 6,
+          "peak_kl": 0.9584261358947216,
+          "peak_gain": 0.14468085106382977,
+          "last_n": 6,
+          "post_peak_change": 0.0,
+          "turnover_detected": false,
+          "d_star_lower_bound_nats": 0.9584261358947216,
+          "note": "K<=6 caps KL at 0.959 nats; no turnover is the pre-declared expected outcome"
+        }
+      }
+    },
+    "cycle_logprob": {
+      "all_232": {
+        "resolution": {
+          "n_pools": 232,
+          "n_candidates": 1116,
+          "perfect_score_candidates": 0,
+          "perfect_score_share": 0.0,
+          "pools_with_unique_top": 224,
+          "unique_top_share": 0.9655172413793104,
+          "mean_top_tie_size": 1.0387931034482758,
+          "tie_size_histogram": {
+            "1": 224,
+            "2": 7,
+            "3": 1
+          }
+        },
+        "by_n": {
+          "1": {
+            "n_pools": 232,
+            "point": 0.37787356321839083,
+            "gain": 0.0,
+            "gain_ci": [
+              0.0,
+              0.0
+            ],
+            "kl": 0.0,
+            "mean_top_size": 1.0,
+            "oracle": 0.37787356321839083
+          },
+          "2": {
+            "n_pools": 232,
+            "point": 0.5576867816091946,
+            "gain": 0.1798132183908044,
+            "gain_ci": [
+              0.16307471264367823,
+              0.19619252873563206
+            ],
+            "kl": 0.1931471805599453,
+            "mean_top_size": 1.011206896551724,
+            "oracle": 0.6354885057471253
+          },
+          "3": {
+            "n_pools": 232,
+            "point": 0.660704022988506,
+            "gain": 0.2828304597701154,
+            "gain_ci": [
+              0.25093390804597737,
+              0.3144396551724139
+            ],
+            "kl": 0.43194562200144315,
+            "mean_top_size": 1.0200431034482755,
+            "oracle": 0.8120689655172423
+          },
+          "4": {
+            "n_pools": 232,
+            "point": 0.7298850574712639,
+            "gain": 0.35201149425287354,
+            "gain_ci": [
+              0.3051724137931035,
+              0.3969109195402298
+            ],
+            "kl": 0.6362943611198906,
+            "mean_top_size": 1.0333333333333332,
+            "oracle": 0.9364942528735621
+          },
+          "5": {
+            "n_pools": 94,
+            "point": 0.7180851063829791,
+            "gain": 0.37588652482269513,
+            "gain_ci": [
+              0.30319148936170226,
+              0.4432624113475177
+            ],
+            "kl": 0.8094379124341002,
+            "mean_top_size": 1.024822695035461,
+            "oracle": 0.9326241134751774
+          },
+          "6": {
+            "n_pools": 94,
+            "point": 0.7659574468085106,
+            "gain": 0.4237588652482268,
+            "gain_ci": [
+              0.3351063829787233,
+              0.5124113475177304
+            ],
+            "kl": 0.9584261358947216,
+            "mean_top_size": 1.0319148936170213,
+            "oracle": 1.0
+          }
+        },
+        "verdicts": {
+          "coupling_holds": true,
+          "coupling_rule": "95% lower bound of gain(N_max) > 0",
+          "gain_at_n_max": 0.35201149425287354,
+          "gain_ci_at_n_max": [
+            0.3051724137931035,
+            0.3969109195402298
+          ],
+          "resolution_insufficient": false,
+          "resolution_rule": "perfect-score share > 50% or mean top tie > K/2",
+          "unique_top_share": 0.9655172413793104,
+          "resolution_repaired": true,
+          "repair_rule": "unique-top share >= 90%"
+        },
+        "turnover": {
+          "peak_n": 6,
+          "peak_kl": 0.9584261358947216,
+          "peak_gain": 0.4237588652482268,
+          "last_n": 6,
+          "post_peak_change": 0.0,
+          "turnover_detected": false,
+          "d_star_lower_bound_nats": 0.9584261358947216,
+          "note": "K<=6 caps KL at 0.959 nats; no turnover is the pre-declared expected outcome"
+        }
+      },
+      "k4_138": {
+        "resolution": {
+          "n_pools": 138,
+          "n_candidates": 552,
+          "perfect_score_candidates": 0,
+          "perfect_score_share": 0.0,
+          "pools_with_unique_top": 133,
+          "unique_top_share": 0.9637681159420289,
+          "mean_top_tie_size": 1.0434782608695652,
+          "tie_size_histogram": {
+            "1": 133,
+            "2": 4,
+            "3": 1
+          }
+        },
+        "by_n": {
+          "1": {
+            "n_pools": 138,
+            "point": 0.40217391304347827,
+            "gain": 0.0,
+            "gain_ci": [
+              0.0,
+              0.0
+            ],
+            "kl": 0.0,
+            "mean_top_size": 1.0,
+            "oracle": 0.40217391304347827
+          },
+          "2": {
+            "n_pools": 138,
+            "point": 0.594806763285024,
+            "gain": 0.19263285024154592,
+            "gain_ci": [
+              0.1684782608695652,
+              0.2161835748792269
+            ],
+            "kl": 0.1931471805599453,
+            "mean_top_size": 1.0144927536231885,
+            "oracle": 0.6823671497584538
+          },
+          "3": {
+            "n_pools": 138,
+            "point": 0.7035024154589372,
+            "gain": 0.3013285024154589,
+            "gain_ci": [
+              0.2542270531400966,
+              0.3472222222222222
+            ],
+            "kl": 0.43194562200144315,
+            "mean_top_size": 1.0253623188405796,
+            "oracle": 0.8713768115942029
+          },
+          "4": {
+            "n_pools": 138,
+            "point": 0.7741545893719808,
+            "gain": 0.3719806763285024,
+            "gain_ci": [
+              0.302536231884058,
+              0.4384057971014493
+            ],
+            "kl": 0.6362943611198906,
+            "mean_top_size": 1.0434782608695652,
+            "oracle": 1.0
+          }
+        },
+        "verdicts": {
+          "coupling_holds": true,
+          "coupling_rule": "95% lower bound of gain(N_max) > 0",
+          "gain_at_n_max": 0.3719806763285024,
+          "gain_ci_at_n_max": [
+            0.302536231884058,
+            0.4384057971014493
+          ],
+          "resolution_insufficient": false,
+          "resolution_rule": "perfect-score share > 50% or mean top tie > K/2",
+          "unique_top_share": 0.9637681159420289,
+          "resolution_repaired": true,
+          "repair_rule": "unique-top share >= 90%"
+        },
+        "turnover": {
+          "peak_n": 4,
+          "peak_kl": 0.6362943611198906,
+          "peak_gain": 0.3719806763285024,
+          "last_n": 4,
+          "post_peak_change": 0.0,
+          "turnover_detected": false,
+          "d_star_lower_bound_nats": 0.6362943611198906,
+          "note": "K<=6 caps KL at 0.959 nats; no turnover is the pre-declared expected outcome"
+        }
+      },
+      "k6_94": {
+        "resolution": {
+          "n_pools": 94,
+          "n_candidates": 564,
+          "perfect_score_candidates": 0,
+          "perfect_score_share": 0.0,
+          "pools_with_unique_top": 91,
+          "unique_top_share": 0.9680851063829787,
+          "mean_top_tie_size": 1.0319148936170213,
+          "tie_size_histogram": {
+            "1": 91,
+            "2": 3
+          }
+        },
+        "by_n": {
+          "1": {
+            "n_pools": 94,
+            "point": 0.34219858156028365,
+            "gain": 0.0,
+            "gain_ci": [
+              0.0,
+              0.0
+            ],
+            "kl": 0.0,
+            "mean_top_size": 1.0,
+            "oracle": 0.34219858156028365
+          },
+          "2": {
+            "n_pools": 94,
+            "point": 0.503191489361702,
+            "gain": 0.16099290780141837,
+            "gain_ci": [
+              0.1425531914893616,
+              0.17872340425531907
+            ],
+            "kl": 0.1931471805599453,
+            "mean_top_size": 1.0063829787234042,
+            "oracle": 0.5666666666666668
+          },
+          "3": {
+            "n_pools": 94,
+            "point": 0.5978723404255318,
+            "gain": 0.25567375886524807,
+            "gain_ci": [
+              0.21897163120567364,
+              0.29219858156028344
+            ],
+            "kl": 0.43194562200144315,
+            "mean_top_size": 1.0122340425531915,
+            "oracle": 0.7249999999999999
+          },
+          "4": {
+            "n_pools": 94,
+            "point": 0.6648936170212763,
+            "gain": 0.322695035460993,
+            "gain_ci": [
+              0.26666666666666666,
+              0.37482269503546106
+            ],
+            "kl": 0.6362943611198906,
+            "mean_top_size": 1.0184397163120569,
+            "oracle": 0.8432624113475176
+          },
+          "5": {
+            "n_pools": 94,
+            "point": 0.7180851063829791,
+            "gain": 0.37588652482269513,
+            "gain_ci": [
+              0.30496453900709236,
+              0.4450354609929078
+            ],
+            "kl": 0.8094379124341002,
+            "mean_top_size": 1.024822695035461,
+            "oracle": 0.9326241134751774
+          },
+          "6": {
+            "n_pools": 94,
+            "point": 0.7659574468085106,
+            "gain": 0.4237588652482268,
+            "gain_ci": [
+              0.3351063829787233,
+              0.5106382978723404
+            ],
+            "kl": 0.9584261358947216,
+            "mean_top_size": 1.0319148936170213,
+            "oracle": 1.0
+          }
+        },
+        "verdicts": {
+          "coupling_holds": true,
+          "coupling_rule": "95% lower bound of gain(N_max) > 0",
+          "gain_at_n_max": 0.4237588652482268,
+          "gain_ci_at_n_max": [
+            0.3351063829787233,
+            0.5106382978723404
+          ],
+          "resolution_insufficient": false,
+          "resolution_rule": "perfect-score share > 50% or mean top tie > K/2",
+          "unique_top_share": 0.9680851063829787,
+          "resolution_repaired": true,
+          "repair_rule": "unique-top share >= 90%"
+        },
+        "turnover": {
+          "peak_n": 6,
+          "peak_kl": 0.9584261358947216,
+          "peak_gain": 0.4237588652482268,
+          "last_n": 6,
+          "post_peak_change": 0.0,
+          "turnover_detected": false,
+          "d_star_lower_bound_nats": 0.9584261358947216,
+          "note": "K<=6 caps KL at 0.959 nats; no turnover is the pre-declared expected outcome"
+        }
+      }
+    }
+  },
+  "scorer_comparison": {
+    "n2": {
+      "n_pools": 232,
+      "difference": 0.09066091954022996,
+      "ci": [
+        0.06831896551724134,
+        0.11228448275862066
+      ]
+    },
+    "n4": {
+      "n_pools": 232,
+      "difference": 0.20900383141762455,
+      "ci": [
+        0.1544779693486589,
+        0.26470306513409947
+      ]
+    },
+    "n6": {
+      "n_pools": 94,
+      "difference": 0.2790780141843972,
+      "ci": [
+        0.1804964539007092,
+        0.3744680851063829
+      ]
+    },
+    "rule": "cycle minus atomic, paired on prompt_id; interval containing zero is reported as no difference, point estimates are not ranked"
+  }
+}

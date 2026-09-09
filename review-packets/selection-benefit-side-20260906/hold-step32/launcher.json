@@ -1,0 +1,12 @@
+{
+  "pid": 29020,
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\core\\python.exe",
+    "-B",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\hold_step32.py",
+    "--execute"
+  ],
+  "launched_unix": 1788684732.9772625,
+  "purpose": "Finish existing step32 measurement, prevent new training, preserve active measurement child."
+}

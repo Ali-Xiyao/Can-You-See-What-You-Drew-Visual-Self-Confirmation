@@ -1,0 +1,16 @@
+{
+  "at_unix": 1788684760.2779229,
+  "state": {
+    "status": "canary_complete",
+    "stage": "review_results",
+    "supervisor_pid": 21696,
+    "updated_unix": 1788684760.2579205,
+    "started_unix": 1788631464.2176192,
+    "elapsed_hours": 14.804455639256371,
+    "through_round": 4,
+    "completed_rounds": 4,
+    "research_goal_complete": false
+  },
+  "supervisor_exit_code": 0,
+  "new_training_started": false
+}

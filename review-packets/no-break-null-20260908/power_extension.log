@@ -1,0 +1,39 @@
+  rise 0.00  n=32  gated 4.3%
+  rise 0.00  n=48  gated 3.7%
+  rise 0.10  n=32  gated 29.7%
+  rise 0.10  n=48  gated 46.7%
+  rise 0.15  n=32  gated 64.0%
+  rise 0.15  n=48  gated 82.0%
+[
+  {
+    "rise": 0.0,
+    "checkpoints": 32,
+    "gated": 0.043333333333333335
+  },
+  {
+    "rise": 0.0,
+    "checkpoints": 48,
+    "gated": 0.03666666666666667
+  },
+  {
+    "rise": 0.1,
+    "checkpoints": 32,
+    "gated": 0.2966666666666667
+  },
+  {
+    "rise": 0.1,
+    "checkpoints": 48,
+    "gated": 0.4666666666666667
+  },
+  {
+    "rise": 0.15,
+    "checkpoints": 32,
+    "gated": 0.64
+  },
+  {
+    "rise": 0.15,
+    "checkpoints": 48,
+    "gated": 0.82
+  }
+]
+436.6s

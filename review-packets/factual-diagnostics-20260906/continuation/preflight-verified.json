@@ -1,0 +1,17 @@
+{
+  "verified_unix": 1788669141.7682729,
+  "command": [
+    "envs/core/python.exe",
+    "review-packets\\factual-diagnostics-20260906\\continuation\\resume_with_original_env.py",
+    "--check-only"
+  ],
+  "actual_exit_code": 0,
+  "launcher_sha256": "357c1a6c55ba39dd090c9b33cfc646fc11ca4832d2fb68c355a61b9c5b9b5dc7",
+  "cpu_preflight_passed": true,
+  "torch_imported": false,
+  "active_owner_pids": [],
+  "model_root": "H:\\selfsight-models",
+  "wan_policy": "snapshot_path(require_complete=False), require Wan2.1_VAE.pth; matches Showo2Adapter._load",
+  "original_deadline_unix": 1788847464.2176192,
+  "execute_started": false
+}

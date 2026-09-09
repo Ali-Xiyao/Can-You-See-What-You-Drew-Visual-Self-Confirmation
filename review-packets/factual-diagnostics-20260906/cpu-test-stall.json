@@ -1,0 +1,5 @@
+{
+  "ProcessId": 31092,
+  "CreationDate": "2026-09-05T21:25:10.309189-07:00",
+  "CommandLine": "\"H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\core\\python.exe\" -m pytest -m \"not gpu\""
+}

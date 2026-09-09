@@ -1,0 +1,26 @@
+[
+  {
+    "device": "cuda:0",
+    "pid": 22068,
+    "command": [
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+      "-B",
+      "-u",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selector-measurement-next-20260906\\frame_worker.py",
+      "--device",
+      "cuda:0"
+    ]
+  },
+  {
+    "device": "cuda:1",
+    "pid": 17448,
+    "command": [
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+      "-B",
+      "-u",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selector-measurement-next-20260906\\frame_worker.py",
+      "--device",
+      "cuda:1"
+    ]
+  }
+]

@@ -1,0 +1,417 @@
+showo2_1p5b: already measured, skipping
+showo2_7b main-2plus1 image_only: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\python.exe -u H:\Xiyao_Wang\062_armB\scripts\v4_run_pipeline.py observe --run runs/v4/main-2plus1 --device cuda:0 --condition image_only --backbone-config H:\Xiyao_Wang\062_armB\configs\backbones\showo2_7b.yaml
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\transformers\utils\hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\accelerate\utils\modeling.py:1228: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  return torch.load(checkpoint_file, map_location=torch.device("cpu"))
+You shouldn't move a model when it is dispatched on multiple devices.
+You shouldn't move a model when it is dispatched on multiple devices.
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:617: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  torch.load(pretrained_path, map_location=device), assign=True)
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:655: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with amp.autocast(dtype=self.dtype):
+1/468 images, 4 answers, 4.1s/img
+21/468 images, 88 answers, 2.6s/img
+41/468 images, 160 answers, 2.3s/img
+61/468 images, 230 answers, 2.2s/img
+81/468 images, 306 answers, 2.2s/img
+101/468 images, 387 answers, 2.2s/img
+121/468 images, 459 answers, 2.2s/img
+141/468 images, 531 answers, 2.2s/img
+161/468 images, 610 answers, 2.2s/img
+181/468 images, 676 answers, 2.2s/img
+201/468 images, 746 answers, 2.2s/img
+221/468 images, 823 answers, 2.2s/img
+241/468 images, 902 answers, 2.2s/img
+261/468 images, 979 answers, 2.2s/img
+281/468 images, 1041 answers, 2.2s/img
+301/468 images, 1090 answers, 2.1s/img
+321/468 images, 1163 answers, 2.1s/img
+341/468 images, 1246 answers, 2.1s/img
+361/468 images, 1327 answers, 2.2s/img
+381/468 images, 1405 answers, 2.2s/img
+421/468 images, 1553 answers, 2.1s/img
+441/468 images, 1636 answers, 2.2s/img
+461/468 images, 1710 answers, 2.2s/img
+12 images supplied no trials: something in them is not any object
+wrote 1739 answers to runs\v4\main-2plus1\answers.showo2_7b.jsonl
+showo2_7b main-2plus1 prompted: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\python.exe -u H:\Xiyao_Wang\062_armB\scripts\v4_run_pipeline.py observe --run runs/v4/main-2plus1 --device cuda:0 --condition prompted --backbone-config H:\Xiyao_Wang\062_armB\configs\backbones\showo2_7b.yaml
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\transformers\utils\hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\accelerate\utils\modeling.py:1228: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  return torch.load(checkpoint_file, map_location=torch.device("cpu"))
+You shouldn't move a model when it is dispatched on multiple devices.
+You shouldn't move a model when it is dispatched on multiple devices.
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:617: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  torch.load(pretrained_path, map_location=device), assign=True)
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:655: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with amp.autocast(dtype=self.dtype):
+1/468 images, 4 answers, 4.3s/img
+21/468 images, 88 answers, 3.0s/img
+41/468 images, 160 answers, 2.9s/img
+61/468 images, 230 answers, 2.7s/img
+81/468 images, 306 answers, 2.7s/img
+101/468 images, 387 answers, 2.8s/img
+121/468 images, 459 answers, 2.7s/img
+141/468 images, 531 answers, 2.7s/img
+161/468 images, 610 answers, 2.7s/img
+181/468 images, 676 answers, 2.7s/img
+201/468 images, 746 answers, 2.7s/img
+221/468 images, 823 answers, 2.7s/img
+241/468 images, 902 answers, 2.7s/img
+261/468 images, 979 answers, 2.7s/img
+281/468 images, 1041 answers, 2.7s/img
+301/468 images, 1090 answers, 2.6s/img
+321/468 images, 1163 answers, 2.6s/img
+341/468 images, 1246 answers, 2.6s/img
+361/468 images, 1327 answers, 2.7s/img
+381/468 images, 1405 answers, 2.7s/img
+421/468 images, 1553 answers, 2.7s/img
+441/468 images, 1636 answers, 2.7s/img
+461/468 images, 1710 answers, 2.7s/img
+12 images supplied no trials: something in them is not any object
+wrote 1739 answers to runs\v4\main-2plus1\answers.prompted.showo2_7b.jsonl
+showo2_7b main-1plus1plus1 image_only: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\python.exe -u H:\Xiyao_Wang\062_armB\scripts\v4_run_pipeline.py observe --run runs/v4/main-1plus1plus1 --device cuda:0 --condition image_only --backbone-config H:\Xiyao_Wang\062_armB\configs\backbones\showo2_7b.yaml
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\transformers\utils\hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\accelerate\utils\modeling.py:1228: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  return torch.load(checkpoint_file, map_location=torch.device("cpu"))
+You shouldn't move a model when it is dispatched on multiple devices.
+You shouldn't move a model when it is dispatched on multiple devices.
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:617: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  torch.load(pretrained_path, map_location=device), assign=True)
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:655: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with amp.autocast(dtype=self.dtype):
+1/444 images, 4 answers, 3.3s/img
+21/444 images, 78 answers, 2.2s/img
+41/444 images, 166 answers, 2.3s/img
+61/444 images, 236 answers, 2.1s/img
+81/444 images, 320 answers, 2.2s/img
+101/444 images, 399 answers, 2.2s/img
+121/444 images, 490 answers, 2.2s/img
+141/444 images, 575 answers, 2.2s/img
+161/444 images, 668 answers, 2.3s/img
+181/444 images, 765 answers, 2.3s/img
+201/444 images, 854 answers, 2.3s/img
+221/444 images, 943 answers, 2.3s/img
+241/444 images, 1029 answers, 2.4s/img
+261/444 images, 1107 answers, 2.4s/img
+281/444 images, 1186 answers, 2.3s/img
+301/444 images, 1259 answers, 2.3s/img
+321/444 images, 1345 answers, 2.3s/img
+341/444 images, 1432 answers, 2.3s/img
+361/444 images, 1521 answers, 2.3s/img
+381/444 images, 1606 answers, 2.3s/img
+401/444 images, 1691 answers, 2.3s/img
+421/444 images, 1780 answers, 2.3s/img
+441/444 images, 1869 answers, 2.4s/img
+11 images supplied no trials: something in them is not any object
+wrote 1884 answers to runs\v4\main-1plus1plus1\answers.showo2_7b.jsonl
+showo2_7b main-1plus1plus1 prompted: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\python.exe -u H:\Xiyao_Wang\062_armB\scripts\v4_run_pipeline.py observe --run runs/v4/main-1plus1plus1 --device cuda:0 --condition prompted --backbone-config H:\Xiyao_Wang\062_armB\configs\backbones\showo2_7b.yaml
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\transformers\utils\hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\accelerate\utils\modeling.py:1228: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  return torch.load(checkpoint_file, map_location=torch.device("cpu"))
+You shouldn't move a model when it is dispatched on multiple devices.
+You shouldn't move a model when it is dispatched on multiple devices.
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:617: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  torch.load(pretrained_path, map_location=device), assign=True)
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:655: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with amp.autocast(dtype=self.dtype):
+1/444 images, 4 answers, 3.9s/img
+21/444 images, 78 answers, 2.8s/img
+41/444 images, 166 answers, 2.9s/img
+61/444 images, 236 answers, 2.8s/img
+81/444 images, 320 answers, 2.9s/img
+101/444 images, 399 answers, 2.9s/img
+121/444 images, 490 answers, 3.0s/img
+141/444 images, 575 answers, 3.0s/img
+161/444 images, 668 answers, 3.0s/img
+181/444 images, 765 answers, 3.1s/img
+201/444 images, 854 answers, 3.1s/img
+221/444 images, 943 answers, 3.1s/img
+241/444 images, 1029 answers, 3.1s/img
+261/444 images, 1107 answers, 3.0s/img
+281/444 images, 1186 answers, 3.0s/img
+301/444 images, 1259 answers, 3.0s/img
+321/444 images, 1345 answers, 3.0s/img
+341/444 images, 1432 answers, 3.0s/img
+361/444 images, 1521 answers, 3.0s/img
+381/444 images, 1606 answers, 3.0s/img
+401/444 images, 1691 answers, 3.0s/img
+421/444 images, 1780 answers, 3.0s/img
+441/444 images, 1869 answers, 3.1s/img
+11 images supplied no trials: something in them is not any object
+wrote 1884 answers to runs\v4\main-1plus1plus1\answers.prompted.showo2_7b.jsonl
+showo_v1 main-2plus1 image_only: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\core\python.exe -u H:\Xiyao_Wang\062_armB\scripts\v4_run_pipeline.py observe --run runs/v4/main-2plus1 --device cuda:0 --condition image_only --backbone-config H:\Xiyao_Wang\062_armB\configs\backbones\showo_v1.yaml
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\core\lib\site-packages\transformers\utils\hub.py:124: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Working with z of shape (1, 13, 16, 16) = 3328 dimensions.
+Look-up free quantizer with codebook size: 8192
+The config attributes {'mask_token_id': 58497} were passed to Showo, but are not expected and will be ignored. Please verify your config.json configuration file.
+attention implementation:  sdpa
+H:\selfsight-models\repositories\Show-o\models\modeling_showo.py:49: FutureWarning: Accessing config attribute `w_clip_vit` directly via 'Showo' object attribute is deprecated. Please access 'w_clip_vit' over 'Showo's config object instead, e.g. 'unet.config.w_clip_vit'.
+  if self.w_clip_vit:
+1/468 images, 4 answers, 0.7s/img
+21/468 images, 88 answers, 0.5s/img
+41/468 images, 160 answers, 0.4s/img
+61/468 images, 230 answers, 0.4s/img
+81/468 images, 306 answers, 0.4s/img
+101/468 images, 387 answers, 0.4s/img
+121/468 images, 459 answers, 0.4s/img
+141/468 images, 531 answers, 0.4s/img
+161/468 images, 610 answers, 0.4s/img
+181/468 images, 676 answers, 0.4s/img
+201/468 images, 746 answers, 0.4s/img
+221/468 images, 823 answers, 0.4s/img
+241/468 images, 902 answers, 0.4s/img
+261/468 images, 979 answers, 0.4s/img
+281/468 images, 1041 answers, 0.4s/img
+301/468 images, 1090 answers, 0.4s/img
+321/468 images, 1163 answers, 0.4s/img
+341/468 images, 1246 answers, 0.4s/img
+361/468 images, 1327 answers, 0.4s/img
+381/468 images, 1405 answers, 0.4s/img
+421/468 images, 1553 answers, 0.4s/img
+441/468 images, 1636 answers, 0.4s/img
+461/468 images, 1710 answers, 0.4s/img
+12 images supplied no trials: something in them is not any object
+wrote 1739 answers to runs\v4\main-2plus1\answers.showo_v1.jsonl
+showo_v1 main-2plus1 prompted: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\core\python.exe -u H:\Xiyao_Wang\062_armB\scripts\v4_run_pipeline.py observe --run runs/v4/main-2plus1 --device cuda:0 --condition prompted --backbone-config H:\Xiyao_Wang\062_armB\configs\backbones\showo_v1.yaml
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\core\lib\site-packages\transformers\utils\hub.py:124: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Working with z of shape (1, 13, 16, 16) = 3328 dimensions.
+Look-up free quantizer with codebook size: 8192
+The config attributes {'mask_token_id': 58497} were passed to Showo, but are not expected and will be ignored. Please verify your config.json configuration file.
+attention implementation:  sdpa
+H:\selfsight-models\repositories\Show-o\models\modeling_showo.py:49: FutureWarning: Accessing config attribute `w_clip_vit` directly via 'Showo' object attribute is deprecated. Please access 'w_clip_vit' over 'Showo's config object instead, e.g. 'unet.config.w_clip_vit'.
+  if self.w_clip_vit:
+1/468 images, 4 answers, 0.8s/img
+21/468 images, 88 answers, 0.6s/img
+41/468 images, 160 answers, 0.5s/img
+61/468 images, 230 answers, 0.5s/img
+81/468 images, 306 answers, 0.5s/img
+101/468 images, 387 answers, 0.5s/img
+121/468 images, 459 answers, 0.5s/img
+141/468 images, 531 answers, 0.5s/img
+161/468 images, 610 answers, 0.5s/img
+181/468 images, 676 answers, 0.5s/img
+201/468 images, 746 answers, 0.5s/img
+221/468 images, 823 answers, 0.5s/img
+241/468 images, 902 answers, 0.5s/img
+261/468 images, 979 answers, 0.5s/img
+281/468 images, 1041 answers, 0.5s/img
+301/468 images, 1090 answers, 0.5s/img
+321/468 images, 1163 answers, 0.5s/img
+341/468 images, 1246 answers, 0.5s/img
+361/468 images, 1327 answers, 0.5s/img
+381/468 images, 1405 answers, 0.5s/img
+421/468 images, 1553 answers, 0.5s/img
+441/468 images, 1636 answers, 0.5s/img
+461/468 images, 1710 answers, 0.5s/img
+12 images supplied no trials: something in them is not any object
+wrote 1739 answers to runs\v4\main-2plus1\answers.prompted.showo_v1.jsonl
+showo_v1 main-1plus1plus1 image_only: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\core\python.exe -u H:\Xiyao_Wang\062_armB\scripts\v4_run_pipeline.py observe --run runs/v4/main-1plus1plus1 --device cuda:0 --condition image_only --backbone-config H:\Xiyao_Wang\062_armB\configs\backbones\showo_v1.yaml
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\core\lib\site-packages\transformers\utils\hub.py:124: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Working with z of shape (1, 13, 16, 16) = 3328 dimensions.
+Look-up free quantizer with codebook size: 8192
+The config attributes {'mask_token_id': 58497} were passed to Showo, but are not expected and will be ignored. Please verify your config.json configuration file.
+attention implementation:  sdpa
+H:\selfsight-models\repositories\Show-o\models\modeling_showo.py:49: FutureWarning: Accessing config attribute `w_clip_vit` directly via 'Showo' object attribute is deprecated. Please access 'w_clip_vit' over 'Showo's config object instead, e.g. 'unet.config.w_clip_vit'.
+  if self.w_clip_vit:
+1/444 images, 4 answers, 0.7s/img
+21/444 images, 78 answers, 0.4s/img
+41/444 images, 166 answers, 0.5s/img
+61/444 images, 236 answers, 0.4s/img
+81/444 images, 320 answers, 0.4s/img
+101/444 images, 399 answers, 0.4s/img
+121/444 images, 490 answers, 0.5s/img
+141/444 images, 575 answers, 0.5s/img
+161/444 images, 668 answers, 0.5s/img
+181/444 images, 765 answers, 0.5s/img
+201/444 images, 854 answers, 0.5s/img
+221/444 images, 943 answers, 0.5s/img
+241/444 images, 1029 answers, 0.5s/img
+261/444 images, 1107 answers, 0.5s/img
+281/444 images, 1186 answers, 0.5s/img
+301/444 images, 1259 answers, 0.5s/img
+321/444 images, 1345 answers, 0.5s/img
+341/444 images, 1432 answers, 0.5s/img
+361/444 images, 1521 answers, 0.5s/img
+381/444 images, 1606 answers, 0.5s/img
+401/444 images, 1691 answers, 0.5s/img
+421/444 images, 1780 answers, 0.5s/img
+441/444 images, 1869 answers, 0.5s/img
+11 images supplied no trials: something in them is not any object
+wrote 1884 answers to runs\v4\main-1plus1plus1\answers.showo_v1.jsonl
+showo_v1 main-1plus1plus1 prompted: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\core\python.exe -u H:\Xiyao_Wang\062_armB\scripts\v4_run_pipeline.py observe --run runs/v4/main-1plus1plus1 --device cuda:0 --condition prompted --backbone-config H:\Xiyao_Wang\062_armB\configs\backbones\showo_v1.yaml
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\core\lib\site-packages\transformers\utils\hub.py:124: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Working with z of shape (1, 13, 16, 16) = 3328 dimensions.
+Look-up free quantizer with codebook size: 8192
+The config attributes {'mask_token_id': 58497} were passed to Showo, but are not expected and will be ignored. Please verify your config.json configuration file.
+attention implementation:  sdpa
+H:\selfsight-models\repositories\Show-o\models\modeling_showo.py:49: FutureWarning: Accessing config attribute `w_clip_vit` directly via 'Showo' object attribute is deprecated. Please access 'w_clip_vit' over 'Showo's config object instead, e.g. 'unet.config.w_clip_vit'.
+  if self.w_clip_vit:
+1/444 images, 4 answers, 0.8s/img
+21/444 images, 78 answers, 0.5s/img
+41/444 images, 166 answers, 0.5s/img
+61/444 images, 236 answers, 0.5s/img
+81/444 images, 320 answers, 0.5s/img
+101/444 images, 399 answers, 0.5s/img
+121/444 images, 490 answers, 0.5s/img
+141/444 images, 575 answers, 0.5s/img
+161/444 images, 668 answers, 0.6s/img
+181/444 images, 765 answers, 0.6s/img
+201/444 images, 854 answers, 0.6s/img
+221/444 images, 943 answers, 0.6s/img
+241/444 images, 1029 answers, 0.6s/img
+261/444 images, 1107 answers, 0.6s/img
+281/444 images, 1186 answers, 0.6s/img
+301/444 images, 1259 answers, 0.6s/img
+321/444 images, 1345 answers, 0.6s/img
+341/444 images, 1432 answers, 0.6s/img
+361/444 images, 1521 answers, 0.6s/img
+381/444 images, 1606 answers, 0.6s/img
+401/444 images, 1691 answers, 0.6s/img
+421/444 images, 1780 answers, 0.6s/img
+441/444 images, 1869 answers, 0.6s/img
+11 images supplied no trials: something in them is not any object
+wrote 1884 answers to runs\v4\main-1plus1plus1\answers.prompted.showo_v1.jsonl
+janus_pro_1b main-2plus1 image_only: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\janus\Scripts\python.exe -u H:\Xiyao_Wang\062_armB\scripts\v4_run_pipeline.py observe --run runs/v4/main-2plus1 --device cuda:0 --condition image_only --backbone-config H:\Xiyao_Wang\062_armB\configs\backbones\janus_pro_1b.yaml
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\janus\lib\site-packages\transformers\utils\hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Python version is above 3.10, patching the collections module.
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\janus\lib\site-packages\transformers\models\auto\image_processing_auto.py:647: FutureWarning: The image_processor_class argument is deprecated and will be removed in v4.42. Please use `slow_image_processor_class`, or `fast_image_processor_class` instead
+  warnings.warn(
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.52, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+You are using the default legacy behaviour of the <class 'transformers.models.llama.tokenization_llama_fast.LlamaTokenizerFast'>. This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thoroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565 - if you loaded a llama tokenizer from a GGUF file you can ignore this message.
+1/468 images, 4 answers, 3.6s/img
+21/468 images, 88 answers, 2.8s/img
+41/468 images, 160 answers, 2.5s/img
+61/468 images, 230 answers, 2.4s/img
+81/468 images, 306 answers, 2.5s/img
+101/468 images, 387 answers, 2.5s/img
+121/468 images, 459 answers, 2.5s/img
+141/468 images, 531 answers, 2.4s/img
+161/468 images, 610 answers, 2.4s/img
+181/468 images, 676 answers, 2.4s/img
+201/468 images, 746 answers, 2.4s/img
+221/468 images, 823 answers, 2.4s/img
+241/468 images, 902 answers, 2.4s/img
+261/468 images, 979 answers, 2.4s/img
+281/468 images, 1041 answers, 2.4s/img
+301/468 images, 1090 answers, 2.3s/img
+321/468 images, 1163 answers, 2.3s/img
+341/468 images, 1246 answers, 2.4s/img
+361/468 images, 1327 answers, 2.4s/img
+381/468 images, 1405 answers, 2.4s/img
+421/468 images, 1553 answers, 2.4s/img
+441/468 images, 1636 answers, 2.4s/img
+461/468 images, 1710 answers, 2.4s/img
+12 images supplied no trials: something in them is not any object
+wrote 1739 answers to runs\v4\main-2plus1\answers.janus_pro_1b.jsonl
+janus_pro_1b main-2plus1 prompted: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\janus\Scripts\python.exe -u H:\Xiyao_Wang\062_armB\scripts\v4_run_pipeline.py observe --run runs/v4/main-2plus1 --device cuda:0 --condition prompted --backbone-config H:\Xiyao_Wang\062_armB\configs\backbones\janus_pro_1b.yaml
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\janus\lib\site-packages\transformers\utils\hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Python version is above 3.10, patching the collections module.
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\janus\lib\site-packages\transformers\models\auto\image_processing_auto.py:647: FutureWarning: The image_processor_class argument is deprecated and will be removed in v4.42. Please use `slow_image_processor_class`, or `fast_image_processor_class` instead
+  warnings.warn(
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.52, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+You are using the default legacy behaviour of the <class 'transformers.models.llama.tokenization_llama_fast.LlamaTokenizerFast'>. This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thoroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565 - if you loaded a llama tokenizer from a GGUF file you can ignore this message.
+1/468 images, 4 answers, 2.3s/img
+21/468 images, 88 answers, 1.9s/img
+41/468 images, 160 answers, 1.8s/img
+61/468 images, 230 answers, 1.7s/img
+81/468 images, 306 answers, 1.7s/img
+101/468 images, 387 answers, 1.8s/img
+121/468 images, 459 answers, 1.7s/img
+141/468 images, 531 answers, 1.7s/img
+161/468 images, 610 answers, 1.7s/img
+181/468 images, 676 answers, 1.7s/img
+201/468 images, 746 answers, 1.7s/img
+221/468 images, 823 answers, 1.7s/img
+241/468 images, 902 answers, 1.7s/img
+261/468 images, 979 answers, 1.7s/img
+281/468 images, 1041 answers, 1.7s/img
+301/468 images, 1090 answers, 1.7s/img
+321/468 images, 1163 answers, 1.7s/img
+341/468 images, 1246 answers, 1.7s/img
+361/468 images, 1327 answers, 1.7s/img
+381/468 images, 1405 answers, 1.7s/img
+421/468 images, 1553 answers, 1.7s/img
+441/468 images, 1636 answers, 1.7s/img
+461/468 images, 1710 answers, 1.7s/img
+12 images supplied no trials: something in them is not any object
+wrote 1739 answers to runs\v4\main-2plus1\answers.prompted.janus_pro_1b.jsonl
+janus_pro_1b main-1plus1plus1 image_only: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\janus\Scripts\python.exe -u H:\Xiyao_Wang\062_armB\scripts\v4_run_pipeline.py observe --run runs/v4/main-1plus1plus1 --device cuda:0 --condition image_only --backbone-config H:\Xiyao_Wang\062_armB\configs\backbones\janus_pro_1b.yaml
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\janus\lib\site-packages\transformers\utils\hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Python version is above 3.10, patching the collections module.
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\janus\lib\site-packages\transformers\models\auto\image_processing_auto.py:647: FutureWarning: The image_processor_class argument is deprecated and will be removed in v4.42. Please use `slow_image_processor_class`, or `fast_image_processor_class` instead
+  warnings.warn(
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.52, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+You are using the default legacy behaviour of the <class 'transformers.models.llama.tokenization_llama_fast.LlamaTokenizerFast'>. This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thoroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565 - if you loaded a llama tokenizer from a GGUF file you can ignore this message.
+1/444 images, 4 answers, 3.3s/img
+21/444 images, 78 answers, 2.4s/img
+41/444 images, 166 answers, 2.7s/img
+61/444 images, 236 answers, 2.5s/img
+81/444 images, 320 answers, 2.6s/img
+101/444 images, 399 answers, 2.6s/img
+121/444 images, 490 answers, 2.6s/img
+141/444 images, 575 answers, 2.7s/img
+161/444 images, 668 answers, 2.7s/img
+181/444 images, 765 answers, 2.8s/img
+201/444 images, 854 answers, 2.8s/img
+221/444 images, 943 answers, 2.8s/img
+241/444 images, 1029 answers, 2.8s/img
+261/444 images, 1107 answers, 2.8s/img
+281/444 images, 1186 answers, 2.8s/img
+301/444 images, 1259 answers, 2.8s/img
+321/444 images, 1345 answers, 2.8s/img
+341/444 images, 1432 answers, 2.8s/img
+361/444 images, 1521 answers, 2.8s/img
+381/444 images, 1606 answers, 2.8s/img
+401/444 images, 1691 answers, 2.8s/img
+421/444 images, 1780 answers, 2.8s/img
+441/444 images, 1869 answers, 2.8s/img
+11 images supplied no trials: something in them is not any object
+wrote 1884 answers to runs\v4\main-1plus1plus1\answers.janus_pro_1b.jsonl
+janus_pro_1b main-1plus1plus1 prompted: H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\janus\Scripts\python.exe -u H:\Xiyao_Wang\062_armB\scripts\v4_run_pipeline.py observe --run runs/v4/main-1plus1plus1 --device cuda:0 --condition prompted --backbone-config H:\Xiyao_Wang\062_armB\configs\backbones\janus_pro_1b.yaml
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\janus\lib\site-packages\transformers\utils\hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Python version is above 3.10, patching the collections module.
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\janus\lib\site-packages\transformers\models\auto\image_processing_auto.py:647: FutureWarning: The image_processor_class argument is deprecated and will be removed in v4.42. Please use `slow_image_processor_class`, or `fast_image_processor_class` instead
+  warnings.warn(
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.52, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+You are using the default legacy behaviour of the <class 'transformers.models.llama.tokenization_llama_fast.LlamaTokenizerFast'>. This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thoroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565 - if you loaded a llama tokenizer from a GGUF file you can ignore this message.
+1/444 images, 4 answers, 2.1s/img
+21/444 images, 78 answers, 1.9s/img
+41/444 images, 166 answers, 2.1s/img
+61/444 images, 236 answers, 1.9s/img
+81/444 images, 320 answers, 2.0s/img
+101/444 images, 399 answers, 2.0s/img
+121/444 images, 490 answers, 2.1s/img
+141/444 images, 575 answers, 2.1s/img
+161/444 images, 668 answers, 2.1s/img
+181/444 images, 765 answers, 2.2s/img
+201/444 images, 854 answers, 2.2s/img
+221/444 images, 943 answers, 2.2s/img
+241/444 images, 1029 answers, 2.2s/img
+261/444 images, 1107 answers, 2.2s/img
+281/444 images, 1186 answers, 2.2s/img
+301/444 images, 1259 answers, 2.2s/img
+321/444 images, 1345 answers, 2.2s/img
+341/444 images, 1432 answers, 2.2s/img
+361/444 images, 1521 answers, 2.2s/img
+381/444 images, 1606 answers, 2.2s/img
+401/444 images, 1691 answers, 2.2s/img
+421/444 images, 1780 answers, 2.2s/img
+441/444 images, 1869 answers, 2.2s/img
+11 images supplied no trials: something in them is not any object
+wrote 1884 answers to runs\v4\main-1plus1plus1\answers.prompted.janus_pro_1b.jsonl

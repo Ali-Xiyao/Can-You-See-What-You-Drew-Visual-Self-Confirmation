@@ -1,0 +1,16 @@
+{
+  "stage": "naive.step-00032.detect.qwen3vl",
+  "completed_unix": 1788681812.6779184,
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\scripts\\v4_run_pipeline.py",
+    "detect",
+    "--manifest",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00032\\manifest.jsonl",
+    "--detector",
+    "qwen3vl",
+    "--device",
+    "cuda:0"
+  ]
+}

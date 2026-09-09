@@ -1,0 +1,151 @@
+{
+  "settings": {
+    "outcome_n": 120,
+    "base_rate": 0.37,
+    "trials_per_cell": 300,
+    "break_resamples": 300,
+    "p_threshold": 0.05,
+    "monte_carlo_se_at_5pct": 0.0126,
+    "seed": 20260908,
+    "note": "rise is the total external gain before the knot, in correctness points; one binomial SEM at n=120 and p=0.37 is 0.044, so rise=0.10 is 2.3 SEM"
+  },
+  "cells": [
+    {
+      "rise": 0.0,
+      "checkpoints": 8,
+      "ungated": 0.32666666666666666,
+      "gated": 0.03333333333333333
+    },
+    {
+      "rise": 0.0,
+      "checkpoints": 12,
+      "ungated": 0.42,
+      "gated": 0.016666666666666666
+    },
+    {
+      "rise": 0.0,
+      "checkpoints": 16,
+      "ungated": 0.5033333333333333,
+      "gated": 0.03
+    },
+    {
+      "rise": 0.0,
+      "checkpoints": 24,
+      "ungated": 0.4766666666666667,
+      "gated": 0.043333333333333335
+    },
+    {
+      "rise": 0.05,
+      "checkpoints": 8,
+      "ungated": 0.47,
+      "gated": 0.04666666666666667
+    },
+    {
+      "rise": 0.05,
+      "checkpoints": 12,
+      "ungated": 0.6433333333333333,
+      "gated": 0.06
+    },
+    {
+      "rise": 0.05,
+      "checkpoints": 16,
+      "ungated": 0.66,
+      "gated": 0.07333333333333333
+    },
+    {
+      "rise": 0.05,
+      "checkpoints": 24,
+      "ungated": 0.77,
+      "gated": 0.08666666666666667
+    },
+    {
+      "rise": 0.1,
+      "checkpoints": 8,
+      "ungated": 0.5466666666666666,
+      "gated": 0.12666666666666668
+    },
+    {
+      "rise": 0.1,
+      "checkpoints": 12,
+      "ungated": 0.7,
+      "gated": 0.13333333333333333
+    },
+    {
+      "rise": 0.1,
+      "checkpoints": 16,
+      "ungated": 0.75,
+      "gated": 0.19
+    },
+    {
+      "rise": 0.1,
+      "checkpoints": 24,
+      "ungated": 0.8266666666666667,
+      "gated": 0.2866666666666667
+    },
+    {
+      "rise": 0.15,
+      "checkpoints": 8,
+      "ungated": 0.5466666666666666,
+      "gated": 0.20666666666666667
+    },
+    {
+      "rise": 0.15,
+      "checkpoints": 12,
+      "ungated": 0.74,
+      "gated": 0.31666666666666665
+    },
+    {
+      "rise": 0.15,
+      "checkpoints": 16,
+      "ungated": 0.8466666666666667,
+      "gated": 0.4
+    },
+    {
+      "rise": 0.15,
+      "checkpoints": 24,
+      "ungated": 0.91,
+      "gated": 0.5033333333333333
+    },
+    {
+      "rise": 0.2,
+      "checkpoints": 8,
+      "ungated": 0.6066666666666667,
+      "gated": 0.30333333333333334
+    },
+    {
+      "rise": 0.2,
+      "checkpoints": 12,
+      "ungated": 0.8133333333333334,
+      "gated": 0.47
+    },
+    {
+      "rise": 0.2,
+      "checkpoints": 16,
+      "ungated": 0.8866666666666667,
+      "gated": 0.5666666666666667
+    },
+    {
+      "rise": 0.2,
+      "checkpoints": 24,
+      "ungated": 0.9433333333333334,
+      "gated": 0.7766666666666666
+    }
+  ],
+  "summary": {
+    "false_positive_ungated": {
+      "8": 0.32666666666666666,
+      "12": 0.42,
+      "16": 0.5033333333333333,
+      "24": 0.4766666666666667
+    },
+    "false_positive_gated": {
+      "8": 0.03333333333333333,
+      "12": 0.016666666666666666,
+      "16": 0.03,
+      "24": 0.043333333333333335
+    },
+    "ungated_rate_rises_with_checkpoints": true,
+    "gated_rate_within_threshold_everywhere": true
+  },
+  "seconds": 478.5
+}

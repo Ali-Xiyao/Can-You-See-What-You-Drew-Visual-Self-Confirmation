@@ -1,0 +1,21 @@
+{
+  "created_utc": "2026-09-06T09:14:18.784344+00:00",
+  "status": "PASS",
+  "independent_method": "Enumerated all 16 assignments of the four raw pending image labels, then directly subtracted selected/control booleans using the frozen pairing file. Did not call the reporting estimator.",
+  "completion_assignments": 16,
+  "scopes_reproduced": 6,
+  "detector_coverage": {
+    "qwen3vl": {
+      "records": 44,
+      "errors": 0
+    },
+    "internvl": {
+      "records": 44,
+      "errors": 0
+    }
+  },
+  "verified_rows": 44,
+  "pending": 4,
+  "report_sha256": "1696cbbe7681fb391fa197c6c2aa2618429b061c8d43f97da61eb4257c135609",
+  "not_population_confidence_or_gate_pass": true
+}

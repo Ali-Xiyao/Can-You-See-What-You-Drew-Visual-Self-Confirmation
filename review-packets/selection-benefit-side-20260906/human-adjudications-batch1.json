@@ -1,0 +1,179 @@
+{
+  "recorded_utc": "2026-09-06T09:29:45.635934+00:00",
+  "source": "explicit_user_message_in_side_conversation",
+  "user_message_verbatim": "A 正确，B错误，C和D都有嵌套融合，E正确",
+  "review_packet_sha256": "eb20e8f44092957553a6457fea75ee0ba1029c6c5f50139f0a6b224423579021",
+  "rubric": "物体种类、主色和数量；不额外要求大小、位置或画风",
+  "cases": {
+    "A": {
+      "review_id": "initial-v4b-0019",
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-94a03340a35a3cb341fa-1082176483-3.png",
+      "image_file_sha256": "29d2731033eeaa74d8b230f8e579bf81716e2b811202ddaf2d1e131d56427b6a",
+      "spec": {
+        "spec_id": "v4b-0019",
+        "prompt": "a red bottle, a green jar, a white box",
+        "objects": [
+          {
+            "object": "bottle",
+            "color": "red",
+            "count": 1
+          },
+          {
+            "object": "jar",
+            "color": "green",
+            "count": 1
+          },
+          {
+            "object": "box",
+            "color": "white",
+            "count": 1
+          }
+        ],
+        "relations": [],
+        "surface": "desk",
+        "metadata": {
+          "author": "llm",
+          "source_index": 4
+        }
+      },
+      "prompt": "a red bottle, a green jar, a white box",
+      "spec_correct_label": true,
+      "source_kind": "explicit_correctness_judgment",
+      "user_observation": "正确",
+      "assistant_interpretation_image_incorrect": null
+    },
+    "B": {
+      "review_id": "b67d8bb4e3c300efafdc",
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-bb9a46e725c805c8ebb9-633230911-3.png",
+      "image_file_sha256": "cd1251cc0bd6313de70a19df2f637ae02131e8226de91a7f3f777345cc9e2dea",
+      "spec": {
+        "spec_id": "v4a-0060",
+        "prompt": "one green pear, two brown bowls",
+        "objects": [
+          {
+            "object": "pear",
+            "color": "green",
+            "count": 1
+          },
+          {
+            "object": "bowl",
+            "color": "brown",
+            "count": 2
+          }
+        ],
+        "relations": [],
+        "surface": "desk",
+        "metadata": {
+          "author": "llm",
+          "source_index": 14
+        }
+      },
+      "prompt": "one green pear, two brown bowls",
+      "spec_correct_label": false,
+      "source_kind": "explicit_correctness_judgment",
+      "user_observation": "错误",
+      "assistant_interpretation_image_incorrect": null
+    },
+    "C": {
+      "review_id": "a72babdc873d33edb4a3",
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-fb3e1c082f5dc43b667e-108904085-6.png",
+      "image_file_sha256": "74417749a65473366074f36b0eb05d6f45258a93013aa8b97104b953fe25be08",
+      "spec": {
+        "spec_id": "v4a-0067",
+        "prompt": "one yellow lemon, two red cups",
+        "objects": [
+          {
+            "object": "lemon",
+            "color": "yellow",
+            "count": 1
+          },
+          {
+            "object": "mug",
+            "color": "red",
+            "count": 2
+          }
+        ],
+        "relations": [],
+        "surface": "marble counter",
+        "metadata": {
+          "author": "llm",
+          "source_index": 5
+        }
+      },
+      "prompt": "one yellow lemon, two red cups",
+      "spec_correct_label": null,
+      "source_kind": "explicit_defect_observation_pending_rubric_clarification",
+      "user_observation": "嵌套融合",
+      "assistant_interpretation_image_incorrect": true
+    },
+    "D": {
+      "review_id": "29681fbc1de093af50b0",
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-fb3e1c082f5dc43b667e-522284907-3.png",
+      "image_file_sha256": "4458d3946bb0f9d70cef7a96345fcbe3a91d0c52a7ff631968ef1c97a889b109",
+      "spec": {
+        "spec_id": "v4a-0067",
+        "prompt": "one yellow lemon, two red cups",
+        "objects": [
+          {
+            "object": "lemon",
+            "color": "yellow",
+            "count": 1
+          },
+          {
+            "object": "mug",
+            "color": "red",
+            "count": 2
+          }
+        ],
+        "relations": [],
+        "surface": "marble counter",
+        "metadata": {
+          "author": "llm",
+          "source_index": 5
+        }
+      },
+      "prompt": "one yellow lemon, two red cups",
+      "spec_correct_label": null,
+      "source_kind": "explicit_defect_observation_pending_rubric_clarification",
+      "user_observation": "嵌套融合",
+      "assistant_interpretation_image_incorrect": true
+    },
+    "E": {
+      "review_id": "22b2f6a764d27f61a8b0",
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-d45c0b265ef4f3766e5a-1464241361-4.png",
+      "image_file_sha256": "67902d04b798675f6fd03d2216cc963e463ef87f1f92fc08df8a83ca0b906afd",
+      "spec": {
+        "spec_id": "v4b-0089",
+        "prompt": "one yellow lemon, one red apple, one green pear",
+        "objects": [
+          {
+            "object": "lemon",
+            "color": "yellow",
+            "count": 1
+          },
+          {
+            "object": "apple",
+            "color": "red",
+            "count": 1
+          },
+          {
+            "object": "pear",
+            "color": "green",
+            "count": 1
+          }
+        ],
+        "relations": [],
+        "surface": "metal tray",
+        "metadata": {
+          "author": "llm",
+          "source_index": 8
+        }
+      },
+      "prompt": "one yellow lemon, one red apple, one green pear",
+      "spec_correct_label": true,
+      "source_kind": "explicit_correctness_judgment",
+      "user_observation": "正确",
+      "assistant_interpretation_image_incorrect": null
+    }
+  }
+}

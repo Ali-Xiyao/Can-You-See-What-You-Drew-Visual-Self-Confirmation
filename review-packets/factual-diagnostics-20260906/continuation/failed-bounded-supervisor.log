@@ -1,0 +1,17 @@
+2026-09-05 20:56:03 naive.step-00024.detect.qwen3vl
+2026-09-05 21:04:59 naive.step-00024.detect.internvl
+2026-09-05 21:15:03 naive.step-00024.crop
+2026-09-05 21:17:49 naive.step-00024.verify
+2026-09-05 21:17:51 naive.step-00024.gradient
+Traceback (most recent call last):
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\scripts\run_decoupling_pilot.py", line 264, in <module>
+    main()
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\scripts\run_decoupling_pilot.py", line 257, in main
+    pilot.execute()
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\scripts\run_decoupling_pilot.py", line 240, in execute
+    self.probe(arm, index)
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\scripts\run_decoupling_pilot.py", line 185, in probe
+    self.run(f"{arm}.step-{step:05d}.gradient", "showo2", "scripts/v4_checkpoint_probe.py", args)
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\scripts\run_decoupling_pilot.py", line 153, in run
+    raise RuntimeError(f"{stage} failed with exit {result}; see {log}")
+RuntimeError: naive.step-00024.gradient failed with exit 1; see H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\runs\v4\decoupling-pilot-20260906\logs\naive.step-00024.gradient.log

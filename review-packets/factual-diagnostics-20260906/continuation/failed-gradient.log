@@ -1,0 +1,18 @@
+
+COMMAND "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\python.exe" -u "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\scripts\v4_checkpoint_probe.py" run --config "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\configs\v4_decoupling_pilot.yaml" --bank "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\runs\v4\decoupling-pilot-20260906\probe-bank" --outdir "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\runs\v4\decoupling-pilot-20260906\gradient-probes\naive\step-00024" --device cuda:1 --arm naive --resamples 2000 --checkpoint "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\runs\v4\decoupling-pilot-20260906\checkpoints\naive\round-002" --reference "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\runs\v4\decoupling-pilot-20260906\gradient-probes\base\step-00000"
+Traceback (most recent call last):
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\scripts\v4_checkpoint_probe.py", line 62, in <module>
+    main()
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\scripts\v4_checkpoint_probe.py", line 53, in main
+    result = run_probe(config=config, bank_dir=args.bank, destination=args.outdir,
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\src\selfsight\v4\checkpoint_probe.py", line 374, in run_probe
+    backbone = Showo2Adapter(backbone_config=config["model"]["backbone_config"],
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\src\selfsight\backbones\showo2.py", line 118, in __init__
+    self._load()
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\src\selfsight\backbones\showo2.py", line 236, in _load
+    source_root = repository_path(
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\src\selfsight\models.py", line 57, in repository_path
+    root = Path(model_root or os.environ["SELFSIGHT_MODEL_ROOT"]).resolve()
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\os.py", line 680, in __getitem__
+    raise KeyError(key) from None
+KeyError: 'SELFSIGHT_MODEL_ROOT'

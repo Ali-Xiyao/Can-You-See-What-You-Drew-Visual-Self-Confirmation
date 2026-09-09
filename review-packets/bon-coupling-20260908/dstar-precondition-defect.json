@@ -1,0 +1,40 @@
+{
+  "A_never_coupled": {
+    "why": "external flat from step 0 (no coupling ever); internal bends up at 32",
+    "d_star": 32.0,
+    "accepted": true,
+    "should_be_accepted": false,
+    "external_slope_before": 3.863636363637108e-05,
+    "external_slope_after": -1.4935064935053813e-05,
+    "internal_slope_after": 0.004000000000000007,
+    "defect_exposed": true
+  },
+  "B_genuine_decoupling": {
+    "why": "external rises then stalls at 32; internal keeps rising",
+    "d_star": 40.0,
+    "accepted": true,
+    "should_be_accepted": true,
+    "external_slope_before": 0.0024457478005865114,
+    "external_slope_after": -0.00026392961876831956,
+    "internal_slope_after": 0.004175953079178894,
+    "defect_exposed": false
+  },
+  "C_external_falling_throughout": {
+    "why": "external declines from step 0; nothing ever coupled, model just degrades",
+    "d_star": 32.0,
+    "accepted": true,
+    "should_be_accepted": false,
+    "external_slope_before": -0.001999999999999988,
+    "external_slope_after": -0.0019999999999999957,
+    "internal_slope_after": 0.004000000000000009,
+    "defect_exposed": true
+  },
+  "summary": {
+    "cases_wrongly_accepted": [
+      "A_never_coupled",
+      "C_external_falling_throughout"
+    ],
+    "proposed_additional_condition": "require external_candidate.slope_before > delta, with delta built from the measured precision of the external curve, and require interval support for it; this is a strengthening and cannot create new D* claims",
+    "not_applied_this_round": "PROTOCOL.md section 6"
+  }
+}

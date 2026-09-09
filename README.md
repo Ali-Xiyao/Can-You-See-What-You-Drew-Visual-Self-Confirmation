@@ -73,6 +73,17 @@ D* / D_g / Lead 降为附录里的仪器负结果。
 | 分支 `experiment/v2.2-joint-readiness`、`experiment/v2.3-rfo-gold`;`runs/v2.3-rfo-gold/` | v2.x 时代。**红色结论冻结,不覆盖、不重新决策** |
 | `runs/_archive/`、`runs/v4/_archive/` | 归档的运行工件。清理一律归档,不 `rm` |
 
+**其中两份只在本地,不在云端。** 它们在这个 checkout 里,推送时被有意排除:
+
+| 位置 | 体积 | 为什么不推 |
+|---|---|---|
+| `review-packets/replay-ablation-20260906/` | 2.58 GB,其中 `.pt` 占 2.55 GB | `.pt` 本来就被 `.gitignore` 挡住;剩下的 37 MB json/jsonl 是同一批 checkpoint 的重放中间态,离开那些 `.pt` 复现不了,单独推没有意义 |
+| `review-packets/generator-repair-validation-20260907/` | 237 MB,1036 张 PNG | 生成器修复期的逐张目视产物;结论已经落在 `STATUS.md` 与 `docs/EVIDENCE_LOG.md` 里,图本身在仓库里只是死重 |
+
+引用它们时写本地路径 + 结论所在的文档,不要假设 clone 下来就有。其余产物(含
+`factual-diagnostics-20260906/`、`selector-measurement-next-20260906/`、
+`selection-benefit-side-20260906/`)已在云端。
+
 
 ## 当前状态
 

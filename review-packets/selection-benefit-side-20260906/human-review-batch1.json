@@ -1,0 +1,528 @@
+[
+  {
+    "review_id": "initial-v4b-0019",
+    "spec_id": "v4b-0019",
+    "prompt": "a red bottle, a green jar, a white box",
+    "spec": {
+      "spec_id": "v4b-0019",
+      "prompt": "a red bottle, a green jar, a white box",
+      "objects": [
+        {
+          "object": "bottle",
+          "color": "red",
+          "count": 1
+        },
+        {
+          "object": "jar",
+          "color": "green",
+          "count": 1
+        },
+        {
+          "object": "box",
+          "color": "white",
+          "count": 1
+        }
+      ],
+      "relations": [],
+      "surface": "desk",
+      "metadata": {
+        "author": "llm",
+        "source_index": 4
+      }
+    },
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-94a03340a35a3cb341fa-1082176483-3.png",
+    "verdict": {
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\rfo_gold\\rfo_gold-r000-94a03340a35a3cb341fa-1082176483-3.png",
+      "spec_id": "v4b-0019",
+      "detections": [
+        {
+          "object": "bottle",
+          "color": "red",
+          "bbox": [
+            87.69600000000001,
+            69.12,
+            183.6,
+            362.88
+          ],
+          "center": [
+            135.648,
+            216.0
+          ]
+        },
+        {
+          "object": "jar",
+          "color": "green",
+          "bbox": [
+            255.744,
+            183.6,
+            361.584,
+            319.68
+          ],
+          "center": [
+            308.664,
+            251.64
+          ]
+        },
+        {
+          "object": "box",
+          "color": "white",
+          "bbox": [
+            202.17600000000002,
+            302.4,
+            387.072,
+            382.32
+          ],
+          "center": [
+            294.624,
+            342.36
+          ]
+        }
+      ],
+      "image_correct": true,
+      "resolution": "pending_human",
+      "verifier_agreement": false,
+      "disputed": [
+        {
+          "object": "bottle",
+          "color": "green",
+          "reason": "not_confirmed_in_crop"
+        }
+      ],
+      "report": {
+        "count_ok": true,
+        "objects_ok": true,
+        "objects_and_color_ok": true,
+        "missing": [],
+        "extra": [],
+        "n_requested": 3,
+        "n_detected": 3
+      },
+      "candidate_index": 3,
+      "seed": 1082176483
+    },
+    "label": null,
+    "review_key": "A",
+    "image_file_sha256": "29d2731033eeaa74d8b230f8e579bf81716e2b811202ddaf2d1e131d56427b6a"
+  },
+  {
+    "review_id": "b67d8bb4e3c300efafdc",
+    "spec_id": "v4a-0060",
+    "candidate_index": 3,
+    "seed": 633230911,
+    "prompt": "one green pear, two brown bowls",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-bb9a46e725c805c8ebb9-633230911-3.png",
+    "spec": {
+      "spec_id": "v4a-0060",
+      "prompt": "one green pear, two brown bowls",
+      "objects": [
+        {
+          "object": "pear",
+          "color": "green",
+          "count": 1
+        },
+        {
+          "object": "bowl",
+          "color": "brown",
+          "count": 2
+        }
+      ],
+      "relations": [],
+      "surface": "desk",
+      "metadata": {
+        "author": "llm",
+        "source_index": 14
+      }
+    },
+    "image_file_sha256": "cd1251cc0bd6313de70a19df2f637ae02131e8226de91a7f3f777345cc9e2dea",
+    "recorded_rgb_sha256": "16ebb730f3da291f57bb76a9f5f6ca3ac0f4f309dac76b3bbc1cc1bf2df75f26",
+    "unknown_reason": "pending_human",
+    "verdict": {
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-bb9a46e725c805c8ebb9-633230911-3.png",
+      "spec_id": "v4a-0060",
+      "detections": [
+        {
+          "object": "pear",
+          "color": "green",
+          "bbox": [
+            71.712,
+            119.23200000000001,
+            179.712,
+            300.67199999999997
+          ],
+          "center": [
+            125.71199999999999,
+            209.952
+          ]
+        },
+        {
+          "object": "bowl",
+          "color": "brown",
+          "bbox": [
+            24.192,
+            184.03199999999998,
+            212.54399999999998,
+            324.864
+          ],
+          "center": [
+            118.368,
+            254.44799999999998
+          ]
+        },
+        {
+          "object": "bowl",
+          "color": "brown",
+          "bbox": [
+            214.272,
+            141.696,
+            406.08,
+            324.864
+          ],
+          "center": [
+            310.176,
+            233.27999999999997
+          ]
+        }
+      ],
+      "image_correct": true,
+      "resolution": "pending_human",
+      "verifier_agreement": false,
+      "disputed": [
+        {
+          "object": "pan",
+          "color": "brown",
+          "reason": "not_confirmed_in_crop"
+        }
+      ],
+      "report": {
+        "count_ok": true,
+        "objects_ok": true,
+        "objects_and_color_ok": true,
+        "missing": [],
+        "extra": [],
+        "n_requested": 3,
+        "n_detected": 3
+      },
+      "candidate_index": 3,
+      "seed": 633230911
+    },
+    "label": null,
+    "review_key": "B"
+  },
+  {
+    "review_id": "a72babdc873d33edb4a3",
+    "spec_id": "v4a-0067",
+    "candidate_index": 6,
+    "seed": 108904085,
+    "prompt": "one yellow lemon, two red cups",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-fb3e1c082f5dc43b667e-108904085-6.png",
+    "spec": {
+      "spec_id": "v4a-0067",
+      "prompt": "one yellow lemon, two red cups",
+      "objects": [
+        {
+          "object": "lemon",
+          "color": "yellow",
+          "count": 1
+        },
+        {
+          "object": "mug",
+          "color": "red",
+          "count": 2
+        }
+      ],
+      "relations": [],
+      "surface": "marble counter",
+      "metadata": {
+        "author": "llm",
+        "source_index": 5
+      }
+    },
+    "image_file_sha256": "74417749a65473366074f36b0eb05d6f45258a93013aa8b97104b953fe25be08",
+    "recorded_rgb_sha256": "f8bef7948c4feecfd7b5b4ca26c1779ef3de3531249d23c59f578abb5a5ab8f6",
+    "unknown_reason": "pending_human",
+    "verdict": {
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-fb3e1c082f5dc43b667e-108904085-6.png",
+      "spec_id": "v4a-0067",
+      "detections": [
+        {
+          "object": "lemon",
+          "color": "yellow",
+          "bbox": [
+            111.456,
+            116.64000000000001,
+            322.272,
+            361.584
+          ],
+          "center": [
+            216.864,
+            239.11200000000002
+          ]
+        },
+        {
+          "object": "cup",
+          "color": "red",
+          "bbox": [
+            19.008,
+            244.944,
+            134.784,
+            364.176
+          ],
+          "center": [
+            76.896,
+            304.56
+          ]
+        },
+        {
+          "object": "cup",
+          "color": "red",
+          "bbox": [
+            298.94399999999996,
+            244.944,
+            411.264,
+            364.176
+          ],
+          "center": [
+            355.104,
+            304.56
+          ]
+        }
+      ],
+      "image_correct": true,
+      "resolution": "pending_human",
+      "verifier_agreement": false,
+      "disputed": [
+        {
+          "object": "orange",
+          "color": "yellow",
+          "reason": "not_confirmed_in_crop"
+        }
+      ],
+      "report": {
+        "count_ok": true,
+        "objects_ok": true,
+        "objects_and_color_ok": true,
+        "missing": [],
+        "extra": [],
+        "n_requested": 3,
+        "n_detected": 3
+      },
+      "candidate_index": 6,
+      "seed": 108904085
+    },
+    "label": null,
+    "review_key": "C"
+  },
+  {
+    "review_id": "29681fbc1de093af50b0",
+    "spec_id": "v4a-0067",
+    "candidate_index": 3,
+    "seed": 522284907,
+    "prompt": "one yellow lemon, two red cups",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-fb3e1c082f5dc43b667e-522284907-3.png",
+    "spec": {
+      "spec_id": "v4a-0067",
+      "prompt": "one yellow lemon, two red cups",
+      "objects": [
+        {
+          "object": "lemon",
+          "color": "yellow",
+          "count": 1
+        },
+        {
+          "object": "mug",
+          "color": "red",
+          "count": 2
+        }
+      ],
+      "relations": [],
+      "surface": "marble counter",
+      "metadata": {
+        "author": "llm",
+        "source_index": 5
+      }
+    },
+    "image_file_sha256": "4458d3946bb0f9d70cef7a96345fcbe3a91d0c52a7ff631968ef1c97a889b109",
+    "recorded_rgb_sha256": "25a9ea1062646c460e472f8fa53fa55d3b280374a449f0aa7f33856e1795ffd2",
+    "unknown_reason": "pending_human",
+    "verdict": {
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-fb3e1c082f5dc43b667e-522284907-3.png",
+      "spec_id": "v4a-0067",
+      "detections": [
+        {
+          "object": "lemon",
+          "color": "yellow",
+          "bbox": [
+            54.864000000000004,
+            119.23200000000001,
+            205.632,
+            221.184
+          ],
+          "center": [
+            130.248,
+            170.208
+          ]
+        },
+        {
+          "object": "cup",
+          "color": "red",
+          "bbox": [
+            54.864000000000004,
+            212.54399999999998,
+            209.088,
+            359.424
+          ],
+          "center": [
+            131.976,
+            285.984
+          ]
+        },
+        {
+          "object": "cup",
+          "color": "red",
+          "bbox": [
+            228.096,
+            205.632,
+            378.432,
+            359.424
+          ],
+          "center": [
+            303.264,
+            282.528
+          ]
+        }
+      ],
+      "image_correct": true,
+      "resolution": "pending_human",
+      "verifier_agreement": false,
+      "disputed": [
+        {
+          "object": "orange",
+          "color": "yellow",
+          "reason": "not_confirmed_in_crop"
+        }
+      ],
+      "report": {
+        "count_ok": true,
+        "objects_ok": true,
+        "objects_and_color_ok": true,
+        "missing": [],
+        "extra": [],
+        "n_requested": 3,
+        "n_detected": 3
+      },
+      "candidate_index": 3,
+      "seed": 522284907
+    },
+    "label": null,
+    "review_key": "D"
+  },
+  {
+    "review_id": "22b2f6a764d27f61a8b0",
+    "spec_id": "v4b-0089",
+    "candidate_index": 4,
+    "seed": 1464241361,
+    "prompt": "one yellow lemon, one red apple, one green pear",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-d45c0b265ef4f3766e5a-1464241361-4.png",
+    "spec": {
+      "spec_id": "v4b-0089",
+      "prompt": "one yellow lemon, one red apple, one green pear",
+      "objects": [
+        {
+          "object": "lemon",
+          "color": "yellow",
+          "count": 1
+        },
+        {
+          "object": "apple",
+          "color": "red",
+          "count": 1
+        },
+        {
+          "object": "pear",
+          "color": "green",
+          "count": 1
+        }
+      ],
+      "relations": [],
+      "surface": "metal tray",
+      "metadata": {
+        "author": "llm",
+        "source_index": 8
+      }
+    },
+    "image_file_sha256": "67902d04b798675f6fd03d2216cc963e463ef87f1f92fc08df8a83ca0b906afd",
+    "recorded_rgb_sha256": "ea53ccd80ece60a9fa5ca91242f4d37fb91ff406e1066c92ad79342af4b1b7e1",
+    "unknown_reason": "pending_human",
+    "verdict": {
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-d45c0b265ef4f3766e5a-1464241361-4.png",
+      "spec_id": "v4b-0089",
+      "detections": [
+        {
+          "object": "apple",
+          "color": "red",
+          "bbox": [
+            247.10399999999998,
+            75.6,
+            403.92,
+            237.60000000000002
+          ],
+          "center": [
+            325.512,
+            156.60000000000002
+          ]
+        },
+        {
+          "object": "pear",
+          "color": "green",
+          "bbox": [
+            237.60000000000002,
+            207.35999999999999,
+            360.71999999999997,
+            342.144
+          ],
+          "center": [
+            299.15999999999997,
+            274.752
+          ]
+        },
+        {
+          "object": "lemon",
+          "color": "yellow",
+          "bbox": [
+            50.544000000000004,
+            104.544,
+            235.008,
+            324.864
+          ],
+          "center": [
+            142.776,
+            214.70399999999998
+          ]
+        }
+      ],
+      "image_correct": true,
+      "resolution": "pending_human",
+      "verifier_agreement": false,
+      "disputed": [
+        {
+          "object": "orange",
+          "color": "yellow",
+          "reason": "not_confirmed_in_crop"
+        }
+      ],
+      "report": {
+        "count_ok": true,
+        "objects_ok": true,
+        "objects_and_color_ok": true,
+        "missing": [],
+        "extra": [],
+        "n_requested": 3,
+        "n_detected": 3
+      },
+      "candidate_index": 4,
+      "seed": 1464241361
+    },
+    "label": null,
+    "review_key": "E"
+  }
+]

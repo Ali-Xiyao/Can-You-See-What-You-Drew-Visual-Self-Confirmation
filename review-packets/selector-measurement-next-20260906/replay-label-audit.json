@@ -1,0 +1,260 @@
+{
+  "created_utc": "2026-09-06T10:33:11.971010+00:00",
+  "scope": "Post-result CPU audit of actual saved replay cursors and the unchanged replay-construction code; no new training.",
+  "replay_corpus_n": 706,
+  "corpus_answer_counts": {
+    "1": 292,
+    "yes": 353,
+    "2": 61
+  },
+  "actual_rounds": [
+    {
+      "round": 0,
+      "arm": "naive",
+      "cursor": 230,
+      "n_samples": 16,
+      "answer_counts": {
+        "1": 7,
+        "yes": 9
+      },
+      "sample_ids": [
+        "main-1plus1plus1:v4b-0053:3:v4b-0053:count:2",
+        "main-1plus1plus1:v4b-0053:3:v4b-0053:exists:0",
+        "main-1plus1plus1:v4b-0053:3:v4b-0053:exists:1",
+        "main-1plus1plus1:v4b-0053:3:v4b-0053:exists:2",
+        "main-1plus1plus1:v4b-0056:0:v4b-0056:count:0",
+        "main-1plus1plus1:v4b-0056:0:v4b-0056:count:1",
+        "main-1plus1plus1:v4b-0056:0:v4b-0056:count:2",
+        "main-1plus1plus1:v4b-0056:0:v4b-0056:exists:0",
+        "main-1plus1plus1:v4b-0056:0:v4b-0056:exists:1",
+        "main-1plus1plus1:v4b-0056:0:v4b-0056:exists:2",
+        "main-1plus1plus1:v4b-0056:1:v4b-0056:count:0",
+        "main-1plus1plus1:v4b-0056:1:v4b-0056:count:1",
+        "main-1plus1plus1:v4b-0056:1:v4b-0056:count:2",
+        "main-1plus1plus1:v4b-0056:1:v4b-0056:exists:0",
+        "main-1plus1plus1:v4b-0056:1:v4b-0056:exists:1",
+        "main-1plus1plus1:v4b-0056:1:v4b-0056:exists:2"
+      ],
+      "existence_samples": 9,
+      "no_targets": 0
+    },
+    {
+      "round": 0,
+      "arm": "rfo_gold",
+      "cursor": 230,
+      "n_samples": 16,
+      "answer_counts": {
+        "1": 7,
+        "yes": 9
+      },
+      "sample_ids": [
+        "main-1plus1plus1:v4b-0053:3:v4b-0053:count:2",
+        "main-1plus1plus1:v4b-0053:3:v4b-0053:exists:0",
+        "main-1plus1plus1:v4b-0053:3:v4b-0053:exists:1",
+        "main-1plus1plus1:v4b-0053:3:v4b-0053:exists:2",
+        "main-1plus1plus1:v4b-0056:0:v4b-0056:count:0",
+        "main-1plus1plus1:v4b-0056:0:v4b-0056:count:1",
+        "main-1plus1plus1:v4b-0056:0:v4b-0056:count:2",
+        "main-1plus1plus1:v4b-0056:0:v4b-0056:exists:0",
+        "main-1plus1plus1:v4b-0056:0:v4b-0056:exists:1",
+        "main-1plus1plus1:v4b-0056:0:v4b-0056:exists:2",
+        "main-1plus1plus1:v4b-0056:1:v4b-0056:count:0",
+        "main-1plus1plus1:v4b-0056:1:v4b-0056:count:1",
+        "main-1plus1plus1:v4b-0056:1:v4b-0056:count:2",
+        "main-1plus1plus1:v4b-0056:1:v4b-0056:exists:0",
+        "main-1plus1plus1:v4b-0056:1:v4b-0056:exists:1",
+        "main-1plus1plus1:v4b-0056:1:v4b-0056:exists:2"
+      ],
+      "existence_samples": 9,
+      "no_targets": 0
+    },
+    {
+      "round": 1,
+      "arm": "naive",
+      "cursor": 306,
+      "n_samples": 16,
+      "answer_counts": {
+        "1": 9,
+        "yes": 7
+      },
+      "sample_ids": [
+        "main-1plus1plus1:v4b-0070:0:v4b-0070:count:0",
+        "main-1plus1plus1:v4b-0070:0:v4b-0070:count:1",
+        "main-1plus1plus1:v4b-0070:0:v4b-0070:count:2",
+        "main-1plus1plus1:v4b-0070:0:v4b-0070:exists:0",
+        "main-1plus1plus1:v4b-0070:0:v4b-0070:exists:1",
+        "main-1plus1plus1:v4b-0070:0:v4b-0070:exists:2",
+        "main-1plus1plus1:v4b-0079:3:v4b-0079:count:0",
+        "main-1plus1plus1:v4b-0079:3:v4b-0079:count:1",
+        "main-1plus1plus1:v4b-0079:3:v4b-0079:count:2",
+        "main-1plus1plus1:v4b-0079:3:v4b-0079:exists:0",
+        "main-1plus1plus1:v4b-0079:3:v4b-0079:exists:1",
+        "main-1plus1plus1:v4b-0079:3:v4b-0079:exists:2",
+        "main-1plus1plus1:v4b-0080:0:v4b-0080:count:0",
+        "main-1plus1plus1:v4b-0080:0:v4b-0080:count:1",
+        "main-1plus1plus1:v4b-0080:0:v4b-0080:count:2",
+        "main-1plus1plus1:v4b-0080:0:v4b-0080:exists:0"
+      ],
+      "existence_samples": 7,
+      "no_targets": 0
+    },
+    {
+      "round": 1,
+      "arm": "rfo_gold",
+      "cursor": 306,
+      "n_samples": 16,
+      "answer_counts": {
+        "1": 9,
+        "yes": 7
+      },
+      "sample_ids": [
+        "main-1plus1plus1:v4b-0070:0:v4b-0070:count:0",
+        "main-1plus1plus1:v4b-0070:0:v4b-0070:count:1",
+        "main-1plus1plus1:v4b-0070:0:v4b-0070:count:2",
+        "main-1plus1plus1:v4b-0070:0:v4b-0070:exists:0",
+        "main-1plus1plus1:v4b-0070:0:v4b-0070:exists:1",
+        "main-1plus1plus1:v4b-0070:0:v4b-0070:exists:2",
+        "main-1plus1plus1:v4b-0079:3:v4b-0079:count:0",
+        "main-1plus1plus1:v4b-0079:3:v4b-0079:count:1",
+        "main-1plus1plus1:v4b-0079:3:v4b-0079:count:2",
+        "main-1plus1plus1:v4b-0079:3:v4b-0079:exists:0",
+        "main-1plus1plus1:v4b-0079:3:v4b-0079:exists:1",
+        "main-1plus1plus1:v4b-0079:3:v4b-0079:exists:2",
+        "main-1plus1plus1:v4b-0080:0:v4b-0080:count:0",
+        "main-1plus1plus1:v4b-0080:0:v4b-0080:count:1",
+        "main-1plus1plus1:v4b-0080:0:v4b-0080:count:2",
+        "main-1plus1plus1:v4b-0080:0:v4b-0080:exists:0"
+      ],
+      "existence_samples": 7,
+      "no_targets": 0
+    },
+    {
+      "round": 2,
+      "arm": "naive",
+      "cursor": 90,
+      "n_samples": 16,
+      "answer_counts": {
+        "1": 9,
+        "yes": 7
+      },
+      "sample_ids": [
+        "main-1plus1plus1:v4b-0024:3:v4b-0024:count:0",
+        "main-1plus1plus1:v4b-0024:3:v4b-0024:count:1",
+        "main-1plus1plus1:v4b-0024:3:v4b-0024:count:2",
+        "main-1plus1plus1:v4b-0024:3:v4b-0024:exists:0",
+        "main-1plus1plus1:v4b-0024:3:v4b-0024:exists:1",
+        "main-1plus1plus1:v4b-0024:3:v4b-0024:exists:2",
+        "main-1plus1plus1:v4b-0025:0:v4b-0025:count:0",
+        "main-1plus1plus1:v4b-0025:0:v4b-0025:count:1",
+        "main-1plus1plus1:v4b-0025:0:v4b-0025:count:2",
+        "main-1plus1plus1:v4b-0025:0:v4b-0025:exists:0",
+        "main-1plus1plus1:v4b-0025:0:v4b-0025:exists:1",
+        "main-1plus1plus1:v4b-0025:0:v4b-0025:exists:2",
+        "main-1plus1plus1:v4b-0025:2:v4b-0025:count:0",
+        "main-1plus1plus1:v4b-0025:2:v4b-0025:count:1",
+        "main-1plus1plus1:v4b-0025:2:v4b-0025:count:2",
+        "main-1plus1plus1:v4b-0025:2:v4b-0025:exists:0"
+      ],
+      "existence_samples": 7,
+      "no_targets": 0
+    },
+    {
+      "round": 2,
+      "arm": "rfo_gold",
+      "cursor": 90,
+      "n_samples": 16,
+      "answer_counts": {
+        "1": 9,
+        "yes": 7
+      },
+      "sample_ids": [
+        "main-1plus1plus1:v4b-0024:3:v4b-0024:count:0",
+        "main-1plus1plus1:v4b-0024:3:v4b-0024:count:1",
+        "main-1plus1plus1:v4b-0024:3:v4b-0024:count:2",
+        "main-1plus1plus1:v4b-0024:3:v4b-0024:exists:0",
+        "main-1plus1plus1:v4b-0024:3:v4b-0024:exists:1",
+        "main-1plus1plus1:v4b-0024:3:v4b-0024:exists:2",
+        "main-1plus1plus1:v4b-0025:0:v4b-0025:count:0",
+        "main-1plus1plus1:v4b-0025:0:v4b-0025:count:1",
+        "main-1plus1plus1:v4b-0025:0:v4b-0025:count:2",
+        "main-1plus1plus1:v4b-0025:0:v4b-0025:exists:0",
+        "main-1plus1plus1:v4b-0025:0:v4b-0025:exists:1",
+        "main-1plus1plus1:v4b-0025:0:v4b-0025:exists:2",
+        "main-1plus1plus1:v4b-0025:2:v4b-0025:count:0",
+        "main-1plus1plus1:v4b-0025:2:v4b-0025:count:1",
+        "main-1plus1plus1:v4b-0025:2:v4b-0025:count:2",
+        "main-1plus1plus1:v4b-0025:2:v4b-0025:exists:0"
+      ],
+      "existence_samples": 7,
+      "no_targets": 0
+    },
+    {
+      "round": 3,
+      "arm": "naive",
+      "cursor": 659,
+      "n_samples": 16,
+      "answer_counts": {
+        "2": 4,
+        "yes": 8,
+        "1": 4
+      },
+      "sample_ids": [
+        "main-2plus1:v4a-0089:0:v4a-0089:count:1",
+        "main-2plus1:v4a-0089:0:v4a-0089:exists:0",
+        "main-2plus1:v4a-0089:0:v4a-0089:exists:1",
+        "main-2plus1:v4a-0094:0:v4a-0094:count:0",
+        "main-2plus1:v4a-0094:0:v4a-0094:count:1",
+        "main-2plus1:v4a-0094:0:v4a-0094:exists:0",
+        "main-2plus1:v4a-0094:0:v4a-0094:exists:1",
+        "main-2plus1:v4a-0096:0:v4a-0096:count:0",
+        "main-2plus1:v4a-0096:0:v4a-0096:count:1",
+        "main-2plus1:v4a-0096:0:v4a-0096:exists:0",
+        "main-2plus1:v4a-0096:0:v4a-0096:exists:1",
+        "main-2plus1:v4a-0096:2:v4a-0096:count:0",
+        "main-2plus1:v4a-0096:2:v4a-0096:count:1",
+        "main-2plus1:v4a-0096:2:v4a-0096:exists:0",
+        "main-2plus1:v4a-0096:2:v4a-0096:exists:1",
+        "main-2plus1:v4a-0101:0:v4a-0101:count:0"
+      ],
+      "existence_samples": 8,
+      "no_targets": 0
+    },
+    {
+      "round": 3,
+      "arm": "rfo_gold",
+      "cursor": 659,
+      "n_samples": 16,
+      "answer_counts": {
+        "2": 4,
+        "yes": 8,
+        "1": 4
+      },
+      "sample_ids": [
+        "main-2plus1:v4a-0089:0:v4a-0089:count:1",
+        "main-2plus1:v4a-0089:0:v4a-0089:exists:0",
+        "main-2plus1:v4a-0089:0:v4a-0089:exists:1",
+        "main-2plus1:v4a-0094:0:v4a-0094:count:0",
+        "main-2plus1:v4a-0094:0:v4a-0094:count:1",
+        "main-2plus1:v4a-0094:0:v4a-0094:exists:0",
+        "main-2plus1:v4a-0094:0:v4a-0094:exists:1",
+        "main-2plus1:v4a-0096:0:v4a-0096:count:0",
+        "main-2plus1:v4a-0096:0:v4a-0096:count:1",
+        "main-2plus1:v4a-0096:0:v4a-0096:exists:0",
+        "main-2plus1:v4a-0096:0:v4a-0096:exists:1",
+        "main-2plus1:v4a-0096:2:v4a-0096:count:0",
+        "main-2plus1:v4a-0096:2:v4a-0096:count:1",
+        "main-2plus1:v4a-0096:2:v4a-0096:exists:0",
+        "main-2plus1:v4a-0096:2:v4a-0096:exists:1",
+        "main-2plus1:v4a-0101:0:v4a-0101:count:0"
+      ],
+      "existence_samples": 8,
+      "no_targets": 0
+    }
+  ],
+  "same_replay_sample_ids_for_both_arms": true,
+  "interpretation": "The replay corpus and both arms actual draws contain no negative existence targets. This is a plausible common cause of yes bias, not a causal attribution: generation updates and replay co-occurred.",
+  "input_sha256": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\src\\selfsight\\v4\\train.py": "7de5d3dfcec9bcfb3be994e41621e256842f0f563fed9e11be5b0ba84d8e574e",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\src\\selfsight\\v4\\probe.py": "f704b87c2e35f314230fe6865968397bedb764f73ea512325bcebe7f64e274d5"
+  }
+}

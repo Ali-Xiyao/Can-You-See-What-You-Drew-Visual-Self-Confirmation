@@ -1,0 +1,15 @@
+{
+  "completed_unix": 1788685894.711519,
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+    "-B",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\scripts\\v4_run_pipeline.py",
+    "crop",
+    "--run",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\independent-labels",
+    "--device",
+    "cuda:0"
+  ],
+  "exit_code": 0
+}

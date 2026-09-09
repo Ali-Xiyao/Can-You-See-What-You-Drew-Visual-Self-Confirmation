@@ -1,0 +1,12 @@
+{
+  "created_utc": "2026-09-08T11:42:56Z",
+  "model_id": "showlab/show-o2-1.5B",
+  "revision": "07ec16589d4fc5422a74dddbbc4b2cd11e551039",
+  "device": "cuda:0",
+  "n_workset": 5100,
+  "n_scored": 5100,
+  "seconds_total": 1592.2,
+  "determinism_recheck_n": 32,
+  "determinism_mismatches": [],
+  "determinism_ok": true
+}

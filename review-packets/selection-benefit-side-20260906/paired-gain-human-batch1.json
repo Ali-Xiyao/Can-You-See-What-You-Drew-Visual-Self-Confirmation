@@ -1,0 +1,1277 @@
+{
+  "created_utc": "2026-09-06T09:30:05.994545+00:00",
+  "human_adjudication_source": "human-adjudications-batch1.json",
+  "primary_confirmed_original_rubric": {
+    "round_1_all_pools": {
+      "n_pools": 12,
+      "gain_completion_bounds": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      },
+      "wins": 1,
+      "losses": 1,
+      "ties": 10,
+      "unknown_gain_pools": 0,
+      "independent_enumeration_assignments": 4
+    },
+    "round_1_entered_training": {
+      "n_pools": 9,
+      "gain_completion_bounds": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      },
+      "wins": 1,
+      "losses": 1,
+      "ties": 7,
+      "unknown_gain_pools": 0,
+      "independent_enumeration_assignments": 2
+    },
+    "round_2_all_pools": {
+      "n_pools": 12,
+      "gain_completion_bounds": {
+        "lower": 0.16666666666666666,
+        "upper": 0.3333333333333333,
+        "lower_exact": "1/6",
+        "upper_exact": "1/3",
+        "point": null
+      },
+      "wins": 4,
+      "losses": 1,
+      "ties": 6,
+      "unknown_gain_pools": 1,
+      "independent_enumeration_assignments": 4
+    },
+    "round_2_entered_training": {
+      "n_pools": 9,
+      "gain_completion_bounds": {
+        "lower": 0.2222222222222222,
+        "upper": 0.4444444444444444,
+        "lower_exact": "2/9",
+        "upper_exact": "4/9",
+        "point": null
+      },
+      "wins": 4,
+      "losses": 1,
+      "ties": 3,
+      "unknown_gain_pools": 1,
+      "independent_enumeration_assignments": 4
+    },
+    "pooled_two_rounds_all_pools": {
+      "n_pools": 24,
+      "gain_completion_bounds": {
+        "lower": 0.08333333333333333,
+        "upper": 0.16666666666666666,
+        "lower_exact": "1/12",
+        "upper_exact": "1/6",
+        "point": null
+      },
+      "wins": 5,
+      "losses": 2,
+      "ties": 16,
+      "unknown_gain_pools": 1,
+      "independent_enumeration_assignments": 16
+    },
+    "pooled_two_rounds_entered_training": {
+      "n_pools": 18,
+      "gain_completion_bounds": {
+        "lower": 0.1111111111111111,
+        "upper": 0.2222222222222222,
+        "lower_exact": "1/9",
+        "upper_exact": "2/9",
+        "point": null
+      },
+      "wins": 5,
+      "losses": 2,
+      "ties": 10,
+      "unknown_gain_pools": 1,
+      "independent_enumeration_assignments": 8
+    }
+  },
+  "scenario_C_D_fusion_counted_wrong": {
+    "round_1_all_pools": {
+      "n_pools": 12,
+      "gain_completion_bounds": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      },
+      "wins": 1,
+      "losses": 1,
+      "ties": 10,
+      "unknown_gain_pools": 0,
+      "independent_enumeration_assignments": 4
+    },
+    "round_1_entered_training": {
+      "n_pools": 9,
+      "gain_completion_bounds": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      },
+      "wins": 1,
+      "losses": 1,
+      "ties": 7,
+      "unknown_gain_pools": 0,
+      "independent_enumeration_assignments": 2
+    },
+    "round_2_all_pools": {
+      "n_pools": 12,
+      "gain_completion_bounds": {
+        "lower": 0.25,
+        "upper": 0.25,
+        "lower_exact": "1/4",
+        "upper_exact": "1/4",
+        "point": 0.25
+      },
+      "wins": 4,
+      "losses": 1,
+      "ties": 7,
+      "unknown_gain_pools": 0,
+      "independent_enumeration_assignments": 1
+    },
+    "round_2_entered_training": {
+      "n_pools": 9,
+      "gain_completion_bounds": {
+        "lower": 0.3333333333333333,
+        "upper": 0.3333333333333333,
+        "lower_exact": "1/3",
+        "upper_exact": "1/3",
+        "point": 0.3333333333333333
+      },
+      "wins": 4,
+      "losses": 1,
+      "ties": 4,
+      "unknown_gain_pools": 0,
+      "independent_enumeration_assignments": 1
+    },
+    "pooled_two_rounds_all_pools": {
+      "n_pools": 24,
+      "gain_completion_bounds": {
+        "lower": 0.125,
+        "upper": 0.125,
+        "lower_exact": "1/8",
+        "upper_exact": "1/8",
+        "point": 0.125
+      },
+      "wins": 5,
+      "losses": 2,
+      "ties": 17,
+      "unknown_gain_pools": 0,
+      "independent_enumeration_assignments": 4
+    },
+    "pooled_two_rounds_entered_training": {
+      "n_pools": 18,
+      "gain_completion_bounds": {
+        "lower": 0.16666666666666666,
+        "upper": 0.16666666666666666,
+        "lower_exact": "1/6",
+        "upper_exact": "1/6",
+        "point": 0.16666666666666666
+      },
+      "wins": 5,
+      "losses": 2,
+      "ties": 11,
+      "unknown_gain_pools": 0,
+      "independent_enumeration_assignments": 2
+    }
+  },
+  "first_round_after_A_correct": {
+    "all_prompts": {
+      "n_pools": 12,
+      "gain_completion_bounds": {
+        "lower": 0.0,
+        "upper": 0.0625,
+        "lower_exact": "0",
+        "upper_exact": "1/16",
+        "point": null
+      },
+      "independent_enumeration_assignments": 64
+    },
+    "trained_prompts": {
+      "n_pools": 9,
+      "gain_completion_bounds": {
+        "lower": 0.013888888888888888,
+        "upper": 0.08333333333333333,
+        "lower_exact": "1/72",
+        "upper_exact": "1/12",
+        "point": null
+      },
+      "independent_enumeration_assignments": 32
+    }
+  },
+  "primary_per_pool": [
+    {
+      "round": 1,
+      "selector_optimizer_step": 8,
+      "prompt_id": "v4a-0010",
+      "scene_sha256": "9a96b0b5571873ea95988889988ee05ac8aa4f745c70138ca360f94d79600310",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "9a96b0b5571873ea95988889988ee05ac8aa4f745c70138ca360f94d79600310:d96c0b59c4e40aa7f3ff3dab4e92cad15a08eb5871088effb50adc82dfb3c3ce",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "9a96b0b5571873ea95988889988ee05ac8aa4f745c70138ca360f94d79600310:6c8bbc8b5b187fcda0c3a35d8bdea8a8b02755b0c109d06b0b8178ecc1ec1394",
+          "coefficient": -1,
+          "label": true
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r001-2ded8db7ccb5e20f14ae-422663243-5",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "d7e8b8c4eb61038f4e8e"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r001-2ded8db7ccb5e20f14ae-1152012413-2",
+          "label": true,
+          "unknown_reason": null,
+          "review_id": "8e880e09307ddcf20486"
+        }
+      },
+      "paired_gain": {
+        "lower": -1.0,
+        "upper": -1.0,
+        "lower_exact": "-1",
+        "upper_exact": "-1",
+        "point": -1.0
+      }
+    },
+    {
+      "round": 1,
+      "selector_optimizer_step": 8,
+      "prompt_id": "v4a-0017",
+      "scene_sha256": "7d689158395188598f0afb74dbac99a63aaedaf312b91b39c0d3a02a13bfd59f",
+      "entered_training": true,
+      "same_candidate": true,
+      "terms": [
+        {
+          "identity": "7d689158395188598f0afb74dbac99a63aaedaf312b91b39c0d3a02a13bfd59f:unsubmitted-same-candidate:naive-r001-970862593ba9b2455bb4-729102026-0",
+          "coefficient": 1,
+          "label": null
+        },
+        {
+          "identity": "7d689158395188598f0afb74dbac99a63aaedaf312b91b39c0d3a02a13bfd59f:unsubmitted-same-candidate:naive-r001-970862593ba9b2455bb4-729102026-0",
+          "coefficient": -1,
+          "label": null
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r001-970862593ba9b2455bb4-729102026-0",
+          "label": null,
+          "unknown_reason": "same_candidate_not_submitted",
+          "review_id": null
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r001-970862593ba9b2455bb4-729102026-0",
+          "label": null,
+          "unknown_reason": "same_candidate_not_submitted",
+          "review_id": null
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 1,
+      "selector_optimizer_step": 8,
+      "prompt_id": "v4a-0019",
+      "scene_sha256": "7bc296c35652f8d6791faa78574c695afba948e0f8906745efc3e6671b0fad5f",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "7bc296c35652f8d6791faa78574c695afba948e0f8906745efc3e6671b0fad5f:10819d88bdd93b91d0f461b822ffdc819bd1e9d119912cafca15657cacff1e3c",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "7bc296c35652f8d6791faa78574c695afba948e0f8906745efc3e6671b0fad5f:2f7f2203855cd578db95e797a8b53f858f356f7439087c8f71fe4207d1667be8",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r001-3dbd9e9309ecf9338413-1017204109-3",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "6dc3377141cee74ecfc1"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r001-3dbd9e9309ecf9338413-1277413266-6",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "0bae412c0e39833a5b11"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 1,
+      "selector_optimizer_step": 8,
+      "prompt_id": "v4a-0029",
+      "scene_sha256": "fc2b600236c0d3663067b0d74575150ad32411d77e09d69837f11fe581a567e7",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "fc2b600236c0d3663067b0d74575150ad32411d77e09d69837f11fe581a567e7:595a153160878a5e631a0ec08ed59049c58bc8fc34da2daf78b503606cd4d7f6",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "fc2b600236c0d3663067b0d74575150ad32411d77e09d69837f11fe581a567e7:ce7ccc093a82eb34f13e1de18056fdad114663a8d8694b85d4e4cbe530d68820",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r001-b13c1d3380a8e9f997c4-523462775-5",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "df4d21acdebffa0a3863"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r001-b13c1d3380a8e9f997c4-1349508509-2",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "2fdc422f04fac4004b56"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 1,
+      "selector_optimizer_step": 8,
+      "prompt_id": "v4a-0042",
+      "scene_sha256": "156717772830e1ead07247a6fc7a0cfbfaf7c8087580c2ed1c3883bf0ad6a6e5",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "156717772830e1ead07247a6fc7a0cfbfaf7c8087580c2ed1c3883bf0ad6a6e5:e8ea2b33087a0924ac83a72dbda68528bf1f3787fdfbb1af8ad11cc023d722b1",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "156717772830e1ead07247a6fc7a0cfbfaf7c8087580c2ed1c3883bf0ad6a6e5:b33f2ef58fd6dd65dd1160b6c0598357e591a89e0c29a2a6e1e4d005881b8e72",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r001-8838ac1b73bc03a4e8d7-743840306-1",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "87fec283f07412436944"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r001-8838ac1b73bc03a4e8d7-1569049096-7",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "d060ba21a2cb1c79776d"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 1,
+      "selector_optimizer_step": 8,
+      "prompt_id": "v4a-0068",
+      "scene_sha256": "20dba8cb9a4d0c5c667f72173d398bef26e329ae20c31a00be24b4a9ad7ebb51",
+      "entered_training": false,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "20dba8cb9a4d0c5c667f72173d398bef26e329ae20c31a00be24b4a9ad7ebb51:1f367dabbfa67831fb075159a600dbdc7618b422a946a55e807cbb3910f86b7c",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "20dba8cb9a4d0c5c667f72173d398bef26e329ae20c31a00be24b4a9ad7ebb51:8459b4dcbc37dfb9da5f39fc198a666aa00d0f491f74850b97f1565bb58904de",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r001-e5df80cc371735762e36-34130493-5",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "2a3a984258858189e73f"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r001-e5df80cc371735762e36-808200441-2",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "4f47217aa9f01a4eb8e8"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 1,
+      "selector_optimizer_step": 8,
+      "prompt_id": "v4a-0079",
+      "scene_sha256": "16dcf7764f434f26964fdedb8d6006d9d23e2b48d7ca792d8253d092cc37371b",
+      "entered_training": false,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "16dcf7764f434f26964fdedb8d6006d9d23e2b48d7ca792d8253d092cc37371b:837e4329568597d3b758e1cebdb2442d1efc081fbed6758279b5f106503a2aae",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "16dcf7764f434f26964fdedb8d6006d9d23e2b48d7ca792d8253d092cc37371b:b8c2e752a1f51a5ea9bc29c65628ee5967c57d2ad1ba58b1bebd308a72f953ad",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r001-50b2b1dbdf1fea3d467c-10068663-5",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "35ae297dfbb058c48b65"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r001-50b2b1dbdf1fea3d467c-1065787279-7",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "70a9795565d7d15c3d96"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 1,
+      "selector_optimizer_step": 8,
+      "prompt_id": "v4a-0086",
+      "scene_sha256": "50a11ae468338ae8d2917f11a74278190a1eb18238cf466720889e238d188b1e",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "50a11ae468338ae8d2917f11a74278190a1eb18238cf466720889e238d188b1e:1fcb3a444c9c9fe26b9036f6bdfa04fd2ee13f963b7fa91abbf38e88d215c6ca",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "50a11ae468338ae8d2917f11a74278190a1eb18238cf466720889e238d188b1e:d16a5ab0f879fb89e2e685f8c2300cbaa0ae67b7007d9cea73110d9811a9539a",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r001-f78d4be957580624c55b-690092400-5",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "98e5bece2bea10385348"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r001-f78d4be957580624c55b-112933483-7",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "3eb34070eee8fe0bafb6"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 1,
+      "selector_optimizer_step": 8,
+      "prompt_id": "v4a-0098",
+      "scene_sha256": "6365ce2afbeb043108df7b800e6ddcd3a54795d2e527ac15348f8280ec2b514d",
+      "entered_training": false,
+      "same_candidate": true,
+      "terms": [
+        {
+          "identity": "6365ce2afbeb043108df7b800e6ddcd3a54795d2e527ac15348f8280ec2b514d:unsubmitted-same-candidate:naive-r001-3df4794f130a190dd4e0-32267827-0",
+          "coefficient": 1,
+          "label": null
+        },
+        {
+          "identity": "6365ce2afbeb043108df7b800e6ddcd3a54795d2e527ac15348f8280ec2b514d:unsubmitted-same-candidate:naive-r001-3df4794f130a190dd4e0-32267827-0",
+          "coefficient": -1,
+          "label": null
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r001-3df4794f130a190dd4e0-32267827-0",
+          "label": null,
+          "unknown_reason": "same_candidate_not_submitted",
+          "review_id": null
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r001-3df4794f130a190dd4e0-32267827-0",
+          "label": null,
+          "unknown_reason": "same_candidate_not_submitted",
+          "review_id": null
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 1,
+      "selector_optimizer_step": 8,
+      "prompt_id": "v4b-0020",
+      "scene_sha256": "267a853f23311d1a7a66aad1fdb705b31cc724913a839263073177909ccf7011",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "267a853f23311d1a7a66aad1fdb705b31cc724913a839263073177909ccf7011:150e5bd6d099b18c2dfe204e5a761688b237c2580e059f0cd0b232aa3b6c24ca",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "267a853f23311d1a7a66aad1fdb705b31cc724913a839263073177909ccf7011:55e58ec6b87054aaa137b27c9bdc95e156fee63e1b99afd4c8d310dbaaa67f50",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r001-09afb1a1e9c37049964f-108518202-1",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "b18e3502fd15ad897b80"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r001-09afb1a1e9c37049964f-696783922-3",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "bcf143dba2b955b844d9"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 1,
+      "selector_optimizer_step": 8,
+      "prompt_id": "v4b-0050",
+      "scene_sha256": "0f807a65054f11ff433d11af3cac9aff6da45fd68d9887bfae364ef78075822c",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "0f807a65054f11ff433d11af3cac9aff6da45fd68d9887bfae364ef78075822c:53233eadc2981bfd195629c47d05bca3d9b591bcf6430ce1fe6e359d77a01c65",
+          "coefficient": 1,
+          "label": true
+        },
+        {
+          "identity": "0f807a65054f11ff433d11af3cac9aff6da45fd68d9887bfae364ef78075822c:f3dd64b27a09f378fb481c6b18cde2cbd0b155d31c8a685ea15f14610cc9f487",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r001-fd9b9de447775fd46168-350612788-5",
+          "label": true,
+          "unknown_reason": null,
+          "review_id": "6e8dc55e3bcfba3bb15e"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r001-fd9b9de447775fd46168-1748006857-0",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "b7a914eafc5828c2de43"
+        }
+      },
+      "paired_gain": {
+        "lower": 1.0,
+        "upper": 1.0,
+        "lower_exact": "1",
+        "upper_exact": "1",
+        "point": 1.0
+      }
+    },
+    {
+      "round": 1,
+      "selector_optimizer_step": 8,
+      "prompt_id": "v4b-0053",
+      "scene_sha256": "608690352ecde02261f1c9e67599a43243a29b6f0947354b88bc1563305c7713",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "608690352ecde02261f1c9e67599a43243a29b6f0947354b88bc1563305c7713:9fbeb29549561ebea6242a2b6b124bbcca8551ded6dcc615557a3fc67c19e6b9",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "608690352ecde02261f1c9e67599a43243a29b6f0947354b88bc1563305c7713:e48289925efc5fd6ec9966aa0837f63641da3a42e57d99562b34564b5c14d6ef",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r001-3cf0cb726c08fef1a432-40583615-2",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "10d50dde43386f8bd023"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r001-3cf0cb726c08fef1a432-1622600955-4",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "9d7d26d4049349a67cb6"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 2,
+      "selector_optimizer_step": 16,
+      "prompt_id": "v4a-0016",
+      "scene_sha256": "06e51efa215ae7c4506dcfd02fe9d93ca50da8656f67667c2038058924adc7b3",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "06e51efa215ae7c4506dcfd02fe9d93ca50da8656f67667c2038058924adc7b3:e9d995b5de875700e7d6c15798fcdf659140acc8b81f73eaf3760a6c42949388",
+          "coefficient": 1,
+          "label": true
+        },
+        {
+          "identity": "06e51efa215ae7c4506dcfd02fe9d93ca50da8656f67667c2038058924adc7b3:23619b19a9c2cb728d2c30e4c8ba0bb4afc440463d694432820b263add3b56ec",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r002-871ba6f58080b2078aab-280059429-0",
+          "label": true,
+          "unknown_reason": null,
+          "review_id": "c66a9bf72887170e004c"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r002-871ba6f58080b2078aab-1210317820-2",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "6273d6a44204b7c8b9d9"
+        }
+      },
+      "paired_gain": {
+        "lower": 1.0,
+        "upper": 1.0,
+        "lower_exact": "1",
+        "upper_exact": "1",
+        "point": 1.0
+      }
+    },
+    {
+      "round": 2,
+      "selector_optimizer_step": 16,
+      "prompt_id": "v4a-0051",
+      "scene_sha256": "b8a25c55637c901e2e1790f4ab2e89f8cad8fc65f99403b4f62298f3a334a9e4",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "b8a25c55637c901e2e1790f4ab2e89f8cad8fc65f99403b4f62298f3a334a9e4:2232db90d9156e63dfac1e3601af8d16608eda59dca8ee497e9e023064f888c4",
+          "coefficient": 1,
+          "label": true
+        },
+        {
+          "identity": "b8a25c55637c901e2e1790f4ab2e89f8cad8fc65f99403b4f62298f3a334a9e4:216d19a680a4c30c435373abbdf2ecad402049d20b6be96d1e02cac836056d44",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r002-853f73c53c80ef837da1-77272086-7",
+          "label": true,
+          "unknown_reason": null,
+          "review_id": "8cb99c7833664c63f282"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r002-853f73c53c80ef837da1-280624460-6",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "6fa4bb1bc2057abe727c"
+        }
+      },
+      "paired_gain": {
+        "lower": 1.0,
+        "upper": 1.0,
+        "lower_exact": "1",
+        "upper_exact": "1",
+        "point": 1.0
+      }
+    },
+    {
+      "round": 2,
+      "selector_optimizer_step": 16,
+      "prompt_id": "v4a-0060",
+      "scene_sha256": "3a4655320a39de4a1ed63a4a11100d9668db2fb580d4aaa50d5eeff5d2cc7c05",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "3a4655320a39de4a1ed63a4a11100d9668db2fb580d4aaa50d5eeff5d2cc7c05:73ea49d50dc2fdf13509c0be7b4592b2d6f1880b875953d6d084478d0ba815fc",
+          "coefficient": 1,
+          "label": true
+        },
+        {
+          "identity": "3a4655320a39de4a1ed63a4a11100d9668db2fb580d4aaa50d5eeff5d2cc7c05:16ebb730f3da291f57bb76a9f5f6ca3ac0f4f309dac76b3bbc1cc1bf2df75f26",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r002-bb9a46e725c805c8ebb9-261115021-0",
+          "label": true,
+          "unknown_reason": null,
+          "review_id": "be739415789b1a6359ac"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r002-bb9a46e725c805c8ebb9-633230911-3",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "b67d8bb4e3c300efafdc",
+          "human_review_key": "B"
+        }
+      },
+      "paired_gain": {
+        "lower": 1.0,
+        "upper": 1.0,
+        "lower_exact": "1",
+        "upper_exact": "1",
+        "point": 1.0
+      }
+    },
+    {
+      "round": 2,
+      "selector_optimizer_step": 16,
+      "prompt_id": "v4a-0063",
+      "scene_sha256": "718638cb9bd973d4d8222df200e14ef7897b5d3619b7e11f492c3036e60fe62d",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "718638cb9bd973d4d8222df200e14ef7897b5d3619b7e11f492c3036e60fe62d:112999ecbfd556fbdd2c607e14a949bd9b48d29d8206a3de0fdaa8c597daa8f4",
+          "coefficient": 1,
+          "label": true
+        },
+        {
+          "identity": "718638cb9bd973d4d8222df200e14ef7897b5d3619b7e11f492c3036e60fe62d:b933ec06d7c8530272fe8ccbe33758a99b4f191790b97b939028d29248328c9d",
+          "coefficient": -1,
+          "label": true
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r002-66f99227fd38b4e014f1-823797766-3",
+          "label": true,
+          "unknown_reason": null,
+          "review_id": "fba8b6cacd375b41c7e8"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r002-66f99227fd38b4e014f1-1387756915-4",
+          "label": true,
+          "unknown_reason": null,
+          "review_id": "ddfe86f6b3e2a7cad281"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 2,
+      "selector_optimizer_step": 16,
+      "prompt_id": "v4a-0065",
+      "scene_sha256": "2dcc78b11abd78c62826e10b14e44f68dc8999e62e91d1b5624a309a7ad89fdf",
+      "entered_training": false,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "2dcc78b11abd78c62826e10b14e44f68dc8999e62e91d1b5624a309a7ad89fdf:b45a29151c6f52fc2a8a8e8d500e87cbad2c3ea8021d51a612d57acec697ad78",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "2dcc78b11abd78c62826e10b14e44f68dc8999e62e91d1b5624a309a7ad89fdf:70974946f401cd07882c11514179ff15bc91aa27899bcb83908f69cfe5500bc9",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r002-3f68e337615d95b66c60-975485509-4",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "13974646a8b583f25ded"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r002-3f68e337615d95b66c60-1567919946-0",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "0778c400d63684ac9d07"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 2,
+      "selector_optimizer_step": 16,
+      "prompt_id": "v4a-0067",
+      "scene_sha256": "16c0bb981fd9d7d24cb7883cdf9ee4b7f35d0af835a66275c929a7eac9084d4d",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "16c0bb981fd9d7d24cb7883cdf9ee4b7f35d0af835a66275c929a7eac9084d4d:f8bef7948c4feecfd7b5b4ca26c1779ef3de3531249d23c59f578abb5a5ab8f6",
+          "coefficient": 1,
+          "label": null
+        },
+        {
+          "identity": "16c0bb981fd9d7d24cb7883cdf9ee4b7f35d0af835a66275c929a7eac9084d4d:25a9ea1062646c460e472f8fa53fa55d3b280374a449f0aa7f33856e1795ffd2",
+          "coefficient": -1,
+          "label": null
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r002-fb3e1c082f5dc43b667e-108904085-6",
+          "label": null,
+          "unknown_reason": "awaiting_rubric_clarification",
+          "review_id": "a72babdc873d33edb4a3",
+          "human_review_key": "C"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r002-fb3e1c082f5dc43b667e-522284907-3",
+          "label": null,
+          "unknown_reason": "awaiting_rubric_clarification",
+          "review_id": "29681fbc1de093af50b0",
+          "human_review_key": "D"
+        }
+      },
+      "paired_gain": {
+        "lower": -1.0,
+        "upper": 1.0,
+        "lower_exact": "-1",
+        "upper_exact": "1",
+        "point": null
+      }
+    },
+    {
+      "round": 2,
+      "selector_optimizer_step": 16,
+      "prompt_id": "v4a-0096",
+      "scene_sha256": "1c9f1a69439199de3ea28e28789b7a2cf3d636190b7b40c814576022ccf1413f",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "1c9f1a69439199de3ea28e28789b7a2cf3d636190b7b40c814576022ccf1413f:74c9e356d367d6af1b2f1159e550c4c9ddfa16da4d7f042bebcf042716f7ce54",
+          "coefficient": 1,
+          "label": true
+        },
+        {
+          "identity": "1c9f1a69439199de3ea28e28789b7a2cf3d636190b7b40c814576022ccf1413f:5924962df414bd140d97add0f1a9847cd6f1c14caf015f4f767669cd26c96bc3",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r002-82403a6420086c3b0575-760616338-3",
+          "label": true,
+          "unknown_reason": null,
+          "review_id": "d3af43d6b0703172e2f2"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r002-82403a6420086c3b0575-27040393-0",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "0cf2e0f06ca613682fcd"
+        }
+      },
+      "paired_gain": {
+        "lower": 1.0,
+        "upper": 1.0,
+        "lower_exact": "1",
+        "upper_exact": "1",
+        "point": 1.0
+      }
+    },
+    {
+      "round": 2,
+      "selector_optimizer_step": 16,
+      "prompt_id": "v4b-0000",
+      "scene_sha256": "c74c0a9021c32066275a2021433a7c7c340de4c3c5e9fb3ef13ec1bc69c908e7",
+      "entered_training": false,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "c74c0a9021c32066275a2021433a7c7c340de4c3c5e9fb3ef13ec1bc69c908e7:7de10212820f4858eea03f7a7eb7fa489e18b2937ca96c76c8d7f06446ae1ea7",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "c74c0a9021c32066275a2021433a7c7c340de4c3c5e9fb3ef13ec1bc69c908e7:bd6d31c7eb033a02989a53c5af182507185fb4d2b7a20343014ebb636af45f69",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r002-c1d2345a070abec55b80-255762589-2",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "96280dbc8d980c5b347c"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r002-c1d2345a070abec55b80-1161318276-7",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "ed4abe65f8862cbaeb1d"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 2,
+      "selector_optimizer_step": 16,
+      "prompt_id": "v4b-0034",
+      "scene_sha256": "4f72a5df9e07279a84f19f83a173533ed7b509296ab1f3833cfaac8cf2ef8ec4",
+      "entered_training": false,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "4f72a5df9e07279a84f19f83a173533ed7b509296ab1f3833cfaac8cf2ef8ec4:6ad47d568645377b623199099898382fcf7b3491f25248e0037a70cbc8dbab01",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "4f72a5df9e07279a84f19f83a173533ed7b509296ab1f3833cfaac8cf2ef8ec4:dd7aff4e414ecaed969a8fef50bebc7106b54bc0bf5d78e8a20dab441d09ed51",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r002-a1452c46fa3e4870c899-375481314-5",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "892bd941393f4421230f"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r002-a1452c46fa3e4870c899-1103211878-0",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "dea7f0db5410f1f72a89"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 2,
+      "selector_optimizer_step": 16,
+      "prompt_id": "v4b-0064",
+      "scene_sha256": "b1cdb3f05f63921fe786a5ef550431730515d3f55be91394c8e5022b89c8ae94",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "b1cdb3f05f63921fe786a5ef550431730515d3f55be91394c8e5022b89c8ae94:88f9c9f80293c22e1faa255ab57b97d0e43129259423b00a13496ba7b93fa83a",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "b1cdb3f05f63921fe786a5ef550431730515d3f55be91394c8e5022b89c8ae94:1678eaf8cfcfe7ad95599634818f5fba8b3985e618b9bdf823180daf082e3c50",
+          "coefficient": -1,
+          "label": false
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r002-6f53331b6df094d1b4b2-27995235-1",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "08558d50a8b25d2f8bd6"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r002-6f53331b6df094d1b4b2-2138049140-0",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "0c1a04e35a7a5a95f905"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    },
+    {
+      "round": 2,
+      "selector_optimizer_step": 16,
+      "prompt_id": "v4b-0089",
+      "scene_sha256": "f31b98036476ea199c1c7f3093d9eba4cd0287c2ab3e5db5e5d35b32721f79b3",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "f31b98036476ea199c1c7f3093d9eba4cd0287c2ab3e5db5e5d35b32721f79b3:a91c5da406fe43d977c31671158f6375ef07dc2662a5e4a3428b42e8c2d0ccaf",
+          "coefficient": 1,
+          "label": false
+        },
+        {
+          "identity": "f31b98036476ea199c1c7f3093d9eba4cd0287c2ab3e5db5e5d35b32721f79b3:ea53ccd80ece60a9fa5ca91242f4d37fb91ff406e1066c92ad79342af4b1b7e1",
+          "coefficient": -1,
+          "label": true
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r002-d45c0b265ef4f3766e5a-16697498-6",
+          "label": false,
+          "unknown_reason": null,
+          "review_id": "c785cca8b4d98fc09da0"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r002-d45c0b265ef4f3766e5a-1464241361-4",
+          "label": true,
+          "unknown_reason": null,
+          "review_id": "22b2f6a764d27f61a8b0",
+          "human_review_key": "E"
+        }
+      },
+      "paired_gain": {
+        "lower": -1.0,
+        "upper": -1.0,
+        "lower_exact": "-1",
+        "upper_exact": "-1",
+        "point": -1.0
+      }
+    },
+    {
+      "round": 2,
+      "selector_optimizer_step": 16,
+      "prompt_id": "v4b-0119",
+      "scene_sha256": "4ee36f14cdce7b847eea6ba9d69dd95c7510703c135429db550796f311bf59e8",
+      "entered_training": true,
+      "same_candidate": false,
+      "terms": [
+        {
+          "identity": "4ee36f14cdce7b847eea6ba9d69dd95c7510703c135429db550796f311bf59e8:7b59c4b6d7eaf60e196743bd31624b2cfb174d6271fd489de5a8ac7664e100a2",
+          "coefficient": 1,
+          "label": true
+        },
+        {
+          "identity": "4ee36f14cdce7b847eea6ba9d69dd95c7510703c135429db550796f311bf59e8:ba434b0fdf33d57a222df6ed4300c1fb59eed8a41aa2698c22110c734148fa29",
+          "coefficient": -1,
+          "label": true
+        }
+      ],
+      "labels": {
+        "selected": {
+          "candidate_id": "naive-r002-d6d3ea753dbebe956bd9-80096081-4",
+          "label": true,
+          "unknown_reason": null,
+          "review_id": "a49ebaa6884bb4f61a6b"
+        },
+        "uniform_control": {
+          "candidate_id": "naive-r002-d6d3ea753dbebe956bd9-230247499-1",
+          "label": true,
+          "unknown_reason": null,
+          "review_id": "efbc679f559a359a9b0e"
+        }
+      },
+      "paired_gain": {
+        "lower": 0.0,
+        "upper": 0.0,
+        "lower_exact": "0",
+        "upper_exact": "0",
+        "point": 0.0
+      }
+    }
+  ],
+  "remaining_original_rubric_clarifications": [
+    "C",
+    "D"
+  ],
+  "limitations": [
+    "Unknown-label completion ranges are not confidence intervals.",
+    "Rounds 1 and 2 compare one frozen sampled control per pool; round 0 uses the full-pool expectation.",
+    "Different rounds use different prompts; these values are not a paired training-time trend.",
+    "Nesting alone is not excluded by the original object/color/count rubric. C/D defect observations do not by themselves settle that rubric.",
+    "No detector objects, historical verdicts, selection policy, thresholds or training state were changed."
+  ],
+  "input_sha256": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\human-adjudications-batch1.json": "910ddd5acddde78f5799a9655d8ec46a8a793131a8718e0d4ca6e634faaa218b",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\human-review-batch1.json": "eb20e8f44092957553a6457fea75ee0ba1029c6c5f50139f0a6b224423579021",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\paired-gain-initial.json": "1696cbbe7681fb391fa197c6c2aa2618429b061c8d43f97da61eb4257c135609",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\independent-labels\\state.json": "5ba379d80e3e1459b9f8cd3dd47d54a5215e25cf1387b46a0d40f5ebc7a0bfcf",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\independent-labels\\detect.qwen3vl.complete.json": "fd71e56cfb55af19ceff0d38a7ce99d70efbcef1e2d22f3cd84a2bc53b320c2b",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\independent-labels\\detect.internvl.complete.json": "d9b7081d9280654111a596c6635e50b900ddf7ae1778452939fe92f95b018ca2",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\independent-labels\\crop.complete.json": "67b36552e14ed81f3792d84e5029c8c31323b0c27c6103e68b484f52f6f3a59d",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\independent-labels\\verify.complete.json": "8007c6b6e6bd5e62e8d1c2e4ce556911839ac6c385090925e81acf3b24da9846",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\followup-label-request.public.jsonl": "69b7e75a33e4bd38617e840e6100737134068bff535b1ba17e5bbe8be5f7c2a3",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\independent-labels\\manifest.jsonl": "69b7e75a33e4bd38617e840e6100737134068bff535b1ba17e5bbe8be5f7c2a3",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\followup-label-pairs.private.json": "86cc7c2883f5c756095b85dfa5944b2846dc28866dc5edb5a93e64ca54e705b9",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\independent-labels\\verified.jsonl": "3eaa3b5b0a11f8862a675663c7e311b170a4825145395d3b4672d03989323b58",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\ladder\\rfo_gold\\manifest.jsonl": "4dd1777d53da5fd6642b8a9d84eb30dacefb050117aec349f449b829f8e5e555",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\ladder\\rfo_gold\\manifest.jsonl": "c72b00449d34400d3b2741ef845f73c51bdfa714e7d97ff401cdea3e8f1f3cd0",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-2ded8db7ccb5e20f14ae-422663243-5.png": "b10a70cd342e36df6d4b28c14b5f1428d7dc6a2882faa6186aa36f18e71cccd7",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-2ded8db7ccb5e20f14ae-1152012413-2.png": "8d615dcc447b68bc879c1759536ebdd336a0477b49800daebd6a976b0c41ac9a",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-3dbd9e9309ecf9338413-1017204109-3.png": "9a1bf7213681b93ca8b3ea58317f7d670bd5f5254549cfa5ebe3de78f52b3df8",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-3dbd9e9309ecf9338413-1277413266-6.png": "920a87a24aab5f1383032ff1cdbac9e1a3eff24d8ad7c4e9ccee52a65cabca6c",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-b13c1d3380a8e9f997c4-523462775-5.png": "7ed29580f5be884473e44a1e3ec504919a99894fc176ebc28cac60bd4410b24d",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-b13c1d3380a8e9f997c4-1349508509-2.png": "a483eb44ab0ba1c601577a6158fb41446307e026bca65bc58e878e94c5298121",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-8838ac1b73bc03a4e8d7-743840306-1.png": "4ed444b427ff52febaf3fc652924a9f1c03a824574a5c5728230482ad0f7d013",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-8838ac1b73bc03a4e8d7-1569049096-7.png": "491c5cd80ae7dae838da45ac645e0a3c24cecaba20a4fa7a152e57eae904e731",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-e5df80cc371735762e36-34130493-5.png": "6c081e1a46a1991c22683b69782f169ea5814ab7827509c53d6c02aac6c23eda",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-e5df80cc371735762e36-808200441-2.png": "064d45d18b6f92a102b3bdf43ed325e465e69031c39ebf6bf4413ebc7fb013e1",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-50b2b1dbdf1fea3d467c-10068663-5.png": "38973fa537d7c4cfaaf4a782476d0dc8f8826bc03c38a65b4ce9abb390752e1d",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-50b2b1dbdf1fea3d467c-1065787279-7.png": "008ec933ce520b7961ab35ab6d62f4e953fc17997947a6afd6cfacaad8bb960c",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-f78d4be957580624c55b-690092400-5.png": "859d29e2660ff60cde28a6e0797a24e0f571710ba1e0f584f63984f87eb0df37",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-f78d4be957580624c55b-112933483-7.png": "1fef4e7d2e51796460d6a22aa60437fe396af97e4f527b6fd756ee803a8994b5",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-09afb1a1e9c37049964f-108518202-1.png": "0ae4b65cf9a58ea0c48af3281c27bacf18078a4d52128053038707819b732585",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-09afb1a1e9c37049964f-696783922-3.png": "2ed1bed7f0f1f6d6a474651314c66afa0e1a4ca4d819988096dea132dd5de7c8",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-fd9b9de447775fd46168-350612788-5.png": "87e39e80b18634400fb5e4b852af9edf7e8241df62716c5d8eaf702feb17c231",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-fd9b9de447775fd46168-1748006857-0.png": "968d86b1feba9d25e152e77cae96494b775a580139b48fae21e516b0fa835b1d",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-3cf0cb726c08fef1a432-40583615-2.png": "1b7c2fbca65783d7c3266d16e42546f66fee507fd3ac0101fde1cde85329abc0",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-3cf0cb726c08fef1a432-1622600955-4.png": "f0df22a3cd33b29f8aa4d6abb303a23a67ae272612f585dda07322c1e26c1ceb",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-871ba6f58080b2078aab-280059429-0.png": "5d8b55e673b8289859f9d72fea7688e5a9259b0cf2c89063739ea954d2621d0b",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-871ba6f58080b2078aab-1210317820-2.png": "cf6ae1445ae2280e6951de1197a95220cbb75a932756c60669f0377089dae413",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-853f73c53c80ef837da1-77272086-7.png": "98544ff1d320bb44289625d6adca3e3c0c54e874a19e0bc684185f4bf60cf99a",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-853f73c53c80ef837da1-280624460-6.png": "d987f19ec3399949244b8b77f8735e9345abbf501d1233477e31f2eb0a249c83",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-bb9a46e725c805c8ebb9-261115021-0.png": "426e5e50d33153df7f4cd2755da22dd0ef2166d3734477ab9a4ee6d78d86c043",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-bb9a46e725c805c8ebb9-633230911-3.png": "cd1251cc0bd6313de70a19df2f637ae02131e8226de91a7f3f777345cc9e2dea",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-66f99227fd38b4e014f1-823797766-3.png": "b1bb56da5dac961b96e9bc5a2c6439cc2a6a74f4e5ee01177c360ae33e7172c1",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-66f99227fd38b4e014f1-1387756915-4.png": "137b2fa7e6270c4927b6e834131224254cbc3dcaf24ce9c1a7f4275ec6fd2e43",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-3f68e337615d95b66c60-975485509-4.png": "610381abc059d190497f0e7acede7405749edc50cd990a3758500cce0957be5f",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-3f68e337615d95b66c60-1567919946-0.png": "910e94a413df7f57596079a0145b168324e5ec55e075736d780daf38b67c5812",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-fb3e1c082f5dc43b667e-108904085-6.png": "74417749a65473366074f36b0eb05d6f45258a93013aa8b97104b953fe25be08",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-fb3e1c082f5dc43b667e-522284907-3.png": "4458d3946bb0f9d70cef7a96345fcbe3a91d0c52a7ff631968ef1c97a889b109",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-82403a6420086c3b0575-760616338-3.png": "c3a838394477827741f5ba09f37e3d2f95290e5a2f7ba3d8de3016db040d708e",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-82403a6420086c3b0575-27040393-0.png": "20246081a5f3a4fe5b643f0582a4d999ce2bcb68ffa1764befdeb94daa84a042",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-c1d2345a070abec55b80-255762589-2.png": "25324ebb0b9944abe6bf4327c102941baf1201cb437e3bd72ee9b7e29b874e2d",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-c1d2345a070abec55b80-1161318276-7.png": "44f67b71e2ea1d9a860b71eba06284927c900b8ccc97fb755361a8745a2bb18d",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-a1452c46fa3e4870c899-375481314-5.png": "a513a3c29e5bd38cc07df62d85222760c27983da59b0be766fb5e1b601d2be18",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-a1452c46fa3e4870c899-1103211878-0.png": "3d68f41c7b0055828baa1aeabb11e90efdc9327c7b66873a2d6812b8186fca08",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-6f53331b6df094d1b4b2-27995235-1.png": "34c084cf8f8433100471413b21793ab77f2a1b0e01f474429d74a3aab1b639e7",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-6f53331b6df094d1b4b2-2138049140-0.png": "0f749b32e834f3462f1e6bbf526b371dd9ffef1e9df6925e52368d2df0638de9",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-d45c0b265ef4f3766e5a-16697498-6.png": "a57726d6c298fce8142d99ab0d00e825ec2b0d66555e5e4fc2a9016b97b669d7",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-d45c0b265ef4f3766e5a-1464241361-4.png": "67902d04b798675f6fd03d2216cc963e463ef87f1f92fc08df8a83ca0b906afd",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-d6d3ea753dbebe956bd9-80096081-4.png": "698d18b4a666bda18f209b270c8eba5e2c2428d7baa8c7f6d3aa5790a95c935a",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-d6d3ea753dbebe956bd9-230247499-1.png": "d9c20a4343a857003d4f02b9539699ba1443fa8f2aef90c3ac6252028ac8f2bc",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-94a03340a35a3cb341fa-1082176483-3.png": "29d2731033eeaa74d8b230f8e579bf81716e2b811202ddaf2d1e131d56427b6a",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selector-gain-20260906\\round000.json": "c7e4ead3476cbd266fead9342be321cb1a257902d700ac62637224e85c83b177",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\priority-review.json": "9dda5772786c5786e697e8ee201833cb46c9fefe9fbf2d16caead2735d81acaa"
+  },
+  "script_sha256": "0c5a8abba18a904dbb62a23e51a30e67cf0a867a8ccacd10183226c015665eda"
+}

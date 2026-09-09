@@ -1,0 +1,45 @@
+{
+  "batches": [
+    "main-2plus1",
+    "main-1plus1plus1",
+    "conf-2plus1",
+    "conf-1plus1plus1",
+    "conf2-2plus1",
+    "conf2-1plus1plus1"
+  ],
+  "verified_rows": 5459,
+  "excluded_pending_human": 359,
+  "usable_candidates": 5100,
+  "specs": 228,
+  "candidates_per_spec": {
+    "14": 1,
+    "16": 1,
+    "17": 1,
+    "18": 4,
+    "19": 11,
+    "20": 16,
+    "21": 22,
+    "22": 39,
+    "23": 60,
+    "24": 73
+  },
+  "base_rate": 0.2384313725490196,
+  "cohorts": {
+    "k14": {
+      "specs": 228,
+      "max_n": 14,
+      "kl_at_max_n": 1.7104859010438298
+    },
+    "k20": {
+      "specs": 210,
+      "max_n": 20,
+      "kl_at_max_n": 2.045732273553991
+    },
+    "k24": {
+      "specs": 73,
+      "max_n": 24,
+      "kl_at_max_n": 2.2197204970146123
+    }
+  },
+  "ordering": "sha256(spec_id + image_path); blind to score, gold and batch"
+}

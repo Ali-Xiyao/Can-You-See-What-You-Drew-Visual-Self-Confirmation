@@ -1,0 +1,30 @@
+{
+  "validated_utc": "2026-09-06T08:55:38.274608+00:00",
+  "status": "PASS_preparation_integrity_only",
+  "n_pools": 24,
+  "n_entered_training": 18,
+  "n_same_candidate_exact_zero": 2,
+  "n_images_checked_file_and_decoded_rgb": 44,
+  "n_labels_assigned": 0,
+  "checks": [
+    "Source selection and entered-training membership",
+    "Deterministic uniform control resampling",
+    "Role mapping and unique review IDs",
+    "Original spec/prompt consistency",
+    "PNG SHA256 and dimension-prefixed decoded RGB SHA256",
+    "All input hashes unchanged",
+    "Public request contains no role or score fields"
+  ],
+  "limitations": [
+    "No detector or human labels supplied yet.",
+    "Original paths are visible, so blinding is limited.",
+    "Sampled controls add sampling variation; this is not exact full-pool expectation.",
+    "Rounds use different prompts, so a round contrast alone is not a paired training-time effect."
+  ],
+  "output_sha256": {
+    "followup-label-request.public.jsonl": "69b7e75a33e4bd38617e840e6100737134068bff535b1ba17e5bbe8be5f7c2a3",
+    "followup-label-pairs.private.json": "86cc7c2883f5c756095b85dfa5944b2846dc28866dc5edb5a93e64ca54e705b9",
+    "followup-label-request.summary.json": "884e607f09610fcd376e789af0e57ff490d3b056b07f555bd4bf3faca3f95c10"
+  },
+  "validation_script_sha256": "53a59f015e8eee0d8e5413a7a12a6bfc5d2a5793306d5f464193d4365c5be5c4"
+}

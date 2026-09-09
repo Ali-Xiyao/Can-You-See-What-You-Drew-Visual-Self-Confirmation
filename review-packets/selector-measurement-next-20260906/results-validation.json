@@ -1,0 +1,34 @@
+{
+  "created_utc": "2026-09-06T10:30:41.701763+00:00",
+  "status": "PASS_integrity_and_arithmetic_only",
+  "checks": {
+    "answers_checked": 9090,
+    "pool_selections_checked": 480,
+    "paired_contrasts_checked": 20
+  },
+  "historical_original_answer_reproduction": {
+    "base-00000": {
+      "matches": 404,
+      "total": 404
+    },
+    "naive-00016": {
+      "matches": 404,
+      "total": 404
+    },
+    "naive-00032": {
+      "matches": 404,
+      "total": 404
+    },
+    "rfo_gold-00016": {
+      "matches": 404,
+      "total": 404
+    },
+    "rfo_gold-00032": {
+      "matches": 404,
+      "total": 404
+    }
+  },
+  "all_measurement_sources_unchanged": true,
+  "report_sha256": "ef93ad79bbf51ea2330720a611a5228d238a291df8aeea8478626954c7a7d606",
+  "scope": "Independent Fraction scoring and contrasts; same registered factual labels. Does not establish the research claims or validate bootstrap coverage."
+}

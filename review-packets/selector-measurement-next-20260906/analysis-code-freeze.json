@@ -1,0 +1,11 @@
+{
+  "frozen_at_utc": "2026-09-06T10:15:36.519823+00:00",
+  "new_condition_outcomes_inspected": false,
+  "inspection_so_far": "progress counts, error/abstention counts, unchanged parameter digests and original-question reproduction only",
+  "files": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selector-measurement-next-20260906\\analyze.py": "30758670e5dac0276be1e8206eae0830c5ea8c7f0e65f831fad9165207a9402b",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selector-measurement-next-20260906\\validate_results.py": "baf960492121ff92abee08c5bc6a42d0be9d970ede10c7476a8f9d5266f03d42",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selector-measurement-next-20260906\\write_report.py": "2cfbc88229eb053289d4327c6c45106ca3607351b13b16cc8a0b277029b3739c",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selector-measurement-next-20260906\\precision_plan.py": "87cc9260ae87ec88d52bd9a4cdc8424f99254f678cdaf575aa74ec16e4fbba00"
+  }
+}

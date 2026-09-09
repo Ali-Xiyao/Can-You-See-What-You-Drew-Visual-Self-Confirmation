@@ -1,0 +1,38 @@
+﻿bank: 232 pools / 1116 images; already scored 6; to score 1110
+backbone: showlab/show-o2-1.5B @ 07ec16589d4fc5422a74dddbbc4b2cd11e551039 on cuda:0 (load 56.2s)
+  50/1110  0.47s/img  eta 8.3min
+  100/1110  0.41s/img  eta 7.0min
+  150/1110  0.40s/img  eta 6.4min
+  200/1110  0.39s/img  eta 6.0min
+  250/1110  0.40s/img  eta 5.7min
+  300/1110  0.40s/img  eta 5.4min
+  350/1110  0.41s/img  eta 5.2min
+  400/1110  0.43s/img  eta 5.0min
+  450/1110  0.43s/img  eta 4.7min
+  500/1110  0.43s/img  eta 4.4min
+  550/1110  0.43s/img  eta 4.0min
+  600/1110  0.42s/img  eta 3.6min
+  650/1110  0.41s/img  eta 3.1min
+  700/1110  0.40s/img  eta 2.7min
+  750/1110  0.40s/img  eta 2.4min
+  800/1110  0.39s/img  eta 2.0min
+  850/1110  0.39s/img  eta 1.7min
+  900/1110  0.38s/img  eta 1.3min
+  950/1110  0.38s/img  eta 1.0min
+  1000/1110  0.37s/img  eta 0.7min
+  1050/1110  0.37s/img  eta 0.4min
+  1100/1110  0.37s/img  eta 0.1min
+  1110/1110  0.37s/img  eta 0.0min
+{
+  "created_utc": "2026-09-08T10:58:33Z",
+  "model_id": "showlab/show-o2-1.5B",
+  "revision": "07ec16589d4fc5422a74dddbbc4b2cd11e551039",
+  "device": "cuda:0",
+  "n_pools": 232,
+  "n_images": 1116,
+  "n_scored": 1116,
+  "seconds_total": 472.3,
+  "determinism_recheck_n": 32,
+  "determinism_mismatches": [],
+  "determinism_ok": true
+}

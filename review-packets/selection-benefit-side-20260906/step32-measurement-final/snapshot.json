@@ -1,0 +1,33 @@
+{
+  "created_utc": "2026-09-06T09:03:29.845043+00:00",
+  "status": "measurement_complete_training_paused",
+  "through_round": 4,
+  "step": 32,
+  "n_measurement_stages": 16,
+  "n_frozen_source_config_protocol_hashes_checked": 14,
+  "n_completed_training_artifacts_unchanged": 8,
+  "round004_exists": false,
+  "snapshot_sha256": {
+    "state.json": "2b578a71729f55c7cba7d1a3aebf0cc75963da2b9c71d30bfd52e222f6f9d247",
+    "checkpoint_metrics.csv": "f475ea22964c199d28d72a94f15a778053713dcb77fad9c438a003435029d1b2",
+    "decoupling_report.json": "f2b98013aadd85dac668df3a63ed61898e59f3e39fd7cd64bb58f15c8cadfa93",
+    "gradient_sensitivity.json": "c706d71a06b311937c8b3d8a1c22cd328f72db4b8fd2b1205faa0e9b5b1f78d5",
+    "stage-completion/naive.step-00032.generate.json": "5d9ea60b96e1d288d17cf55a30e58691e09ee57778d937786797740152dd2c6f",
+    "stage-completion/naive.step-00032.detect.qwen3vl.json": "c5822689a4b4882514d3f34120b0102720ffda8f7fef38b8c6a963c4088afb22",
+    "stage-completion/naive.step-00032.detect.internvl.json": "7473f90ad91a84335028cf7ba581c89c8665c3edfdde89eaf01728ed56f970ba",
+    "stage-completion/naive.step-00032.crop.json": "fd7214bad2ed6d9d84054b1cc3b544d089577835f7d3aa0461015d698ebc48c2",
+    "stage-completion/naive.step-00032.verify.json": "c60ab4ebb3b384696534008e1f1e6ed537e8ba3d826a3244fca8a8a8511ac515",
+    "stage-completion/naive.step-00032.gradient.json": "fc9cf97cdfe72c4f0d03570f0fb78f81c1851d43443943c01908f64d01848212",
+    "stage-completion/rfo_gold.step-00032.generate.json": "617ff1c3332be48497120e99135ebe67c8eeb5b7ba7b03d67f7f54f890129d66",
+    "stage-completion/rfo_gold.step-00032.detect.qwen3vl.json": "7795e67c415a8d3aff51daf909d7b432e16ce2e669e44a5fb5c0c6e1cc99f119",
+    "stage-completion/rfo_gold.step-00032.detect.internvl.json": "546806cf0af21c6e72e563ea6e6d68ec9be57f11b06141fbac31f0dc5dba775d",
+    "stage-completion/rfo_gold.step-00032.crop.json": "f3abe787fc515a8f581e88bbe014ec22f8c3372b5adfb13a510833393fbb02ef",
+    "stage-completion/rfo_gold.step-00032.verify.json": "6bba76f2c4f0949887c5ccd1f4d0fed062dd5f78285cc5529e5e1baa5d121e77",
+    "stage-completion/rfo_gold.step-00032.gradient.json": "e461c993f3b3ebc9b304087d8376486fbcde06ad2d32ff7147470d89e7b5d6b9",
+    "stage-completion/step-00032.score.json": "7d756565d5df6c967511610ce4be7cd7b6af50f0bd20d356503f290164344781",
+    "stage-completion/step-00032.report.json": "de5caa3b67124f51a5ff23357dff2e2c08677f5a1d03b207f51646279c3fab34",
+    "stage-completion/step-00032.gradient-sensitivity.json": "9ea39cda06cf7673facd78a39e1e6f9c5e6659aca83180101898167c6c1b8fac",
+    "stage-completion/step-00032.plot.json": "afff38113c67ee543527a6574b65db17a2daec118174f7606f77fdb78bb71f25"
+  },
+  "note": "No checkpoint weights are rehashed in this audit; completed probe identity and prior weight audits retain their own scope."
+}

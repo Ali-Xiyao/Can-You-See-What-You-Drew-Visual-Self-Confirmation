@@ -1,0 +1,40 @@
+﻿workset 5100 images; scored 0; to score 5100
+backbone showlab/show-o2-1.5B @ 07ec16589d4fc5422a74dddbbc4b2cd11e551039 on cuda:0 (load 52.4s)
+  200/5100  0.32s/img  eta 26.5min
+  400/5100  0.31s/img  eta 24.6min
+  600/5100  0.32s/img  eta 24.2min
+  800/5100  0.32s/img  eta 22.7min
+  1000/5100  0.31s/img  eta 21.5min
+  1200/5100  0.31s/img  eta 20.1min
+  1400/5100  0.30s/img  eta 18.7min
+  1600/5100  0.30s/img  eta 17.4min
+  1800/5100  0.29s/img  eta 16.2min
+  2000/5100  0.29s/img  eta 15.1min
+  2200/5100  0.29s/img  eta 14.1min
+  2400/5100  0.29s/img  eta 12.9min
+  2600/5100  0.29s/img  eta 11.9min
+  2800/5100  0.29s/img  eta 11.0min
+  3000/5100  0.29s/img  eta 10.1min
+  3200/5100  0.29s/img  eta 9.2min
+  3400/5100  0.29s/img  eta 8.3min
+  3600/5100  0.29s/img  eta 7.3min
+  3800/5100  0.29s/img  eta 6.3min
+  4000/5100  0.29s/img  eta 5.4min
+  4200/5100  0.30s/img  eta 4.5min
+  4400/5100  0.30s/img  eta 3.5min
+  4600/5100  0.30s/img  eta 2.5min
+  4800/5100  0.30s/img  eta 1.5min
+  5000/5100  0.30s/img  eta 0.5min
+  5100/5100  0.30s/img  eta 0.0min
+{
+  "created_utc": "2026-09-08T11:42:56Z",
+  "model_id": "showlab/show-o2-1.5B",
+  "revision": "07ec16589d4fc5422a74dddbbc4b2cd11e551039",
+  "device": "cuda:0",
+  "n_workset": 5100,
+  "n_scored": 5100,
+  "seconds_total": 1592.2,
+  "determinism_recheck_n": 32,
+  "determinism_mismatches": [],
+  "determinism_ok": true
+}

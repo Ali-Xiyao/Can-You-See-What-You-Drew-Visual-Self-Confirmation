@@ -1,0 +1,27 @@
+{
+  "n": 44,
+  "by_resolution": {
+    "agreed": 24,
+    "resolved_by_crop": 3,
+    "agreed_verdict": 13,
+    "pending_human": 4
+  },
+  "list_agreement_rate": 0.5454545454545454,
+  "verdict_agreement_rate": 0.8409090909090909,
+  "agreement_rate": 0.5454545454545454,
+  "crop_resolved_rate": 0.06818181818181818,
+  "human_rate": 0.09090909090909091,
+  "pending_human": 4,
+  "unnameable": 0,
+  "p": 0.3181818181818182,
+  "skipped_no_detection": 0,
+  "selection_ceiling": {
+    "n_images": 44,
+    "n_specs": 22,
+    "p": 0.3182,
+    "k": 2,
+    "C_p": 0.2169,
+    "balanced_pool_rate": 0.2727,
+    "balanced_pools": 6
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "source_record": {
+    "path": "review-packets/bon-coupling-20260908/dstar-precondition-defect.json",
+    "kept_unmodified": true,
+    "recorded_wrongly_accepted": [
+      "A_never_coupled",
+      "C_external_falling_throughout"
+    ]
+  },
+  "outcome_n_assumed_for_floor": 120,
+  "cases": {
+    "A_never_coupled": {
+      "why": "external flat from step 0 (no coupling ever); internal bends up at 32",
+      "should_be_accepted": false,
+      "prior_d_star": 32.0,
+      "measured_floor": 0.0005509225217759753,
+      "sign_test_only": {
+        "d_star": 32.0,
+        "accepted": true,
+        "external_pre_slope": 3.863636363637108e-05,
+        "coupled_candidates": 5,
+        "admissible_candidates": 5,
+        "reason": "exploratory local estimate; formal inference requires seed-level bootstrap"
+      },
+      "with_measured_floor": {
+        "d_star": null,
+        "accepted": false,
+        "external_pre_slope": 3.3577712609971676e-05,
+        "coupled_candidates": 0,
+        "admissible_candidates": 5,
+        "reason": "No coupled phase: the external curve does not rise faster than 0.000550923 before any of the 5 admissible breakpoints, so there is no coupling for training to break. D* is undefined here, which is not the same as a decoupling that was looked for and not found."
+      },
+      "now_correct": true,
+      "sign_test_alone_sufficient": false
+    },
+    "B_genuine_decoupling": {
+      "why": "external rises then stalls at 32; internal keeps rising",
+      "should_be_accepted": true,
+      "prior_d_star": 40.0,
+      "measured_floor": 0.0005580658563288028,
+      "sign_test_only": {
+        "d_star": 40.0,
+        "accepted": true,
+        "external_pre_slope": 0.0024457478005865114,
+        "coupled_candidates": 5,
+        "admissible_candidates": 5,
+        "reason": "exploratory local estimate; formal inference requires seed-level bootstrap"
+      },
+      "with_measured_floor": {
+        "d_star": 40.0,
+        "accepted": true,
+        "external_pre_slope": 0.0024457478005865114,
+        "coupled_candidates": 5,
+        "admissible_candidates": 5,
+        "reason": "exploratory local estimate; formal inference requires seed-level bootstrap"
+      },
+      "now_correct": true,
+      "sign_test_alone_sufficient": true
+    },
+    "C_external_falling_throughout": {
+      "why": "external declines from step 0; nothing ever coupled, model just degrades",
+      "should_be_accepted": false,
+      "prior_d_star": 32.0,
+      "measured_floor": 0.0005509225217759753,
+      "sign_test_only": {
+        "d_star": null,
+        "accepted": false,
+        "external_pre_slope": -0.0019999999999999996,
+        "coupled_candidates": 0,
+        "admissible_candidates": 5,
+        "reason": "No coupled phase: the external curve does not rise faster than 0 before any of the 5 admissible breakpoints, so there is no coupling for training to break. D* is undefined here, which is not the same as a decoupling that was looked for and not found."
+      },
+      "with_measured_floor": {
+        "d_star": null,
+        "accepted": false,
+        "external_pre_slope": -0.0019999999999999996,
+        "coupled_candidates": 0,
+        "admissible_candidates": 5,
+        "reason": "No coupled phase: the external curve does not rise faster than 0.000550923 before any of the 5 admissible breakpoints, so there is no coupling for training to break. D* is undefined here, which is not the same as a decoupling that was looked for and not found."
+      },
+      "now_correct": true,
+      "sign_test_alone_sufficient": true
+    }
+  },
+  "summary": {
+    "all_cases_now_correct": true,
+    "still_wrongly_accepted": [],
+    "needed_a_measured_floor_not_just_a_sign_test": [
+      "A_never_coupled"
+    ],
+    "genuine_case_survives": true,
+    "still_open": "fit_segmented has no no-break null, so it always returns some knot, and case B recovers 40.0 from noiseless data whose true knot is 32. Both are knot-location questions, separate from the precondition fixed here (.planning/2026-09-04-project-audit/findings.md line 131)."
+  }
+}

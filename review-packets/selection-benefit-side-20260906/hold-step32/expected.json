@@ -1,0 +1,75 @@
+{
+  "state": {
+    "status": "running",
+    "stage": "rfo_gold.step-00032.gradient",
+    "supervisor_pid": 18576,
+    "updated_unix": 1788684495.099646,
+    "started_unix": 1788631464.2176192,
+    "elapsed_hours": 14.730800563030773,
+    "through_round": 10,
+    "child_pid": 27272,
+    "log": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\logs\\rfo_gold.step-00032.gradient.log",
+    "command": [
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+      "-u",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\scripts\\v4_checkpoint_probe.py",
+      "run",
+      "--config",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\configs\\v4_decoupling_pilot.yaml",
+      "--bank",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\probe-bank",
+      "--outdir",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00032",
+      "--device",
+      "cuda:1",
+      "--arm",
+      "rfo_gold",
+      "--resamples",
+      "2000",
+      "--checkpoint",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\rfo_gold\\round-003",
+      "--reference",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\base\\step-00000"
+    ]
+  },
+  "parent": {
+    "pid": 18576,
+    "created": 134331427797587987,
+    "exe": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\core\\python.exe"
+  },
+  "child": {
+    "pid": 27272,
+    "created": 134331580950950900,
+    "exe": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe"
+  },
+  "frozen_sha256": {
+    "scripts/v4_train.py": "987cb0a5d718b09bc083e09020eecc23c27d34c2bb8084587f55dd5c5edc48f8",
+    "src/selfsight/v4/train.py": "7de5d3dfcec9bcfb3be994e41621e256842f0f563fed9e11be5b0ba84d8e574e",
+    "src/selfsight/v4/evaluate.py": "d4e65ff59832d6ef7b96cabc315489c9ad4689e967e34fe5b0f0c9ba001d13a1",
+    "src/selfsight/v4/probe.py": "f704b87c2e35f314230fe6865968397bedb764f73ea512325bcebe7f64e274d5",
+    "scripts/v4_checkpoint_probe.py": "8dbceae2c001065f81d18548627dbe62d1560111dd59f41dddb91516bfc3f05d",
+    "src/selfsight/v4/checkpoint_probe.py": "9840c3fea98b60e261176a4291195deb50b34fb95eb0d21ec1ece80b19a5b209",
+    "scripts/v4_decoupling_report.py": "a6fabc7b46c0114388cecf27b10d55d0db11687f4dad6d914bbdd97a189050bc",
+    "src/selfsight/v4/factual_truth.py": "0e9a4cf293939344e000f4b6c89cf4d714b55376049aa8edfb19885d48337c19",
+    "src/selfsight/training/checkpoint.py": "1252ebcdda5a6a2b6b411f081168a1f348aa738e3025f1220f04910cc47ff261",
+    "scripts/run_decoupling_pilot.py": "02af8ac4fb20bc1e2492c803e7302f3c16fbe9671d0e8da0dd8356e2b335e392",
+    "scripts/v4_decoupling_plot.py": "2f93d3b440596a57d0f4fd782f10923a0f22d7328d74cf583daed99176b27ebc",
+    "scripts/v4_gradient_sensitivity.py": "e1e7d719644dda0b662576f0b336f2b35afed7a42045b2a67bd611bb4b0852d2",
+    "configs/v4_decoupling_pilot.yaml": "d92afed91a4649cb958e0a4011d20b4d0e7dac46a222b3634a90e246a2400106",
+    "docs/prereg/2026-09-06-decoupling-pilot.md": "c1d1e7240c134293077b8e1a68d5b9ab503f3ffdfac1c22343bdf6fd72a47710"
+  },
+  "completed_training_sha256": {
+    "stage-completion/round-000.train.json": "78f43e7c43127f5286463ef5410d91bf62063d7ffbaa2abe7ea7f725eed38415",
+    "rounds/round-000/DONE.json": "256a074405e074fb066d34ba18ba4984154ad6645d210699267c881d0722b33d",
+    "stage-completion/round-001.train.json": "7398fe3f8f7ad52581347ec23aa1db347398c9b0d48f713ece3490ac42e7e80b",
+    "rounds/round-001/DONE.json": "3287b829c723c4aeeb1816a7d9091354f90c16e322b2335fde8bc832b1cd5b70",
+    "stage-completion/round-002.train.json": "f9bfd87c6254dc495e596f9ff4b9ed1184e9217f33cfae48a01f86330c2ae24d",
+    "rounds/round-002/DONE.json": "c5e8db05aa98cbe54f57639f102197556440026eb4e7d75df3c630e58b7050ea",
+    "stage-completion/round-003.train.json": "a7fe17fbd2a50d87cca65f292375f9480a68b1065c5048d6495f9bbcfaa8cbbf",
+    "rounds/round-003/DONE.json": "5c8a6fb23c459bd4d502b52195e4a526a8e9effb3ac70bcc59c53ba0bd2e86bb"
+  },
+  "deadline": 1788847464.2176192,
+  "started_unix": 1788631464.2176192,
+  "through_round": 4,
+  "controller_sha256": "85079f410b1fec8deaab3a4f50445ba10f6ee2708ce21cac90d955089efdc294"
+}

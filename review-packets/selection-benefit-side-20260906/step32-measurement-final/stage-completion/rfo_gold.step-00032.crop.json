@@ -1,0 +1,14 @@
+{
+  "stage": "rfo_gold.step-00032.crop",
+  "completed_unix": 1788684494.8479362,
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\scripts\\v4_run_pipeline.py",
+    "crop",
+    "--run",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00032",
+    "--device",
+    "cuda:0"
+  ]
+}

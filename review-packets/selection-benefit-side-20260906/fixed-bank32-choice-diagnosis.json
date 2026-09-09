@@ -1,0 +1,430 @@
+{
+  "created_utc": "2026-09-06T09:08:19.708607+00:00",
+  "arms": {
+    "naive": {
+      "n_pools": 16,
+      "changed_candidate_pools": 3,
+      "correct_to_wrong": 2,
+      "wrong_to_correct": 0,
+      "ranking_of_wrong_selections32": {
+        "correct_wrong_top_tie": 9
+      },
+      "ranking_of_correct_to_wrong_flips": {
+        "correct_wrong_top_tie": 2
+      },
+      "per_pool": [
+        {
+          "prompt_id": "conf-2plus1:v4a-0087",
+          "spec_id": "v4a-0087",
+          "selected24": "v4a-0087:0",
+          "selected32": "v4a-0087:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0095",
+          "spec_id": "v4a-0095",
+          "selected24": "v4a-0095:2",
+          "selected32": "v4a-0095:2",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_preferred",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 0.75
+        },
+        {
+          "prompt_id": "main-1plus1plus1:v4b-0108",
+          "spec_id": "v4b-0108",
+          "selected24": "v4b-0108:0",
+          "selected32": "v4b-0108:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0012",
+          "spec_id": "v4a-0012",
+          "selected24": "v4a-0012:3",
+          "selected32": "v4a-0012:0",
+          "correct24": true,
+          "correct32": false,
+          "changed_candidate": true,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0061",
+          "spec_id": "v4a-0061",
+          "selected24": "v4a-0061:0",
+          "selected32": "v4a-0061:0",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-1plus1plus1:v4b-0018",
+          "spec_id": "v4b-0018",
+          "selected24": "v4b-0018:0",
+          "selected32": "v4b-0018:0",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-1plus1plus1:v4b-0074",
+          "spec_id": "v4b-0074",
+          "selected24": "v4b-0074:0",
+          "selected32": "v4b-0074:0",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0009",
+          "spec_id": "v4b-0009",
+          "selected24": "v4b-0009:0",
+          "selected32": "v4b-0009:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0047",
+          "spec_id": "v4a-0047",
+          "selected24": "v4a-0047:0",
+          "selected32": "v4a-0047:0",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "conf-2plus1:v4a-0069",
+          "spec_id": "v4a-0069",
+          "selected24": "v4a-0069:2",
+          "selected32": "v4a-0069:0",
+          "correct24": true,
+          "correct32": false,
+          "changed_candidate": true,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0113",
+          "spec_id": "v4b-0113",
+          "selected24": "v4b-0113:0",
+          "selected32": "v4b-0113:0",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0013",
+          "spec_id": "v4b-0013",
+          "selected24": "v4b-0013:0",
+          "selected32": "v4b-0013:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0076",
+          "spec_id": "v4a-0076",
+          "selected24": "v4a-0076:0",
+          "selected32": "v4a-0076:0",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_preferred",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 0.75
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0114",
+          "spec_id": "v4b-0114",
+          "selected24": "v4b-0114:0",
+          "selected32": "v4b-0114:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0100",
+          "spec_id": "v4b-0100",
+          "selected24": "v4b-0100:0",
+          "selected32": "v4b-0100:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "conf-2plus1:v4a-0053",
+          "spec_id": "v4a-0053",
+          "selected24": "v4a-0053:3",
+          "selected32": "v4a-0053:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": true,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        }
+      ]
+    },
+    "rfo_gold": {
+      "n_pools": 16,
+      "changed_candidate_pools": 3,
+      "correct_to_wrong": 2,
+      "wrong_to_correct": 0,
+      "ranking_of_wrong_selections32": {
+        "correct_wrong_top_tie": 9
+      },
+      "ranking_of_correct_to_wrong_flips": {
+        "correct_wrong_top_tie": 2
+      },
+      "per_pool": [
+        {
+          "prompt_id": "conf-2plus1:v4a-0087",
+          "spec_id": "v4a-0087",
+          "selected24": "v4a-0087:0",
+          "selected32": "v4a-0087:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0095",
+          "spec_id": "v4a-0095",
+          "selected24": "v4a-0095:2",
+          "selected32": "v4a-0095:2",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_preferred",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 0.75
+        },
+        {
+          "prompt_id": "main-1plus1plus1:v4b-0108",
+          "spec_id": "v4b-0108",
+          "selected24": "v4b-0108:0",
+          "selected32": "v4b-0108:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0012",
+          "spec_id": "v4a-0012",
+          "selected24": "v4a-0012:3",
+          "selected32": "v4a-0012:0",
+          "correct24": true,
+          "correct32": false,
+          "changed_candidate": true,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0061",
+          "spec_id": "v4a-0061",
+          "selected24": "v4a-0061:0",
+          "selected32": "v4a-0061:0",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-1plus1plus1:v4b-0018",
+          "spec_id": "v4b-0018",
+          "selected24": "v4b-0018:0",
+          "selected32": "v4b-0018:0",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-1plus1plus1:v4b-0074",
+          "spec_id": "v4b-0074",
+          "selected24": "v4b-0074:0",
+          "selected32": "v4b-0074:0",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0009",
+          "spec_id": "v4b-0009",
+          "selected24": "v4b-0009:0",
+          "selected32": "v4b-0009:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0047",
+          "spec_id": "v4a-0047",
+          "selected24": "v4a-0047:0",
+          "selected32": "v4a-0047:0",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "conf-2plus1:v4a-0069",
+          "spec_id": "v4a-0069",
+          "selected24": "v4a-0069:2",
+          "selected32": "v4a-0069:0",
+          "correct24": true,
+          "correct32": false,
+          "changed_candidate": true,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0113",
+          "spec_id": "v4b-0113",
+          "selected24": "v4b-0113:0",
+          "selected32": "v4b-0113:0",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0013",
+          "spec_id": "v4b-0013",
+          "selected24": "v4b-0013:0",
+          "selected32": "v4b-0013:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "main-2plus1:v4a-0076",
+          "spec_id": "v4a-0076",
+          "selected24": "v4a-0076:0",
+          "selected32": "v4a-0076:0",
+          "correct24": true,
+          "correct32": true,
+          "changed_candidate": false,
+          "ranking32": "correct_preferred",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 0.75
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0114",
+          "spec_id": "v4b-0114",
+          "selected24": "v4b-0114:0",
+          "selected32": "v4b-0114:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "conf-1plus1plus1:v4b-0100",
+          "spec_id": "v4b-0100",
+          "selected24": "v4b-0100:0",
+          "selected32": "v4b-0100:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": false,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        },
+        {
+          "prompt_id": "conf-2plus1:v4a-0053",
+          "spec_id": "v4a-0053",
+          "selected24": "v4a-0053:3",
+          "selected32": "v4a-0053:0",
+          "correct24": false,
+          "correct32": false,
+          "changed_candidate": true,
+          "ranking32": "correct_wrong_top_tie",
+          "best_correct_score32": 1.0,
+          "best_wrong_score32": 1.0
+        }
+      ]
+    }
+  },
+  "input_sha256": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\probe-bank\\bank.json": "ebd7fac6d03d55465429e686a3b09d0720328b92905e4dad0b59de95036430d1",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00024\\selection.json": "bbe0194ed4832d727a0392367b89f85f50a7fa2865951c747f1608a1d532ae47",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00024\\report.json": "19edba35ddf9cc3cc39d6cd536d1dcaf93d10c51856956a04ff59fda6d9c0751",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032\\selection.json": "b91c9e349ea475239b91b9f85293c63af7634873c15ec3f59ef369bcf2101a9a",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032\\report.json": "e8bb31451af79aaff52429d1146eb37c2cda961bda19f3465e05edab307849ee",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00024\\selection.json": "cd0f8a2dad6f81f0fa1b93ccd42413cb0c2c839aff4c178b85875da249ada54e",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00024\\report.json": "500867bf1a1b221beb321e32fd147cf5c4efaedcb1c15c0c7faf6a592d984117",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00032\\selection.json": "ba8e2e51a1219e1158323c6c1de99826f4fc2e753a917928e63cf7c600466962",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00032\\report.json": "4a23d9e69cde2f8575ac0e35ea6961bae4e721c71b7a51665e756b4e7f6bd656"
+  },
+  "script_sha256": "7b9815764eb4941b87cab3d3b4cc104353e393957551ec0b788ac1c4e572ff85",
+  "scope": "Descriptive fixed balanced bank only; top ties describe the choice path, not a causal mechanism. This does not validate a replacement tie-break policy or establish population-level deterioration."
+}

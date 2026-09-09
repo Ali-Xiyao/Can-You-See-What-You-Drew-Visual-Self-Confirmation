@@ -1,0 +1,32 @@
+{
+  "completed_utc": "2026-09-06T10:28:07.138618+00:00",
+  "task": {
+    "id": "rfo_gold-00032",
+    "arm": "rfo_gold",
+    "step": 32,
+    "checkpoint": {
+      "adapter_sha256": "da6b655af7cde787d1d50b7f3da5dc047208a2c4e44cad988dc91844c683b7e8",
+      "arm": "rfo_gold",
+      "manifest_sha256": "6bb09c92afbe66191ce3441b52f5d65d39b3f1bd98586c8114cad25633af0ff7",
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\rfo_gold\\round-003",
+      "round_index": 3,
+      "step": 32,
+      "type": "checkpoint"
+    },
+    "adapter_parameter_digest": "b6d4bc924da23821e026feb37ac7ce6b62cf8944144b5c4589d0ec8e0bb16022",
+    "old_observations": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00032\\observations.naive.jsonl",
+    "device": "cuda:1"
+  },
+  "n_observations": 80,
+  "n_errors": 0,
+  "n_abstained": 0,
+  "old_prompted_answer_reproduction": {
+    "matches": 0,
+    "total": 0,
+    "mismatches": []
+  },
+  "adapter_parameter_digest_before": "b6d4bc924da23821e026feb37ac7ce6b62cf8944144b5c4589d0ec8e0bb16022",
+  "adapter_parameter_digest_after": "b6d4bc924da23821e026feb37ac7ce6b62cf8944144b5c4589d0ec8e0bb16022",
+  "answers_sha256": "b4e6c57d22eda9eba868a2875c1a7ea6a82eb95cbc2b29090bdb455c52c42cdd",
+  "plan_sha256": "0b35c279b84c9c76965130d7273a7ece31a9fc5880fa39b290040b24a538c281"
+}

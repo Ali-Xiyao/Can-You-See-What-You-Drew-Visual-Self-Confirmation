@@ -1,0 +1,11 @@
+{
+  "status": "detector_ladder_complete",
+  "at_unix": 1788685894.9480283,
+  "controller_pid": 26812,
+  "n_requested": 44,
+  "n_verdicts": 44,
+  "n_missing": 0,
+  "n_pending_human": 4,
+  "verified_sha256": "3eaa3b5b0a11f8862a675663c7e311b170a4825145395d3b4672d03989323b58",
+  "research_goal_complete": false
+}

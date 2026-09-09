@@ -1,0 +1,11 @@
+{
+  "pid": 26812,
+  "launched_unix": 1788684958.485384,
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\core\\python.exe",
+    "-B",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\selection-benefit-side-20260906\\run_independent_labels.py",
+    "run"
+  ]
+}

@@ -1,0 +1,4311 @@
+{
+  "schema_version": 2,
+  "created_at": "2026-09-06T08:52:33.559211+00:00",
+  "outdir": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906",
+  "exploratory": true,
+  "multiple_looks_adjusted": false,
+  "rules": {
+    "window_checkpoints": 3,
+    "internal_delta_min": 0.02,
+    "external_delta_max": 0.02,
+    "gradient_drop_min": 0.01,
+    "gradient_consecutive_checkpoints": 2,
+    "gradient_paired_ci_min_common": 4,
+    "confidence_level": 0.95
+  },
+  "provenance": {
+    "config": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\configs\\v4_decoupling_pilot.yaml",
+      "sha256": "d92afed91a4649cb958e0a4011d20b4d0e7dac46a222b3634a90e246a2400106"
+    },
+    "protocol": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\docs\\prereg\\2026-09-06-decoupling-pilot.md",
+      "sha256": "c1d1e7240c134293077b8e1a68d5b9ab503f3ffdfac1c22343bdf6fd72a47710"
+    },
+    "scene_overlap": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\audit-splits\\scene_overlap.json",
+      "sha256": "b305fce3d53172e16f7c524c516053041cc398aa4f9e674b396cad4513cfd1ce"
+    },
+    "scene_representatives": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\audit-splits\\scene_representatives.json",
+      "sha256": "b981ad63507e1fa836cd9ded8bd578e93393df794d9341ea8776d57770c4d8c2"
+    }
+  },
+  "reporting_repair": "registered bootstrap rules retained; supplemental sparse-pair and missingness checks",
+  "numeric_comparison_tolerance": 1e-12,
+  "bootstrap_seed": 20260906,
+  "limitations": [
+    "exploratory: this report does not confirm D* or predictive utility",
+    "multiple looks and arms are not multiplicity-adjusted",
+    "observed lead is descriptive; forecasting improvement requires separate validation",
+    "complete paired specs may differ from the full outcome population; inspect coverage",
+    "bootstrap_rule_supported is the frozen descriptive rule, not reliable evidence of a plateau",
+    "supplementary robustness bounds do not correct repeated looks or establish predictive utility",
+    "spec-level binomial bounds require independent pairs; duplicate canonical scenes block that support flag",
+    "scene-disjoint sensitivity and scene-cluster bootstrap supplement the original frozen outcome population",
+    "the supplementary screen retains the internal-score percentile bootstrap; it is not an exact joint confidence test"
+  ],
+  "scene_audit_status": "prospectively_frozen_supplement_loaded",
+  "scene_audit_summary": {
+    "train_partition_n": 132,
+    "scheduled_train_prompt_n": 120,
+    "train_only_replay_pool_examples": 706,
+    "train_only_replay_pool_prompt_n": 82,
+    "planned_replay_sample_n": 160,
+    "planned_replay_prompt_n": 24,
+    "combined_planned_exposed_prompt_n": 123,
+    "combined_planned_exposed_scene_n": 112,
+    "outcome_overlap_n": 7,
+    "probe_partition_overlap_n": 5,
+    "actual_probe_bank_overlap_n": 2,
+    "scene_disjoint_outcome_n": 57,
+    "conservative_all_train_partition_outcome_overlap_n": 10,
+    "outcome_unique_canonical_scenes": 59,
+    "outcome_repeated_scene_groups": 4,
+    "outcome_prompts_in_repeated_scene_groups": 9
+  },
+  "arms": {
+    "naive": {
+      "status": "descriptive",
+      "checkpoints": [
+        {
+          "step": 0,
+          "arm": "naive",
+          "directory": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00000",
+          "coverage": {
+            "images": 64,
+            "known_score_images": 64,
+            "known_verdict_images": 57,
+            "joint_images": 57,
+            "answer_available": 316,
+            "answer_total": 316,
+            "specs": 64,
+            "expected_specs": 64,
+            "missing_manifest_specs": 0,
+            "complete_specs": 57,
+            "incomplete_specs": 7,
+            "paired_measurement_coverage": 0.890625,
+            "answer_coverage": 1.0
+          },
+          "missing_files": []
+        },
+        {
+          "step": 8,
+          "arm": "naive",
+          "directory": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00008",
+          "coverage": {
+            "images": 64,
+            "known_score_images": 64,
+            "known_verdict_images": 54,
+            "joint_images": 54,
+            "answer_available": 316,
+            "answer_total": 316,
+            "specs": 64,
+            "expected_specs": 64,
+            "missing_manifest_specs": 0,
+            "complete_specs": 54,
+            "incomplete_specs": 10,
+            "paired_measurement_coverage": 0.84375,
+            "answer_coverage": 1.0
+          },
+          "missing_files": []
+        },
+        {
+          "step": 16,
+          "arm": "naive",
+          "directory": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00016",
+          "coverage": {
+            "images": 64,
+            "known_score_images": 64,
+            "known_verdict_images": 61,
+            "joint_images": 61,
+            "answer_available": 316,
+            "answer_total": 316,
+            "specs": 64,
+            "expected_specs": 64,
+            "missing_manifest_specs": 0,
+            "complete_specs": 61,
+            "incomplete_specs": 3,
+            "paired_measurement_coverage": 0.953125,
+            "answer_coverage": 1.0
+          },
+          "missing_files": []
+        },
+        {
+          "step": 24,
+          "arm": "naive",
+          "directory": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00024",
+          "coverage": {
+            "images": 64,
+            "known_score_images": 64,
+            "known_verdict_images": 59,
+            "joint_images": 59,
+            "answer_available": 316,
+            "answer_total": 316,
+            "specs": 64,
+            "expected_specs": 64,
+            "missing_manifest_specs": 0,
+            "complete_specs": 59,
+            "incomplete_specs": 5,
+            "paired_measurement_coverage": 0.921875,
+            "answer_coverage": 1.0
+          },
+          "missing_files": []
+        },
+        {
+          "step": 32,
+          "arm": "naive",
+          "directory": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\evaluations\\naive\\step-00032",
+          "coverage": {
+            "images": 64,
+            "known_score_images": 64,
+            "known_verdict_images": 57,
+            "joint_images": 57,
+            "answer_available": 316,
+            "answer_total": 316,
+            "specs": 64,
+            "expected_specs": 64,
+            "missing_manifest_specs": 0,
+            "complete_specs": 57,
+            "incomplete_specs": 7,
+            "paired_measurement_coverage": 0.890625,
+            "answer_coverage": 1.0
+          },
+          "missing_files": []
+        }
+      ],
+      "windows": [
+        {
+          "window_steps": [
+            0,
+            8,
+            16
+          ],
+          "available_at_step": 16,
+          "n_paired_specs": 57,
+          "paired_spec_ids": [
+            "v4a-0001",
+            "v4a-0004",
+            "v4a-0007",
+            "v4a-0008",
+            "v4a-0009",
+            "v4a-0011",
+            "v4a-0014",
+            "v4a-0023",
+            "v4a-0024",
+            "v4a-0030",
+            "v4a-0031",
+            "v4a-0032",
+            "v4a-0033",
+            "v4a-0039",
+            "v4a-0041",
+            "v4a-0058",
+            "v4a-0062",
+            "v4a-0066",
+            "v4a-0070",
+            "v4a-0071",
+            "v4a-0073",
+            "v4a-0078",
+            "v4a-0080",
+            "v4a-0084",
+            "v4a-0088",
+            "v4a-0090",
+            "v4a-0097",
+            "v4a-0103",
+            "v4a-0104",
+            "v4a-0106",
+            "v4a-0107",
+            "v4a-0108",
+            "v4a-0113",
+            "v4b-0017",
+            "v4b-0021",
+            "v4b-0026",
+            "v4b-0029",
+            "v4b-0032",
+            "v4b-0033",
+            "v4b-0045",
+            "v4b-0049",
+            "v4b-0055",
+            "v4b-0059",
+            "v4b-0060",
+            "v4b-0061",
+            "v4b-0062",
+            "v4b-0069",
+            "v4b-0077",
+            "v4b-0082",
+            "v4b-0083",
+            "v4b-0090",
+            "v4b-0092",
+            "v4b-0094",
+            "v4b-0097",
+            "v4b-0103",
+            "v4b-0104",
+            "v4b-0106"
+          ],
+          "n_start_complete": 57,
+          "n_end_complete": 61,
+          "ci_method": "paired_spec_percentile_bootstrap",
+          "bootstrap_samples": 2000,
+          "s_select": {
+            "delta": 0.01608187134502924,
+            "ci_low": -0.023391812865497078,
+            "ci_high": 0.05555555555555555
+          },
+          "external": {
+            "delta": 0.017543859649122806,
+            "ci_low": -0.05263157894736842,
+            "ci_high": 0.10526315789473684
+          },
+          "ci_status": "available",
+          "candidate": false,
+          "interval_supported": false,
+          "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+          "bootstrap_rule_supported": false,
+          "bootstrap_degenerate_external_interval": false,
+          "robustness": {
+            "role": "supplementary_robustness_check_not_registered_confirmation",
+            "n_population_specs": 64,
+            "n_external_paired_specs": 57,
+            "n_external_unknown_pairs": 7,
+            "n_internal_paired_specs": 64,
+            "external_pair_coverage": 0.890625,
+            "internal_pair_coverage": 1.0,
+            "external_unknown_completion_delta_bounds": [
+              -0.03125,
+              0.125
+            ],
+            "external_paired_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 57,
+              "improvements": 3,
+              "deteriorations": 2,
+              "unchanged": 52,
+              "delta": 0.017543859649122806,
+              "ci_low": -0.12662173038429517,
+              "ci_high": 0.15808192904772853,
+              "improvement_probability_ci": [
+                0.008431312121700708,
+                0.16103530519017367
+              ],
+              "deterioration_probability_ci": [
+                0.0029533761424451587,
+                0.13505304250599587
+              ]
+            },
+            "external_confidence_and_unknown_envelope": [
+              -0.1596474786235129,
+              0.25016671805813323
+            ],
+            "external_fixed_cohort_screen": false,
+            "external_complete_population": false,
+            "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+            "external_full_cohort_completion_confidence_bounds": [
+              -0.18012513067818536,
+              0.2825096145422448
+            ],
+            "external_lower_completion_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 64,
+              "improvements": 3,
+              "deteriorations": 5,
+              "unchanged": 56,
+              "delta": -0.03125,
+              "ci_low": -0.18012513067818536,
+              "ci_high": 0.12275371033110943,
+              "improvement_probability_ci": [
+                0.007497834701724925,
+                0.14435628574313714
+              ],
+              "deterioration_probability_ci": [
+                0.02160257541202771,
+                0.1876229653799103
+              ]
+            },
+            "external_upper_completion_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 64,
+              "improvements": 10,
+              "deteriorations": 2,
+              "unchanged": 52,
+              "delta": 0.125,
+              "ci_low": -0.05150253684115441,
+              "ci_high": 0.2825096145422448,
+              "improvement_probability_ci": [
+                0.06948621470036373,
+                0.28513782729048176
+              ],
+              "deterioration_probability_ci": [
+                0.0026282127482369208,
+                0.12098875154151814
+              ]
+            },
+            "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+            "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+            "external_ci_status": "available",
+            "internal_all_available_delta": 0.019531249999999997,
+            "internal_all_available_bootstrap_ci": [
+              -0.015625,
+              0.05598958333333333
+            ],
+            "internal_complete_population": true,
+            "internal_supported": false,
+            "external_supported": false,
+            "supported": false,
+            "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+            "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+            "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+            "multiple_looks_adjusted": false,
+            "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+          },
+          "robustness_supported": false,
+          "robustness_support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+          "exploratory": true,
+          "multiple_looks_adjusted": false,
+          "scene_cluster_bootstrap": {
+            "method": "canonical_scene_cluster_percentile_bootstrap",
+            "estimand": "original prompt-weighted paired change, not scene-equal mean",
+            "n_population_specs": 64,
+            "n_paired_specs": 57,
+            "n_population_scene_clusters": 59,
+            "n_paired_scene_clusters": 53,
+            "valid_bootstrap_draws": 2000,
+            "bootstrap_samples": 2000,
+            "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+            "s_select": {
+              "delta": 0.01608187134502924,
+              "ci_low": -0.024251117734724294,
+              "ci_high": 0.05848359324236515
+            },
+            "external": {
+              "delta": 0.017543859649122806,
+              "ci_low": -0.05663098693759071,
+              "ci_high": 0.09680581910183411
+            }
+          },
+          "robustness_supported_assuming_independent_specs": false,
+          "scene_disjoint_sensitivity": {
+            "window_steps": [
+              0,
+              8,
+              16
+            ],
+            "available_at_step": 16,
+            "n_paired_specs": 53,
+            "paired_spec_ids": [
+              "v4a-0001",
+              "v4a-0004",
+              "v4a-0007",
+              "v4a-0008",
+              "v4a-0009",
+              "v4a-0011",
+              "v4a-0023",
+              "v4a-0024",
+              "v4a-0030",
+              "v4a-0031",
+              "v4a-0032",
+              "v4a-0033",
+              "v4a-0039",
+              "v4a-0041",
+              "v4a-0058",
+              "v4a-0062",
+              "v4a-0066",
+              "v4a-0070",
+              "v4a-0071",
+              "v4a-0073",
+              "v4a-0078",
+              "v4a-0080",
+              "v4a-0084",
+              "v4a-0088",
+              "v4a-0090",
+              "v4a-0097",
+              "v4a-0103",
+              "v4a-0104",
+              "v4a-0106",
+              "v4a-0107",
+              "v4a-0108",
+              "v4a-0113",
+              "v4b-0017",
+              "v4b-0021",
+              "v4b-0026",
+              "v4b-0032",
+              "v4b-0033",
+              "v4b-0045",
+              "v4b-0059",
+              "v4b-0060",
+              "v4b-0061",
+              "v4b-0062",
+              "v4b-0069",
+              "v4b-0077",
+              "v4b-0082",
+              "v4b-0083",
+              "v4b-0090",
+              "v4b-0092",
+              "v4b-0094",
+              "v4b-0097",
+              "v4b-0103",
+              "v4b-0104",
+              "v4b-0106"
+            ],
+            "n_start_complete": 53,
+            "n_end_complete": 55,
+            "ci_method": "paired_spec_percentile_bootstrap",
+            "bootstrap_samples": 2000,
+            "s_select": {
+              "delta": 0.009433962264150943,
+              "ci_low": -0.03144654088050315,
+              "ci_high": 0.05345911949685534
+            },
+            "external": {
+              "delta": 0.018867924528301886,
+              "ci_low": -0.05660377358490566,
+              "ci_high": 0.09433962264150944
+            },
+            "ci_status": "available",
+            "candidate": false,
+            "interval_supported": false,
+            "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+            "bootstrap_rule_supported": false,
+            "bootstrap_degenerate_external_interval": false,
+            "robustness": {
+              "role": "supplementary_robustness_check_not_registered_confirmation",
+              "n_population_specs": 57,
+              "n_external_paired_specs": 53,
+              "n_external_unknown_pairs": 4,
+              "n_internal_paired_specs": 57,
+              "external_pair_coverage": 0.9298245614035088,
+              "internal_pair_coverage": 1.0,
+              "external_unknown_completion_delta_bounds": [
+                -0.017543859649122806,
+                0.08771929824561403
+              ],
+              "external_paired_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 53,
+                "improvements": 3,
+                "deteriorations": 2,
+                "unchanged": 48,
+                "delta": 0.018867924528301886,
+                "ci_low": -0.13558244151204454,
+                "ci_high": 0.16923634511051056,
+                "improvement_probability_ci": [
+                  0.009077094178925906,
+                  0.1724144032125815
+                ],
+                "deterioration_probability_ci": [
+                  0.0031780581020709473,
+                  0.14465953569097045
+                ]
+              },
+              "external_confidence_and_unknown_envelope": [
+                -0.16115560351119934,
+                0.22753554896240455
+              ],
+              "external_fixed_cohort_screen": false,
+              "external_complete_population": false,
+              "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+              "external_full_cohort_completion_confidence_bounds": [
+                -0.17714168602318883,
+                0.2508698493668261
+              ],
+              "external_lower_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 57,
+                "improvements": 3,
+                "deteriorations": 4,
+                "unchanged": 50,
+                "delta": -0.017543859649122806,
+                "ci_low": -0.17714168602318883,
+                "ci_high": 0.14529839128041244,
+                "improvement_probability_ci": [
+                  0.008431312121700708,
+                  0.16103530519017367
+                ],
+                "deterioration_probability_ci": [
+                  0.015736913909761237,
+                  0.18557299814488953
+                ]
+              },
+              "external_upper_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 57,
+                "improvements": 7,
+                "deteriorations": 2,
+                "unchanged": 48,
+                "delta": 0.08771929824561403,
+                "ci_low": -0.09089487151112878,
+                "ci_high": 0.2508698493668261,
+                "improvement_probability_ci": [
+                  0.04415817099486709,
+                  0.2538232255092713
+                ],
+                "deterioration_probability_ci": [
+                  0.0029533761424451587,
+                  0.13505304250599587
+                ]
+              },
+              "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+              "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+              "external_ci_status": "available",
+              "internal_all_available_delta": 0.011695906432748536,
+              "internal_all_available_bootstrap_ci": [
+                -0.02631578947368421,
+                0.04824561403508772
+              ],
+              "internal_complete_population": true,
+              "internal_supported": false,
+              "external_supported": false,
+              "supported": false,
+              "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+              "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+              "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+              "multiple_looks_adjusted": false,
+              "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+            },
+            "robustness_supported": false,
+            "robustness_support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+            "exploratory": true,
+            "multiple_looks_adjusted": false,
+            "scene_cluster_bootstrap": {
+              "method": "canonical_scene_cluster_percentile_bootstrap",
+              "estimand": "original prompt-weighted paired change, not scene-equal mean",
+              "n_population_specs": 57,
+              "n_paired_specs": 53,
+              "n_population_scene_clusters": 54,
+              "n_paired_scene_clusters": 50,
+              "valid_bootstrap_draws": 2000,
+              "bootstrap_samples": 2000,
+              "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+              "s_select": {
+                "delta": 0.009433962264150941,
+                "ci_low": -0.03422837885154062,
+                "ci_high": 0.054022581254724054
+              },
+              "external": {
+                "delta": 0.018867924528301886,
+                "ci_low": -0.06003061224489795,
+                "ci_high": 0.10535885167464062
+              }
+            },
+            "robustness_supported_assuming_independent_specs": false,
+            "role": "frozen_sensitivity_not_replacement_primary_analysis",
+            "requested_sensitivity_n": 57
+          },
+          "independent_scene_representative_sensitivity": {
+            "window_steps": [
+              0,
+              8,
+              16
+            ],
+            "available_at_step": 16,
+            "n_paired_specs": 50,
+            "paired_spec_ids": [
+              "v4a-0001",
+              "v4a-0004",
+              "v4a-0007",
+              "v4a-0008",
+              "v4a-0009",
+              "v4a-0011",
+              "v4a-0023",
+              "v4a-0024",
+              "v4a-0030",
+              "v4a-0031",
+              "v4a-0032",
+              "v4a-0033",
+              "v4a-0041",
+              "v4a-0058",
+              "v4a-0062",
+              "v4a-0066",
+              "v4a-0070",
+              "v4a-0071",
+              "v4a-0073",
+              "v4a-0078",
+              "v4a-0080",
+              "v4a-0084",
+              "v4a-0088",
+              "v4a-0097",
+              "v4a-0103",
+              "v4a-0104",
+              "v4a-0106",
+              "v4a-0108",
+              "v4a-0113",
+              "v4b-0017",
+              "v4b-0021",
+              "v4b-0026",
+              "v4b-0032",
+              "v4b-0033",
+              "v4b-0045",
+              "v4b-0059",
+              "v4b-0060",
+              "v4b-0061",
+              "v4b-0062",
+              "v4b-0069",
+              "v4b-0077",
+              "v4b-0082",
+              "v4b-0083",
+              "v4b-0090",
+              "v4b-0092",
+              "v4b-0094",
+              "v4b-0097",
+              "v4b-0103",
+              "v4b-0104",
+              "v4b-0106"
+            ],
+            "n_start_complete": 50,
+            "n_end_complete": 52,
+            "ci_method": "paired_spec_percentile_bootstrap",
+            "bootstrap_samples": 2000,
+            "s_select": {
+              "delta": 0.014999999999999998,
+              "ci_low": -0.02666666666666667,
+              "ci_high": 0.059999999999999984
+            },
+            "external": {
+              "delta": 0.02,
+              "ci_low": -0.06,
+              "ci_high": 0.1
+            },
+            "ci_status": "available",
+            "candidate": false,
+            "interval_supported": false,
+            "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+            "bootstrap_rule_supported": false,
+            "bootstrap_degenerate_external_interval": false,
+            "robustness": {
+              "role": "supplementary_robustness_check_not_registered_confirmation",
+              "n_population_specs": 54,
+              "n_external_paired_specs": 50,
+              "n_external_unknown_pairs": 4,
+              "n_internal_paired_specs": 54,
+              "external_pair_coverage": 0.9259259259259259,
+              "internal_pair_coverage": 1.0,
+              "external_unknown_completion_delta_bounds": [
+                -0.018518518518518517,
+                0.09259259259259259
+              ],
+              "external_paired_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 50,
+                "improvements": 3,
+                "deteriorations": 2,
+                "unchanged": 45,
+                "delta": 0.02,
+                "ci_low": -0.14317959285272755,
+                "ci_high": 0.17868964060445983,
+                "improvement_probability_ci": [
+                  0.009630317156511674,
+                  0.18206000347353113
+                ],
+                "deterioration_probability_ci": [
+                  0.0033703628690713062,
+                  0.1528099100092392
+                ]
+              },
+              "external_confidence_and_unknown_envelope": [
+                -0.1696107341228959,
+                0.23952744500412948
+              ],
+              "external_fixed_cohort_screen": false,
+              "external_complete_population": false,
+              "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+              "external_full_cohort_completion_confidence_bounds": [
+                -0.18627422654261613,
+                0.2636412150677783
+              ],
+              "external_lower_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 54,
+                "improvements": 3,
+                "deteriorations": 4,
+                "unchanged": 47,
+                "delta": -0.018518518518518517,
+                "ci_low": -0.18627422654261613,
+                "ci_high": 0.15279272802438332,
+                "improvement_probability_ci": [
+                  0.008906547527495787,
+                  0.16942183971345154
+                ],
+                "deterioration_probability_ci": [
+                  0.016629111689068228,
+                  0.19518077407011192
+                ]
+              },
+              "external_upper_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 54,
+                "improvements": 7,
+                "deteriorations": 2,
+                "unchanged": 45,
+                "delta": 0.09259259259259259,
+                "ci_low": -0.09543316500683326,
+                "ci_high": 0.2636412150677783,
+                "improvement_probability_ci": [
+                  0.04669907997918758,
+                  0.2667599574217657
+                ],
+                "deterioration_probability_ci": [
+                  0.0031187423539873905,
+                  0.14213224498602084
+                ]
+              },
+              "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+              "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+              "external_ci_status": "available",
+              "internal_all_available_delta": 0.016975308641975304,
+              "internal_all_available_bootstrap_ci": [
+                -0.02006172839506173,
+                0.05401234567901234
+              ],
+              "internal_complete_population": true,
+              "internal_supported": false,
+              "external_supported": false,
+              "supported": false,
+              "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+              "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+              "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+              "multiple_looks_adjusted": false,
+              "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+            },
+            "robustness_supported": false,
+            "robustness_support_status": "conditional_on_independent_canonical_scenes",
+            "exploratory": true,
+            "multiple_looks_adjusted": false,
+            "scene_cluster_bootstrap": {
+              "method": "canonical_scene_cluster_percentile_bootstrap",
+              "estimand": "original prompt-weighted paired change, not scene-equal mean",
+              "n_population_specs": 54,
+              "n_paired_specs": 50,
+              "n_population_scene_clusters": 54,
+              "n_paired_scene_clusters": 50,
+              "valid_bootstrap_draws": 2000,
+              "bootstrap_samples": 2000,
+              "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+              "s_select": {
+                "delta": 0.014999999999999998,
+                "ci_low": -0.02833333333333334,
+                "ci_high": 0.058828635620915004
+              },
+              "external": {
+                "delta": 0.02,
+                "ci_low": -0.06382978723404255,
+                "ci_high": 0.11320754716981132
+              }
+            },
+            "robustness_supported_assuming_independent_specs": false,
+            "role": "frozen_sensitivity_not_replacement_primary_analysis",
+            "requested_sensitivity_n": 54
+          }
+        },
+        {
+          "window_steps": [
+            8,
+            16,
+            24
+          ],
+          "available_at_step": 24,
+          "n_paired_specs": 52,
+          "paired_spec_ids": [
+            "v4a-0001",
+            "v4a-0004",
+            "v4a-0007",
+            "v4a-0008",
+            "v4a-0009",
+            "v4a-0011",
+            "v4a-0014",
+            "v4a-0023",
+            "v4a-0024",
+            "v4a-0030",
+            "v4a-0031",
+            "v4a-0032",
+            "v4a-0033",
+            "v4a-0039",
+            "v4a-0041",
+            "v4a-0058",
+            "v4a-0062",
+            "v4a-0066",
+            "v4a-0070",
+            "v4a-0071",
+            "v4a-0080",
+            "v4a-0084",
+            "v4a-0088",
+            "v4a-0090",
+            "v4a-0097",
+            "v4a-0103",
+            "v4a-0104",
+            "v4a-0106",
+            "v4a-0107",
+            "v4a-0108",
+            "v4a-0113",
+            "v4b-0017",
+            "v4b-0021",
+            "v4b-0026",
+            "v4b-0029",
+            "v4b-0032",
+            "v4b-0033",
+            "v4b-0045",
+            "v4b-0049",
+            "v4b-0055",
+            "v4b-0059",
+            "v4b-0060",
+            "v4b-0062",
+            "v4b-0069",
+            "v4b-0077",
+            "v4b-0083",
+            "v4b-0090",
+            "v4b-0092",
+            "v4b-0097",
+            "v4b-0103",
+            "v4b-0104",
+            "v4b-0106"
+          ],
+          "n_start_complete": 54,
+          "n_end_complete": 59,
+          "ci_method": "paired_spec_percentile_bootstrap",
+          "bootstrap_samples": 2000,
+          "s_select": {
+            "delta": 0.017628205128205125,
+            "ci_low": -0.025681089743589753,
+            "ci_high": 0.06089743589743589
+          },
+          "external": {
+            "delta": 0.038461538461538464,
+            "ci_low": -0.038461538461538464,
+            "ci_high": 0.11538461538461539
+          },
+          "ci_status": "available",
+          "candidate": false,
+          "interval_supported": false,
+          "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+          "bootstrap_rule_supported": false,
+          "bootstrap_degenerate_external_interval": false,
+          "robustness": {
+            "role": "supplementary_robustness_check_not_registered_confirmation",
+            "n_population_specs": 64,
+            "n_external_paired_specs": 52,
+            "n_external_unknown_pairs": 12,
+            "n_internal_paired_specs": 64,
+            "external_pair_coverage": 0.8125,
+            "internal_pair_coverage": 1.0,
+            "external_unknown_completion_delta_bounds": [
+              -0.0625,
+              0.171875
+            ],
+            "external_paired_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 52,
+              "improvements": 3,
+              "deteriorations": 1,
+              "unchanged": 48,
+              "delta": 0.038461538461538464,
+              "ci_low": -0.1072949477996812,
+              "ci_high": 0.1752724338753192,
+              "improvement_probability_ci": [
+                0.00925430066004972,
+                0.1755143042777802
+              ],
+              "deterioration_probability_ci": [
+                0.00024187040246099442,
+                0.11654924845973091
+              ]
+            },
+            "external_confidence_and_unknown_envelope": [
+              -0.18092714508724098,
+              0.28303385252369684
+            ],
+            "external_fixed_cohort_screen": false,
+            "external_complete_population": false,
+            "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+            "external_full_cohort_completion_confidence_bounds": [
+              -0.22050439456421556,
+              0.3213780810290953
+            ],
+            "external_lower_completion_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 64,
+              "improvements": 3,
+              "deteriorations": 7,
+              "unchanged": 54,
+              "delta": -0.0625,
+              "ci_low": -0.22050439456421556,
+              "ci_high": 0.10517219144087818,
+              "improvement_probability_ci": [
+                0.007497834701724925,
+                0.14435628574313714
+              ],
+              "deterioration_probability_ci": [
+                0.03918409430225896,
+                0.2280022292659405
+              ]
+            },
+            "external_upper_completion_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 64,
+              "improvements": 12,
+              "deteriorations": 1,
+              "unchanged": 51,
+              "delta": 0.171875,
+              "ci_low": -0.004094162592028022,
+              "ci_high": 0.3213780810290953,
+              "improvement_probability_ci": [
+                0.09151779502692448,
+                0.32157460518767467
+              ],
+              "deterioration_probability_ci": [
+                0.00019652415857932085,
+                0.0956119576189525
+              ]
+            },
+            "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+            "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+            "external_ci_status": "available",
+            "internal_all_available_delta": 0.011718749999999997,
+            "internal_all_available_bootstrap_ci": [
+              -0.02604166666666667,
+              0.05078124999999999
+            ],
+            "internal_complete_population": true,
+            "internal_supported": false,
+            "external_supported": false,
+            "supported": false,
+            "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+            "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+            "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+            "multiple_looks_adjusted": false,
+            "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+          },
+          "robustness_supported": false,
+          "robustness_support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+          "exploratory": true,
+          "multiple_looks_adjusted": false,
+          "scene_cluster_bootstrap": {
+            "method": "canonical_scene_cluster_percentile_bootstrap",
+            "estimand": "original prompt-weighted paired change, not scene-equal mean",
+            "n_population_specs": 64,
+            "n_paired_specs": 52,
+            "n_population_scene_clusters": 59,
+            "n_paired_scene_clusters": 48,
+            "valid_bootstrap_draws": 2000,
+            "bootstrap_samples": 2000,
+            "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+            "s_select": {
+              "delta": 0.017628205128205125,
+              "ci_low": -0.022014985239378775,
+              "ci_high": 0.06411163522012572
+            },
+            "external": {
+              "delta": 0.038461538461538464,
+              "ci_low": -0.037037037037037035,
+              "ci_high": 0.12244897959183673
+            }
+          },
+          "robustness_supported_assuming_independent_specs": false,
+          "scene_disjoint_sensitivity": {
+            "window_steps": [
+              8,
+              16,
+              24
+            ],
+            "available_at_step": 24,
+            "n_paired_specs": 48,
+            "paired_spec_ids": [
+              "v4a-0001",
+              "v4a-0004",
+              "v4a-0007",
+              "v4a-0008",
+              "v4a-0009",
+              "v4a-0011",
+              "v4a-0023",
+              "v4a-0024",
+              "v4a-0030",
+              "v4a-0031",
+              "v4a-0032",
+              "v4a-0033",
+              "v4a-0039",
+              "v4a-0041",
+              "v4a-0058",
+              "v4a-0062",
+              "v4a-0066",
+              "v4a-0070",
+              "v4a-0071",
+              "v4a-0080",
+              "v4a-0084",
+              "v4a-0088",
+              "v4a-0090",
+              "v4a-0097",
+              "v4a-0103",
+              "v4a-0104",
+              "v4a-0106",
+              "v4a-0107",
+              "v4a-0108",
+              "v4a-0113",
+              "v4b-0017",
+              "v4b-0021",
+              "v4b-0026",
+              "v4b-0032",
+              "v4b-0033",
+              "v4b-0045",
+              "v4b-0059",
+              "v4b-0060",
+              "v4b-0062",
+              "v4b-0069",
+              "v4b-0077",
+              "v4b-0083",
+              "v4b-0090",
+              "v4b-0092",
+              "v4b-0097",
+              "v4b-0103",
+              "v4b-0104",
+              "v4b-0106"
+            ],
+            "n_start_complete": 50,
+            "n_end_complete": 53,
+            "ci_method": "paired_spec_percentile_bootstrap",
+            "bootstrap_samples": 2000,
+            "s_select": {
+              "delta": 0.012152777777777776,
+              "ci_low": -0.03298611111111111,
+              "ci_high": 0.057335069444444206
+            },
+            "external": {
+              "delta": 0.041666666666666664,
+              "ci_low": -0.041666666666666664,
+              "ci_high": 0.125
+            },
+            "ci_status": "available",
+            "candidate": false,
+            "interval_supported": false,
+            "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+            "bootstrap_rule_supported": false,
+            "bootstrap_degenerate_external_interval": false,
+            "robustness": {
+              "role": "supplementary_robustness_check_not_registered_confirmation",
+              "n_population_specs": 57,
+              "n_external_paired_specs": 48,
+              "n_external_unknown_pairs": 9,
+              "n_internal_paired_specs": 57,
+              "external_pair_coverage": 0.8421052631578947,
+              "internal_pair_coverage": 1.0,
+              "external_unknown_completion_delta_bounds": [
+                -0.05263157894736842,
+                0.14035087719298245
+              ],
+              "external_paired_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 48,
+                "improvements": 3,
+                "deteriorations": 1,
+                "unchanged": 44,
+                "delta": 0.041666666666666664,
+                "ci_low": -0.11568527634322355,
+                "ci_high": 0.18884926438300012,
+                "improvement_probability_ci": [
+                  0.010038189173368139,
+                  0.18911128801145438
+                ],
+                "deterioration_probability_ci": [
+                  0.00026202362845427376,
+                  0.1257234655165917
+                ]
+              },
+              "external_confidence_and_unknown_envelope": [
+                -0.18513847832411806,
+                0.264294117375158
+              ],
+              "external_fixed_cohort_screen": false,
+              "external_complete_population": false,
+              "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+              "external_full_cohort_completion_confidence_bounds": [
+                -0.22334067663876842,
+                0.2961535076357814
+              ],
+              "external_lower_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 57,
+                "improvements": 3,
+                "deteriorations": 6,
+                "unchanged": 48,
+                "delta": -0.05263157894736842,
+                "ci_low": -0.22334067663876842,
+                "ci_high": 0.12717400643312504,
+                "improvement_probability_ci": [
+                  0.008431312121700708,
+                  0.16103530519017367
+                ],
+                "deterioration_probability_ci": [
+                  0.033861298757048644,
+                  0.23177198876046912
+                ]
+              },
+              "external_upper_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 57,
+                "improvements": 9,
+                "deteriorations": 1,
+                "unchanged": 47,
+                "delta": 0.14035087719298245,
+                "ci_low": -0.040287642235425386,
+                "ci_high": 0.2961535076357814,
+                "improvement_probability_ci": [
+                  0.06651754582021108,
+                  0.29637416367724934
+                ],
+                "deterioration_probability_ci": [
+                  0.00022065604146794438,
+                  0.10680518805563646
+                ]
+              },
+              "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+              "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+              "external_ci_status": "available",
+              "internal_all_available_delta": 0.0043859649122807,
+              "internal_all_available_bootstrap_ci": [
+                -0.036549707602339186,
+                0.04678362573099415
+              ],
+              "internal_complete_population": true,
+              "internal_supported": false,
+              "external_supported": false,
+              "supported": false,
+              "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+              "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+              "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+              "multiple_looks_adjusted": false,
+              "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+            },
+            "robustness_supported": false,
+            "robustness_support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+            "exploratory": true,
+            "multiple_looks_adjusted": false,
+            "scene_cluster_bootstrap": {
+              "method": "canonical_scene_cluster_percentile_bootstrap",
+              "estimand": "original prompt-weighted paired change, not scene-equal mean",
+              "n_population_specs": 57,
+              "n_paired_specs": 48,
+              "n_population_scene_clusters": 54,
+              "n_paired_scene_clusters": 45,
+              "valid_bootstrap_draws": 2000,
+              "bootstrap_samples": 2000,
+              "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+              "s_select": {
+                "delta": 0.012152777777777776,
+                "ci_low": -0.031918303327877796,
+                "ci_high": 0.05769557823129249
+              },
+              "external": {
+                "delta": 0.041666666666666664,
+                "ci_low": -0.025016025641025643,
+                "ci_high": 0.1276595744680851
+              }
+            },
+            "robustness_supported_assuming_independent_specs": false,
+            "role": "frozen_sensitivity_not_replacement_primary_analysis",
+            "requested_sensitivity_n": 57
+          },
+          "independent_scene_representative_sensitivity": {
+            "window_steps": [
+              8,
+              16,
+              24
+            ],
+            "available_at_step": 24,
+            "n_paired_specs": 45,
+            "paired_spec_ids": [
+              "v4a-0001",
+              "v4a-0004",
+              "v4a-0007",
+              "v4a-0008",
+              "v4a-0009",
+              "v4a-0011",
+              "v4a-0023",
+              "v4a-0024",
+              "v4a-0030",
+              "v4a-0031",
+              "v4a-0032",
+              "v4a-0033",
+              "v4a-0041",
+              "v4a-0058",
+              "v4a-0062",
+              "v4a-0066",
+              "v4a-0070",
+              "v4a-0071",
+              "v4a-0080",
+              "v4a-0084",
+              "v4a-0088",
+              "v4a-0097",
+              "v4a-0103",
+              "v4a-0104",
+              "v4a-0106",
+              "v4a-0108",
+              "v4a-0113",
+              "v4b-0017",
+              "v4b-0021",
+              "v4b-0026",
+              "v4b-0032",
+              "v4b-0033",
+              "v4b-0045",
+              "v4b-0059",
+              "v4b-0060",
+              "v4b-0062",
+              "v4b-0069",
+              "v4b-0077",
+              "v4b-0083",
+              "v4b-0090",
+              "v4b-0092",
+              "v4b-0097",
+              "v4b-0103",
+              "v4b-0104",
+              "v4b-0106"
+            ],
+            "n_start_complete": 47,
+            "n_end_complete": 50,
+            "ci_method": "paired_spec_percentile_bootstrap",
+            "bootstrap_samples": 2000,
+            "s_select": {
+              "delta": 0.01296296296296296,
+              "ci_low": -0.03333333333333334,
+              "ci_high": 0.06296296296296296
+            },
+            "external": {
+              "delta": 0.044444444444444446,
+              "ci_low": -0.044444444444444446,
+              "ci_high": 0.13333333333333333
+            },
+            "ci_status": "available",
+            "candidate": false,
+            "interval_supported": false,
+            "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+            "bootstrap_rule_supported": false,
+            "bootstrap_degenerate_external_interval": false,
+            "robustness": {
+              "role": "supplementary_robustness_check_not_registered_confirmation",
+              "n_population_specs": 54,
+              "n_external_paired_specs": 45,
+              "n_external_unknown_pairs": 9,
+              "n_internal_paired_specs": 54,
+              "external_pair_coverage": 0.8333333333333334,
+              "internal_pair_coverage": 1.0,
+              "external_unknown_completion_delta_bounds": [
+                -0.05555555555555555,
+                0.14814814814814814
+              ],
+              "external_paired_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 45,
+                "improvements": 3,
+                "deteriorations": 1,
+                "unchanged": 41,
+                "delta": 0.044444444444444446,
+                "ci_low": -0.1228906165094439,
+                "ci_high": 0.20049218018465328,
+                "improvement_probability_ci": [
+                  0.010719184145188621,
+                  0.2007716696136897
+                ],
+                "deterioration_probability_ci": [
+                  0.0002794894290364063,
+                  0.13360980065463252
+                ]
+              },
+              "external_confidence_and_unknown_envelope": [
+                -0.19500143968379582,
+                0.27818792793165553
+              ],
+              "external_fixed_cohort_screen": false,
+              "external_complete_population": false,
+              "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+              "external_full_cohort_completion_confidence_bounds": [
+                -0.23473758029494993,
+                0.31110185435770515
+              ],
+              "external_lower_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 54,
+                "improvements": 3,
+                "deteriorations": 6,
+                "unchanged": 45,
+                "delta": -0.05555555555555555,
+                "ci_low": -0.23473758029494993,
+                "ci_high": 0.13362113215097066,
+                "improvement_probability_ci": [
+                  0.008906547527495787,
+                  0.16942183971345154
+                ],
+                "deterioration_probability_ci": [
+                  0.03580070756248087,
+                  0.2436441278224457
+                ]
+              },
+              "external_upper_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 54,
+                "improvements": 9,
+                "deteriorations": 1,
+                "unchanged": 44,
+                "delta": 0.14814814814814814,
+                "ci_low": -0.04206750379293819,
+                "ci_high": 0.31110185435770515,
+                "improvement_probability_ci": [
+                  0.07037850834305845,
+                  0.3113347676404322
+                ],
+                "deterioration_probability_ci": [
+                  0.00023291328272704746,
+                  0.11244601213599664
+                ]
+              },
+              "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+              "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+              "external_ci_status": "available",
+              "internal_all_available_delta": 0.004629629629629628,
+              "internal_all_available_bootstrap_ci": [
+                -0.03858024691358025,
+                0.047839506172839504
+              ],
+              "internal_complete_population": true,
+              "internal_supported": false,
+              "external_supported": false,
+              "supported": false,
+              "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+              "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+              "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+              "multiple_looks_adjusted": false,
+              "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+            },
+            "robustness_supported": false,
+            "robustness_support_status": "conditional_on_independent_canonical_scenes",
+            "exploratory": true,
+            "multiple_looks_adjusted": false,
+            "scene_cluster_bootstrap": {
+              "method": "canonical_scene_cluster_percentile_bootstrap",
+              "estimand": "original prompt-weighted paired change, not scene-equal mean",
+              "n_population_specs": 54,
+              "n_paired_specs": 45,
+              "n_population_scene_clusters": 54,
+              "n_paired_scene_clusters": 45,
+              "valid_bootstrap_draws": 2000,
+              "bootstrap_samples": 2000,
+              "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+              "s_select": {
+                "delta": 0.01296296296296296,
+                "ci_low": -0.034427838164251205,
+                "ci_high": 0.060288033653177545
+              },
+              "external": {
+                "delta": 0.044444444444444446,
+                "ci_low": -0.025675675675675674,
+                "ci_high": 0.13644291754756827
+              }
+            },
+            "robustness_supported_assuming_independent_specs": false,
+            "role": "frozen_sensitivity_not_replacement_primary_analysis",
+            "requested_sensitivity_n": 54
+          }
+        },
+        {
+          "window_steps": [
+            16,
+            24,
+            32
+          ],
+          "available_at_step": 32,
+          "n_paired_specs": 57,
+          "paired_spec_ids": [
+            "v4a-0001",
+            "v4a-0004",
+            "v4a-0007",
+            "v4a-0008",
+            "v4a-0009",
+            "v4a-0011",
+            "v4a-0014",
+            "v4a-0023",
+            "v4a-0024",
+            "v4a-0031",
+            "v4a-0032",
+            "v4a-0033",
+            "v4a-0039",
+            "v4a-0041",
+            "v4a-0058",
+            "v4a-0062",
+            "v4a-0066",
+            "v4a-0070",
+            "v4a-0071",
+            "v4a-0073",
+            "v4a-0078",
+            "v4a-0080",
+            "v4a-0084",
+            "v4a-0088",
+            "v4a-0090",
+            "v4a-0097",
+            "v4a-0103",
+            "v4a-0104",
+            "v4a-0105",
+            "v4a-0106",
+            "v4a-0107",
+            "v4a-0108",
+            "v4a-0113",
+            "v4b-0017",
+            "v4b-0021",
+            "v4b-0026",
+            "v4b-0029",
+            "v4b-0032",
+            "v4b-0045",
+            "v4b-0049",
+            "v4b-0054",
+            "v4b-0055",
+            "v4b-0059",
+            "v4b-0060",
+            "v4b-0061",
+            "v4b-0062",
+            "v4b-0069",
+            "v4b-0077",
+            "v4b-0082",
+            "v4b-0083",
+            "v4b-0090",
+            "v4b-0092",
+            "v4b-0094",
+            "v4b-0097",
+            "v4b-0103",
+            "v4b-0104",
+            "v4b-0106"
+          ],
+          "n_start_complete": 61,
+          "n_end_complete": 57,
+          "ci_method": "paired_spec_percentile_bootstrap",
+          "bootstrap_samples": 2000,
+          "s_select": {
+            "delta": 0.016081871345029242,
+            "ci_low": -0.008771929824561403,
+            "ci_high": 0.04093567251461989
+          },
+          "external": {
+            "delta": 0.0,
+            "ci_low": -0.07017543859649122,
+            "ci_high": 0.07017543859649122
+          },
+          "ci_status": "available",
+          "candidate": false,
+          "interval_supported": false,
+          "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+          "bootstrap_rule_supported": false,
+          "bootstrap_degenerate_external_interval": false,
+          "robustness": {
+            "role": "supplementary_robustness_check_not_registered_confirmation",
+            "n_population_specs": 64,
+            "n_external_paired_specs": 57,
+            "n_external_unknown_pairs": 7,
+            "n_internal_paired_specs": 64,
+            "external_pair_coverage": 0.890625,
+            "internal_pair_coverage": 1.0,
+            "external_unknown_completion_delta_bounds": [
+              -0.078125,
+              0.078125
+            ],
+            "external_paired_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 57,
+              "improvements": 2,
+              "deteriorations": 2,
+              "unchanged": 53,
+              "delta": 0.0,
+              "ci_low": -0.13209966636355072,
+              "ci_high": 0.13209966636355072,
+              "improvement_probability_ci": [
+                0.0029533761424451587,
+                0.13505304250599587
+              ],
+              "deterioration_probability_ci": [
+                0.0029533761424451587,
+                0.13505304250599587
+              ]
+            },
+            "external_confidence_and_unknown_envelope": [
+              -0.19577626535503737,
+              0.19577626535503737
+            ],
+            "external_fixed_cohort_screen": false,
+            "external_complete_population": false,
+            "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+            "external_full_cohort_completion_confidence_bounds": [
+              -0.22537401651770358,
+              0.22537401651770358
+            ],
+            "external_lower_completion_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 64,
+              "improvements": 2,
+              "deteriorations": 7,
+              "unchanged": 55,
+              "delta": -0.078125,
+              "ci_low": -0.22537401651770358,
+              "ci_high": 0.08180465723925918,
+              "improvement_probability_ci": [
+                0.0026282127482369208,
+                0.12098875154151814
+              ],
+              "deterioration_probability_ci": [
+                0.03918409430225896,
+                0.2280022292659405
+              ]
+            },
+            "external_upper_completion_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 64,
+              "improvements": 7,
+              "deteriorations": 2,
+              "unchanged": 55,
+              "delta": 0.078125,
+              "ci_low": -0.08180465723925918,
+              "ci_high": 0.22537401651770358,
+              "improvement_probability_ci": [
+                0.03918409430225896,
+                0.2280022292659405
+              ],
+              "deterioration_probability_ci": [
+                0.0026282127482369208,
+                0.12098875154151814
+              ]
+            },
+            "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+            "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+            "external_ci_status": "available",
+            "internal_all_available_delta": 0.015625,
+            "internal_all_available_bootstrap_ci": [
+              -0.010416666666666664,
+              0.040364583333333336
+            ],
+            "internal_complete_population": true,
+            "internal_supported": false,
+            "external_supported": false,
+            "supported": false,
+            "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+            "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+            "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+            "multiple_looks_adjusted": false,
+            "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+          },
+          "robustness_supported": false,
+          "robustness_support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+          "exploratory": true,
+          "multiple_looks_adjusted": false,
+          "scene_cluster_bootstrap": {
+            "method": "canonical_scene_cluster_percentile_bootstrap",
+            "estimand": "original prompt-weighted paired change, not scene-equal mean",
+            "n_population_specs": 64,
+            "n_paired_specs": 57,
+            "n_population_scene_clusters": 59,
+            "n_paired_scene_clusters": 52,
+            "valid_bootstrap_draws": 2000,
+            "bootstrap_samples": 2000,
+            "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+            "s_select": {
+              "delta": 0.016081871345029246,
+              "ci_low": -0.010057471264367812,
+              "ci_high": 0.042499154834347456
+            },
+            "external": {
+              "delta": 0.0,
+              "ci_low": -0.06896551724137931,
+              "ci_high": 0.07017543859649122
+            }
+          },
+          "robustness_supported_assuming_independent_specs": false,
+          "scene_disjoint_sensitivity": {
+            "window_steps": [
+              16,
+              24,
+              32
+            ],
+            "available_at_step": 32,
+            "n_paired_specs": 51,
+            "paired_spec_ids": [
+              "v4a-0001",
+              "v4a-0004",
+              "v4a-0007",
+              "v4a-0008",
+              "v4a-0009",
+              "v4a-0011",
+              "v4a-0023",
+              "v4a-0024",
+              "v4a-0031",
+              "v4a-0032",
+              "v4a-0033",
+              "v4a-0039",
+              "v4a-0041",
+              "v4a-0058",
+              "v4a-0062",
+              "v4a-0066",
+              "v4a-0070",
+              "v4a-0071",
+              "v4a-0073",
+              "v4a-0078",
+              "v4a-0080",
+              "v4a-0084",
+              "v4a-0088",
+              "v4a-0090",
+              "v4a-0097",
+              "v4a-0103",
+              "v4a-0104",
+              "v4a-0106",
+              "v4a-0107",
+              "v4a-0108",
+              "v4a-0113",
+              "v4b-0017",
+              "v4b-0021",
+              "v4b-0026",
+              "v4b-0032",
+              "v4b-0045",
+              "v4b-0059",
+              "v4b-0060",
+              "v4b-0061",
+              "v4b-0062",
+              "v4b-0069",
+              "v4b-0077",
+              "v4b-0082",
+              "v4b-0083",
+              "v4b-0090",
+              "v4b-0092",
+              "v4b-0094",
+              "v4b-0097",
+              "v4b-0103",
+              "v4b-0104",
+              "v4b-0106"
+            ],
+            "n_start_complete": 55,
+            "n_end_complete": 51,
+            "ci_method": "paired_spec_percentile_bootstrap",
+            "bootstrap_samples": 2000,
+            "s_select": {
+              "delta": 0.022875816993464054,
+              "ci_low": -0.0032679738562091474,
+              "ci_high": 0.05392156862745098
+            },
+            "external": {
+              "delta": 0.0,
+              "ci_low": -0.0784313725490196,
+              "ci_high": 0.0784313725490196
+            },
+            "ci_status": "available",
+            "candidate": true,
+            "interval_supported": false,
+            "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+            "bootstrap_rule_supported": false,
+            "bootstrap_degenerate_external_interval": false,
+            "robustness": {
+              "role": "supplementary_robustness_check_not_registered_confirmation",
+              "n_population_specs": 57,
+              "n_external_paired_specs": 51,
+              "n_external_unknown_pairs": 6,
+              "n_internal_paired_specs": 57,
+              "external_pair_coverage": 0.8947368421052632,
+              "internal_pair_coverage": 1.0,
+              "external_unknown_completion_delta_bounds": [
+                -0.07017543859649122,
+                0.07017543859649122
+              ],
+              "external_paired_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 51,
+                "improvements": 2,
+                "deteriorations": 2,
+                "unchanged": 47,
+                "delta": 0.0,
+                "ci_low": -0.1466894224802628,
+                "ci_high": 0.1466894224802628,
+                "improvement_probability_ci": [
+                  0.0033037264123821283,
+                  0.14999314889264492
+                ],
+                "deterioration_probability_ci": [
+                  0.0033037264123821283,
+                  0.14999314889264492
+                ]
+              },
+              "external_confidence_and_unknown_envelope": [
+                -0.20142386923672637,
+                0.20142386923672637
+              ],
+              "external_fixed_cohort_screen": false,
+              "external_complete_population": false,
+              "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+              "external_full_cohort_completion_confidence_bounds": [
+                -0.22881861261802397,
+                0.22881861261802397
+              ],
+              "external_lower_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 57,
+                "improvements": 2,
+                "deteriorations": 6,
+                "unchanged": 49,
+                "delta": -0.07017543859649122,
+                "ci_low": -0.22881861261802397,
+                "ci_high": 0.10119174374894722,
+                "improvement_probability_ci": [
+                  0.0029533761424451587,
+                  0.13505304250599587
+                ],
+                "deterioration_probability_ci": [
+                  0.033861298757048644,
+                  0.23177198876046912
+                ]
+              },
+              "external_upper_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 57,
+                "improvements": 6,
+                "deteriorations": 2,
+                "unchanged": 49,
+                "delta": 0.07017543859649122,
+                "ci_low": -0.10119174374894722,
+                "ci_high": 0.22881861261802397,
+                "improvement_probability_ci": [
+                  0.033861298757048644,
+                  0.23177198876046912
+                ],
+                "deterioration_probability_ci": [
+                  0.0029533761424451587,
+                  0.13505304250599587
+                ]
+              },
+              "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+              "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+              "external_ci_status": "available",
+              "internal_all_available_delta": 0.024853801169590645,
+              "internal_all_available_bootstrap_ci": [
+                1.947759692324836e-18,
+                0.05116959064327486
+              ],
+              "internal_complete_population": true,
+              "internal_supported": false,
+              "external_supported": false,
+              "supported": false,
+              "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+              "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+              "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+              "multiple_looks_adjusted": false,
+              "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+            },
+            "robustness_supported": false,
+            "robustness_support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+            "exploratory": true,
+            "multiple_looks_adjusted": false,
+            "scene_cluster_bootstrap": {
+              "method": "canonical_scene_cluster_percentile_bootstrap",
+              "estimand": "original prompt-weighted paired change, not scene-equal mean",
+              "n_population_specs": 57,
+              "n_paired_specs": 51,
+              "n_population_scene_clusters": 54,
+              "n_paired_scene_clusters": 48,
+              "valid_bootstrap_draws": 2000,
+              "bootstrap_samples": 2000,
+              "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+              "s_select": {
+                "delta": 0.022875816993464054,
+                "ci_low": -0.00490441176470588,
+                "ci_high": 0.05
+              },
+              "external": {
+                "delta": 0.0,
+                "ci_low": -0.0784313725490196,
+                "ci_high": 0.08
+              }
+            },
+            "robustness_supported_assuming_independent_specs": false,
+            "role": "frozen_sensitivity_not_replacement_primary_analysis",
+            "requested_sensitivity_n": 57
+          },
+          "independent_scene_representative_sensitivity": {
+            "window_steps": [
+              16,
+              24,
+              32
+            ],
+            "available_at_step": 32,
+            "n_paired_specs": 48,
+            "paired_spec_ids": [
+              "v4a-0001",
+              "v4a-0004",
+              "v4a-0007",
+              "v4a-0008",
+              "v4a-0009",
+              "v4a-0011",
+              "v4a-0023",
+              "v4a-0024",
+              "v4a-0031",
+              "v4a-0032",
+              "v4a-0033",
+              "v4a-0041",
+              "v4a-0058",
+              "v4a-0062",
+              "v4a-0066",
+              "v4a-0070",
+              "v4a-0071",
+              "v4a-0073",
+              "v4a-0078",
+              "v4a-0080",
+              "v4a-0084",
+              "v4a-0088",
+              "v4a-0097",
+              "v4a-0103",
+              "v4a-0104",
+              "v4a-0106",
+              "v4a-0108",
+              "v4a-0113",
+              "v4b-0017",
+              "v4b-0021",
+              "v4b-0026",
+              "v4b-0032",
+              "v4b-0045",
+              "v4b-0059",
+              "v4b-0060",
+              "v4b-0061",
+              "v4b-0062",
+              "v4b-0069",
+              "v4b-0077",
+              "v4b-0082",
+              "v4b-0083",
+              "v4b-0090",
+              "v4b-0092",
+              "v4b-0094",
+              "v4b-0097",
+              "v4b-0103",
+              "v4b-0104",
+              "v4b-0106"
+            ],
+            "n_start_complete": 52,
+            "n_end_complete": 48,
+            "ci_method": "paired_spec_percentile_bootstrap",
+            "bootstrap_samples": 2000,
+            "s_select": {
+              "delta": 0.024305555555555556,
+              "ci_low": -0.003472222222222219,
+              "ci_high": 0.057291666666666664
+            },
+            "external": {
+              "delta": 0.0,
+              "ci_low": -0.08333333333333333,
+              "ci_high": 0.08333333333333333
+            },
+            "ci_status": "available",
+            "candidate": true,
+            "interval_supported": false,
+            "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+            "bootstrap_rule_supported": false,
+            "bootstrap_degenerate_external_interval": false,
+            "robustness": {
+              "role": "supplementary_robustness_check_not_registered_confirmation",
+              "n_population_specs": 54,
+              "n_external_paired_specs": 48,
+              "n_external_unknown_pairs": 6,
+              "n_internal_paired_specs": 54,
+              "external_pair_coverage": 0.8888888888888888,
+              "internal_pair_coverage": 1.0,
+              "external_unknown_completion_delta_bounds": [
+                -0.07407407407407407,
+                0.07407407407407407
+              ],
+              "external_paired_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 48,
+                "improvements": 2,
+                "deteriorations": 2,
+                "unchanged": 44,
+                "delta": 0.0,
+                "ci_low": -0.1552604329049232,
+                "ci_high": 0.1552604329049232,
+                "improvement_probability_ci": [
+                  0.003512039639303739,
+                  0.15877247254422694
+                ],
+                "deterioration_probability_ci": [
+                  0.003512039639303739,
+                  0.15877247254422694
+                ]
+              },
+              "external_confidence_and_unknown_envelope": [
+                -0.21208334776733914,
+                0.21208334776733914
+              ],
+              "external_fixed_cohort_screen": false,
+              "external_complete_population": false,
+              "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+              "external_full_cohort_completion_confidence_bounds": [
+                -0.2405253854684583,
+                0.2405253854684583
+              ],
+              "external_lower_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 54,
+                "improvements": 2,
+                "deteriorations": 6,
+                "unchanged": 46,
+                "delta": -0.07407407407407407,
+                "ci_low": -0.2405253854684583,
+                "ci_high": 0.10633153742353997,
+                "improvement_probability_ci": [
+                  0.0031187423539873905,
+                  0.14213224498602084
+                ],
+                "deterioration_probability_ci": [
+                  0.03580070756248087,
+                  0.2436441278224457
+                ]
+              },
+              "external_upper_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 54,
+                "improvements": 6,
+                "deteriorations": 2,
+                "unchanged": 46,
+                "delta": 0.07407407407407407,
+                "ci_low": -0.10633153742353997,
+                "ci_high": 0.2405253854684583,
+                "improvement_probability_ci": [
+                  0.03580070756248087,
+                  0.2436441278224457
+                ],
+                "deterioration_probability_ci": [
+                  0.0031187423539873905,
+                  0.14213224498602084
+                ]
+              },
+              "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+              "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+              "external_ci_status": "available",
+              "internal_all_available_delta": 0.026234567901234573,
+              "internal_all_available_bootstrap_ci": [
+                -0.0015432098765432065,
+                0.05555555555555555
+              ],
+              "internal_complete_population": true,
+              "internal_supported": false,
+              "external_supported": false,
+              "supported": false,
+              "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+              "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+              "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+              "multiple_looks_adjusted": false,
+              "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+            },
+            "robustness_supported": false,
+            "robustness_support_status": "conditional_on_independent_canonical_scenes",
+            "exploratory": true,
+            "multiple_looks_adjusted": false,
+            "scene_cluster_bootstrap": {
+              "method": "canonical_scene_cluster_percentile_bootstrap",
+              "estimand": "original prompt-weighted paired change, not scene-equal mean",
+              "n_population_specs": 54,
+              "n_paired_specs": 48,
+              "n_population_scene_clusters": 54,
+              "n_paired_scene_clusters": 48,
+              "valid_bootstrap_draws": 2000,
+              "bootstrap_samples": 2000,
+              "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+              "s_select": {
+                "delta": 0.024305555555555556,
+                "ci_low": -0.0051020408163265285,
+                "ci_high": 0.05357762896825393
+              },
+              "external": {
+                "delta": 0.0,
+                "ci_low": -0.08333333333333333,
+                "ci_high": 0.08333333333333333
+              }
+            },
+            "robustness_supported_assuming_independent_specs": false,
+            "role": "frozen_sensitivity_not_replacement_primary_analysis",
+            "requested_sensitivity_n": 54
+          }
+        }
+      ],
+      "first_candidate_step": null,
+      "first_interval_supported_step": null,
+      "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+      "first_bootstrap_rule_supported_step": null,
+      "first_robustness_supported_step": null,
+      "gradient": {
+        "baseline_cosine": 0.7749844162565988,
+        "points": [
+          {
+            "step": 0,
+            "cosine": 0.7749844162565988,
+            "delta_from_step0": 0.0,
+            "marginal_point_delta": 0.0,
+            "paired_ci_low": null,
+            "paired_ci_high": null,
+            "n_common": 0,
+            "point_flag": false,
+            "interval_supported_flag": false,
+            "support_status": "unsupported_no_paired_difference_ci",
+            "missing_report": false
+          },
+          {
+            "step": 8,
+            "cosine": 0.7361813552167358,
+            "delta_from_step0": -0.038803061039862974,
+            "marginal_point_delta": -0.038803061039862974,
+            "paired_ci_low": -0.06592874826417844,
+            "paired_ci_high": 0.023026620038652714,
+            "n_common": 16,
+            "point_flag": true,
+            "interval_supported_flag": false,
+            "support_status": "paired_difference_ci",
+            "missing_report": false
+          },
+          {
+            "step": 16,
+            "cosine": 0.5232923867792474,
+            "delta_from_step0": -0.25169202947735136,
+            "marginal_point_delta": -0.25169202947735136,
+            "paired_ci_low": -0.27985439654449,
+            "paired_ci_high": 0.33245248160046337,
+            "n_common": 16,
+            "point_flag": true,
+            "interval_supported_flag": false,
+            "support_status": "paired_difference_ci",
+            "missing_report": false
+          },
+          {
+            "step": 24,
+            "cosine": 0.702092943288951,
+            "delta_from_step0": -0.07289147296764775,
+            "marginal_point_delta": -0.07289147296764775,
+            "paired_ci_low": -0.26143913310948064,
+            "paired_ci_high": 0.4534971400683529,
+            "n_common": 16,
+            "point_flag": true,
+            "interval_supported_flag": false,
+            "support_status": "paired_difference_ci",
+            "missing_report": false
+          },
+          {
+            "step": 32,
+            "cosine": 0.8079376433598159,
+            "delta_from_step0": 0.03295322710321713,
+            "marginal_point_delta": 0.03295322710321713,
+            "paired_ci_low": -0.17297806767271878,
+            "paired_ci_high": 0.5234313836817224,
+            "n_common": 16,
+            "point_flag": false,
+            "interval_supported_flag": false,
+            "support_status": "paired_difference_ci",
+            "missing_report": false
+          }
+        ],
+        "candidate_alarm_step": 16,
+        "interval_supported_alarm_step": null,
+        "alarm_timestamp": "final_checkpoint_of_required_consecutive_flags",
+        "warning": "marginal cosine intervals are never subtracted to obtain a difference CI"
+      },
+      "bootstrap_rule_lead": {
+        "status": "no_event",
+        "event_step": null,
+        "alarm_step": null,
+        "lead_steps": null,
+        "interpretation": "descriptive as of the currently available checkpoints"
+      },
+      "lead": {
+        "status": "no_event",
+        "event_step": null,
+        "alarm_step": null,
+        "lead_steps": null,
+        "interpretation": "descriptive as of the currently available checkpoints"
+      },
+      "lead_reference": "supplementary_robustness_screened_behavior_and_paired_gradient_candidates",
+      "point_only_lead": {
+        "status": "no_event",
+        "event_step": null,
+        "alarm_step": 16,
+        "lead_steps": null,
+        "interpretation": "descriptive as of the currently available checkpoints"
+      },
+      "point_only_lead_is_supported": false,
+      "scene_sensitivity_status": "supplementary; gradient-bank exclusions are not applied here",
+      "scene_disjoint_sensitivity_summary": {
+        "requested_specs": 57,
+        "canonical_scene_clusters": 54,
+        "first_candidate_step": 32,
+        "first_bootstrap_rule_supported_step": null,
+        "first_robustness_supported_step": null,
+        "role": "prospectively_frozen_sensitivity_not_replacement_primary_analysis"
+      },
+      "independent_scene_representative_summary": {
+        "requested_specs_and_scenes": 54,
+        "first_candidate_step": 32,
+        "first_bootstrap_rule_supported_step": null,
+        "first_robustness_supported_step": null,
+        "role": "conditional independent-scene supplement; gradient-bank exclusions require a separate matched analysis"
+      }
+    },
+    "rfo_gold": {
+      "status": "descriptive",
+      "checkpoints": [
+        {
+          "step": 0,
+          "arm": "rfo_gold",
+          "directory": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00000",
+          "coverage": {
+            "images": 64,
+            "known_score_images": 64,
+            "known_verdict_images": 57,
+            "joint_images": 57,
+            "answer_available": 316,
+            "answer_total": 316,
+            "specs": 64,
+            "expected_specs": 64,
+            "missing_manifest_specs": 0,
+            "complete_specs": 57,
+            "incomplete_specs": 7,
+            "paired_measurement_coverage": 0.890625,
+            "answer_coverage": 1.0
+          },
+          "missing_files": []
+        },
+        {
+          "step": 8,
+          "arm": "rfo_gold",
+          "directory": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00008",
+          "coverage": {
+            "images": 64,
+            "known_score_images": 64,
+            "known_verdict_images": 58,
+            "joint_images": 58,
+            "answer_available": 316,
+            "answer_total": 316,
+            "specs": 64,
+            "expected_specs": 64,
+            "missing_manifest_specs": 0,
+            "complete_specs": 58,
+            "incomplete_specs": 6,
+            "paired_measurement_coverage": 0.90625,
+            "answer_coverage": 1.0
+          },
+          "missing_files": []
+        },
+        {
+          "step": 16,
+          "arm": "rfo_gold",
+          "directory": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00016",
+          "coverage": {
+            "images": 64,
+            "known_score_images": 64,
+            "known_verdict_images": 59,
+            "joint_images": 59,
+            "answer_available": 316,
+            "answer_total": 316,
+            "specs": 64,
+            "expected_specs": 64,
+            "missing_manifest_specs": 0,
+            "complete_specs": 59,
+            "incomplete_specs": 5,
+            "paired_measurement_coverage": 0.921875,
+            "answer_coverage": 1.0
+          },
+          "missing_files": []
+        },
+        {
+          "step": 24,
+          "arm": "rfo_gold",
+          "directory": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00024",
+          "coverage": {
+            "images": 64,
+            "known_score_images": 64,
+            "known_verdict_images": 57,
+            "joint_images": 57,
+            "answer_available": 316,
+            "answer_total": 316,
+            "specs": 64,
+            "expected_specs": 64,
+            "missing_manifest_specs": 0,
+            "complete_specs": 57,
+            "incomplete_specs": 7,
+            "paired_measurement_coverage": 0.890625,
+            "answer_coverage": 1.0
+          },
+          "missing_files": []
+        },
+        {
+          "step": 32,
+          "arm": "rfo_gold",
+          "directory": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\evaluations\\rfo_gold\\step-00032",
+          "coverage": {
+            "images": 64,
+            "known_score_images": 64,
+            "known_verdict_images": 57,
+            "joint_images": 57,
+            "answer_available": 316,
+            "answer_total": 316,
+            "specs": 64,
+            "expected_specs": 64,
+            "missing_manifest_specs": 0,
+            "complete_specs": 57,
+            "incomplete_specs": 7,
+            "paired_measurement_coverage": 0.890625,
+            "answer_coverage": 1.0
+          },
+          "missing_files": []
+        }
+      ],
+      "windows": [
+        {
+          "window_steps": [
+            0,
+            8,
+            16
+          ],
+          "available_at_step": 16,
+          "n_paired_specs": 55,
+          "paired_spec_ids": [
+            "v4a-0001",
+            "v4a-0004",
+            "v4a-0007",
+            "v4a-0008",
+            "v4a-0009",
+            "v4a-0011",
+            "v4a-0014",
+            "v4a-0023",
+            "v4a-0024",
+            "v4a-0030",
+            "v4a-0031",
+            "v4a-0032",
+            "v4a-0033",
+            "v4a-0039",
+            "v4a-0041",
+            "v4a-0058",
+            "v4a-0062",
+            "v4a-0066",
+            "v4a-0070",
+            "v4a-0071",
+            "v4a-0078",
+            "v4a-0080",
+            "v4a-0084",
+            "v4a-0088",
+            "v4a-0090",
+            "v4a-0097",
+            "v4a-0103",
+            "v4a-0104",
+            "v4a-0106",
+            "v4a-0107",
+            "v4a-0108",
+            "v4a-0113",
+            "v4b-0017",
+            "v4b-0021",
+            "v4b-0026",
+            "v4b-0029",
+            "v4b-0032",
+            "v4b-0045",
+            "v4b-0049",
+            "v4b-0055",
+            "v4b-0059",
+            "v4b-0060",
+            "v4b-0061",
+            "v4b-0062",
+            "v4b-0069",
+            "v4b-0077",
+            "v4b-0082",
+            "v4b-0083",
+            "v4b-0090",
+            "v4b-0092",
+            "v4b-0094",
+            "v4b-0097",
+            "v4b-0103",
+            "v4b-0104",
+            "v4b-0106"
+          ],
+          "n_start_complete": 57,
+          "n_end_complete": 59,
+          "ci_method": "paired_spec_percentile_bootstrap",
+          "bootstrap_samples": 2000,
+          "s_select": {
+            "delta": 0.013636363636363634,
+            "ci_low": -0.02579545454545455,
+            "ci_high": 0.05606060606060604
+          },
+          "external": {
+            "delta": -0.01818181818181818,
+            "ci_low": -0.07272727272727272,
+            "ci_high": 0.03636363636363636
+          },
+          "ci_status": "available",
+          "candidate": false,
+          "interval_supported": false,
+          "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+          "bootstrap_rule_supported": false,
+          "bootstrap_degenerate_external_interval": false,
+          "robustness": {
+            "role": "supplementary_robustness_check_not_registered_confirmation",
+            "n_population_specs": 64,
+            "n_external_paired_specs": 55,
+            "n_external_unknown_pairs": 9,
+            "n_internal_paired_specs": 64,
+            "external_pair_coverage": 0.859375,
+            "internal_pair_coverage": 1.0,
+            "external_unknown_completion_delta_bounds": [
+              -0.0625,
+              0.125
+            ],
+            "external_paired_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 55,
+              "improvements": 1,
+              "deteriorations": 2,
+              "unchanged": 52,
+              "delta": -0.01818181818181818,
+              "ci_low": -0.13946292081562167,
+              "ci_high": 0.1074391487915996,
+              "improvement_probability_ci": [
+                0.00022867898000899345,
+                0.11050074908020913
+              ],
+              "deterioration_probability_ci": [
+                0.003061600288609516,
+                0.13969159979563067
+              ]
+            },
+            "external_confidence_and_unknown_envelope": [
+              -0.16672594757592488,
+              0.2329555184927809
+            ],
+            "external_fixed_cohort_screen": false,
+            "external_complete_population": false,
+            "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+            "external_full_cohort_completion_confidence_bounds": [
+              -0.18742644122133098,
+              0.2825096145422448
+            ],
+            "external_lower_completion_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 64,
+              "improvements": 1,
+              "deteriorations": 5,
+              "unchanged": 58,
+              "delta": -0.0625,
+              "ci_low": -0.18742644122133098,
+              "ci_high": 0.0740093822069248,
+              "improvement_probability_ci": [
+                0.00019652415857932085,
+                0.0956119576189525
+              ],
+              "deterioration_probability_ci": [
+                0.02160257541202771,
+                0.1876229653799103
+              ]
+            },
+            "external_upper_completion_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 64,
+              "improvements": 10,
+              "deteriorations": 2,
+              "unchanged": 52,
+              "delta": 0.125,
+              "ci_low": -0.05150253684115441,
+              "ci_high": 0.2825096145422448,
+              "improvement_probability_ci": [
+                0.06948621470036373,
+                0.28513782729048176
+              ],
+              "deterioration_probability_ci": [
+                0.0026282127482369208,
+                0.12098875154151814
+              ]
+            },
+            "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+            "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+            "external_ci_status": "available",
+            "internal_all_available_delta": 0.019531249999999997,
+            "internal_all_available_bootstrap_ci": [
+              -0.015625,
+              0.05598958333333333
+            ],
+            "internal_complete_population": true,
+            "internal_supported": false,
+            "external_supported": false,
+            "supported": false,
+            "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+            "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+            "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+            "multiple_looks_adjusted": false,
+            "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+          },
+          "robustness_supported": false,
+          "robustness_support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+          "exploratory": true,
+          "multiple_looks_adjusted": false,
+          "scene_cluster_bootstrap": {
+            "method": "canonical_scene_cluster_percentile_bootstrap",
+            "estimand": "original prompt-weighted paired change, not scene-equal mean",
+            "n_population_specs": 64,
+            "n_paired_specs": 55,
+            "n_population_scene_clusters": 59,
+            "n_paired_scene_clusters": 51,
+            "valid_bootstrap_draws": 2000,
+            "bootstrap_samples": 2000,
+            "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+            "s_select": {
+              "delta": 0.013636363636363634,
+              "ci_low": -0.026788114439324124,
+              "ci_high": 0.056603773584905655
+            },
+            "external": {
+              "delta": -0.01818181818181818,
+              "ci_low": -0.08620689655172414,
+              "ci_high": 0.0392156862745098
+            }
+          },
+          "robustness_supported_assuming_independent_specs": false,
+          "scene_disjoint_sensitivity": {
+            "window_steps": [
+              0,
+              8,
+              16
+            ],
+            "available_at_step": 16,
+            "n_paired_specs": 51,
+            "paired_spec_ids": [
+              "v4a-0001",
+              "v4a-0004",
+              "v4a-0007",
+              "v4a-0008",
+              "v4a-0009",
+              "v4a-0011",
+              "v4a-0023",
+              "v4a-0024",
+              "v4a-0030",
+              "v4a-0031",
+              "v4a-0032",
+              "v4a-0033",
+              "v4a-0039",
+              "v4a-0041",
+              "v4a-0058",
+              "v4a-0062",
+              "v4a-0066",
+              "v4a-0070",
+              "v4a-0071",
+              "v4a-0078",
+              "v4a-0080",
+              "v4a-0084",
+              "v4a-0088",
+              "v4a-0090",
+              "v4a-0097",
+              "v4a-0103",
+              "v4a-0104",
+              "v4a-0106",
+              "v4a-0107",
+              "v4a-0108",
+              "v4a-0113",
+              "v4b-0017",
+              "v4b-0021",
+              "v4b-0026",
+              "v4b-0032",
+              "v4b-0045",
+              "v4b-0059",
+              "v4b-0060",
+              "v4b-0061",
+              "v4b-0062",
+              "v4b-0069",
+              "v4b-0077",
+              "v4b-0082",
+              "v4b-0083",
+              "v4b-0090",
+              "v4b-0092",
+              "v4b-0094",
+              "v4b-0097",
+              "v4b-0103",
+              "v4b-0104",
+              "v4b-0106"
+            ],
+            "n_start_complete": 53,
+            "n_end_complete": 53,
+            "ci_method": "paired_spec_percentile_bootstrap",
+            "bootstrap_samples": 2000,
+            "s_select": {
+              "delta": 0.011437908496732025,
+              "ci_low": -0.029411764705882363,
+              "ci_high": 0.05392156862745098
+            },
+            "external": {
+              "delta": -0.0196078431372549,
+              "ci_low": -0.0784313725490196,
+              "ci_high": 0.0392156862745098
+            },
+            "ci_status": "available",
+            "candidate": false,
+            "interval_supported": false,
+            "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+            "bootstrap_rule_supported": false,
+            "bootstrap_degenerate_external_interval": false,
+            "robustness": {
+              "role": "supplementary_robustness_check_not_registered_confirmation",
+              "n_population_specs": 57,
+              "n_external_paired_specs": 51,
+              "n_external_unknown_pairs": 6,
+              "n_internal_paired_specs": 57,
+              "external_pair_coverage": 0.8947368421052632,
+              "internal_pair_coverage": 1.0,
+              "external_unknown_completion_delta_bounds": [
+                -0.05263157894736842,
+                0.08771929824561403
+              ],
+              "external_paired_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 51,
+                "improvements": 1,
+                "deteriorations": 2,
+                "unchanged": 48,
+                "delta": -0.0196078431372549,
+                "ci_low": -0.14974653651810713,
+                "ci_high": 0.11541138187468492,
+                "improvement_probability_ci": [
+                  0.000246612374537795,
+                  0.11871510828706705
+                ],
+                "deterioration_probability_ci": [
+                  0.0033037264123821283,
+                  0.14999314889264492
+                ]
+              },
+              "external_confidence_and_unknown_envelope": [
+                -0.16907146249865726,
+                0.20852597325629704
+              ],
+              "external_fixed_cohort_screen": false,
+              "external_complete_population": false,
+              "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+              "external_full_cohort_completion_confidence_bounds": [
+                -0.18535234210342158,
+                0.2508698493668261
+              ],
+              "external_lower_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 57,
+                "improvements": 1,
+                "deteriorations": 4,
+                "unchanged": 52,
+                "delta": -0.05263157894736842,
+                "ci_low": -0.18535234210342158,
+                "ci_high": 0.09106827414587523,
+                "improvement_probability_ci": [
+                  0.00022065604146794438,
+                  0.10680518805563646
+                ],
+                "deterioration_probability_ci": [
+                  0.015736913909761237,
+                  0.18557299814488953
+                ]
+              },
+              "external_upper_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 57,
+                "improvements": 7,
+                "deteriorations": 2,
+                "unchanged": 48,
+                "delta": 0.08771929824561403,
+                "ci_low": -0.09089487151112878,
+                "ci_high": 0.2508698493668261,
+                "improvement_probability_ci": [
+                  0.04415817099486709,
+                  0.2538232255092713
+                ],
+                "deterioration_probability_ci": [
+                  0.0029533761424451587,
+                  0.13505304250599587
+                ]
+              },
+              "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+              "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+              "external_ci_status": "available",
+              "internal_all_available_delta": 0.01608187134502924,
+              "internal_all_available_bootstrap_ci": [
+                -0.023391812865497078,
+                0.05263157894736842
+              ],
+              "internal_complete_population": true,
+              "internal_supported": false,
+              "external_supported": false,
+              "supported": false,
+              "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+              "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+              "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+              "multiple_looks_adjusted": false,
+              "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+            },
+            "robustness_supported": false,
+            "robustness_support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+            "exploratory": true,
+            "multiple_looks_adjusted": false,
+            "scene_cluster_bootstrap": {
+              "method": "canonical_scene_cluster_percentile_bootstrap",
+              "estimand": "original prompt-weighted paired change, not scene-equal mean",
+              "n_population_specs": 57,
+              "n_paired_specs": 51,
+              "n_population_scene_clusters": 54,
+              "n_paired_scene_clusters": 48,
+              "valid_bootstrap_draws": 2000,
+              "bootstrap_samples": 2000,
+              "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+              "s_select": {
+                "delta": 0.011437908496732025,
+                "ci_low": -0.03334876543209877,
+                "ci_high": 0.058518460575719605
+              },
+              "external": {
+                "delta": -0.0196078431372549,
+                "ci_low": -0.09615384615384616,
+                "ci_high": 0.041666666666666664
+              }
+            },
+            "robustness_supported_assuming_independent_specs": false,
+            "role": "frozen_sensitivity_not_replacement_primary_analysis",
+            "requested_sensitivity_n": 57
+          },
+          "independent_scene_representative_sensitivity": {
+            "window_steps": [
+              0,
+              8,
+              16
+            ],
+            "available_at_step": 16,
+            "n_paired_specs": 48,
+            "paired_spec_ids": [
+              "v4a-0001",
+              "v4a-0004",
+              "v4a-0007",
+              "v4a-0008",
+              "v4a-0009",
+              "v4a-0011",
+              "v4a-0023",
+              "v4a-0024",
+              "v4a-0030",
+              "v4a-0031",
+              "v4a-0032",
+              "v4a-0033",
+              "v4a-0041",
+              "v4a-0058",
+              "v4a-0062",
+              "v4a-0066",
+              "v4a-0070",
+              "v4a-0071",
+              "v4a-0078",
+              "v4a-0080",
+              "v4a-0084",
+              "v4a-0088",
+              "v4a-0097",
+              "v4a-0103",
+              "v4a-0104",
+              "v4a-0106",
+              "v4a-0108",
+              "v4a-0113",
+              "v4b-0017",
+              "v4b-0021",
+              "v4b-0026",
+              "v4b-0032",
+              "v4b-0045",
+              "v4b-0059",
+              "v4b-0060",
+              "v4b-0061",
+              "v4b-0062",
+              "v4b-0069",
+              "v4b-0077",
+              "v4b-0082",
+              "v4b-0083",
+              "v4b-0090",
+              "v4b-0092",
+              "v4b-0094",
+              "v4b-0097",
+              "v4b-0103",
+              "v4b-0104",
+              "v4b-0106"
+            ],
+            "n_start_complete": 50,
+            "n_end_complete": 50,
+            "ci_method": "paired_spec_percentile_bootstrap",
+            "bootstrap_samples": 2000,
+            "s_select": {
+              "delta": 0.01736111111111111,
+              "ci_low": -0.026041666666666668,
+              "ci_high": 0.0625
+            },
+            "external": {
+              "delta": -0.020833333333333332,
+              "ci_low": -0.08333333333333333,
+              "ci_high": 0.041666666666666664
+            },
+            "ci_status": "available",
+            "candidate": false,
+            "interval_supported": false,
+            "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+            "bootstrap_rule_supported": false,
+            "bootstrap_degenerate_external_interval": false,
+            "robustness": {
+              "role": "supplementary_robustness_check_not_registered_confirmation",
+              "n_population_specs": 54,
+              "n_external_paired_specs": 48,
+              "n_external_unknown_pairs": 6,
+              "n_internal_paired_specs": 54,
+              "external_pair_coverage": 0.8888888888888888,
+              "internal_pair_coverage": 1.0,
+              "external_unknown_completion_delta_bounds": [
+                -0.05555555555555555,
+                0.09259259259259259
+              ],
+              "external_paired_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 48,
+                "improvements": 1,
+                "deteriorations": 2,
+                "unchanged": 45,
+                "delta": -0.020833333333333332,
+                "ci_low": -0.15851044891577268,
+                "ci_high": 0.12221142587728795,
+                "improvement_probability_ci": [
+                  0.00026202362845427376,
+                  0.1257234655165917
+                ],
+                "deterioration_probability_ci": [
+                  0.003512039639303739,
+                  0.15877247254422694
+                ]
+              },
+              "external_confidence_and_unknown_envelope": [
+                -0.17793521385105718,
+                0.2197434896687004
+              ],
+              "external_fixed_cohort_screen": false,
+              "external_complete_population": false,
+              "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+              "external_full_cohort_completion_confidence_bounds": [
+                -0.19494786078738488,
+                0.2636412150677783
+              ],
+              "external_lower_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 54,
+                "improvements": 1,
+                "deteriorations": 4,
+                "unchanged": 49,
+                "delta": -0.05555555555555555,
+                "ci_low": -0.19494786078738488,
+                "ci_high": 0.09581690044692842,
+                "improvement_probability_ci": [
+                  0.00023291328272704746,
+                  0.11244601213599664
+                ],
+                "deterioration_probability_ci": [
+                  0.016629111689068228,
+                  0.19518077407011192
+                ]
+              },
+              "external_upper_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 54,
+                "improvements": 7,
+                "deteriorations": 2,
+                "unchanged": 45,
+                "delta": 0.09259259259259259,
+                "ci_low": -0.09543316500683326,
+                "ci_high": 0.2636412150677783,
+                "improvement_probability_ci": [
+                  0.04669907997918758,
+                  0.2667599574217657
+                ],
+                "deterioration_probability_ci": [
+                  0.0031187423539873905,
+                  0.14213224498602084
+                ]
+              },
+              "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+              "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+              "external_ci_status": "available",
+              "internal_all_available_delta": 0.021604938271604937,
+              "internal_all_available_bootstrap_ci": [
+                -0.01697530864197531,
+                0.06018518518518518
+              ],
+              "internal_complete_population": true,
+              "internal_supported": false,
+              "external_supported": false,
+              "supported": false,
+              "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+              "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+              "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+              "multiple_looks_adjusted": false,
+              "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+            },
+            "robustness_supported": false,
+            "robustness_support_status": "conditional_on_independent_canonical_scenes",
+            "exploratory": true,
+            "multiple_looks_adjusted": false,
+            "scene_cluster_bootstrap": {
+              "method": "canonical_scene_cluster_percentile_bootstrap",
+              "estimand": "original prompt-weighted paired change, not scene-equal mean",
+              "n_population_specs": 54,
+              "n_paired_specs": 48,
+              "n_population_scene_clusters": 54,
+              "n_paired_scene_clusters": 48,
+              "valid_bootstrap_draws": 2000,
+              "bootstrap_samples": 2000,
+              "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+              "s_select": {
+                "delta": 0.01736111111111111,
+                "ci_low": -0.029513888888888895,
+                "ci_high": 0.06297222222222215
+              },
+              "external": {
+                "delta": -0.020833333333333332,
+                "ci_low": -0.10204081632653061,
+                "ci_high": 0.043478260869565216
+              }
+            },
+            "robustness_supported_assuming_independent_specs": false,
+            "role": "frozen_sensitivity_not_replacement_primary_analysis",
+            "requested_sensitivity_n": 54
+          }
+        },
+        {
+          "window_steps": [
+            8,
+            16,
+            24
+          ],
+          "available_at_step": 24,
+          "n_paired_specs": 54,
+          "paired_spec_ids": [
+            "v4a-0001",
+            "v4a-0004",
+            "v4a-0007",
+            "v4a-0008",
+            "v4a-0009",
+            "v4a-0011",
+            "v4a-0014",
+            "v4a-0023",
+            "v4a-0024",
+            "v4a-0030",
+            "v4a-0031",
+            "v4a-0032",
+            "v4a-0033",
+            "v4a-0039",
+            "v4a-0041",
+            "v4a-0058",
+            "v4a-0062",
+            "v4a-0066",
+            "v4a-0070",
+            "v4a-0071",
+            "v4a-0080",
+            "v4a-0084",
+            "v4a-0088",
+            "v4a-0090",
+            "v4a-0097",
+            "v4a-0104",
+            "v4a-0106",
+            "v4a-0107",
+            "v4a-0108",
+            "v4a-0113",
+            "v4b-0017",
+            "v4b-0021",
+            "v4b-0026",
+            "v4b-0029",
+            "v4b-0032",
+            "v4b-0045",
+            "v4b-0049",
+            "v4b-0054",
+            "v4b-0055",
+            "v4b-0059",
+            "v4b-0060",
+            "v4b-0061",
+            "v4b-0062",
+            "v4b-0069",
+            "v4b-0072",
+            "v4b-0075",
+            "v4b-0077",
+            "v4b-0083",
+            "v4b-0090",
+            "v4b-0092",
+            "v4b-0097",
+            "v4b-0103",
+            "v4b-0104",
+            "v4b-0106"
+          ],
+          "n_start_complete": 58,
+          "n_end_complete": 57,
+          "ci_method": "paired_spec_percentile_bootstrap",
+          "bootstrap_samples": 2000,
+          "s_select": {
+            "delta": 0.016975308641975304,
+            "ci_low": -0.02469135802469136,
+            "ci_high": 0.057098765432098735
+          },
+          "external": {
+            "delta": 0.018518518518518517,
+            "ci_low": -0.037037037037037035,
+            "ci_high": 0.09259259259259259
+          },
+          "ci_status": "available",
+          "candidate": false,
+          "interval_supported": false,
+          "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+          "bootstrap_rule_supported": false,
+          "bootstrap_degenerate_external_interval": false,
+          "robustness": {
+            "role": "supplementary_robustness_check_not_registered_confirmation",
+            "n_population_specs": 64,
+            "n_external_paired_specs": 54,
+            "n_external_unknown_pairs": 10,
+            "n_internal_paired_specs": 64,
+            "external_pair_coverage": 0.84375,
+            "internal_pair_coverage": 1.0,
+            "external_unknown_completion_delta_bounds": [
+              -0.046875,
+              0.15625
+            ],
+            "external_paired_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 54,
+              "improvements": 2,
+              "deteriorations": 1,
+              "unchanged": 51,
+              "delta": 0.018518518518518517,
+              "ci_low": -0.10932726978200925,
+              "ci_high": 0.1418993317032938,
+              "improvement_probability_ci": [
+                0.0031187423539873905,
+                0.14213224498602084
+              ],
+              "deterioration_probability_ci": [
+                0.00023291328272704746,
+                0.11244601213599664
+              ]
+            },
+            "external_confidence_and_unknown_envelope": [
+              -0.15474488387857033,
+              0.26035256112465416
+            ],
+            "external_fixed_cohort_screen": false,
+            "external_complete_population": false,
+            "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+            "external_full_cohort_completion_confidence_bounds": [
+              -0.1849947526316734,
+              0.3033012100141726
+            ],
+            "external_lower_completion_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 64,
+              "improvements": 2,
+              "deteriorations": 5,
+              "unchanged": 57,
+              "delta": -0.046875,
+              "ci_low": -0.1849947526316734,
+              "ci_high": 0.09938617612949044,
+              "improvement_probability_ci": [
+                0.0026282127482369208,
+                0.12098875154151814
+              ],
+              "deterioration_probability_ci": [
+                0.02160257541202771,
+                0.1876229653799103
+              ]
+            },
+            "external_upper_completion_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 64,
+              "improvements": 11,
+              "deteriorations": 1,
+              "unchanged": 52,
+              "delta": 0.15625,
+              "ci_low": -0.015264170265850613,
+              "ci_high": 0.3033012100141726,
+              "improvement_probability_ci": [
+                0.08034778735310188,
+                0.30349773417275194
+              ],
+              "deterioration_probability_ci": [
+                0.00019652415857932085,
+                0.0956119576189525
+              ]
+            },
+            "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+            "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+            "external_ci_status": "available",
+            "internal_all_available_delta": 0.019531249999999997,
+            "internal_all_available_bootstrap_ci": [
+              -0.01822916666666667,
+              0.05602213541666649
+            ],
+            "internal_complete_population": true,
+            "internal_supported": false,
+            "external_supported": false,
+            "supported": false,
+            "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+            "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+            "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+            "multiple_looks_adjusted": false,
+            "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+          },
+          "robustness_supported": false,
+          "robustness_support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+          "exploratory": true,
+          "multiple_looks_adjusted": false,
+          "scene_cluster_bootstrap": {
+            "method": "canonical_scene_cluster_percentile_bootstrap",
+            "estimand": "original prompt-weighted paired change, not scene-equal mean",
+            "n_population_specs": 64,
+            "n_paired_specs": 54,
+            "n_population_scene_clusters": 59,
+            "n_paired_scene_clusters": 49,
+            "valid_bootstrap_draws": 2000,
+            "bootstrap_samples": 2000,
+            "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+            "s_select": {
+              "delta": 0.016975308641975304,
+              "ci_low": -0.022324290293040294,
+              "ci_high": 0.0625
+            },
+            "external": {
+              "delta": 0.018518518518518517,
+              "ci_low": -0.04,
+              "ci_high": 0.0851063829787234
+            }
+          },
+          "robustness_supported_assuming_independent_specs": false,
+          "scene_disjoint_sensitivity": {
+            "window_steps": [
+              8,
+              16,
+              24
+            ],
+            "available_at_step": 24,
+            "n_paired_specs": 49,
+            "paired_spec_ids": [
+              "v4a-0001",
+              "v4a-0004",
+              "v4a-0007",
+              "v4a-0008",
+              "v4a-0009",
+              "v4a-0011",
+              "v4a-0023",
+              "v4a-0024",
+              "v4a-0030",
+              "v4a-0031",
+              "v4a-0032",
+              "v4a-0033",
+              "v4a-0039",
+              "v4a-0041",
+              "v4a-0058",
+              "v4a-0062",
+              "v4a-0066",
+              "v4a-0070",
+              "v4a-0071",
+              "v4a-0080",
+              "v4a-0084",
+              "v4a-0088",
+              "v4a-0090",
+              "v4a-0097",
+              "v4a-0104",
+              "v4a-0106",
+              "v4a-0107",
+              "v4a-0108",
+              "v4a-0113",
+              "v4b-0017",
+              "v4b-0021",
+              "v4b-0026",
+              "v4b-0032",
+              "v4b-0045",
+              "v4b-0059",
+              "v4b-0060",
+              "v4b-0061",
+              "v4b-0062",
+              "v4b-0069",
+              "v4b-0072",
+              "v4b-0075",
+              "v4b-0077",
+              "v4b-0083",
+              "v4b-0090",
+              "v4b-0092",
+              "v4b-0097",
+              "v4b-0103",
+              "v4b-0104",
+              "v4b-0106"
+            ],
+            "n_start_complete": 52,
+            "n_end_complete": 51,
+            "ci_method": "paired_spec_percentile_bootstrap",
+            "bootstrap_samples": 2000,
+            "s_select": {
+              "delta": 0.01530612244897959,
+              "ci_low": -0.028911564625850344,
+              "ci_high": 0.0629251700680272
+            },
+            "external": {
+              "delta": 0.02040816326530612,
+              "ci_low": -0.04081632653061224,
+              "ci_high": 0.10204081632653061
+            },
+            "ci_status": "available",
+            "candidate": false,
+            "interval_supported": false,
+            "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+            "bootstrap_rule_supported": false,
+            "bootstrap_degenerate_external_interval": false,
+            "robustness": {
+              "role": "supplementary_robustness_check_not_registered_confirmation",
+              "n_population_specs": 57,
+              "n_external_paired_specs": 49,
+              "n_external_unknown_pairs": 8,
+              "n_internal_paired_specs": 57,
+              "external_pair_coverage": 0.8596491228070176,
+              "internal_pair_coverage": 1.0,
+              "external_unknown_completion_delta_bounds": [
+                -0.05263157894736842,
+                0.14035087719298245
+              ],
+              "external_paired_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 49,
+                "improvements": 2,
+                "deteriorations": 1,
+                "unchanged": 46,
+                "delta": 0.02040816326530612,
+                "ci_low": -0.11985755871500177,
+                "ci_high": 0.15547758458506053,
+                "improvement_probability_ci": [
+                  0.003439742939644815,
+                  0.155734261478865
+                ],
+                "deterioration_probability_ci": [
+                  0.0002566768938044488,
+                  0.12329730165464658
+                ]
+              },
+              "external_confidence_and_unknown_envelope": [
+                -0.17321088380763308,
+                0.2564631867485608
+              ],
+              "external_fixed_cohort_screen": false,
+              "external_complete_population": false,
+              "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+              "external_full_cohort_completion_confidence_bounds": [
+                -0.20611946565470776,
+                0.2961535076357814
+              ],
+              "external_lower_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 57,
+                "improvements": 2,
+                "deteriorations": 5,
+                "unchanged": 50,
+                "delta": -0.05263157894736842,
+                "ci_low": -0.20611946565470776,
+                "ci_high": 0.11073266203380852,
+                "improvement_probability_ci": [
+                  0.0029533761424451587,
+                  0.13505304250599587
+                ],
+                "deterioration_probability_ci": [
+                  0.02432038047218734,
+                  0.2090728417971529
+                ]
+              },
+              "external_upper_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 57,
+                "improvements": 9,
+                "deteriorations": 1,
+                "unchanged": 47,
+                "delta": 0.14035087719298245,
+                "ci_low": -0.040287642235425386,
+                "ci_high": 0.2961535076357814,
+                "improvement_probability_ci": [
+                  0.06651754582021108,
+                  0.29637416367724934
+                ],
+                "deterioration_probability_ci": [
+                  0.00022065604146794438,
+                  0.10680518805563646
+                ]
+              },
+              "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+              "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+              "external_ci_status": "available",
+              "internal_all_available_delta": 0.01608187134502924,
+              "internal_all_available_bootstrap_ci": [
+                -0.024853801169590645,
+                0.05701754385964911
+              ],
+              "internal_complete_population": true,
+              "internal_supported": false,
+              "external_supported": false,
+              "supported": false,
+              "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+              "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+              "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+              "multiple_looks_adjusted": false,
+              "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+            },
+            "robustness_supported": false,
+            "robustness_support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+            "exploratory": true,
+            "multiple_looks_adjusted": false,
+            "scene_cluster_bootstrap": {
+              "method": "canonical_scene_cluster_percentile_bootstrap",
+              "estimand": "original prompt-weighted paired change, not scene-equal mean",
+              "n_population_specs": 57,
+              "n_paired_specs": 49,
+              "n_population_scene_clusters": 54,
+              "n_paired_scene_clusters": 46,
+              "valid_bootstrap_draws": 2000,
+              "bootstrap_samples": 2000,
+              "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+              "s_select": {
+                "delta": 0.015306122448979591,
+                "ci_low": -0.02884963768115942,
+                "ci_high": 0.06111394557823127
+              },
+              "external": {
+                "delta": 0.02040816326530612,
+                "ci_low": -0.045454545454545456,
+                "ci_high": 0.09526098901098888
+              }
+            },
+            "robustness_supported_assuming_independent_specs": false,
+            "role": "frozen_sensitivity_not_replacement_primary_analysis",
+            "requested_sensitivity_n": 57
+          },
+          "independent_scene_representative_sensitivity": {
+            "window_steps": [
+              8,
+              16,
+              24
+            ],
+            "available_at_step": 24,
+            "n_paired_specs": 46,
+            "paired_spec_ids": [
+              "v4a-0001",
+              "v4a-0004",
+              "v4a-0007",
+              "v4a-0008",
+              "v4a-0009",
+              "v4a-0011",
+              "v4a-0023",
+              "v4a-0024",
+              "v4a-0030",
+              "v4a-0031",
+              "v4a-0032",
+              "v4a-0033",
+              "v4a-0041",
+              "v4a-0058",
+              "v4a-0062",
+              "v4a-0066",
+              "v4a-0070",
+              "v4a-0071",
+              "v4a-0080",
+              "v4a-0084",
+              "v4a-0088",
+              "v4a-0097",
+              "v4a-0104",
+              "v4a-0106",
+              "v4a-0108",
+              "v4a-0113",
+              "v4b-0017",
+              "v4b-0021",
+              "v4b-0026",
+              "v4b-0032",
+              "v4b-0045",
+              "v4b-0059",
+              "v4b-0060",
+              "v4b-0061",
+              "v4b-0062",
+              "v4b-0069",
+              "v4b-0072",
+              "v4b-0075",
+              "v4b-0077",
+              "v4b-0083",
+              "v4b-0090",
+              "v4b-0092",
+              "v4b-0097",
+              "v4b-0103",
+              "v4b-0104",
+              "v4b-0106"
+            ],
+            "n_start_complete": 49,
+            "n_end_complete": 48,
+            "ci_method": "paired_spec_percentile_bootstrap",
+            "bootstrap_samples": 2000,
+            "s_select": {
+              "delta": 0.016304347826086953,
+              "ci_low": -0.03260869565217391,
+              "ci_high": 0.06159420289855072
+            },
+            "external": {
+              "delta": 0.021739130434782608,
+              "ci_low": -0.043478260869565216,
+              "ci_high": 0.10869565217391304
+            },
+            "ci_status": "available",
+            "candidate": false,
+            "interval_supported": false,
+            "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+            "bootstrap_rule_supported": false,
+            "bootstrap_degenerate_external_interval": false,
+            "robustness": {
+              "role": "supplementary_robustness_check_not_registered_confirmation",
+              "n_population_specs": 54,
+              "n_external_paired_specs": 46,
+              "n_external_unknown_pairs": 8,
+              "n_internal_paired_specs": 54,
+              "external_pair_coverage": 0.8518518518518519,
+              "internal_pair_coverage": 1.0,
+              "external_unknown_completion_delta_bounds": [
+                -0.05555555555555555,
+                0.14814814814814814
+              ],
+              "external_paired_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 46,
+                "improvements": 2,
+                "deteriorations": 1,
+                "unchanged": 43,
+                "delta": 0.021739130434782608,
+                "ci_low": -0.12720735892801305,
+                "ci_high": 0.16494466252286574,
+                "improvement_probability_ci": [
+                  0.003666150920377655,
+                  0.16521807692543916
+                ],
+                "deterioration_probability_ci": [
+                  0.0002734144025734169,
+                  0.1308735098483907
+                ]
+              },
+              "external_confidence_and_unknown_envelope": [
+                -0.1824358983460852,
+                0.2701380458528116
+              ],
+              "external_fixed_cohort_screen": false,
+              "external_complete_population": false,
+              "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+              "external_full_cohort_completion_confidence_bounds": [
+                -0.21671938915632644,
+                0.31110185435770515
+              ],
+              "external_lower_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 54,
+                "improvements": 2,
+                "deteriorations": 5,
+                "unchanged": 47,
+                "delta": -0.05555555555555555,
+                "ci_low": -0.21671938915632644,
+                "ci_high": 0.1164257295119342,
+                "improvement_probability_ci": [
+                  0.0031187423539873905,
+                  0.14213224498602084
+                ],
+                "deterioration_probability_ci": [
+                  0.025706515474086637,
+                  0.21983813151031384
+                ]
+              },
+              "external_upper_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 54,
+                "improvements": 9,
+                "deteriorations": 1,
+                "unchanged": 44,
+                "delta": 0.14814814814814814,
+                "ci_low": -0.04206750379293819,
+                "ci_high": 0.31110185435770515,
+                "improvement_probability_ci": [
+                  0.07037850834305845,
+                  0.3113347676404322
+                ],
+                "deterioration_probability_ci": [
+                  0.00023291328272704746,
+                  0.11244601213599664
+                ]
+              },
+              "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+              "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+              "external_ci_status": "available",
+              "internal_all_available_delta": 0.016975308641975304,
+              "internal_all_available_bootstrap_ci": [
+                -0.02469135802469136,
+                0.06172839506172839
+              ],
+              "internal_complete_population": true,
+              "internal_supported": false,
+              "external_supported": false,
+              "supported": false,
+              "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+              "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+              "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+              "multiple_looks_adjusted": false,
+              "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+            },
+            "robustness_supported": false,
+            "robustness_support_status": "conditional_on_independent_canonical_scenes",
+            "exploratory": true,
+            "multiple_looks_adjusted": false,
+            "scene_cluster_bootstrap": {
+              "method": "canonical_scene_cluster_percentile_bootstrap",
+              "estimand": "original prompt-weighted paired change, not scene-equal mean",
+              "n_population_specs": 54,
+              "n_paired_specs": 46,
+              "n_population_scene_clusters": 54,
+              "n_paired_scene_clusters": 46,
+              "valid_bootstrap_draws": 2000,
+              "bootstrap_samples": 2000,
+              "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+              "s_select": {
+                "delta": 0.016304347826086956,
+                "ci_low": -0.0310077519379845,
+                "ci_high": 0.06340579710144927
+              },
+              "external": {
+                "delta": 0.021739130434782608,
+                "ci_low": -0.047619047619047616,
+                "ci_high": 0.10204081632653061
+              }
+            },
+            "robustness_supported_assuming_independent_specs": false,
+            "role": "frozen_sensitivity_not_replacement_primary_analysis",
+            "requested_sensitivity_n": 54
+          }
+        },
+        {
+          "window_steps": [
+            16,
+            24,
+            32
+          ],
+          "available_at_step": 32,
+          "n_paired_specs": 55,
+          "paired_spec_ids": [
+            "v4a-0001",
+            "v4a-0004",
+            "v4a-0007",
+            "v4a-0009",
+            "v4a-0011",
+            "v4a-0014",
+            "v4a-0023",
+            "v4a-0024",
+            "v4a-0031",
+            "v4a-0032",
+            "v4a-0033",
+            "v4a-0039",
+            "v4a-0041",
+            "v4a-0058",
+            "v4a-0062",
+            "v4a-0066",
+            "v4a-0070",
+            "v4a-0071",
+            "v4a-0078",
+            "v4a-0080",
+            "v4a-0084",
+            "v4a-0088",
+            "v4a-0090",
+            "v4a-0097",
+            "v4a-0103",
+            "v4a-0104",
+            "v4a-0105",
+            "v4a-0106",
+            "v4a-0107",
+            "v4a-0108",
+            "v4a-0113",
+            "v4b-0017",
+            "v4b-0021",
+            "v4b-0026",
+            "v4b-0029",
+            "v4b-0032",
+            "v4b-0045",
+            "v4b-0049",
+            "v4b-0054",
+            "v4b-0055",
+            "v4b-0059",
+            "v4b-0060",
+            "v4b-0061",
+            "v4b-0062",
+            "v4b-0069",
+            "v4b-0077",
+            "v4b-0082",
+            "v4b-0083",
+            "v4b-0090",
+            "v4b-0092",
+            "v4b-0094",
+            "v4b-0097",
+            "v4b-0103",
+            "v4b-0104",
+            "v4b-0106"
+          ],
+          "n_start_complete": 59,
+          "n_end_complete": 57,
+          "ci_method": "paired_spec_percentile_bootstrap",
+          "bootstrap_samples": 2000,
+          "s_select": {
+            "delta": 0.021212121212121217,
+            "ci_low": 2.0185873175002845e-18,
+            "ci_high": 0.045454545454545456
+          },
+          "external": {
+            "delta": 0.03636363636363636,
+            "ci_low": -0.03636363636363636,
+            "ci_high": 0.10909090909090909
+          },
+          "ci_status": "available",
+          "candidate": false,
+          "interval_supported": false,
+          "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+          "bootstrap_rule_supported": false,
+          "bootstrap_degenerate_external_interval": false,
+          "robustness": {
+            "role": "supplementary_robustness_check_not_registered_confirmation",
+            "n_population_specs": 64,
+            "n_external_paired_specs": 55,
+            "n_external_unknown_pairs": 9,
+            "n_internal_paired_specs": 64,
+            "external_pair_coverage": 0.859375,
+            "internal_pair_coverage": 1.0,
+            "external_unknown_completion_delta_bounds": [
+              -0.078125,
+              0.109375
+            ],
+            "external_paired_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 55,
+              "improvements": 3,
+              "deteriorations": 1,
+              "unchanged": 51,
+              "delta": 0.03636363636363636,
+              "ci_low": -0.1017584569325602,
+              "ci_high": 0.16630246887225125,
+              "improvement_probability_ci": [
+                0.00874229214764892,
+                0.16653114785226025
+              ],
+              "deterioration_probability_ci": [
+                0.00022867898000899345,
+                0.11050074908020913
+              ]
+            },
+            "external_confidence_and_unknown_envelope": [
+              -0.19682367392641892,
+              0.22104118418709093
+            ],
+            "external_fixed_cohort_screen": false,
+            "external_complete_population": false,
+            "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+            "external_full_cohort_completion_confidence_bounds": [
+              -0.2399375701973791,
+              0.24723888074052472
+            ],
+            "external_lower_completion_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 64,
+              "improvements": 3,
+              "deteriorations": 8,
+              "unchanged": 53,
+              "delta": -0.078125,
+              "ci_low": -0.2399375701973791,
+              "ci_high": 0.09550743256235562,
+              "improvement_probability_ci": [
+                0.007497834701724925,
+                0.14435628574313714
+              ],
+              "deterioration_probability_ci": [
+                0.04884885318078151,
+                0.24743540489910404
+              ]
+            },
+            "external_upper_completion_binary_bounds": {
+              "method": "paired_discordance_clopper_pearson_bonferroni",
+              "confidence": 0.95,
+              "category_tail_probability": 0.012500000000000011,
+              "n": 64,
+              "improvements": 8,
+              "deteriorations": 1,
+              "unchanged": 55,
+              "delta": 0.109375,
+              "ci_low": -0.046763104438170985,
+              "ci_high": 0.24723888074052472,
+              "improvement_probability_ci": [
+                0.04884885318078151,
+                0.24743540489910404
+              ],
+              "deterioration_probability_ci": [
+                0.00019652415857932085,
+                0.0956119576189525
+              ]
+            },
+            "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+            "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+            "external_ci_status": "available",
+            "internal_all_available_delta": 0.016927083333333336,
+            "internal_all_available_bootstrap_ci": [
+              -0.0039062499999999965,
+              0.0390625
+            ],
+            "internal_complete_population": true,
+            "internal_supported": false,
+            "external_supported": false,
+            "supported": false,
+            "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+            "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+            "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+            "multiple_looks_adjusted": false,
+            "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+          },
+          "robustness_supported": false,
+          "robustness_support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+          "exploratory": true,
+          "multiple_looks_adjusted": false,
+          "scene_cluster_bootstrap": {
+            "method": "canonical_scene_cluster_percentile_bootstrap",
+            "estimand": "original prompt-weighted paired change, not scene-equal mean",
+            "n_population_specs": 64,
+            "n_paired_specs": 55,
+            "n_population_scene_clusters": 59,
+            "n_paired_scene_clusters": 50,
+            "valid_bootstrap_draws": 2000,
+            "bootstrap_samples": 2000,
+            "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+            "s_select": {
+              "delta": 0.021212121212121213,
+              "ci_low": 2.0550340329551506e-18,
+              "ci_high": 0.04436479490242926
+            },
+            "external": {
+              "delta": 0.03636363636363636,
+              "ci_low": -0.034482758620689655,
+              "ci_high": 0.1111111111111111
+            }
+          },
+          "robustness_supported_assuming_independent_specs": false,
+          "scene_disjoint_sensitivity": {
+            "window_steps": [
+              16,
+              24,
+              32
+            ],
+            "available_at_step": 32,
+            "n_paired_specs": 49,
+            "paired_spec_ids": [
+              "v4a-0001",
+              "v4a-0004",
+              "v4a-0007",
+              "v4a-0009",
+              "v4a-0011",
+              "v4a-0023",
+              "v4a-0024",
+              "v4a-0031",
+              "v4a-0032",
+              "v4a-0033",
+              "v4a-0039",
+              "v4a-0041",
+              "v4a-0058",
+              "v4a-0062",
+              "v4a-0066",
+              "v4a-0070",
+              "v4a-0071",
+              "v4a-0078",
+              "v4a-0080",
+              "v4a-0084",
+              "v4a-0088",
+              "v4a-0090",
+              "v4a-0097",
+              "v4a-0103",
+              "v4a-0104",
+              "v4a-0106",
+              "v4a-0107",
+              "v4a-0108",
+              "v4a-0113",
+              "v4b-0017",
+              "v4b-0021",
+              "v4b-0026",
+              "v4b-0032",
+              "v4b-0045",
+              "v4b-0059",
+              "v4b-0060",
+              "v4b-0061",
+              "v4b-0062",
+              "v4b-0069",
+              "v4b-0077",
+              "v4b-0082",
+              "v4b-0083",
+              "v4b-0090",
+              "v4b-0092",
+              "v4b-0094",
+              "v4b-0097",
+              "v4b-0103",
+              "v4b-0104",
+              "v4b-0106"
+            ],
+            "n_start_complete": 53,
+            "n_end_complete": 51,
+            "ci_method": "paired_spec_percentile_bootstrap",
+            "bootstrap_samples": 2000,
+            "s_select": {
+              "delta": 0.023809523809523815,
+              "ci_low": 2.2657612747452172e-18,
+              "ci_high": 0.05102040816326531
+            },
+            "external": {
+              "delta": 0.04081632653061224,
+              "ci_low": -0.04081632653061224,
+              "ci_high": 0.12244897959183673
+            },
+            "ci_status": "available",
+            "candidate": false,
+            "interval_supported": false,
+            "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+            "bootstrap_rule_supported": false,
+            "bootstrap_degenerate_external_interval": false,
+            "robustness": {
+              "role": "supplementary_robustness_check_not_registered_confirmation",
+              "n_population_specs": 57,
+              "n_external_paired_specs": 49,
+              "n_external_unknown_pairs": 8,
+              "n_internal_paired_specs": 57,
+              "external_pair_coverage": 0.8596491228070176,
+              "internal_pair_coverage": 1.0,
+              "external_unknown_completion_delta_bounds": [
+                -0.07017543859649122,
+                0.10526315789473684
+              ],
+              "external_paired_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 49,
+                "improvements": 3,
+                "deteriorations": 1,
+                "unchanged": 45,
+                "delta": 0.04081632653061224,
+                "ci_low": -0.11346727822847366,
+                "ci_high": 0.18526219091579751,
+                "improvement_probability_ci": [
+                  0.00983002342617293,
+                  0.18551886780960197
+                ],
+                "deterioration_probability_ci": [
+                  0.0002566768938044488,
+                  0.12329730165464658
+                ]
+              },
+              "external_confidence_and_unknown_envelope": [
+                -0.202805204091144,
+                0.22943591850656278
+              ],
+              "external_fixed_cohort_screen": false,
+              "external_complete_population": false,
+              "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+              "external_full_cohort_completion_confidence_bounds": [
+                -0.24539191338757058,
+                0.25360256946780335
+              ],
+              "external_lower_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 57,
+                "improvements": 3,
+                "deteriorations": 7,
+                "unchanged": 47,
+                "delta": -0.07017543859649122,
+                "ci_low": -0.24539191338757058,
+                "ci_high": 0.11687713419530658,
+                "improvement_probability_ci": [
+                  0.008431312121700708,
+                  0.16103530519017367
+                ],
+                "deterioration_probability_ci": [
+                  0.04415817099486709,
+                  0.2538232255092713
+                ]
+              },
+              "external_upper_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 57,
+                "improvements": 7,
+                "deteriorations": 1,
+                "unchanged": 49,
+                "delta": 0.10526315789473684,
+                "ci_low": -0.06264701706076937,
+                "ci_high": 0.25360256946780335,
+                "improvement_probability_ci": [
+                  0.04415817099486709,
+                  0.2538232255092713
+                ],
+                "deterioration_probability_ci": [
+                  0.00022065604146794438,
+                  0.10680518805563646
+                ]
+              },
+              "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+              "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+              "external_ci_status": "available",
+              "internal_all_available_delta": 0.021929824561403518,
+              "internal_all_available_bootstrap_ci": [
+                -0.001461988304093564,
+                0.046783625730994156
+              ],
+              "internal_complete_population": true,
+              "internal_supported": false,
+              "external_supported": false,
+              "supported": false,
+              "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+              "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+              "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+              "multiple_looks_adjusted": false,
+              "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+            },
+            "robustness_supported": false,
+            "robustness_support_status": "blocked_pending_scene_adjusted_sparse_binary_inference",
+            "exploratory": true,
+            "multiple_looks_adjusted": false,
+            "scene_cluster_bootstrap": {
+              "method": "canonical_scene_cluster_percentile_bootstrap",
+              "estimand": "original prompt-weighted paired change, not scene-equal mean",
+              "n_population_specs": 57,
+              "n_paired_specs": 49,
+              "n_population_scene_clusters": 54,
+              "n_paired_scene_clusters": 46,
+              "valid_bootstrap_draws": 2000,
+              "bootstrap_samples": 2000,
+              "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+              "s_select": {
+                "delta": 0.02380952380952381,
+                "ci_low": 2.220446049250313e-18,
+                "ci_high": 0.048614386792452814
+              },
+              "external": {
+                "delta": 0.04081632653061224,
+                "ci_low": -0.039235294117647056,
+                "ci_high": 0.1276595744680851
+              }
+            },
+            "robustness_supported_assuming_independent_specs": false,
+            "role": "frozen_sensitivity_not_replacement_primary_analysis",
+            "requested_sensitivity_n": 57
+          },
+          "independent_scene_representative_sensitivity": {
+            "window_steps": [
+              16,
+              24,
+              32
+            ],
+            "available_at_step": 32,
+            "n_paired_specs": 46,
+            "paired_spec_ids": [
+              "v4a-0001",
+              "v4a-0004",
+              "v4a-0007",
+              "v4a-0009",
+              "v4a-0011",
+              "v4a-0023",
+              "v4a-0024",
+              "v4a-0031",
+              "v4a-0032",
+              "v4a-0033",
+              "v4a-0041",
+              "v4a-0058",
+              "v4a-0062",
+              "v4a-0066",
+              "v4a-0070",
+              "v4a-0071",
+              "v4a-0078",
+              "v4a-0080",
+              "v4a-0084",
+              "v4a-0088",
+              "v4a-0097",
+              "v4a-0103",
+              "v4a-0104",
+              "v4a-0106",
+              "v4a-0108",
+              "v4a-0113",
+              "v4b-0017",
+              "v4b-0021",
+              "v4b-0026",
+              "v4b-0032",
+              "v4b-0045",
+              "v4b-0059",
+              "v4b-0060",
+              "v4b-0061",
+              "v4b-0062",
+              "v4b-0069",
+              "v4b-0077",
+              "v4b-0082",
+              "v4b-0083",
+              "v4b-0090",
+              "v4b-0092",
+              "v4b-0094",
+              "v4b-0097",
+              "v4b-0103",
+              "v4b-0104",
+              "v4b-0106"
+            ],
+            "n_start_complete": 50,
+            "n_end_complete": 48,
+            "ci_method": "paired_spec_percentile_bootstrap",
+            "bootstrap_samples": 2000,
+            "s_select": {
+              "delta": 0.025362318840579715,
+              "ci_low": 2.413528314402514e-18,
+              "ci_high": 0.05434782608695652
+            },
+            "external": {
+              "delta": 0.043478260869565216,
+              "ci_low": -0.043478260869565216,
+              "ci_high": 0.13043478260869565
+            },
+            "ci_status": "available",
+            "candidate": false,
+            "interval_supported": false,
+            "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+            "bootstrap_rule_supported": false,
+            "bootstrap_degenerate_external_interval": false,
+            "robustness": {
+              "role": "supplementary_robustness_check_not_registered_confirmation",
+              "n_population_specs": 54,
+              "n_external_paired_specs": 46,
+              "n_external_unknown_pairs": 8,
+              "n_internal_paired_specs": 54,
+              "external_pair_coverage": 0.8518518518518519,
+              "internal_pair_coverage": 1.0,
+              "external_unknown_completion_delta_bounds": [
+                -0.07407407407407407,
+                0.1111111111111111
+              ],
+              "external_paired_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 46,
+                "improvements": 3,
+                "deteriorations": 1,
+                "unchanged": 42,
+                "delta": 0.043478260869565216,
+                "ci_low": -0.12039136520769173,
+                "ci_high": 0.19645544432662967,
+                "improvement_probability_ci": [
+                  0.010482144640698968,
+                  0.1967288587292031
+                ],
+                "deterioration_probability_ci": [
+                  0.0002734144025734169,
+                  0.1308735098483907
+                ]
+              },
+              "external_confidence_and_unknown_envelope": [
+                -0.2136667185102559,
+                0.24142500813009193
+              ],
+              "external_fixed_cohort_screen": false,
+              "external_complete_population": false,
+              "external_envelope_scope": "fixed observed cohort and missingness pattern; not a population confidence interval",
+              "external_full_cohort_completion_confidence_bounds": [
+                -0.2578534098942699,
+                0.26652704413903866
+              ],
+              "external_lower_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 54,
+                "improvements": 3,
+                "deteriorations": 7,
+                "unchanged": 44,
+                "delta": -0.07407407407407407,
+                "ci_low": -0.2578534098942699,
+                "ci_high": 0.12272275973426396,
+                "improvement_probability_ci": [
+                  0.008906547527495787,
+                  0.16942183971345154
+                ],
+                "deterioration_probability_ci": [
+                  0.04669907997918758,
+                  0.2667599574217657
+                ]
+              },
+              "external_upper_completion_binary_bounds": {
+                "method": "paired_discordance_clopper_pearson_bonferroni",
+                "confidence": 0.95,
+                "category_tail_probability": 0.012500000000000011,
+                "n": 54,
+                "improvements": 7,
+                "deteriorations": 1,
+                "unchanged": 46,
+                "delta": 0.1111111111111111,
+                "ci_low": -0.06574693215680906,
+                "ci_high": 0.26652704413903866,
+                "improvement_probability_ci": [
+                  0.04669907997918758,
+                  0.2667599574217657
+                ],
+                "deterioration_probability_ci": [
+                  0.00023291328272704746,
+                  0.11244601213599664
+                ]
+              },
+              "external_completion_bound_method": "full_N_endpoint_completion_CP_four_tail_union_bound",
+              "external_completion_bound_scope": "L <= actual delta <= U; simultaneous lower E[L] and upper E[U] assuming independent spec pairs",
+              "external_ci_status": "available",
+              "internal_all_available_delta": 0.023148148148148157,
+              "internal_all_available_bootstrap_ci": [
+                -3.858024691357591e-05,
+                0.05092592592592592
+              ],
+              "internal_complete_population": true,
+              "internal_supported": false,
+              "external_supported": false,
+              "supported": false,
+              "independence_assumption": "independent spec pairs; canonical-scene duplicates invalidate this assumption",
+              "support_interpretation": "conditional supplementary screen, not an exact joint test or confirmation of D*",
+              "internal_inference_limitation": "internal-score percentile bootstrap can under-cover rare unobserved changes",
+              "multiple_looks_adjusted": false,
+              "scope": "complete-case CP is diagnostic; supplementary support uses full-N worst-completion bounds and independent-pair assumptions"
+            },
+            "robustness_supported": false,
+            "robustness_support_status": "conditional_on_independent_canonical_scenes",
+            "exploratory": true,
+            "multiple_looks_adjusted": false,
+            "scene_cluster_bootstrap": {
+              "method": "canonical_scene_cluster_percentile_bootstrap",
+              "estimand": "original prompt-weighted paired change, not scene-equal mean",
+              "n_population_specs": 54,
+              "n_paired_specs": 46,
+              "n_population_scene_clusters": 54,
+              "n_paired_scene_clusters": 46,
+              "valid_bootstrap_draws": 2000,
+              "bootstrap_samples": 2000,
+              "scope": "supplementary complete-case analysis; sparse binary bootstrap can still degenerate",
+              "s_select": {
+                "delta": 0.025362318840579712,
+                "ci_low": 2.3129646346357427e-18,
+                "ci_high": 0.05320429472025211
+              },
+              "external": {
+                "delta": 0.043478260869565216,
+                "ci_low": -0.0425531914893617,
+                "ci_high": 0.13333333333333333
+              }
+            },
+            "robustness_supported_assuming_independent_specs": false,
+            "role": "frozen_sensitivity_not_replacement_primary_analysis",
+            "requested_sensitivity_n": 54
+          }
+        }
+      ],
+      "first_candidate_step": null,
+      "first_interval_supported_step": null,
+      "interval_support_scope": "legacy_alias_for_descriptive_bootstrap_rule_only",
+      "first_bootstrap_rule_supported_step": null,
+      "first_robustness_supported_step": null,
+      "gradient": {
+        "baseline_cosine": 0.7749844162565988,
+        "points": [
+          {
+            "step": 0,
+            "cosine": 0.7749844162565988,
+            "delta_from_step0": 0.0,
+            "marginal_point_delta": 0.0,
+            "paired_ci_low": null,
+            "paired_ci_high": null,
+            "n_common": 0,
+            "point_flag": false,
+            "interval_supported_flag": false,
+            "support_status": "unsupported_no_paired_difference_ci",
+            "missing_report": false
+          },
+          {
+            "step": 8,
+            "cosine": 0.7247507390212472,
+            "delta_from_step0": -0.05023367723535155,
+            "marginal_point_delta": -0.05023367723535155,
+            "paired_ci_low": -0.07947524497282718,
+            "paired_ci_high": 0.017146920793440438,
+            "n_common": 16,
+            "point_flag": true,
+            "interval_supported_flag": false,
+            "support_status": "paired_difference_ci",
+            "missing_report": false
+          },
+          {
+            "step": 16,
+            "cosine": 0.6248799533870507,
+            "delta_from_step0": -0.15010446286954804,
+            "marginal_point_delta": -0.15010446286954804,
+            "paired_ci_low": -0.23414026261295162,
+            "paired_ci_high": 0.31732672910836895,
+            "n_common": 16,
+            "point_flag": true,
+            "interval_supported_flag": false,
+            "support_status": "paired_difference_ci",
+            "missing_report": false
+          },
+          {
+            "step": 24,
+            "cosine": 0.7773375450316826,
+            "delta_from_step0": 0.002353128775083868,
+            "marginal_point_delta": 0.002353128775083868,
+            "paired_ci_low": -0.2615449629137444,
+            "paired_ci_high": 0.387877680437727,
+            "n_common": 16,
+            "point_flag": false,
+            "interval_supported_flag": false,
+            "support_status": "paired_difference_ci",
+            "missing_report": false
+          },
+          {
+            "step": 32,
+            "cosine": 0.844493519608768,
+            "delta_from_step0": 0.0695091033521692,
+            "marginal_point_delta": 0.0695091033521692,
+            "paired_ci_low": -0.10336049107359666,
+            "paired_ci_high": 0.5444847093528467,
+            "n_common": 16,
+            "point_flag": false,
+            "interval_supported_flag": false,
+            "support_status": "paired_difference_ci",
+            "missing_report": false
+          }
+        ],
+        "candidate_alarm_step": 16,
+        "interval_supported_alarm_step": null,
+        "alarm_timestamp": "final_checkpoint_of_required_consecutive_flags",
+        "warning": "marginal cosine intervals are never subtracted to obtain a difference CI"
+      },
+      "bootstrap_rule_lead": {
+        "status": "no_event",
+        "event_step": null,
+        "alarm_step": null,
+        "lead_steps": null,
+        "interpretation": "descriptive as of the currently available checkpoints"
+      },
+      "lead": {
+        "status": "no_event",
+        "event_step": null,
+        "alarm_step": null,
+        "lead_steps": null,
+        "interpretation": "descriptive as of the currently available checkpoints"
+      },
+      "lead_reference": "supplementary_robustness_screened_behavior_and_paired_gradient_candidates",
+      "point_only_lead": {
+        "status": "no_event",
+        "event_step": null,
+        "alarm_step": 16,
+        "lead_steps": null,
+        "interpretation": "descriptive as of the currently available checkpoints"
+      },
+      "point_only_lead_is_supported": false,
+      "scene_sensitivity_status": "supplementary; gradient-bank exclusions are not applied here",
+      "scene_disjoint_sensitivity_summary": {
+        "requested_specs": 57,
+        "canonical_scene_clusters": 54,
+        "first_candidate_step": null,
+        "first_bootstrap_rule_supported_step": null,
+        "first_robustness_supported_step": null,
+        "role": "prospectively_frozen_sensitivity_not_replacement_primary_analysis"
+      },
+      "independent_scene_representative_summary": {
+        "requested_specs_and_scenes": 54,
+        "first_candidate_step": null,
+        "first_bootstrap_rule_supported_step": null,
+        "first_robustness_supported_step": null,
+        "role": "conditional independent-scene supplement; gradient-bank exclusions require a separate matched analysis"
+      }
+    }
+  }
+}

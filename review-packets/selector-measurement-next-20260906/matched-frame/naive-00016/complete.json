@@ -1,0 +1,32 @@
+{
+  "completed_utc": "2026-09-06T10:26:46.884414+00:00",
+  "task": {
+    "id": "naive-00016",
+    "arm": "naive",
+    "step": 16,
+    "checkpoint": {
+      "adapter_sha256": "2acc78ddd0deae46c1d5c387692c4d2ec6599b3801d56f8eb82a47a653fdd4e2",
+      "arm": "naive",
+      "manifest_sha256": "861319c5d09b3dfeb0bb5db003a1e25eec56e0246f1f90b91f3bea56563dc2e7",
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-001",
+      "round_index": 1,
+      "step": 16,
+      "type": "checkpoint"
+    },
+    "adapter_parameter_digest": "9813785e5dcf59a104e196b067263965b46d68ad85dc4d3ec6bc83d3a3ea4c83",
+    "old_observations": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00016\\observations.naive.jsonl",
+    "device": "cuda:0"
+  },
+  "n_observations": 80,
+  "n_errors": 0,
+  "n_abstained": 0,
+  "old_prompted_answer_reproduction": {
+    "matches": 0,
+    "total": 0,
+    "mismatches": []
+  },
+  "adapter_parameter_digest_before": "9813785e5dcf59a104e196b067263965b46d68ad85dc4d3ec6bc83d3a3ea4c83",
+  "adapter_parameter_digest_after": "9813785e5dcf59a104e196b067263965b46d68ad85dc4d3ec6bc83d3a3ea4c83",
+  "answers_sha256": "1a3aba2cc5dae508b6c4ec1b45b2bda1c65aef2106b39e9cef1832cadd44a362",
+  "plan_sha256": "0b35c279b84c9c76965130d7273a7ece31a9fc5880fa39b290040b24a538c281"
+}

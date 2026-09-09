@@ -1,0 +1,23 @@
+{
+  "at_utc": "2026-09-06T10:02:00.144890+00:00",
+  "task": {
+    "id": "base-00000",
+    "arm": "base",
+    "step": 0,
+    "checkpoint": {
+      "adapter_sha256": "62f350f04cac8241f258b773606217d2678bf6015a8bf27aed39be121c490cf1",
+      "arm": "base",
+      "manifest_sha256": "6408823a3c519dd6c431aa40f78090d4ecde9588a9c7753a1bb473ee25ca1c02",
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\base\\round--01",
+      "round_index": -1,
+      "step": 0,
+      "type": "checkpoint"
+    },
+    "adapter_parameter_digest": "1cd2f01c081a171a375a89989d964af4907040633a87563be0b13e721a0618e2",
+    "old_observations": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\base\\step-00000\\observations.naive.jsonl",
+    "device": "cuda:0"
+  },
+  "worker_pid": 26896,
+  "plan_sha256": "0b35c279b84c9c76965130d7273a7ece31a9fc5880fa39b290040b24a538c281",
+  "adapter_parameter_digest": "1cd2f01c081a171a375a89989d964af4907040633a87563be0b13e721a0618e2"
+}

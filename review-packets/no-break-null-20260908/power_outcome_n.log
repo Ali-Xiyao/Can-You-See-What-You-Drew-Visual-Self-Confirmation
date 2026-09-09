@@ -1,0 +1,13 @@
+  rise 0.00  outcome_n 120  (1 SEM = 4.41 pt, rise = 0.0 SEM)  power 2.7%
+  rise 0.00  outcome_n 240  (1 SEM = 3.12 pt, rise = 0.0 SEM)  power 1.0%
+  rise 0.00  outcome_n 480  (1 SEM = 2.20 pt, rise = 0.0 SEM)  power 3.0%
+  rise 0.00  outcome_n 960  (1 SEM = 1.56 pt, rise = 0.0 SEM)  power 2.0%
+  rise 0.05  outcome_n 120  (1 SEM = 4.41 pt, rise = 1.1 SEM)  power 12.0%
+  rise 0.05  outcome_n 240  (1 SEM = 3.12 pt, rise = 1.6 SEM)  power 16.3%
+  rise 0.05  outcome_n 480  (1 SEM = 2.20 pt, rise = 2.3 SEM)  power 24.7%
+  rise 0.05  outcome_n 960  (1 SEM = 1.56 pt, rise = 3.2 SEM)  power 46.7%
+  rise 0.10  outcome_n 120  (1 SEM = 4.41 pt, rise = 2.3 SEM)  power 26.3%
+  rise 0.10  outcome_n 240  (1 SEM = 3.12 pt, rise = 3.2 SEM)  power 47.3%
+  rise 0.10  outcome_n 480  (1 SEM = 2.20 pt, rise = 4.5 SEM)  power 76.0%
+  rise 0.10  outcome_n 960  (1 SEM = 1.56 pt, rise = 6.4 SEM)  power 98.7%
+478.0s

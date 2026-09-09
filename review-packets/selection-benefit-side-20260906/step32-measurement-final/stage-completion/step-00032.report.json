@@ -1,0 +1,15 @@
+{
+  "stage": "step-00032.report",
+  "completed_unix": 1788684753.611373,
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\core\\python.exe",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\scripts\\v4_decoupling_report.py",
+    "--outdir",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906",
+    "--config",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\configs\\v4_decoupling_pilot.yaml",
+    "--protocol",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\docs\\prereg\\2026-09-06-decoupling-pilot.md"
+  ]
+}

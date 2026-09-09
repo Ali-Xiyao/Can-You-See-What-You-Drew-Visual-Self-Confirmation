@@ -1,0 +1,23 @@
+{
+  "stage": "naive.step-00032.generate",
+  "completed_unix": 1788681524.693924,
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\scripts\\v4_train.py",
+    "generate",
+    "--outdir",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906",
+    "--config",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\configs\\v4_decoupling_pilot.yaml",
+    "--runs",
+    "runs/v4/main-2plus1",
+    "runs/v4/main-1plus1plus1",
+    "--arm",
+    "naive",
+    "--round",
+    "3",
+    "--device",
+    "cuda:1"
+  ]
+}

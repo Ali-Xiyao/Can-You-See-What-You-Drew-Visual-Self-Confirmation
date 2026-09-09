@@ -1,0 +1,6 @@
+{
+  "at_unix": 1788684733.6766407,
+  "helper_pid": 29020,
+  "expected_sha256": "120e107050ec8c466e935090a54ce82401ee21b7b85d84108566d43ad027890f",
+  "reason": "Explicit user request: finish step32 measurement, stop new training, start selection-benefit diagnosis."
+}

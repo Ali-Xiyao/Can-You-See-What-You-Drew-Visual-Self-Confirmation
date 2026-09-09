@@ -1,0 +1,23 @@
+{
+  "at_utc": "2026-09-06T10:26:48.317257+00:00",
+  "task": {
+    "id": "naive-00032",
+    "arm": "naive",
+    "step": 32,
+    "checkpoint": {
+      "adapter_sha256": "05c7b04e2545b888a6df10345dd6363327775503961975bc472fd7231666302d",
+      "arm": "naive",
+      "manifest_sha256": "a4c3b204d8702938f448a013dce026d3e4fc5f57362c29eaf147a49701929b12",
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-003",
+      "round_index": 3,
+      "step": 32,
+      "type": "checkpoint"
+    },
+    "adapter_parameter_digest": "9bb84cc7160254f8cc0adb3bc22182c00522d55187fbf58e4c5bfdf6a2f7d55a",
+    "old_observations": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032\\observations.naive.jsonl",
+    "device": "cuda:0"
+  },
+  "worker_pid": 22068,
+  "plan_sha256": "0b35c279b84c9c76965130d7273a7ece31a9fc5880fa39b290040b24a538c281",
+  "adapter_parameter_digest": "9bb84cc7160254f8cc0adb3bc22182c00522d55187fbf58e4c5bfdf6a2f7d55a"
+}

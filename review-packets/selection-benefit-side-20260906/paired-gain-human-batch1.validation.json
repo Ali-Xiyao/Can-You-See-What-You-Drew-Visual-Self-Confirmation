@@ -1,0 +1,17 @@
+{
+  "created_utc": "2026-09-06T09:30:55.639793+00:00",
+  "status": "PASS_arithmetic_and_provenance_only",
+  "method": "Independent raw-verdict and frozen-pairing subtraction; no estimator import; all C/D assignments checked.",
+  "checks": {
+    "primary_confirmed_original_rubric": {
+      "all_six_scopes_match": true,
+      "C_D_assignments": 4
+    },
+    "scenario_C_D_fusion_counted_wrong": {
+      "all_six_scopes_match": true,
+      "C_D_assignments": 1
+    }
+  },
+  "source_inputs_unchanged": true,
+  "report_sha256": "0020484d89d75af754989291fa9381364c06b53add58e7922c7ca4a79e90065f"
+}

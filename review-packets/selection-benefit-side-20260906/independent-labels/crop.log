@@ -1,0 +1,8 @@
+11 disputed objects, 11 to query, 0 with no box from either detector, 13 images skipped because the verdict agrees anyway
+cuda:0: 24326 MiB free, need 18000 -- starting
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\observer\lib\site-packages\transformers\utils\hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:05<00:15,  5.00s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:09<00:09,  4.60s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:14<00:04,  4.72s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:17<00:00,  4.03s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:17<00:00,  4.29s/it]
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+1/11 6.6s/crop
+wrote H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\review-packets\selection-benefit-side-20260906\independent-labels\detections.crops.jsonl

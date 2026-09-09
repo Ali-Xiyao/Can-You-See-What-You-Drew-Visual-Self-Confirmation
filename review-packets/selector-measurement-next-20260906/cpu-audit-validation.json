@@ -1,0 +1,14 @@
+{
+  "created_utc": "2026-09-06T10:05:34.440852+00:00",
+  "status": "PASS_arithmetic_only",
+  "checks": {
+    "naive": "Raw independent Fraction arithmetic matches all/tied subsets.",
+    "rfo": "Raw independent Fraction arithmetic matches all/tied subsets."
+  },
+  "fixed_bank_negative_facts": {
+    "total": 202,
+    "known": 199,
+    "present": 0
+  },
+  "cpu_report_sha256": "bd8d8d1c0cb3edee9ccad5cc76ced6db1c6f4f44d10c65a2736176b477cc9710"
+}

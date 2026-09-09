@@ -1,0 +1,39 @@
+{
+  "at_unix": 1788669180.1616123,
+  "state": {
+    "status": "running",
+    "stage": "naive.step-00024.gradient",
+    "supervisor_pid": 18576,
+    "updated_unix": 1788669179.9673119,
+    "started_unix": 1788631464.2176192,
+    "elapsed_hours": 10.476597136855126,
+    "through_round": 10,
+    "child_pid": 28688,
+    "log": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\logs\\naive.step-00024.gradient.log",
+    "command": [
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+      "-u",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\scripts\\v4_checkpoint_probe.py",
+      "run",
+      "--config",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\configs\\v4_decoupling_pilot.yaml",
+      "--bank",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\probe-bank",
+      "--outdir",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00024",
+      "--device",
+      "cuda:1",
+      "--arm",
+      "naive",
+      "--resamples",
+      "2000",
+      "--checkpoint",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-002",
+      "--reference",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\base\\step-00000"
+    ]
+  },
+  "launch_only": true,
+  "pilot_complete": false,
+  "note": "Root continues monitoring; launch is not completion of the pilot."
+}

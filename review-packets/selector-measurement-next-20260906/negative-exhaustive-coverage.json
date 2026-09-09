@@ -1,0 +1,115 @@
+{
+  "created_utc": "2026-09-06T10:16:49.826387+00:00",
+  "scope": "Additional CPU upper-coverage diagnostic of every absent noun in the frozen vocabulary; NOT the running question variant and NOT used to change it.",
+  "counts": {
+    "all_absent_vocab_questions": 33046,
+    "known_absent_vocab_questions": 32490,
+    "known_present_answers": 21,
+    "old_perfect_but_wrong_images": 14,
+    "old_perfect_but_wrong_detectable_with_all_absent_vocab": 1,
+    "old_perfect_but_wrong_with_unknown_negative_fact": 1
+  },
+  "old_perfect_wrong_cases": [
+    {
+      "prompt_id": "main-2plus1:v4a-0087",
+      "candidate_id": "v4a-0087:2",
+      "known_extra_requested_vocab_categories": [
+        "pen"
+      ],
+      "n_unknown_negative_facts": 0
+    },
+    {
+      "prompt_id": "main-2plus1:v4a-0103",
+      "candidate_id": "v4a-0103:2",
+      "known_extra_requested_vocab_categories": [],
+      "n_unknown_negative_facts": 0
+    },
+    {
+      "prompt_id": "main-1plus1plus1:v4b-0015",
+      "candidate_id": "v4b-0015:0",
+      "known_extra_requested_vocab_categories": [],
+      "n_unknown_negative_facts": 0
+    },
+    {
+      "prompt_id": "main-1plus1plus1:v4b-0033",
+      "candidate_id": "v4b-0033:1",
+      "known_extra_requested_vocab_categories": [],
+      "n_unknown_negative_facts": 0
+    },
+    {
+      "prompt_id": "main-1plus1plus1:v4b-0047",
+      "candidate_id": "v4b-0047:2",
+      "known_extra_requested_vocab_categories": [],
+      "n_unknown_negative_facts": 0
+    },
+    {
+      "prompt_id": "main-1plus1plus1:v4b-0050",
+      "candidate_id": "v4b-0050:1",
+      "known_extra_requested_vocab_categories": [],
+      "n_unknown_negative_facts": 1
+    },
+    {
+      "prompt_id": "main-1plus1plus1:v4b-0088",
+      "candidate_id": "v4b-0088:2",
+      "known_extra_requested_vocab_categories": [],
+      "n_unknown_negative_facts": 0
+    },
+    {
+      "prompt_id": "conf-2plus1:v4a-0000",
+      "candidate_id": "v4a-0000:5",
+      "known_extra_requested_vocab_categories": [],
+      "n_unknown_negative_facts": 0
+    },
+    {
+      "prompt_id": "conf-2plus1:v4a-0029",
+      "candidate_id": "v4a-0029:1",
+      "known_extra_requested_vocab_categories": [],
+      "n_unknown_negative_facts": 0
+    },
+    {
+      "prompt_id": "conf-2plus1:v4a-0081",
+      "candidate_id": "v4a-0081:0",
+      "known_extra_requested_vocab_categories": [],
+      "n_unknown_negative_facts": 0
+    },
+    {
+      "prompt_id": "conf-1plus1plus1:v4b-0032",
+      "candidate_id": "v4b-0032:5",
+      "known_extra_requested_vocab_categories": [],
+      "n_unknown_negative_facts": 0
+    },
+    {
+      "prompt_id": "conf-1plus1plus1:v4b-0045",
+      "candidate_id": "v4b-0045:1",
+      "known_extra_requested_vocab_categories": [],
+      "n_unknown_negative_facts": 0
+    },
+    {
+      "prompt_id": "conf-1plus1plus1:v4b-0045",
+      "candidate_id": "v4b-0045:5",
+      "known_extra_requested_vocab_categories": [],
+      "n_unknown_negative_facts": 0
+    },
+    {
+      "prompt_id": "conf-1plus1plus1:v4b-0049",
+      "candidate_id": "v4b-0049:5",
+      "known_extra_requested_vocab_categories": [],
+      "n_unknown_negative_facts": 0
+    }
+  ],
+  "input_sha256": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\manifest.jsonl": "4a8513319fab0052f118c312cd1bca5852e9b56dcf810d1782102b34d694767d",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\verified.jsonl": "694384a049a622115f03013545e5915c37288946ba6c51fbf9a7a7caf9941586",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\manifest.jsonl": "7a2fa7ff4117ee9bc7cbe1a67ee9b146aafd52b9ecf24b18e7985741e322cc65",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\verified.jsonl": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\manifest.jsonl": "6f3a0bef08926957dbfc6696d4eb4aef6c5ac26a627d33c6d912934a765aac6d",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\verified.jsonl": "32c9988191a7b11fe9c340619fe10f0346eae31d348942c75718b190673f6605",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\manifest.jsonl": "94bbb330773d46ccc6269fd0e93b936b8b699c7388fff4210624352a1fdd2173",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\verified.jsonl": "8431f923be6f4c7d60d77395b2a99b66703078edd2d22fd4c63d8ef1e3fdd4ac"
+  },
+  "limitations": [
+    "Known presence and absence follow the existing uncertainty-aware factual oracle; unknown is not no.",
+    "The exhaustive vocabulary is restricted to the frozen requested-noun vocabulary, not every possible object.",
+    "No new observer answers, candidate selections or experimental decisions were made from this diagnostic."
+  ]
+}

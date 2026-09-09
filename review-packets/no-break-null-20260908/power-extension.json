@@ -1,0 +1,42 @@
+{
+  "settings": {
+    "trials_per_cell": 300,
+    "break_resamples": 300,
+    "p_threshold": 0.05,
+    "monte_carlo_se_at_50pct": 0.0289,
+    "extends": "calibration.json, which covered 8 to 24 checkpoints"
+  },
+  "cells": [
+    {
+      "rise": 0.0,
+      "checkpoints": 32,
+      "gated": 0.043333333333333335
+    },
+    {
+      "rise": 0.0,
+      "checkpoints": 48,
+      "gated": 0.03666666666666667
+    },
+    {
+      "rise": 0.1,
+      "checkpoints": 32,
+      "gated": 0.2966666666666667
+    },
+    {
+      "rise": 0.1,
+      "checkpoints": 48,
+      "gated": 0.4666666666666667
+    },
+    {
+      "rise": 0.15,
+      "checkpoints": 32,
+      "gated": 0.64
+    },
+    {
+      "rise": 0.15,
+      "checkpoints": 48,
+      "gated": 0.82
+    }
+  ],
+  "seconds": 436.6
+}

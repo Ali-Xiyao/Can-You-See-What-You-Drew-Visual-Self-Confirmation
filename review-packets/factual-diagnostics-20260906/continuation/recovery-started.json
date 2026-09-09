@@ -1,0 +1,56 @@
+{
+  "at_unix": 1788669178.8952804,
+  "launcher_pid": 32704,
+  "launcher_sha256": "357c1a6c55ba39dd090c9b33cfc646fc11ca4832d2fb68c355a61b9c5b9b5dc7",
+  "expected_sha256": "738bb78114ec88057a0202b4470f3543011d92c77d16963e6f2822b3867be9d2",
+  "reason": "Recover the environment-only failure at naive step24 gradient, preserve its failed evidence, and finish existing measurements before the original supervisor advances to round3 through9. Same frozen sources/config/protocol and original sixty-hour deadline; no false hold completion.",
+  "preflight": {
+    "cpu_only": true,
+    "model_root": "H:\\selfsight-models",
+    "source_repository": "H:\\selfsight-models\\repositories\\Show-o",
+    "snapshots": {
+      "showlab/show-o2-1.5B": "H:\\selfsight-models\\models--showlab--show-o2-1.5B\\snapshots\\07ec16589d4fc5422a74dddbbc4b2cd11e551039",
+      "Wan-AI/Wan2.1-T2V-14B": "H:\\selfsight-models\\models--Wan-AI--Wan2.1-T2V-14B\\snapshots\\a064a6c71f5be440641209c07bf2a5ce7a2ff5e4",
+      "google/siglip-so400m-patch14-384": "H:\\selfsight-models\\models--google--siglip-so400m-patch14-384\\snapshots\\9fdffc58afc957d1a03a25b10dba0329ab15c2a3",
+      "Qwen/Qwen2.5-1.5B-Instruct": "H:\\selfsight-models\\models--Qwen--Qwen2.5-1.5B-Instruct\\snapshots\\989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+    },
+    "offline": {
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1"
+    }
+  },
+  "environment_allowlist": {
+    "SELFSIGHT_PROJECT_ROOT": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation",
+    "SELFSIGHT_CACHE_ROOT": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\cache",
+    "SELFSIGHT_DATA_ROOT": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\data",
+    "SELFSIGHT_RUN_ROOT": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs",
+    "SELFSIGHT_MODEL_ROOT": "H:\\selfsight-models",
+    "SELFSIGHT_ENV_ROOT": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs",
+    "SELFSIGHT_TMP_ROOT": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\tmp",
+    "HF_HOME": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\cache\\huggingface",
+    "HF_HUB_CACHE": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\cache\\huggingface\\hub",
+    "HF_HUB_DISABLE_XET": "1",
+    "HF_HUB_DISABLE_SYMLINKS_WARNING": "1",
+    "TRANSFORMERS_CACHE": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\cache\\huggingface\\transformers",
+    "TORCH_HOME": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\cache\\torch",
+    "PIP_CACHE_DIR": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\cache\\pip",
+    "WANDB_DIR": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\wandb",
+    "WANDB_CACHE_DIR": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\cache\\wandb",
+    "TEMP": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\tmp",
+    "TMP": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\tmp",
+    "PYTHONPATH": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\src",
+    "PYTHONUTF8": "1",
+    "PYTHONNOUSERSITE": "1",
+    "TOKENIZERS_PARALLELISM": "false",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1"
+  },
+  "failure_evidence_sha256": {
+    "runs\\v4\\decoupling-pilot-20260906\\state.json": "86c2cfa7cba678b90535e364cfe8142804992f8554c8c1e88437af8a680cd790",
+    "runs\\v4\\decoupling-pilot-20260906\\logs\\naive.step-00024.gradient.log": "8b21b6596cb2db3ccd3cc52a74276d9c4a3f736d0aa4d30dcdea920ff8a0bc13",
+    "runs\\v4\\decoupling-pilot-20260906\\runtime-check\\method-review-hold-20260906\\helper.err": "d1e60a88764a67492d0f686192ad6a11d0eed76ba10a9ebd6cd67016b53e4aea",
+    "runs\\v4\\decoupling-pilot-20260906\\runtime-check\\method-review-hold-20260906\\events.jsonl": "b14b19feb18255a13779d7bd0f0cbb0f75d1ed40c3658fbe98c976e34185f56d",
+    "runs\\v4\\decoupling-pilot-20260906\\runtime-check\\method-review-hold-20260906\\bounded-supervisor.log": "3909b3afe400e59d13e56f57455f3ad9cc1fdf5e644710cb67b3f976105b6e78"
+  },
+  "original_deadline_unix": 1788847464.2176192
+}

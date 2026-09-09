@@ -1,0 +1,2296 @@
+{
+  "primary_selection": {
+    "base-00000": {
+      "prompt_on": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 12,
+          "n_top_without_correct": 2,
+          "top_size_mean": 3.142857142857143,
+          "top_correct_rate_pool_mean": 0.5,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.08928571428571427,
+          "actual_gain": 0.017857142857142873,
+          "actual_correct_rate": 0.42857142857142855,
+          "top_correct_rate_micro": 0.4772727272727273,
+          "n_all_tied": 3,
+          "n_correct_score_higher": 7,
+          "n_correct_score_equal": 3,
+          "n_correct_score_lower": 4,
+          "actual_gain_interval": {
+            "point": 0.017857142857142873,
+            "ci_low": -0.2619047619047619,
+            "ci_high": 0.29166666666666663,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.08928571428571427,
+            "ci_low": -0.06904761904761905,
+            "ci_high": 0.25952380952380955,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 12,
+          "n_top_without_correct": 2,
+          "top_size_mean": 3.0,
+          "top_correct_rate_pool_mean": 0.5178571428571429,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.10714285714285711,
+          "actual_gain": 0.08928571428571429,
+          "actual_correct_rate": 0.5,
+          "top_correct_rate_micro": 0.5,
+          "n_all_tied": 3,
+          "n_correct_score_higher": 7,
+          "n_correct_score_equal": 3,
+          "n_correct_score_lower": 4,
+          "actual_gain_interval": {
+            "point": 0.08928571428571429,
+            "ci_low": -0.20833333333333334,
+            "ci_high": 0.375,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.10714285714285711,
+            "ci_low": -0.055982142857142855,
+            "ci_high": 0.2738095238095238,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      },
+      "prompt_off": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 10,
+          "n_top_without_correct": 1,
+          "top_size_mean": 2.5,
+          "top_correct_rate_pool_mean": 0.7321428571428571,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.32142857142857145,
+          "actual_gain": 0.37500000000000006,
+          "actual_correct_rate": 0.7857142857142857,
+          "top_correct_rate_micro": 0.6857142857142857,
+          "n_all_tied": 0,
+          "n_correct_score_higher": 13,
+          "n_correct_score_equal": 0,
+          "n_correct_score_lower": 1,
+          "actual_gain_interval": {
+            "point": 0.37500000000000006,
+            "ci_low": 0.1369047619047619,
+            "ci_high": 0.5892857142857143,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.32142857142857145,
+            "ci_low": 0.17976190476190476,
+            "ci_high": 0.47023809523809523,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 10,
+          "n_top_without_correct": 2,
+          "top_size_mean": 2.4285714285714284,
+          "top_correct_rate_pool_mean": 0.7083333333333334,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.2976190476190476,
+          "actual_gain": 0.30357142857142855,
+          "actual_correct_rate": 0.7142857142857143,
+          "top_correct_rate_micro": 0.6764705882352942,
+          "n_all_tied": 0,
+          "n_correct_score_higher": 12,
+          "n_correct_score_equal": 0,
+          "n_correct_score_lower": 2,
+          "actual_gain_interval": {
+            "point": 0.30357142857142855,
+            "ci_low": 0.06547619047619045,
+            "ci_high": 0.5238095238095238,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.2976190476190476,
+            "ci_low": 0.13925595238095237,
+            "ci_high": 0.4595238095238095,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      },
+      "prompt_blank": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 11,
+          "n_top_without_correct": 0,
+          "top_size_mean": 2.7142857142857144,
+          "top_correct_rate_pool_mean": 0.7107142857142856,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.29999999999999993,
+          "actual_gain": 0.37500000000000006,
+          "actual_correct_rate": 0.7857142857142857,
+          "top_correct_rate_micro": 0.631578947368421,
+          "n_all_tied": 0,
+          "n_correct_score_higher": 13,
+          "n_correct_score_equal": 0,
+          "n_correct_score_lower": 1,
+          "actual_gain_interval": {
+            "point": 0.37500000000000006,
+            "ci_low": 0.1369047619047619,
+            "ci_high": 0.5892857142857143,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.29999999999999993,
+            "ci_low": 0.17976190476190476,
+            "ci_high": 0.4404761904761904,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 11,
+          "n_top_without_correct": 1,
+          "top_size_mean": 2.5,
+          "top_correct_rate_pool_mean": 0.6928571428571428,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.28214285714285714,
+          "actual_gain": 0.30357142857142866,
+          "actual_correct_rate": 0.7142857142857143,
+          "top_correct_rate_micro": 0.6285714285714286,
+          "n_all_tied": 0,
+          "n_correct_score_higher": 12,
+          "n_correct_score_equal": 0,
+          "n_correct_score_lower": 2,
+          "actual_gain_interval": {
+            "point": 0.30357142857142866,
+            "ci_low": 0.02380952380952383,
+            "ci_high": 0.5535714285714286,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.28214285714285714,
+            "ci_low": 0.14401785714285714,
+            "ci_high": 0.4345238095238096,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      }
+    },
+    "naive-00016": {
+      "prompt_on": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 14,
+          "n_top_without_correct": 0,
+          "top_size_mean": 3.9285714285714284,
+          "top_correct_rate_pool_mean": 0.5226190476190476,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.11190476190476191,
+          "actual_gain": 0.017857142857142873,
+          "actual_correct_rate": 0.42857142857142855,
+          "top_correct_rate_micro": 0.509090909090909,
+          "n_all_tied": 6,
+          "n_correct_score_higher": 8,
+          "n_correct_score_equal": 6,
+          "n_correct_score_lower": 0,
+          "actual_gain_interval": {
+            "point": 0.017857142857142873,
+            "ci_low": -0.22023809523809526,
+            "ci_high": 0.25000000000000006,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.11190476190476191,
+            "ci_low": 0.04047619047619048,
+            "ci_high": 0.19285714285714287,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 14,
+          "n_top_without_correct": 0,
+          "top_size_mean": 3.7857142857142856,
+          "top_correct_rate_pool_mean": 0.5083333333333333,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.09761904761904762,
+          "actual_gain": 0.017857142857142873,
+          "actual_correct_rate": 0.42857142857142855,
+          "top_correct_rate_micro": 0.49056603773584906,
+          "n_all_tied": 5,
+          "n_correct_score_higher": 8,
+          "n_correct_score_equal": 5,
+          "n_correct_score_lower": 1,
+          "actual_gain_interval": {
+            "point": 0.017857142857142873,
+            "ci_low": -0.22023809523809526,
+            "ci_high": 0.25000000000000006,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.09761904761904762,
+            "ci_low": 0.024999999999999998,
+            "ci_high": 0.18095238095238095,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      },
+      "prompt_off": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 10,
+          "n_top_without_correct": 0,
+          "top_size_mean": 2.7142857142857144,
+          "top_correct_rate_pool_mean": 0.7797619047619048,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.369047619047619,
+          "actual_gain": 0.37500000000000006,
+          "actual_correct_rate": 0.7857142857142857,
+          "top_correct_rate_micro": 0.6842105263157895,
+          "n_all_tied": 2,
+          "n_correct_score_higher": 11,
+          "n_correct_score_equal": 2,
+          "n_correct_score_lower": 1,
+          "actual_gain_interval": {
+            "point": 0.37500000000000006,
+            "ci_low": 0.125,
+            "ci_high": 0.5892857142857143,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.36904761904761907,
+            "ci_low": 0.20833333333333334,
+            "ci_high": 0.5357142857142857,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 9,
+          "n_top_without_correct": 0,
+          "top_size_mean": 2.357142857142857,
+          "top_correct_rate_pool_mean": 0.744047619047619,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.33333333333333337,
+          "actual_gain": 0.30357142857142866,
+          "actual_correct_rate": 0.7142857142857143,
+          "top_correct_rate_micro": 0.6363636363636364,
+          "n_all_tied": 1,
+          "n_correct_score_higher": 10,
+          "n_correct_score_equal": 3,
+          "n_correct_score_lower": 1,
+          "actual_gain_interval": {
+            "point": 0.30357142857142866,
+            "ci_low": 0.02380952380952381,
+            "ci_high": 0.5476190476190476,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.33333333333333337,
+            "ci_low": 0.14880952380952378,
+            "ci_high": 0.5178571428571429,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      },
+      "prompt_blank": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 11,
+          "n_top_without_correct": 0,
+          "top_size_mean": 3.0,
+          "top_correct_rate_pool_mean": 0.7380952380952381,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.3273809523809524,
+          "actual_gain": 0.23214285714285718,
+          "actual_correct_rate": 0.6428571428571429,
+          "top_correct_rate_micro": 0.6666666666666666,
+          "n_all_tied": 3,
+          "n_correct_score_higher": 11,
+          "n_correct_score_equal": 3,
+          "n_correct_score_lower": 0,
+          "actual_gain_interval": {
+            "point": 0.23214285714285718,
+            "ci_low": -0.03571428571428571,
+            "ci_high": 0.48214285714285715,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.3273809523809524,
+            "ci_low": 0.19047619047619047,
+            "ci_high": 0.4821428571428571,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 10,
+          "n_top_without_correct": 0,
+          "top_size_mean": 2.7857142857142856,
+          "top_correct_rate_pool_mean": 0.7380952380952381,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.3273809523809524,
+          "actual_gain": 0.23214285714285718,
+          "actual_correct_rate": 0.6428571428571429,
+          "top_correct_rate_micro": 0.6666666666666666,
+          "n_all_tied": 2,
+          "n_correct_score_higher": 11,
+          "n_correct_score_equal": 3,
+          "n_correct_score_lower": 0,
+          "actual_gain_interval": {
+            "point": 0.23214285714285718,
+            "ci_low": -0.03571428571428571,
+            "ci_high": 0.48214285714285715,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.3273809523809524,
+            "ci_low": 0.19047619047619047,
+            "ci_high": 0.4821428571428571,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      }
+    },
+    "naive-00032": {
+      "prompt_on": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 14,
+          "n_top_without_correct": 0,
+          "top_size_mean": 4.071428571428571,
+          "top_correct_rate_pool_mean": 0.49642857142857144,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.08571428571428572,
+          "actual_gain": 0.017857142857142873,
+          "actual_correct_rate": 0.42857142857142855,
+          "top_correct_rate_micro": 0.45614035087719296,
+          "n_all_tied": 5,
+          "n_correct_score_higher": 7,
+          "n_correct_score_equal": 5,
+          "n_correct_score_lower": 2,
+          "actual_gain_interval": {
+            "point": 0.017857142857142873,
+            "ci_low": -0.22023809523809526,
+            "ci_high": 0.25000000000000006,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.08571428571428572,
+            "ci_low": 0.016666666666666666,
+            "ci_high": 0.17023809523809524,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 14,
+          "n_top_without_correct": 0,
+          "top_size_mean": 4.071428571428571,
+          "top_correct_rate_pool_mean": 0.49642857142857144,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.08571428571428572,
+          "actual_gain": 0.017857142857142873,
+          "actual_correct_rate": 0.42857142857142855,
+          "top_correct_rate_micro": 0.45614035087719296,
+          "n_all_tied": 5,
+          "n_correct_score_higher": 7,
+          "n_correct_score_equal": 5,
+          "n_correct_score_lower": 2,
+          "actual_gain_interval": {
+            "point": 0.017857142857142873,
+            "ci_low": -0.22023809523809526,
+            "ci_high": 0.25000000000000006,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.08571428571428572,
+            "ci_low": 0.016666666666666666,
+            "ci_high": 0.17023809523809524,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      },
+      "prompt_off": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 13,
+          "n_top_without_correct": 1,
+          "top_size_mean": 3.142857142857143,
+          "top_correct_rate_pool_mean": 0.613095238095238,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.20238095238095236,
+          "actual_gain": 0.16071428571428567,
+          "actual_correct_rate": 0.5714285714285714,
+          "top_correct_rate_micro": 0.5909090909090909,
+          "n_all_tied": 2,
+          "n_correct_score_higher": 10,
+          "n_correct_score_equal": 2,
+          "n_correct_score_lower": 2,
+          "actual_gain_interval": {
+            "point": 0.16071428571428567,
+            "ci_low": -0.10119047619047618,
+            "ci_high": 0.40476190476190477,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.20238095238095236,
+            "ci_low": 0.08333333333333333,
+            "ci_high": 0.34523809523809523,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 13,
+          "n_top_without_correct": 1,
+          "top_size_mean": 3.142857142857143,
+          "top_correct_rate_pool_mean": 0.613095238095238,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.20238095238095236,
+          "actual_gain": 0.16071428571428567,
+          "actual_correct_rate": 0.5714285714285714,
+          "top_correct_rate_micro": 0.5909090909090909,
+          "n_all_tied": 2,
+          "n_correct_score_higher": 10,
+          "n_correct_score_equal": 2,
+          "n_correct_score_lower": 2,
+          "actual_gain_interval": {
+            "point": 0.16071428571428567,
+            "ci_low": -0.10119047619047618,
+            "ci_high": 0.40476190476190477,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.20238095238095236,
+            "ci_low": 0.08333333333333333,
+            "ci_high": 0.34523809523809523,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      },
+      "prompt_blank": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 14,
+          "n_top_without_correct": 1,
+          "top_size_mean": 3.2142857142857144,
+          "top_correct_rate_pool_mean": 0.536904761904762,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.12619047619047616,
+          "actual_gain": 0.017857142857142873,
+          "actual_correct_rate": 0.42857142857142855,
+          "top_correct_rate_micro": 0.5111111111111111,
+          "n_all_tied": 1,
+          "n_correct_score_higher": 9,
+          "n_correct_score_equal": 1,
+          "n_correct_score_lower": 4,
+          "actual_gain_interval": {
+            "point": 0.017857142857142873,
+            "ci_low": -0.22023809523809526,
+            "ci_high": 0.25000000000000006,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.12619047619047616,
+            "ci_low": 0.013095238095238094,
+            "ci_high": 0.24285714285714285,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 14,
+          "n_top_without_correct": 1,
+          "top_size_mean": 3.2142857142857144,
+          "top_correct_rate_pool_mean": 0.536904761904762,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.12619047619047616,
+          "actual_gain": 0.017857142857142873,
+          "actual_correct_rate": 0.42857142857142855,
+          "top_correct_rate_micro": 0.5111111111111111,
+          "n_all_tied": 1,
+          "n_correct_score_higher": 9,
+          "n_correct_score_equal": 1,
+          "n_correct_score_lower": 4,
+          "actual_gain_interval": {
+            "point": 0.017857142857142873,
+            "ci_low": -0.22023809523809526,
+            "ci_high": 0.25000000000000006,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.12619047619047616,
+            "ci_low": 0.013095238095238094,
+            "ci_high": 0.24285714285714285,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      }
+    },
+    "rfo_gold-00016": {
+      "prompt_on": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 14,
+          "n_top_without_correct": 0,
+          "top_size_mean": 3.9285714285714284,
+          "top_correct_rate_pool_mean": 0.5226190476190476,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.11190476190476191,
+          "actual_gain": 0.017857142857142873,
+          "actual_correct_rate": 0.42857142857142855,
+          "top_correct_rate_micro": 0.509090909090909,
+          "n_all_tied": 6,
+          "n_correct_score_higher": 8,
+          "n_correct_score_equal": 6,
+          "n_correct_score_lower": 0,
+          "actual_gain_interval": {
+            "point": 0.017857142857142873,
+            "ci_low": -0.22023809523809526,
+            "ci_high": 0.25000000000000006,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.11190476190476191,
+            "ci_low": 0.04047619047619048,
+            "ci_high": 0.19285714285714287,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 14,
+          "n_top_without_correct": 0,
+          "top_size_mean": 3.7857142857142856,
+          "top_correct_rate_pool_mean": 0.5083333333333333,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.09761904761904762,
+          "actual_gain": 0.017857142857142873,
+          "actual_correct_rate": 0.42857142857142855,
+          "top_correct_rate_micro": 0.49056603773584906,
+          "n_all_tied": 5,
+          "n_correct_score_higher": 8,
+          "n_correct_score_equal": 5,
+          "n_correct_score_lower": 1,
+          "actual_gain_interval": {
+            "point": 0.017857142857142873,
+            "ci_low": -0.22023809523809526,
+            "ci_high": 0.25000000000000006,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.09761904761904762,
+            "ci_low": 0.024999999999999998,
+            "ci_high": 0.18095238095238095,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      },
+      "prompt_off": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 11,
+          "n_top_without_correct": 0,
+          "top_size_mean": 2.857142857142857,
+          "top_correct_rate_pool_mean": 0.7321428571428571,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.32142857142857145,
+          "actual_gain": 0.30357142857142855,
+          "actual_correct_rate": 0.7142857142857143,
+          "top_correct_rate_micro": 0.65,
+          "n_all_tied": 2,
+          "n_correct_score_higher": 11,
+          "n_correct_score_equal": 2,
+          "n_correct_score_lower": 1,
+          "actual_gain_interval": {
+            "point": 0.30357142857142855,
+            "ci_low": 0.06547619047619045,
+            "ci_high": 0.5238095238095238,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.32142857142857145,
+            "ci_low": 0.17857142857142855,
+            "ci_high": 0.4761904761904762,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 10,
+          "n_top_without_correct": 0,
+          "top_size_mean": 2.357142857142857,
+          "top_correct_rate_pool_mean": 0.7321428571428571,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.32142857142857145,
+          "actual_gain": 0.30357142857142855,
+          "actual_correct_rate": 0.7142857142857143,
+          "top_correct_rate_micro": 0.6363636363636364,
+          "n_all_tied": 1,
+          "n_correct_score_higher": 11,
+          "n_correct_score_equal": 2,
+          "n_correct_score_lower": 1,
+          "actual_gain_interval": {
+            "point": 0.30357142857142855,
+            "ci_low": 0.06547619047619045,
+            "ci_high": 0.5238095238095238,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.32142857142857145,
+            "ci_low": 0.15476190476190474,
+            "ci_high": 0.48809523809523814,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      },
+      "prompt_blank": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 11,
+          "n_top_without_correct": 0,
+          "top_size_mean": 3.0714285714285716,
+          "top_correct_rate_pool_mean": 0.7202380952380952,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.3095238095238095,
+          "actual_gain": 0.23214285714285718,
+          "actual_correct_rate": 0.6428571428571429,
+          "top_correct_rate_micro": 0.6511627906976745,
+          "n_all_tied": 4,
+          "n_correct_score_higher": 10,
+          "n_correct_score_equal": 4,
+          "n_correct_score_lower": 0,
+          "actual_gain_interval": {
+            "point": 0.23214285714285718,
+            "ci_low": -0.03571428571428571,
+            "ci_high": 0.48214285714285715,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.3095238095238095,
+            "ci_low": 0.16666666666666666,
+            "ci_high": 0.4702380952380952,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 9,
+          "n_top_without_correct": 0,
+          "top_size_mean": 2.5714285714285716,
+          "top_correct_rate_pool_mean": 0.725,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.3142857142857142,
+          "actual_gain": 0.30357142857142866,
+          "actual_correct_rate": 0.7142857142857143,
+          "top_correct_rate_micro": 0.6111111111111112,
+          "n_all_tied": 2,
+          "n_correct_score_higher": 11,
+          "n_correct_score_equal": 2,
+          "n_correct_score_lower": 1,
+          "actual_gain_interval": {
+            "point": 0.30357142857142866,
+            "ci_low": 0.08928571428571429,
+            "ci_high": 0.5059523809523808,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.3142857142857142,
+            "ci_low": 0.16666666666666669,
+            "ci_high": 0.4703571428571412,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      }
+    },
+    "rfo_gold-00032": {
+      "prompt_on": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 14,
+          "n_top_without_correct": 0,
+          "top_size_mean": 4.142857142857143,
+          "top_correct_rate_pool_mean": 0.4928571428571429,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.08214285714285716,
+          "actual_gain": 0.017857142857142873,
+          "actual_correct_rate": 0.42857142857142855,
+          "top_correct_rate_micro": 0.4482758620689655,
+          "n_all_tied": 5,
+          "n_correct_score_higher": 7,
+          "n_correct_score_equal": 5,
+          "n_correct_score_lower": 2,
+          "actual_gain_interval": {
+            "point": 0.017857142857142873,
+            "ci_low": -0.22023809523809526,
+            "ci_high": 0.25000000000000006,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.08214285714285716,
+            "ci_low": 0.01190476190476191,
+            "ci_high": 0.16666666666666666,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 14,
+          "n_top_without_correct": 0,
+          "top_size_mean": 4.142857142857143,
+          "top_correct_rate_pool_mean": 0.4928571428571429,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.08214285714285716,
+          "actual_gain": 0.017857142857142873,
+          "actual_correct_rate": 0.42857142857142855,
+          "top_correct_rate_micro": 0.4482758620689655,
+          "n_all_tied": 5,
+          "n_correct_score_higher": 7,
+          "n_correct_score_equal": 5,
+          "n_correct_score_lower": 2,
+          "actual_gain_interval": {
+            "point": 0.017857142857142873,
+            "ci_low": -0.22023809523809526,
+            "ci_high": 0.25000000000000006,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.08214285714285716,
+            "ci_low": 0.01190476190476191,
+            "ci_high": 0.16666666666666666,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      },
+      "prompt_off": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 13,
+          "n_top_without_correct": 1,
+          "top_size_mean": 3.0714285714285716,
+          "top_correct_rate_pool_mean": 0.6011904761904762,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.19047619047619047,
+          "actual_gain": 0.0892857142857143,
+          "actual_correct_rate": 0.5,
+          "top_correct_rate_micro": 0.5813953488372093,
+          "n_all_tied": 2,
+          "n_correct_score_higher": 10,
+          "n_correct_score_equal": 2,
+          "n_correct_score_lower": 2,
+          "actual_gain_interval": {
+            "point": 0.0892857142857143,
+            "ci_low": -0.19047619047619044,
+            "ci_high": 0.3632440476190455,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.19047619047619047,
+            "ci_low": 0.05952380952380952,
+            "ci_high": 0.3392857142857143,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 13,
+          "n_top_without_correct": 1,
+          "top_size_mean": 3.0714285714285716,
+          "top_correct_rate_pool_mean": 0.6011904761904762,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.19047619047619047,
+          "actual_gain": 0.0892857142857143,
+          "actual_correct_rate": 0.5,
+          "top_correct_rate_micro": 0.5813953488372093,
+          "n_all_tied": 2,
+          "n_correct_score_higher": 10,
+          "n_correct_score_equal": 2,
+          "n_correct_score_lower": 2,
+          "actual_gain_interval": {
+            "point": 0.0892857142857143,
+            "ci_low": -0.19047619047619044,
+            "ci_high": 0.3632440476190455,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.19047619047619047,
+            "ci_low": 0.05952380952380952,
+            "ci_high": 0.3392857142857143,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      },
+      "prompt_blank": {
+        "original": {
+          "n_pools": 14,
+          "n_with_top_ties": 13,
+          "n_top_without_correct": 2,
+          "top_size_mean": 3.0,
+          "top_correct_rate_pool_mean": 0.5142857142857143,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.10357142857142856,
+          "actual_gain": -0.05357142857142857,
+          "actual_correct_rate": 0.35714285714285715,
+          "top_correct_rate_micro": 0.5,
+          "n_all_tied": 1,
+          "n_correct_score_higher": 9,
+          "n_correct_score_equal": 1,
+          "n_correct_score_lower": 4,
+          "actual_gain_interval": {
+            "point": -0.05357142857142856,
+            "ci_low": -0.3095238095238095,
+            "ci_high": 0.20238095238095238,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.10357142857142856,
+            "ci_low": -0.0773809523809524,
+            "ci_high": 0.2619047619047619,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        },
+        "expanded": {
+          "n_pools": 14,
+          "n_with_top_ties": 13,
+          "n_top_without_correct": 2,
+          "top_size_mean": 3.0,
+          "top_correct_rate_pool_mean": 0.5142857142857143,
+          "baseline_pool_mean": 0.41071428571428575,
+          "top_uniform_gain": 0.10357142857142856,
+          "actual_gain": -0.05357142857142857,
+          "actual_correct_rate": 0.35714285714285715,
+          "top_correct_rate_micro": 0.5,
+          "n_all_tied": 1,
+          "n_correct_score_higher": 9,
+          "n_correct_score_equal": 1,
+          "n_correct_score_lower": 4,
+          "actual_gain_interval": {
+            "point": -0.05357142857142856,
+            "ci_low": -0.3095238095238095,
+            "ci_high": 0.20238095238095238,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          },
+          "top_uniform_gain_interval": {
+            "point": 0.10357142857142856,
+            "ci_low": -0.0773809523809524,
+            "ci_high": 0.2619047619047619,
+            "n_scenes": 14,
+            "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+          }
+        }
+      }
+    }
+  },
+  "primary_contrasts": {
+    "base-00000": {
+      "prompt_blank_minus_on": {
+        "original_actual_gain": {
+          "point": 0.35714285714285715,
+          "ci_low": 0.14285714285714285,
+          "ci_high": 0.6428571428571429,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_actual_gain": {
+          "point": 0.21428571428571427,
+          "ci_low": 0.0,
+          "ci_high": 0.42857142857142855,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_fact": {
+          "point": 0.04265873015873014,
+          "ci_low": 0.007936507936507924,
+          "ci_high": 0.0863095238095238,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_conflicting_fact_accuracy": {
+          "point": 0.22916666666666669,
+          "ci_low": 0.04166666666666667,
+          "ci_high": 0.4791666666666667,
+          "n_scenes": 8,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_request_all": {
+          "point": 0.00793650793650794,
+          "ci_low": -0.01190476190476191,
+          "ci_high": 0.029761904761904774,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_fact": {
+          "point": 0.11111111111111113,
+          "ci_low": 0.04067460317460318,
+          "ci_high": 0.20039682539682538,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_conflicting_fact_accuracy": {
+          "point": 0.4034722222222222,
+          "ci_low": 0.1951388888888889,
+          "ci_high": 0.6305555555555555,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_request_all": {
+          "point": -0.09722222222222221,
+          "ci_low": -0.1567460317460317,
+          "ci_high": -0.03571428571428571,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_response_fact": {
+          "point": -0.019841269841269844,
+          "ci_low": -0.04761904761904761,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_conflicting_fact_accuracy": {
+          "point": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n_scenes": 0
+        },
+        "negative_existence_response_request_all": {
+          "point": -0.019841269841269844,
+          "ci_low": -0.04761904761904761,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_fact": {
+          "point": 0.07688492063492063,
+          "ci_low": 0.03571428571428571,
+          "ci_high": 0.1220238095238095,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_conflicting_fact_accuracy": {
+          "point": 0.3638888888888889,
+          "ci_low": 0.16666666666666666,
+          "ci_high": 0.5861111111111111,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_request_all": {
+          "point": -0.044642857142857144,
+          "ci_low": -0.07787698412698411,
+          "ci_high": -0.006448412698412699,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_fact": {
+          "point": 0.03663548752834469,
+          "ci_low": 0.011404596560846608,
+          "ci_high": 0.0618150037792895,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_conflicting_fact_accuracy": {
+          "point": 0.3638888888888889,
+          "ci_low": 0.16666666666666666,
+          "ci_high": 0.5861111111111111,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_request_all": {
+          "point": -0.03637566137566138,
+          "ci_low": -0.05853174603174607,
+          "ci_high": -0.01190476190476191,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        }
+      },
+      "prompt_off_minus_on": {
+        "original_actual_gain": {
+          "point": 0.35714285714285715,
+          "ci_low": 0.14285714285714285,
+          "ci_high": 0.6428571428571429,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_actual_gain": {
+          "point": 0.21428571428571427,
+          "ci_low": -0.07142857142857142,
+          "ci_high": 0.5,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_fact": {
+          "point": 0.06547619047619048,
+          "ci_low": 0.020833333333333332,
+          "ci_high": 0.11309523809523811,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_conflicting_fact_accuracy": {
+          "point": 0.4791666666666667,
+          "ci_low": 0.16666666666666669,
+          "ci_high": 0.7708333333333334,
+          "n_scenes": 8,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_request_all": {
+          "point": -0.014880952380952384,
+          "ci_low": -0.048611111111111126,
+          "ci_high": 0.01388888888888891,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_fact": {
+          "point": 0.11111111111111113,
+          "ci_low": 0.019841269841269864,
+          "ci_high": 0.20932539682539683,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_conflicting_fact_accuracy": {
+          "point": 0.4312499999999999,
+          "ci_low": 0.2305555555555556,
+          "ci_high": 0.6416840277777774,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_request_all": {
+          "point": -0.11408730158730158,
+          "ci_low": -0.1825396825396825,
+          "ci_high": -0.04960317460317457,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_response_fact": {
+          "point": -0.012896825396825391,
+          "ci_low": -0.03472222222222221,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_conflicting_fact_accuracy": {
+          "point": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n_scenes": 0
+        },
+        "negative_existence_response_request_all": {
+          "point": -0.012896825396825391,
+          "ci_low": -0.03472222222222221,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_fact": {
+          "point": 0.0882936507936508,
+          "ci_low": 0.03174603174603175,
+          "ci_high": 0.14484126984126985,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_conflicting_fact_accuracy": {
+          "point": 0.4315972222222222,
+          "ci_low": 0.225,
+          "ci_high": 0.6482725694444443,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_request_all": {
+          "point": -0.06448412698412698,
+          "ci_low": -0.1056547619047619,
+          "ci_high": -0.024305555555555525,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_fact": {
+          "point": 0.045918367346938785,
+          "ci_low": 0.010392455593348464,
+          "ci_high": 0.0812789351851852,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_conflicting_fact_accuracy": {
+          "point": 0.4315972222222222,
+          "ci_low": 0.225,
+          "ci_high": 0.6482725694444443,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_request_all": {
+          "point": -0.04728835978835983,
+          "ci_low": -0.0747354497354498,
+          "ci_high": -0.019841269841269875,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        }
+      }
+    },
+    "naive-00016": {
+      "prompt_blank_minus_on": {
+        "original_actual_gain": {
+          "point": 0.21428571428571427,
+          "ci_low": 0.0,
+          "ci_high": 0.42857142857142855,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_actual_gain": {
+          "point": 0.21428571428571427,
+          "ci_low": 0.0,
+          "ci_high": 0.42857142857142855,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_fact": {
+          "point": 0.0009920634920634885,
+          "ci_low": -0.02380952380952382,
+          "ci_high": 0.026785714285714284,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_conflicting_fact_accuracy": {
+          "point": 0.0625,
+          "ci_low": -0.1875,
+          "ci_high": 0.375,
+          "n_scenes": 8,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_request_all": {
+          "point": -0.0009920634920634885,
+          "ci_low": -0.026785714285714284,
+          "ci_high": 0.02380952380952382,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_fact": {
+          "point": 0.07837301587301589,
+          "ci_low": 0.04265873015873017,
+          "ci_high": 0.11607142857142859,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_conflicting_fact_accuracy": {
+          "point": 0.41944444444444445,
+          "ci_low": 0.2332986111111111,
+          "ci_high": 0.6209374999999985,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_request_all": {
+          "point": -0.09126984126984128,
+          "ci_low": -0.1349206349206349,
+          "ci_high": -0.050595238095238096,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_response_fact": {
+          "point": -0.02777777777777778,
+          "ci_low": -0.07539682539682539,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_conflicting_fact_accuracy": {
+          "point": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n_scenes": 0
+        },
+        "negative_existence_response_request_all": {
+          "point": -0.02777777777777778,
+          "ci_low": -0.07539682539682539,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_fact": {
+          "point": 0.0396825396825397,
+          "ci_low": 0.018849206349206362,
+          "ci_high": 0.0634920634920635,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_conflicting_fact_accuracy": {
+          "point": 0.3138888888888889,
+          "ci_low": 0.15277777777777776,
+          "ci_high": 0.49652777777777773,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_request_all": {
+          "point": -0.04613095238095238,
+          "ci_low": -0.07142857142857141,
+          "ci_high": -0.02281746031746031,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_fact": {
+          "point": 0.015428949357520792,
+          "ci_low": -0.00988402305366587,
+          "ci_high": 0.0380763416477702,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_conflicting_fact_accuracy": {
+          "point": 0.3138888888888889,
+          "ci_low": 0.15277777777777776,
+          "ci_high": 0.49652777777777773,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_request_all": {
+          "point": -0.04001322751322751,
+          "ci_low": -0.05687830687830686,
+          "ci_high": -0.02347883597883598,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        }
+      },
+      "prompt_off_minus_on": {
+        "original_actual_gain": {
+          "point": 0.35714285714285715,
+          "ci_low": 0.14285714285714285,
+          "ci_high": 0.6428571428571429,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_actual_gain": {
+          "point": 0.2857142857142857,
+          "ci_low": 0.07142857142857142,
+          "ci_high": 0.5,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_fact": {
+          "point": 0.016865079365079378,
+          "ci_low": -0.007936507936507924,
+          "ci_high": 0.04960317460317463,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_conflicting_fact_accuracy": {
+          "point": 0.16666666666666666,
+          "ci_low": -0.04166666666666667,
+          "ci_high": 0.4375,
+          "n_scenes": 8,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_request_all": {
+          "point": -0.012896825396825407,
+          "ci_low": -0.04067460317460319,
+          "ci_high": 0.007936507936507924,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_fact": {
+          "point": 0.08928571428571429,
+          "ci_low": 0.034722222222222224,
+          "ci_high": 0.14484126984126983,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_conflicting_fact_accuracy": {
+          "point": 0.4506944444444445,
+          "ci_low": 0.2555208333333333,
+          "ci_high": 0.6514062499999997,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_request_all": {
+          "point": -0.1091269841269841,
+          "ci_low": -0.1587301587301587,
+          "ci_high": -0.06448412698412698,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_response_fact": {
+          "point": 0.11111111111111109,
+          "ci_low": 0.03174603174603174,
+          "ci_high": 0.20039682539682535,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_conflicting_fact_accuracy": {
+          "point": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n_scenes": 0
+        },
+        "negative_existence_response_request_all": {
+          "point": 0.11507936507936509,
+          "ci_low": 0.031746031746031744,
+          "ci_high": 0.20833333333333331,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_fact": {
+          "point": 0.05307539682539682,
+          "ci_low": 0.02232142857142858,
+          "ci_high": 0.08482142857142856,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_conflicting_fact_accuracy": {
+          "point": 0.3295138888888889,
+          "ci_low": 0.17776041666666662,
+          "ci_high": 0.4930555555555555,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_request_all": {
+          "point": -0.06101190476190478,
+          "ci_low": -0.0868055555555556,
+          "ci_high": -0.03621031746031748,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_fact": {
+          "point": 0.07806122448979592,
+          "ci_low": 0.04455640589569164,
+          "ci_high": 0.11385156840513978,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_conflicting_fact_accuracy": {
+          "point": 0.3295138888888889,
+          "ci_low": 0.17776041666666662,
+          "ci_high": 0.4930555555555555,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_request_all": {
+          "point": -0.002314814814814841,
+          "ci_low": -0.03968253968253969,
+          "ci_high": 0.03802910052910047,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        }
+      },
+      "prompt_blank_effect_change_from_base_conflicting_original_fact_accuracy": {
+        "point": -0.05000000000000001,
+        "ci_low": -0.34793402777777777,
+        "ci_high": 0.2569444444444444,
+        "n_scenes": 12,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_off_effect_change_from_base_conflicting_original_fact_accuracy": {
+        "point": -0.10208333333333335,
+        "ci_low": -0.38125000000000003,
+        "ci_high": 0.1840277777777778,
+        "n_scenes": 12,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_on_original_selection_change_from_base": {
+        "point": 0.0,
+        "ci_low": -0.21428571428571427,
+        "ci_high": 0.21428571428571427,
+        "n_scenes": 14,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_off_original_selection_change_from_base": {
+        "point": 0.0,
+        "ci_low": -0.21428571428571427,
+        "ci_high": 0.21428571428571427,
+        "n_scenes": 14,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_blank_original_selection_change_from_base": {
+        "point": -0.14285714285714285,
+        "ci_low": -0.35714285714285715,
+        "ci_high": 0.0,
+        "n_scenes": 14,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      }
+    },
+    "naive-00032": {
+      "prompt_blank_minus_on": {
+        "original_actual_gain": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_actual_gain": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_fact": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_conflicting_fact_accuracy": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 8,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_request_all": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_fact": {
+          "point": 0.03670634920634921,
+          "ci_low": -0.03472222222222221,
+          "ci_high": 0.1280009920634917,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_conflicting_fact_accuracy": {
+          "point": 0.19652777777777777,
+          "ci_low": 0.05416666666666667,
+          "ci_high": 0.37916666666666665,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_request_all": {
+          "point": -0.10912698412698414,
+          "ci_low": -0.1626984126984127,
+          "ci_high": -0.06051587301587306,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_response_fact": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_conflicting_fact_accuracy": {
+          "point": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n_scenes": 0
+        },
+        "negative_existence_response_request_all": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_fact": {
+          "point": 0.018353174603174576,
+          "ci_low": -0.017361111111111136,
+          "ci_high": 0.06400049603174585,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_conflicting_fact_accuracy": {
+          "point": 0.17430555555555552,
+          "ci_low": 0.03819444444444444,
+          "ci_high": 0.35833333333333334,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_request_all": {
+          "point": -0.05456349206349207,
+          "ci_low": -0.08134920634920638,
+          "ci_high": -0.03025793650793651,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_fact": {
+          "point": 0.004794973544973548,
+          "ci_low": -0.011904761904761887,
+          "ci_high": 0.021990740740740738,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_conflicting_fact_accuracy": {
+          "point": 0.17430555555555552,
+          "ci_low": 0.03819444444444444,
+          "ci_high": 0.35833333333333334,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_request_all": {
+          "point": -0.03637566137566139,
+          "ci_low": -0.05423280423280422,
+          "ci_high": -0.020171957671957706,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        }
+      },
+      "prompt_off_minus_on": {
+        "original_actual_gain": {
+          "point": 0.14285714285714285,
+          "ci_low": 0.0,
+          "ci_high": 0.35714285714285715,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_actual_gain": {
+          "point": 0.14285714285714285,
+          "ci_low": 0.0,
+          "ci_high": 0.35714285714285715,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_fact": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_conflicting_fact_accuracy": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 8,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_request_all": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_fact": {
+          "point": 0.0902777777777778,
+          "ci_low": 0.021825396825396852,
+          "ci_high": 0.17361111111111113,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_conflicting_fact_accuracy": {
+          "point": 0.34861111111111104,
+          "ci_low": 0.1875,
+          "ci_high": 0.5222569444444439,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_request_all": {
+          "point": -0.12599206349206346,
+          "ci_low": -0.18353174603174602,
+          "ci_high": -0.06845238095238095,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_response_fact": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_conflicting_fact_accuracy": {
+          "point": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n_scenes": 0
+        },
+        "negative_existence_response_request_all": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_fact": {
+          "point": 0.04513888888888889,
+          "ci_low": 0.010912698412698405,
+          "ci_high": 0.08680555555555555,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_conflicting_fact_accuracy": {
+          "point": 0.2708333333333333,
+          "ci_low": 0.13194444444444445,
+          "ci_high": 0.4444444444444444,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_request_all": {
+          "point": -0.06299603174603177,
+          "ci_low": -0.09176587301587305,
+          "ci_high": -0.03422619047619051,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_fact": {
+          "point": 0.021943499622071056,
+          "ci_low": 0.0062104355631141485,
+          "ci_high": 0.03854934334845049,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_conflicting_fact_accuracy": {
+          "point": 0.2708333333333333,
+          "ci_low": 0.13194444444444445,
+          "ci_high": 0.4444444444444444,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_request_all": {
+          "point": -0.041997354497354464,
+          "ci_low": -0.06117724867724863,
+          "ci_high": -0.02281746031746031,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        }
+      },
+      "prompt_blank_effect_change_from_base_conflicting_original_fact_accuracy": {
+        "point": -0.18958333333333333,
+        "ci_low": -0.37916666666666665,
+        "ci_high": -0.041666666666666664,
+        "n_scenes": 12,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_off_effect_change_from_base_conflicting_original_fact_accuracy": {
+        "point": -0.16076388888888887,
+        "ci_low": -0.3680815972222222,
+        "ci_high": 0.010078124999999879,
+        "n_scenes": 12,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_on_original_selection_change_from_base": {
+        "point": 0.0,
+        "ci_low": -0.21428571428571427,
+        "ci_high": 0.21428571428571427,
+        "n_scenes": 14,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_off_original_selection_change_from_base": {
+        "point": -0.21428571428571427,
+        "ci_low": -0.42857142857142855,
+        "ci_high": 0.0,
+        "n_scenes": 14,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_blank_original_selection_change_from_base": {
+        "point": -0.35714285714285715,
+        "ci_low": -0.6428571428571429,
+        "ci_high": -0.14285714285714285,
+        "n_scenes": 14,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      }
+    },
+    "rfo_gold-00016": {
+      "prompt_blank_minus_on": {
+        "original_actual_gain": {
+          "point": 0.21428571428571427,
+          "ci_low": 0.0,
+          "ci_high": 0.42857142857142855,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_actual_gain": {
+          "point": 0.2857142857142857,
+          "ci_low": 0.07142857142857142,
+          "ci_high": 0.5714285714285714,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_fact": {
+          "point": 0.0009920634920634885,
+          "ci_low": -0.02380952380952382,
+          "ci_high": 0.026785714285714284,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_conflicting_fact_accuracy": {
+          "point": 0.0625,
+          "ci_low": -0.1875,
+          "ci_high": 0.375,
+          "n_scenes": 8,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_request_all": {
+          "point": -0.0009920634920634885,
+          "ci_low": -0.026785714285714284,
+          "ci_high": 0.02380952380952382,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_fact": {
+          "point": 0.07242063492063491,
+          "ci_low": 0.035714285714285705,
+          "ci_high": 0.11111111111111113,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_conflicting_fact_accuracy": {
+          "point": 0.3361111111111111,
+          "ci_low": 0.16944444444444443,
+          "ci_high": 0.5194444444444445,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_request_all": {
+          "point": -0.08531746031746032,
+          "ci_low": -0.12996031746031747,
+          "ci_high": -0.043650793650793655,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_response_fact": {
+          "point": -0.019841269841269844,
+          "ci_low": -0.05555555555555556,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_conflicting_fact_accuracy": {
+          "point": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n_scenes": 0
+        },
+        "negative_existence_response_request_all": {
+          "point": -0.019841269841269844,
+          "ci_low": -0.05555555555555556,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_fact": {
+          "point": 0.03670634920634922,
+          "ci_low": 0.01587301587301588,
+          "ci_high": 0.061507936507936525,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_conflicting_fact_accuracy": {
+          "point": 0.2722222222222222,
+          "ci_low": 0.11178819444444445,
+          "ci_high": 0.4576388888888889,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_request_all": {
+          "point": -0.043154761904761904,
+          "ci_low": -0.06845238095238095,
+          "ci_high": -0.01934523809523809,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_fact": {
+          "point": 0.01609032501889645,
+          "ci_low": -0.006151502267573697,
+          "ci_high": 0.036802721088435346,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_conflicting_fact_accuracy": {
+          "point": 0.2722222222222222,
+          "ci_low": 0.11178819444444445,
+          "ci_high": 0.4576388888888889,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_request_all": {
+          "point": -0.035383597883597885,
+          "ci_low": -0.05257936507936506,
+          "ci_high": -0.01884920634920637,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        }
+      },
+      "prompt_off_minus_on": {
+        "original_actual_gain": {
+          "point": 0.2857142857142857,
+          "ci_low": 0.07142857142857142,
+          "ci_high": 0.5017857142856883,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_actual_gain": {
+          "point": 0.2857142857142857,
+          "ci_low": 0.07142857142857142,
+          "ci_high": 0.5017857142856883,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_fact": {
+          "point": 0.016865079365079378,
+          "ci_low": -0.007936507936507924,
+          "ci_high": 0.04960317460317463,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_conflicting_fact_accuracy": {
+          "point": 0.16666666666666666,
+          "ci_low": -0.04166666666666667,
+          "ci_high": 0.4375,
+          "n_scenes": 8,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_request_all": {
+          "point": -0.012896825396825407,
+          "ci_low": -0.04067460317460319,
+          "ci_high": 0.007936507936507924,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_fact": {
+          "point": 0.07936507936507937,
+          "ci_low": 0.031746031746031744,
+          "ci_high": 0.12700892857142823,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_conflicting_fact_accuracy": {
+          "point": 0.4090277777777778,
+          "ci_low": 0.23192708333333328,
+          "ci_high": 0.59375,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_request_all": {
+          "point": -0.09920634920634919,
+          "ci_low": -0.1388888888888889,
+          "ci_high": -0.06148313492063527,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_response_fact": {
+          "point": 0.09722222222222222,
+          "ci_low": 0.009920634920634922,
+          "ci_high": 0.19246031746031744,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_conflicting_fact_accuracy": {
+          "point": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n_scenes": 0
+        },
+        "negative_existence_response_request_all": {
+          "point": 0.10119047619047618,
+          "ci_low": 0.011904761904761899,
+          "ci_high": 0.19841269841269843,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_fact": {
+          "point": 0.04811507936507937,
+          "ci_low": 0.02033730158730157,
+          "ci_high": 0.07738095238095241,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_conflicting_fact_accuracy": {
+          "point": 0.28784722222222225,
+          "ci_low": 0.15590277777777775,
+          "ci_high": 0.42118923611111103,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_request_all": {
+          "point": -0.056051587301587324,
+          "ci_low": -0.07886904761904764,
+          "ci_high": -0.033730158730158756,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_fact": {
+          "point": 0.07012471655328799,
+          "ci_low": 0.03558153817082391,
+          "ci_high": 0.10678665910808761,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_conflicting_fact_accuracy": {
+          "point": 0.28784722222222225,
+          "ci_low": 0.15590277777777775,
+          "ci_high": 0.42118923611111103,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_request_all": {
+          "point": -0.0036375661375661456,
+          "ci_low": -0.041005291005290996,
+          "ci_high": 0.03769841269841269,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        }
+      },
+      "prompt_blank_effect_change_from_base_conflicting_original_fact_accuracy": {
+        "point": -0.09166666666666667,
+        "ci_low": -0.4291840277777778,
+        "ci_high": 0.23958333333333334,
+        "n_scenes": 12,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_off_effect_change_from_base_conflicting_original_fact_accuracy": {
+        "point": -0.14375000000000002,
+        "ci_low": -0.4063194444444444,
+        "ci_high": 0.11666666666666665,
+        "n_scenes": 12,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_on_original_selection_change_from_base": {
+        "point": 0.0,
+        "ci_low": -0.21428571428571427,
+        "ci_high": 0.21428571428571427,
+        "n_scenes": 14,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_off_original_selection_change_from_base": {
+        "point": -0.07142857142857142,
+        "ci_low": -0.21428571428571427,
+        "ci_high": 0.0,
+        "n_scenes": 14,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_blank_original_selection_change_from_base": {
+        "point": -0.14285714285714285,
+        "ci_low": -0.35714285714285715,
+        "ci_high": 0.0,
+        "n_scenes": 14,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      }
+    },
+    "rfo_gold-00032": {
+      "prompt_blank_minus_on": {
+        "original_actual_gain": {
+          "point": -0.07142857142857142,
+          "ci_low": -0.21428571428571427,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_actual_gain": {
+          "point": -0.07142857142857142,
+          "ci_low": -0.21428571428571427,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_fact": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_conflicting_fact_accuracy": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 8,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_request_all": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_fact": {
+          "point": 0.032738095238095254,
+          "ci_low": -0.05059523809523806,
+          "ci_high": 0.13293650793650794,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_conflicting_fact_accuracy": {
+          "point": 0.21319444444444446,
+          "ci_low": 0.05555555555555555,
+          "ci_high": 0.40208333333333335,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_request_all": {
+          "point": -0.13095238095238096,
+          "ci_low": -0.18849206349206352,
+          "ci_high": -0.07539682539682539,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_response_fact": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_conflicting_fact_accuracy": {
+          "point": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n_scenes": 0
+        },
+        "negative_existence_response_request_all": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_fact": {
+          "point": 0.0163690476190476,
+          "ci_low": -0.025297619047619086,
+          "ci_high": 0.06646825396825394,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_conflicting_fact_accuracy": {
+          "point": 0.1909722222222222,
+          "ci_low": 0.041666666666666664,
+          "ci_high": 0.375,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_request_all": {
+          "point": -0.06547619047619048,
+          "ci_low": -0.09424603174603179,
+          "ci_high": -0.03769841269841268,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_fact": {
+          "point": 0.00347222222222222,
+          "ci_low": -0.017763841647770194,
+          "ci_high": 0.0255822467876039,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_conflicting_fact_accuracy": {
+          "point": 0.1909722222222222,
+          "ci_low": 0.041666666666666664,
+          "ci_high": 0.375,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_request_all": {
+          "point": -0.04365079365079364,
+          "ci_low": -0.06283068783068782,
+          "ci_high": -0.025132275132275124,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        }
+      },
+      "prompt_off_minus_on": {
+        "original_actual_gain": {
+          "point": 0.07142857142857142,
+          "ci_low": -0.14285714285714285,
+          "ci_high": 0.2857142857142857,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_actual_gain": {
+          "point": 0.07142857142857142,
+          "ci_low": -0.14285714285714285,
+          "ci_high": 0.2857142857142857,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_fact": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_conflicting_fact_accuracy": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 8,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "existence_response_request_all": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_fact": {
+          "point": 0.08630952380952385,
+          "ci_low": 0.005952380952380963,
+          "ci_high": 0.1795634920634921,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_conflicting_fact_accuracy": {
+          "point": 0.35486111111111107,
+          "ci_low": 0.18123263888888888,
+          "ci_high": 0.5381944444444444,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "count_response_request_all": {
+          "point": -0.13789682539682538,
+          "ci_low": -0.20042162698412697,
+          "ci_high": -0.07738095238095236,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_response_fact": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "negative_existence_conflicting_fact_accuracy": {
+          "point": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n_scenes": 0
+        },
+        "negative_existence_response_request_all": {
+          "point": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_fact": {
+          "point": 0.043154761904761904,
+          "ci_low": 0.0029761904761904496,
+          "ci_high": 0.08978174603174606,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_conflicting_fact_accuracy": {
+          "point": 0.2805555555555555,
+          "ci_low": 0.13194444444444445,
+          "ci_high": 0.45833333333333326,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "original_all_response_request_all": {
+          "point": -0.06894841269841272,
+          "ci_low": -0.10021081349206358,
+          "ci_high": -0.038690476190476185,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_fact": {
+          "point": 0.02062074829931972,
+          "ci_low": -0.00023797713529856,
+          "ci_high": 0.04242252456538169,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_conflicting_fact_accuracy": {
+          "point": 0.2805555555555555,
+          "ci_low": 0.13194444444444445,
+          "ci_high": 0.45833333333333326,
+          "n_scenes": 12,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        },
+        "expanded_all_response_request_all": {
+          "point": -0.04596560846560843,
+          "ci_low": -0.06680720899470895,
+          "ci_high": -0.025793650793650758,
+          "n_scenes": 14,
+          "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+        }
+      },
+      "prompt_blank_effect_change_from_base_conflicting_original_fact_accuracy": {
+        "point": -0.1729166666666667,
+        "ci_low": -0.36041666666666666,
+        "ci_high": -0.03125,
+        "n_scenes": 12,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_off_effect_change_from_base_conflicting_original_fact_accuracy": {
+        "point": -0.15104166666666666,
+        "ci_low": -0.359375,
+        "ci_high": 0.022569444444444444,
+        "n_scenes": 12,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_on_original_selection_change_from_base": {
+        "point": 0.0,
+        "ci_low": -0.21428571428571427,
+        "ci_high": 0.21428571428571427,
+        "n_scenes": 14,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_off_original_selection_change_from_base": {
+        "point": -0.2857142857142857,
+        "ci_low": -0.5,
+        "ci_high": -0.07142857142857142,
+        "n_scenes": 14,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      },
+      "prompt_blank_original_selection_change_from_base": {
+        "point": -0.42857142857142855,
+        "ci_low": -0.7142857142857143,
+        "ci_high": -0.21428571428571427,
+        "n_scenes": 14,
+        "scope": "Exploratory scene bootstrap conditional on this already-seen fixed bank; no training-seed uncertainty or multiplicity correction."
+      }
+    }
+  }
+}

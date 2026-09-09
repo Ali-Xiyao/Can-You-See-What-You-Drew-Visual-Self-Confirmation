@@ -1,0 +1,26 @@
+{
+  "stage": "naive.step-00032.gradient",
+  "completed_unix": 1788682408.6975427,
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\scripts\\v4_checkpoint_probe.py",
+    "run",
+    "--config",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\configs\\v4_decoupling_pilot.yaml",
+    "--bank",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\probe-bank",
+    "--outdir",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032",
+    "--device",
+    "cuda:1",
+    "--arm",
+    "naive",
+    "--resamples",
+    "2000",
+    "--checkpoint",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-003",
+    "--reference",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\base\\step-00000"
+  ]
+}

@@ -1,0 +1,82 @@
+  sd57=1.50pt img= 64 sd=1.42pt ck=12 rise=0.00 (  0.0 SD)  power 4.7%
+  sd57=1.50pt img= 64 sd=1.42pt ck=12 rise=0.05 (  3.5 SD)  power 34.0%
+  sd57=1.50pt img= 64 sd=1.42pt ck=12 rise=0.10 (  7.1 SD)  power 79.7%
+  sd57=1.50pt img= 64 sd=1.42pt ck=16 rise=0.00 (  0.0 SD)  power 3.0%
+  sd57=1.50pt img= 64 sd=1.42pt ck=16 rise=0.05 (  3.5 SD)  power 43.0%
+  sd57=1.50pt img= 64 sd=1.42pt ck=16 rise=0.10 (  7.1 SD)  power 90.3%
+  sd57=1.50pt img= 64 sd=1.42pt ck=24 rise=0.00 (  0.0 SD)  power 3.3%
+  sd57=1.50pt img= 64 sd=1.42pt ck=24 rise=0.05 (  3.5 SD)  power 55.3%
+  sd57=1.50pt img= 64 sd=1.42pt ck=24 rise=0.10 (  7.1 SD)  power 99.0%
+  sd57=1.50pt img=128 sd=1.00pt ck=12 rise=0.00 (  0.0 SD)  power 2.0%
+  sd57=1.50pt img=128 sd=1.00pt ck=12 rise=0.05 (  5.0 SD)  power 57.0%
+  sd57=1.50pt img=128 sd=1.00pt ck=12 rise=0.10 ( 10.0 SD)  power 94.3%
+  sd57=1.50pt img=128 sd=1.00pt ck=16 rise=0.00 (  0.0 SD)  power 1.0%
+  sd57=1.50pt img=128 sd=1.00pt ck=16 rise=0.05 (  5.0 SD)  power 63.3%
+  sd57=1.50pt img=128 sd=1.00pt ck=16 rise=0.10 ( 10.0 SD)  power 98.0%
+  sd57=1.50pt img=128 sd=1.00pt ck=24 rise=0.00 (  0.0 SD)  power 3.0%
+  sd57=1.50pt img=128 sd=1.00pt ck=24 rise=0.05 (  5.0 SD)  power 87.0%
+  sd57=1.50pt img=128 sd=1.00pt ck=24 rise=0.10 ( 10.0 SD)  power 100.0%
+  sd57=1.50pt img=256 sd=0.71pt ck=12 rise=0.00 (  0.0 SD)  power 2.3%
+  sd57=1.50pt img=256 sd=0.71pt ck=12 rise=0.05 (  7.1 SD)  power 78.0%
+  sd57=1.50pt img=256 sd=0.71pt ck=12 rise=0.10 ( 14.1 SD)  power 100.0%
+  sd57=1.50pt img=256 sd=0.71pt ck=16 rise=0.00 (  0.0 SD)  power 1.3%
+  sd57=1.50pt img=256 sd=0.71pt ck=16 rise=0.05 (  7.1 SD)  power 92.7%
+  sd57=1.50pt img=256 sd=0.71pt ck=16 rise=0.10 ( 14.1 SD)  power 100.0%
+  sd57=1.50pt img=256 sd=0.71pt ck=24 rise=0.00 (  0.0 SD)  power 2.7%
+  sd57=1.50pt img=256 sd=0.71pt ck=24 rise=0.05 (  7.1 SD)  power 99.0%
+  sd57=1.50pt img=256 sd=0.71pt ck=24 rise=0.10 ( 14.1 SD)  power 100.0%
+  sd57=2.33pt img= 64 sd=2.20pt ck=12 rise=0.00 (  0.0 SD)  power 2.3%
+  sd57=2.33pt img= 64 sd=2.20pt ck=12 rise=0.05 (  2.3 SD)  power 14.0%
+  sd57=2.33pt img= 64 sd=2.20pt ck=12 rise=0.10 (  4.5 SD)  power 44.7%
+  sd57=2.33pt img= 64 sd=2.20pt ck=16 rise=0.00 (  0.0 SD)  power 2.0%
+  sd57=2.33pt img= 64 sd=2.20pt ck=16 rise=0.05 (  2.3 SD)  power 23.0%
+  sd57=2.33pt img= 64 sd=2.20pt ck=16 rise=0.10 (  4.5 SD)  power 60.7%
+  sd57=2.33pt img= 64 sd=2.20pt ck=24 rise=0.00 (  0.0 SD)  power 2.0%
+  sd57=2.33pt img= 64 sd=2.20pt ck=24 rise=0.05 (  2.3 SD)  power 27.7%
+  sd57=2.33pt img= 64 sd=2.20pt ck=24 rise=0.10 (  4.5 SD)  power 79.0%
+  sd57=2.33pt img=128 sd=1.55pt ck=12 rise=0.00 (  0.0 SD)  power 0.3%
+  sd57=2.33pt img=128 sd=1.55pt ck=12 rise=0.05 (  3.2 SD)  power 28.0%
+  sd57=2.33pt img=128 sd=1.55pt ck=12 rise=0.10 (  6.4 SD)  power 75.3%
+  sd57=2.33pt img=128 sd=1.55pt ck=16 rise=0.00 (  0.0 SD)  power 2.0%
+  sd57=2.33pt img=128 sd=1.55pt ck=16 rise=0.05 (  3.2 SD)  power 38.3%
+  sd57=2.33pt img=128 sd=1.55pt ck=16 rise=0.10 (  6.4 SD)  power 87.0%
+  sd57=2.33pt img=128 sd=1.55pt ck=24 rise=0.00 (  0.0 SD)  power 1.3%
+  sd57=2.33pt img=128 sd=1.55pt ck=24 rise=0.05 (  3.2 SD)  power 49.0%
+  sd57=2.33pt img=128 sd=1.55pt ck=24 rise=0.10 (  6.4 SD)  power 94.3%
+  sd57=2.33pt img=256 sd=1.10pt ck=12 rise=0.00 (  0.0 SD)  power 1.3%
+  sd57=2.33pt img=256 sd=1.10pt ck=12 rise=0.05 (  4.5 SD)  power 48.7%
+  sd57=2.33pt img=256 sd=1.10pt ck=12 rise=0.10 (  9.1 SD)  power 92.7%
+  sd57=2.33pt img=256 sd=1.10pt ck=16 rise=0.00 (  0.0 SD)  power 1.3%
+  sd57=2.33pt img=256 sd=1.10pt ck=16 rise=0.05 (  4.5 SD)  power 64.0%
+  sd57=2.33pt img=256 sd=1.10pt ck=16 rise=0.10 (  9.1 SD)  power 97.7%
+  sd57=2.33pt img=256 sd=1.10pt ck=24 rise=0.00 (  0.0 SD)  power 3.0%
+  sd57=2.33pt img=256 sd=1.10pt ck=24 rise=0.05 (  4.5 SD)  power 78.7%
+  sd57=2.33pt img=256 sd=1.10pt ck=24 rise=0.10 (  9.1 SD)  power 99.7%
+  sd57=5.14pt img= 64 sd=4.85pt ck=12 rise=0.00 (  0.0 SD)  power 2.7%
+  sd57=5.14pt img= 64 sd=4.85pt ck=12 rise=0.05 (  1.0 SD)  power 8.3%
+  sd57=5.14pt img= 64 sd=4.85pt ck=12 rise=0.10 (  2.1 SD)  power 15.3%
+  sd57=5.14pt img= 64 sd=4.85pt ck=16 rise=0.00 (  0.0 SD)  power 3.7%
+  sd57=5.14pt img= 64 sd=4.85pt ck=16 rise=0.05 (  1.0 SD)  power 9.7%
+  sd57=5.14pt img= 64 sd=4.85pt ck=16 rise=0.10 (  2.1 SD)  power 16.3%
+  sd57=5.14pt img= 64 sd=4.85pt ck=24 rise=0.00 (  0.0 SD)  power 1.0%
+  sd57=5.14pt img= 64 sd=4.85pt ck=24 rise=0.05 (  1.0 SD)  power 9.0%
+  sd57=5.14pt img= 64 sd=4.85pt ck=24 rise=0.10 (  2.1 SD)  power 22.7%
+  sd57=5.14pt img=128 sd=3.43pt ck=12 rise=0.00 (  0.0 SD)  power 3.0%
+  sd57=5.14pt img=128 sd=3.43pt ck=12 rise=0.05 (  1.5 SD)  power 7.7%
+  sd57=5.14pt img=128 sd=3.43pt ck=12 rise=0.10 (  2.9 SD)  power 23.7%
+  sd57=5.14pt img=128 sd=3.43pt ck=16 rise=0.00 (  0.0 SD)  power 3.0%
+  sd57=5.14pt img=128 sd=3.43pt ck=16 rise=0.05 (  1.5 SD)  power 11.0%
+  sd57=5.14pt img=128 sd=3.43pt ck=16 rise=0.10 (  2.9 SD)  power 34.7%
+  sd57=5.14pt img=128 sd=3.43pt ck=24 rise=0.00 (  0.0 SD)  power 0.7%
+  sd57=5.14pt img=128 sd=3.43pt ck=24 rise=0.05 (  1.5 SD)  power 12.3%
+  sd57=5.14pt img=128 sd=3.43pt ck=24 rise=0.10 (  2.9 SD)  power 39.3%
+  sd57=5.14pt img=256 sd=2.43pt ck=12 rise=0.00 (  0.0 SD)  power 2.3%
+  sd57=5.14pt img=256 sd=2.43pt ck=12 rise=0.05 (  2.1 SD)  power 12.7%
+  sd57=5.14pt img=256 sd=2.43pt ck=12 rise=0.10 (  4.1 SD)  power 44.3%
+  sd57=5.14pt img=256 sd=2.43pt ck=16 rise=0.00 (  0.0 SD)  power 3.0%
+  sd57=5.14pt img=256 sd=2.43pt ck=16 rise=0.05 (  2.1 SD)  power 19.7%
+  sd57=5.14pt img=256 sd=2.43pt ck=16 rise=0.10 (  4.1 SD)  power 49.7%
+  sd57=5.14pt img=256 sd=2.43pt ck=24 rise=0.00 (  0.0 SD)  power 2.7%
+  sd57=5.14pt img=256 sd=2.43pt ck=24 rise=0.05 (  2.1 SD)  power 23.7%
+  sd57=5.14pt img=256 sd=2.43pt ck=24 rise=0.10 (  4.1 SD)  power 66.7%
+2438.6s

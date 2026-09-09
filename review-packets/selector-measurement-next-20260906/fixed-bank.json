@@ -1,0 +1,5909 @@
+{
+  "original_bank_fingerprint": "daf31aa3da74877324c88df2a126040a15dfefcbe70c6a889133dbcf265dc59e",
+  "vocabulary": [
+    "apple",
+    "ball",
+    "banana",
+    "book",
+    "bottle",
+    "bowl",
+    "box",
+    "brush",
+    "candle",
+    "carrot",
+    "clock",
+    "cucumber",
+    "egg",
+    "flower",
+    "fork",
+    "hat",
+    "jar",
+    "key",
+    "leaf",
+    "lemon",
+    "mug",
+    "orange",
+    "pear",
+    "pen",
+    "pepper",
+    "plate",
+    "shell",
+    "shoe",
+    "sock",
+    "spoon",
+    "stone",
+    "tomato"
+  ],
+  "pools": [
+    {
+      "prompt_id": "conf-2plus1:v4a-0087",
+      "run": "conf-2plus1",
+      "spec_id": "v4a-0087",
+      "prompt": "two white candles, one black notebook",
+      "candidates": [
+        {
+          "candidate_id": "v4a-0087:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-dc59dfd14922ae3745fc-21261423-0.png",
+          "sampling_seed": 21261423,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "86b99d9b25496be0a1fce0453594cd6376c82f0be07eb4efc63fe185547ac925",
+          "rgb_sha256": "1661e4c9fcbb76540f8f1ba7a060a5d35e2bdfcc57e28343ab321a0bb4c2c162"
+        },
+        {
+          "candidate_id": "v4a-0087:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-dc59dfd14922ae3745fc-21261424-1.png",
+          "sampling_seed": 21261424,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "d6b2224100b7c7a84bd089c9a306f4fe8538b7a0e112e21379fc2ea4aef6c01d",
+          "rgb_sha256": "7a35f44a1923858b61d35b87f443b580744886f52ff96842ffeb55a5171607c8"
+        },
+        {
+          "candidate_id": "v4a-0087:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-dc59dfd14922ae3745fc-21261425-2.png",
+          "sampling_seed": 21261425,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "fdc49db1b9fc2402235948b97ef885e09f5ad0e7be3ad8a04fc62a1a1e7dc010",
+          "rgb_sha256": "e2e928ab8b743595ed403ed88413bc2fa8a13badc25806bdb7bbaab5d4f3bece"
+        },
+        {
+          "candidate_id": "v4a-0087:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-dc59dfd14922ae3745fc-21261426-3.png",
+          "sampling_seed": 21261426,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "d5f9d65c3d478564fbca5b8188ea26620f195aba60ef83917d1d9acf53fd9537",
+          "rgb_sha256": "d659abb2f51ee1f81adb103f3ab8be59417d4be6e380706a2f5789e9fb5a429e"
+        },
+        {
+          "candidate_id": "v4a-0087:4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-dc59dfd14922ae3745fc-21261427-4.png",
+          "sampling_seed": 21261427,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "10fbace7789b881a7c7187818f19d307529d4dd64d74e11cc4520dad2ca39a14",
+          "rgb_sha256": "0b87816c4277c78216854ee2c4f32d6f2b5e86c3bd7533e065e06f9a2f77f950"
+        },
+        {
+          "candidate_id": "v4a-0087:5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-dc59dfd14922ae3745fc-21261428-5.png",
+          "sampling_seed": 21261428,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "2090c9e8e4de0c8f3108f30addcc5230b40ea809ce142b9bd88071248bbb7f1a",
+          "rgb_sha256": "6939925ba7318044b58c256ec49d0c6bb4c4ba211ff795fbf84c573f2cbf3964"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4a-0087:exists:0",
+          "atom_id": "v4a-0087:exists:white-candle",
+          "family": "existence",
+          "text": "Is there a white candle in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4a-0087:count:0",
+          "atom_id": "v4a-0087:count:white-candle",
+          "family": "count",
+          "text": "How many white candles are in this picture? Answer with a single number.",
+          "expected_answer": "2",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0087:exists:1",
+          "atom_id": "v4a-0087:exists:black-book",
+          "family": "existence",
+          "text": "Is there a black book in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4a-0087:count:1",
+          "atom_id": "v4a-0087:count:black-book",
+          "family": "count",
+          "text": "How many black books are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0087:negative-exists-v1:carrot",
+          "atom_id": "v4a-0087:negative-exists-v1:carrot",
+          "family": "existence",
+          "text": "Is there a carrot in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4a-0087:negative-exists-v1:brush",
+          "atom_id": "v4a-0087:negative-exists-v1:brush",
+          "family": "existence",
+          "text": "Is there a brush in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        }
+      ],
+      "spec": {
+        "spec_id": "v4a-0087",
+        "prompt": "two white candles, one black notebook",
+        "objects": [
+          {
+            "object": "candle",
+            "color": "white",
+            "count": 2
+          },
+          {
+            "object": "book",
+            "color": "black",
+            "count": 1
+          }
+        ],
+        "relations": [],
+        "surface": "marble counter",
+        "metadata": {
+          "author": "llm",
+          "source_index": 16
+        }
+      },
+      "n_original_questions": 4,
+      "scene_sha256": "6f54bc4ca66f63bc0e20b3a612c8c40c56bd872a16162bf00a404396679a6dc9",
+      "primary_scene_disjoint": false
+    },
+    {
+      "prompt_id": "main-2plus1:v4a-0095",
+      "run": "main-2plus1",
+      "spec_id": "v4a-0095",
+      "prompt": "one yellow banana, two red apples on marble counter",
+      "candidates": [
+        {
+          "candidate_id": "v4a-0095:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-aee49796607760241d65-20261281-0.png",
+          "sampling_seed": 20261281,
+          "correct": false,
+          "facts": [
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "fdedbc97bdce204c66c95078f0be48de73f7b4581d3624350fe2babb8cfd6fa7",
+          "rgb_sha256": "ee8b478b80b9718940e78c641abc7376649d3d7dec13c2bb05cc6b21125b63b9"
+        },
+        {
+          "candidate_id": "v4a-0095:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-aee49796607760241d65-20261282-1.png",
+          "sampling_seed": 20261282,
+          "correct": false,
+          "facts": [
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "f7eb5efbe4ea40cd01b28774bc4a417602a64170dd346f1670ac7873badb4d60",
+          "rgb_sha256": "b06486d83d2237616a93da0605323d2a6f17ef3a1126d2fa657cc26a9a47b974"
+        },
+        {
+          "candidate_id": "v4a-0095:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-aee49796607760241d65-20261283-2.png",
+          "sampling_seed": 20261283,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "4eb120c02c946a50abdb783578eac89272ce6fd540eaea2e3c96e1a2387682bd",
+          "rgb_sha256": "dc3abf07fa23587b8f69040521ad0f7cc277586230293590df04d8b12a09e317"
+        },
+        {
+          "candidate_id": "v4a-0095:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-aee49796607760241d65-20261284-3.png",
+          "sampling_seed": 20261284,
+          "correct": false,
+          "facts": [
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "4c5ad31cdf19662dcb3c73142e8c23ef09877b3208c13818e5f0cca308a788ef",
+          "rgb_sha256": "30dd0b48d6fd815d8bf47ab7860518628305b1e1b87ebb595a0789e12b8c466b"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4a-0095:exists:0",
+          "atom_id": "v4a-0095:exists:yellow-banana",
+          "family": "existence",
+          "text": "Is there a yellow banana in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4a-0095:count:0",
+          "atom_id": "v4a-0095:count:yellow-banana",
+          "family": "count",
+          "text": "How many yellow bananas are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0095:exists:1",
+          "atom_id": "v4a-0095:exists:red-apple",
+          "family": "existence",
+          "text": "Is there a red apple in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4a-0095:count:1",
+          "atom_id": "v4a-0095:count:red-apple",
+          "family": "count",
+          "text": "How many red apples are in this picture? Answer with a single number.",
+          "expected_answer": "2",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0095:negative-exists-v1:box",
+          "atom_id": "v4a-0095:negative-exists-v1:box",
+          "family": "existence",
+          "text": "Is there a box in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4a-0095:negative-exists-v1:carrot",
+          "atom_id": "v4a-0095:negative-exists-v1:carrot",
+          "family": "existence",
+          "text": "Is there a carrot in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        }
+      ],
+      "spec": {
+        "spec_id": "v4a-0095",
+        "prompt": "one yellow banana, two red apples on marble counter",
+        "objects": [
+          {
+            "object": "banana",
+            "color": "yellow",
+            "count": 1
+          },
+          {
+            "object": "apple",
+            "color": "red",
+            "count": 2
+          }
+        ],
+        "relations": [],
+        "surface": "marble counter",
+        "metadata": {
+          "author": "llm",
+          "source_index": 5
+        }
+      },
+      "n_original_questions": 4,
+      "scene_sha256": "a0e4ece2331bc7f9401487364ba38608847cbaacda9b6915ee0702a9b923aaa0",
+      "primary_scene_disjoint": false
+    },
+    {
+      "prompt_id": "main-1plus1plus1:v4b-0108",
+      "run": "main-1plus1plus1",
+      "spec_id": "v4b-0108",
+      "prompt": "one orange carrot, one white egg, one brown bottle",
+      "candidates": [
+        {
+          "candidate_id": "v4b-0108:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-25859bc90b9bae400d86-20261297-0.png",
+          "sampling_seed": 20261297,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "236dee8125eeeafff6910b8fda097fce0a4ca42541008e95acb7c8d14c11bd51",
+          "rgb_sha256": "27d11fe139c9486ad3fede2358272849c923651a3949c4edf79a7d989ade3c72"
+        },
+        {
+          "candidate_id": "v4b-0108:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-25859bc90b9bae400d86-20261298-1.png",
+          "sampling_seed": 20261298,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "5410e689615453be9930b4c4f345f07f91e1cfe9c18eaa223c7e464f16adc714",
+          "rgb_sha256": "6f991a8e3911f422fcf2d34cf1256a380667ba43208ca25bad59562aecf887f2"
+        },
+        {
+          "candidate_id": "v4b-0108:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-25859bc90b9bae400d86-20261299-2.png",
+          "sampling_seed": 20261299,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "4ab2ac3f309107db8f149c9587c8af6d9605e10f946890adec45bb3a66126976",
+          "rgb_sha256": "7fd3038b4da3b1163af96b7db949c4691260fbb91da251183b5530db0ee8b313"
+        },
+        {
+          "candidate_id": "v4b-0108:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-25859bc90b9bae400d86-20261300-3.png",
+          "sampling_seed": 20261300,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "e47567791b2acbe749b10f9e1af63383d717610844a267fbeb40591b0d4b0f77",
+          "rgb_sha256": "9d055763ff2e0d35747f92906ef9727a985c7f19a6413415dafe2b141dba0deb"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4b-0108:exists:0",
+          "atom_id": "v4b-0108:exists:orange-carrot",
+          "family": "existence",
+          "text": "Is there a orange carrot in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0108:count:0",
+          "atom_id": "v4b-0108:count:orange-carrot",
+          "family": "count",
+          "text": "How many orange carrots are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0108:exists:1",
+          "atom_id": "v4b-0108:exists:white-egg",
+          "family": "existence",
+          "text": "Is there a white egg in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0108:count:1",
+          "atom_id": "v4b-0108:count:white-egg",
+          "family": "count",
+          "text": "How many white eggs are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0108:exists:2",
+          "atom_id": "v4b-0108:exists:brown-bottle",
+          "family": "existence",
+          "text": "Is there a brown bottle in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0108:count:2",
+          "atom_id": "v4b-0108:count:brown-bottle",
+          "family": "count",
+          "text": "How many brown bottles are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0108:negative-exists-v1:pear",
+          "atom_id": "v4b-0108:negative-exists-v1:pear",
+          "family": "existence",
+          "text": "Is there a pear in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0108:negative-exists-v1:lemon",
+          "atom_id": "v4b-0108:negative-exists-v1:lemon",
+          "family": "existence",
+          "text": "Is there a lemon in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0108:negative-exists-v1:clock",
+          "atom_id": "v4b-0108:negative-exists-v1:clock",
+          "family": "existence",
+          "text": "Is there a clock in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        }
+      ],
+      "spec": {
+        "spec_id": "v4b-0108",
+        "prompt": "one orange carrot, one white egg, one brown bottle",
+        "objects": [
+          {
+            "object": "carrot",
+            "color": "orange",
+            "count": 1
+          },
+          {
+            "object": "egg",
+            "color": "white",
+            "count": 1
+          },
+          {
+            "object": "bottle",
+            "color": "brown",
+            "count": 1
+          }
+        ],
+        "relations": [],
+        "surface": "wooden table",
+        "metadata": {
+          "author": "llm",
+          "source_index": 5
+        }
+      },
+      "n_original_questions": 6,
+      "scene_sha256": "e2505807913bec84c3377e56d89bd2e340e456a3ba56a82f41b69beb2e97e9b2",
+      "primary_scene_disjoint": true
+    },
+    {
+      "prompt_id": "main-2plus1:v4a-0012",
+      "run": "main-2plus1",
+      "spec_id": "v4a-0012",
+      "prompt": "one yellow banana, two green plates",
+      "candidates": [
+        {
+          "candidate_id": "v4a-0012:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-1ef8adbfb17b16113fc1-20260949-0.png",
+          "sampling_seed": 20260949,
+          "correct": false,
+          "facts": [
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "89931acd82cd6ef46bc99976c21b56911437e3ad08cbd77f30a6d34345ae9dce",
+          "rgb_sha256": "944df9b407b18f418ba22094defebfcf713fd1bc06937c9d988fd52087c553e3"
+        },
+        {
+          "candidate_id": "v4a-0012:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-1ef8adbfb17b16113fc1-20260950-1.png",
+          "sampling_seed": 20260950,
+          "correct": false,
+          "facts": [
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "92173fda6ffc59135d48c1e3119606d8bffa232732ee82b1510426a18bc05d87",
+          "rgb_sha256": "f6664c308d1dfce59cdc3b67264af552978f915f7e14b5c29828a65cdeafd4e0"
+        },
+        {
+          "candidate_id": "v4a-0012:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-1ef8adbfb17b16113fc1-20260951-2.png",
+          "sampling_seed": 20260951,
+          "correct": false,
+          "facts": [
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "736394d33fb8b06924d3943fb405584a49bfc1ac42f2903aecde3758a5c0218f",
+          "rgb_sha256": "190e7d84489e5aca4e22c444aa3af82f001b78bb09881d8a732c45a33346e595"
+        },
+        {
+          "candidate_id": "v4a-0012:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-1ef8adbfb17b16113fc1-20260952-3.png",
+          "sampling_seed": 20260952,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "fc0c53d38a3d86728e0f8e9805a443d373d2f2e3e4dc37b3709f0e47f50e8e07",
+          "rgb_sha256": "4ed1eaffdfd102efddff02b76f8cbf6bc8833013db8c251f049495c4c4cf9441"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4a-0012:exists:0",
+          "atom_id": "v4a-0012:exists:yellow-banana",
+          "family": "existence",
+          "text": "Is there a yellow banana in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4a-0012:count:0",
+          "atom_id": "v4a-0012:count:yellow-banana",
+          "family": "count",
+          "text": "How many yellow bananas are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0012:exists:1",
+          "atom_id": "v4a-0012:exists:green-plate",
+          "family": "existence",
+          "text": "Is there a green plate in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4a-0012:count:1",
+          "atom_id": "v4a-0012:count:green-plate",
+          "family": "count",
+          "text": "How many green plates are in this picture? Answer with a single number.",
+          "expected_answer": "2",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0012:negative-exists-v1:tomato",
+          "atom_id": "v4a-0012:negative-exists-v1:tomato",
+          "family": "existence",
+          "text": "Is there a tomato in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4a-0012:negative-exists-v1:apple",
+          "atom_id": "v4a-0012:negative-exists-v1:apple",
+          "family": "existence",
+          "text": "Is there an apple in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        }
+      ],
+      "spec": {
+        "spec_id": "v4a-0012",
+        "prompt": "one yellow banana, two green plates",
+        "objects": [
+          {
+            "object": "banana",
+            "color": "yellow",
+            "count": 1
+          },
+          {
+            "object": "plate",
+            "color": "green",
+            "count": 2
+          }
+        ],
+        "relations": [],
+        "surface": "desk",
+        "metadata": {
+          "author": "llm",
+          "source_index": 9
+        }
+      },
+      "n_original_questions": 4,
+      "scene_sha256": "557750c4311b30698c67318147a83dd11f0f2f81b14c4a2985ce6ed35a1269ae",
+      "primary_scene_disjoint": true
+    },
+    {
+      "prompt_id": "main-2plus1:v4a-0061",
+      "run": "main-2plus1",
+      "spec_id": "v4a-0061",
+      "prompt": "one yellow lemon, two blue cups",
+      "candidates": [
+        {
+          "candidate_id": "v4a-0061:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-8fd206f3bf99b6429c03-20261145-0.png",
+          "sampling_seed": 20261145,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "a4d34e41c54cde6d6c40da416fe42671a496bae4f8661502a8d06004b6ee275f",
+          "rgb_sha256": "172690c9b484b79cbfdf35edf3aa842815235d3df77ecb9a0fd6f90ebeb66e7a"
+        },
+        {
+          "candidate_id": "v4a-0061:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-8fd206f3bf99b6429c03-20261146-1.png",
+          "sampling_seed": 20261146,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "ffec2424a7032dfd15c4a9377ed82d467d7a4b3e60c2cf8e9b871f83faaad553",
+          "rgb_sha256": "88e7dcaaf677199d0347507aeb8a3a6e21545a9270c6ed9327ea789baaab83ce"
+        },
+        {
+          "candidate_id": "v4a-0061:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-8fd206f3bf99b6429c03-20261147-2.png",
+          "sampling_seed": 20261147,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "17595c9ca22a2e4ba2a50297ca2e81aa52f986ba0490a5d94e2659832e1e9c0c",
+          "rgb_sha256": "4a02e5afb399990107b78eac91c460b71ebcfb754bee2a97274b72977fc57fd6"
+        },
+        {
+          "candidate_id": "v4a-0061:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-8fd206f3bf99b6429c03-20261148-3.png",
+          "sampling_seed": 20261148,
+          "correct": false,
+          "facts": [
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "78e85276b4a2505cbfd73f1a3a6234244c3436d0d464d8469e48d6cd41d5d827",
+          "rgb_sha256": "453ca217f7db703e0352049ad945e795a73e37fb00f928d0df6e567089f3f232"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4a-0061:exists:0",
+          "atom_id": "v4a-0061:exists:yellow-lemon",
+          "family": "existence",
+          "text": "Is there a yellow lemon in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4a-0061:count:0",
+          "atom_id": "v4a-0061:count:yellow-lemon",
+          "family": "count",
+          "text": "How many yellow lemons are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0061:exists:1",
+          "atom_id": "v4a-0061:exists:blue-mug",
+          "family": "existence",
+          "text": "Is there a blue mug in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4a-0061:count:1",
+          "atom_id": "v4a-0061:count:blue-mug",
+          "family": "count",
+          "text": "How many blue mugs are in this picture? Answer with a single number.",
+          "expected_answer": "2",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0061:negative-exists-v1:jar",
+          "atom_id": "v4a-0061:negative-exists-v1:jar",
+          "family": "existence",
+          "text": "Is there a jar in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4a-0061:negative-exists-v1:hat",
+          "atom_id": "v4a-0061:negative-exists-v1:hat",
+          "family": "existence",
+          "text": "Is there a hat in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        }
+      ],
+      "spec": {
+        "spec_id": "v4a-0061",
+        "prompt": "one yellow lemon, two blue cups",
+        "objects": [
+          {
+            "object": "lemon",
+            "color": "yellow",
+            "count": 1
+          },
+          {
+            "object": "cup",
+            "color": "blue",
+            "count": 2
+          }
+        ],
+        "relations": [],
+        "surface": "wooden table",
+        "metadata": {
+          "author": "llm",
+          "source_index": 15
+        }
+      },
+      "n_original_questions": 4,
+      "scene_sha256": "86f9e536477f2b27f1321e64c5ab617ec6c3fd9ff3dfe46dec402148588e615d",
+      "primary_scene_disjoint": true
+    },
+    {
+      "prompt_id": "main-1plus1plus1:v4b-0018",
+      "run": "main-1plus1plus1",
+      "spec_id": "v4b-0018",
+      "prompt": "a red book, a blue notebook, a yellow candle",
+      "candidates": [
+        {
+          "candidate_id": "v4b-0018:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c84cb8c11102a6d9f842-20260965-0.png",
+          "sampling_seed": 20260965,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "5810ded02e1fd2980731003c9970eb02cb539af3d4f5ae2d630fc1471b9392d7",
+          "rgb_sha256": "34771ed7f5a7f38ea39170e6d8b15e00cd3f5e66351dd4ca337b6013e54ceaed"
+        },
+        {
+          "candidate_id": "v4b-0018:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c84cb8c11102a6d9f842-20260966-1.png",
+          "sampling_seed": 20260966,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "0bd2cfba35d4e0f9e66a2fee75e6eb0aed3e958bf165630100ac20a95d348eae",
+          "rgb_sha256": "dc2e7541c438ae96d52b463d54de05059db1a03543b54f3b745ba4f7c9bcec69"
+        },
+        {
+          "candidate_id": "v4b-0018:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c84cb8c11102a6d9f842-20260967-2.png",
+          "sampling_seed": 20260967,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "a6d03407fc4aa441c8412963006a7c22ba464ab65b2f2dbac1f14abd4605ddc0",
+          "rgb_sha256": "1a16a6eaf0217c208d77d4e4e1ad33c672e7225cf5abef8821e806d95b98885f"
+        },
+        {
+          "candidate_id": "v4b-0018:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c84cb8c11102a6d9f842-20260968-3.png",
+          "sampling_seed": 20260968,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "f172e380d78589d739ae266b4259d40c7cf7cba562b761c7ee9548fec16ca76a",
+          "rgb_sha256": "238de03242ce0db8c815d10f810259ce984deb4293f22a86475cb924a5e79c7f"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4b-0018:exists:0",
+          "atom_id": "v4b-0018:exists:red-book",
+          "family": "existence",
+          "text": "Is there a red book in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0018:count:0",
+          "atom_id": "v4b-0018:count:red-book",
+          "family": "count",
+          "text": "How many red books are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0018:exists:1",
+          "atom_id": "v4b-0018:exists:blue-book",
+          "family": "existence",
+          "text": "Is there a blue book in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0018:count:1",
+          "atom_id": "v4b-0018:count:blue-book",
+          "family": "count",
+          "text": "How many blue books are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0018:exists:2",
+          "atom_id": "v4b-0018:exists:yellow-candle",
+          "family": "existence",
+          "text": "Is there a yellow candle in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0018:count:2",
+          "atom_id": "v4b-0018:count:yellow-candle",
+          "family": "count",
+          "text": "How many yellow candles are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0018:negative-exists-v1:cucumber",
+          "atom_id": "v4b-0018:negative-exists-v1:cucumber",
+          "family": "existence",
+          "text": "Is there a cucumber in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0018:negative-exists-v1:jar",
+          "atom_id": "v4b-0018:negative-exists-v1:jar",
+          "family": "existence",
+          "text": "Is there a jar in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0018:negative-exists-v1:plate",
+          "atom_id": "v4b-0018:negative-exists-v1:plate",
+          "family": "existence",
+          "text": "Is there a plate in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        }
+      ],
+      "spec": {
+        "spec_id": "v4b-0018",
+        "prompt": "a red book, a blue notebook, a yellow candle",
+        "objects": [
+          {
+            "object": "book",
+            "color": "red",
+            "count": 1
+          },
+          {
+            "object": "notebook",
+            "color": "blue",
+            "count": 1
+          },
+          {
+            "object": "candle",
+            "color": "yellow",
+            "count": 1
+          }
+        ],
+        "relations": [],
+        "surface": "metal tray",
+        "metadata": {
+          "author": "llm",
+          "source_index": 3
+        }
+      },
+      "n_original_questions": 6,
+      "scene_sha256": "da262b87d02725539dcc358c6045363196586189a15d0a6031ab3e15c87d244c",
+      "primary_scene_disjoint": true
+    },
+    {
+      "prompt_id": "main-1plus1plus1:v4b-0074",
+      "run": "main-1plus1plus1",
+      "spec_id": "v4b-0074",
+      "prompt": "a red mug, a blue plate, a green bowl",
+      "candidates": [
+        {
+          "candidate_id": "v4b-0074:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-5de2e10dc84eef7e28b8-20261169-0.png",
+          "sampling_seed": 20261169,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "f2e58a2a7ae222964ff58416fd981bfa98a348a974b8ac856a9d692a85d746a9",
+          "rgb_sha256": "77021ee30d90667140f33b7910564cbb42782fa584ee1d62b01b6467b84923ff"
+        },
+        {
+          "candidate_id": "v4b-0074:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-5de2e10dc84eef7e28b8-20261170-1.png",
+          "sampling_seed": 20261170,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "1e5455342e3d3c592547e8b3d657dbf6835c81134a41f4a3f514b8e5d85ba238",
+          "rgb_sha256": "86504200e7875cd2b6f451bd7d4f61aa2370637f635011925e494b3bdffec3e9"
+        },
+        {
+          "candidate_id": "v4b-0074:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-5de2e10dc84eef7e28b8-20261171-2.png",
+          "sampling_seed": 20261171,
+          "correct": false,
+          "facts": [
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "14c361b9cd6fb67b00bf7bbf9478dae4a5506c554d3556a54aea0135a4f78aa4",
+          "rgb_sha256": "ee593b2fa1d379d71609d7f3381e296d96b548adc01e2949cbbd50052c3f0664"
+        },
+        {
+          "candidate_id": "v4b-0074:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-5de2e10dc84eef7e28b8-20261172-3.png",
+          "sampling_seed": 20261172,
+          "correct": false,
+          "facts": [
+            {
+              "known": false,
+              "answer": null,
+              "reason": "unnameable"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "unnameable"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "unnameable"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "unnameable"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "unnameable"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "unnameable"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "unnameable"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "unnameable"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "unnameable"
+            }
+          ],
+          "image_file_sha256": "7394b94986ffd6ec55d0a4ee6d56e010fd5fd47d8b21c7657ec45d3ee3cd0a5d",
+          "rgb_sha256": "56ea0d1b9d2c11430f3e1e8c805be4cb045430fcacb1ef2e227d4a73cb6ba0c9"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4b-0074:exists:0",
+          "atom_id": "v4b-0074:exists:red-mug",
+          "family": "existence",
+          "text": "Is there a red mug in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0074:count:0",
+          "atom_id": "v4b-0074:count:red-mug",
+          "family": "count",
+          "text": "How many red mugs are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0074:exists:1",
+          "atom_id": "v4b-0074:exists:blue-plate",
+          "family": "existence",
+          "text": "Is there a blue plate in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0074:count:1",
+          "atom_id": "v4b-0074:count:blue-plate",
+          "family": "count",
+          "text": "How many blue plates are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0074:exists:2",
+          "atom_id": "v4b-0074:exists:green-bowl",
+          "family": "existence",
+          "text": "Is there a green bowl in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0074:count:2",
+          "atom_id": "v4b-0074:count:green-bowl",
+          "family": "count",
+          "text": "How many green bowls are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0074:negative-exists-v1:apple",
+          "atom_id": "v4b-0074:negative-exists-v1:apple",
+          "family": "existence",
+          "text": "Is there an apple in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0074:negative-exists-v1:key",
+          "atom_id": "v4b-0074:negative-exists-v1:key",
+          "family": "existence",
+          "text": "Is there a key in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0074:negative-exists-v1:box",
+          "atom_id": "v4b-0074:negative-exists-v1:box",
+          "family": "existence",
+          "text": "Is there a box in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        }
+      ],
+      "spec": {
+        "spec_id": "v4b-0074",
+        "prompt": "a red mug, a blue plate, a green bowl",
+        "objects": [
+          {
+            "object": "mug",
+            "color": "red",
+            "count": 1
+          },
+          {
+            "object": "plate",
+            "color": "blue",
+            "count": 1
+          },
+          {
+            "object": "bowl",
+            "color": "green",
+            "count": 1
+          }
+        ],
+        "relations": [],
+        "surface": "marble counter",
+        "metadata": {
+          "author": "llm",
+          "source_index": 16
+        }
+      },
+      "n_original_questions": 6,
+      "scene_sha256": "dc7178d27706bf3aa484344917dcc060976fcc56d75687ea5cd4b4b9f56fd3bc",
+      "primary_scene_disjoint": true
+    },
+    {
+      "prompt_id": "conf-1plus1plus1:v4b-0009",
+      "run": "conf-1plus1plus1",
+      "spec_id": "v4b-0009",
+      "prompt": "a red apple, a green pear, a brown book",
+      "candidates": [
+        {
+          "candidate_id": "v4b-0009:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-524db66f097b1d346fd2-21260949-0.png",
+          "sampling_seed": 21260949,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "5170b992dae9c7e1716cbc62eeab3678d482a6300c16c57d88b62478b89a4ce5",
+          "rgb_sha256": "bcced8ac9ea6e824906f6e8f0cdb5cf1c85ab94d69d39786ce0f23adf29d06d3"
+        },
+        {
+          "candidate_id": "v4b-0009:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-524db66f097b1d346fd2-21260950-1.png",
+          "sampling_seed": 21260950,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "0420034304dec2c784343f74f425fd7111d2be60c3e418bf7e0c39c6354bcb02",
+          "rgb_sha256": "a1eb53b4272c9bdc86f419fccbe014fdba9ab4bc49d18e727e3660e950b854d2"
+        },
+        {
+          "candidate_id": "v4b-0009:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-524db66f097b1d346fd2-21260951-2.png",
+          "sampling_seed": 21260951,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "f34b89d24458bfef064900bba8c3c12331e386f32e965c1d7311edff0fc1933f",
+          "rgb_sha256": "ecf32918cd48fadfbe9eb6dcbfb3e98e75373fb74621bdd84afa5e395e0e7ae4"
+        },
+        {
+          "candidate_id": "v4b-0009:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-524db66f097b1d346fd2-21260952-3.png",
+          "sampling_seed": 21260952,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "25725bc94903bdce250192b2b8b5facbf934a41bd7446513e762fac7671b4a00",
+          "rgb_sha256": "d9eca6b3b5c0e776f7f749fa936a3b241a80084d12faddfbb9826c3f5fb7c572"
+        },
+        {
+          "candidate_id": "v4b-0009:4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-524db66f097b1d346fd2-21260953-4.png",
+          "sampling_seed": 21260953,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "329137e12ca280144de0d74b90baa7a78fbe93d5b85cbd379f2321215e8b4dfa",
+          "rgb_sha256": "aa2c9cd449e50b587a650e83dc7ac4fa060bf31e1ac33873eaa4b49833c8d660"
+        },
+        {
+          "candidate_id": "v4b-0009:5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-524db66f097b1d346fd2-21260954-5.png",
+          "sampling_seed": 21260954,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "9c6fae5005f41d59d54820573fcf6c20e741d085b9f54cf739f474cd5b2a489f",
+          "rgb_sha256": "0d9f0ccd05b5a52c8832a05cbc1611b908a5d493d7c5ca23a389a7ca952367e1"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4b-0009:exists:0",
+          "atom_id": "v4b-0009:exists:red-apple",
+          "family": "existence",
+          "text": "Is there a red apple in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0009:count:0",
+          "atom_id": "v4b-0009:count:red-apple",
+          "family": "count",
+          "text": "How many red apples are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0009:exists:1",
+          "atom_id": "v4b-0009:exists:green-pear",
+          "family": "existence",
+          "text": "Is there a green pear in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0009:count:1",
+          "atom_id": "v4b-0009:count:green-pear",
+          "family": "count",
+          "text": "How many green pears are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0009:exists:2",
+          "atom_id": "v4b-0009:exists:brown-book",
+          "family": "existence",
+          "text": "Is there a brown book in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0009:count:2",
+          "atom_id": "v4b-0009:count:brown-book",
+          "family": "count",
+          "text": "How many brown books are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0009:negative-exists-v1:flower",
+          "atom_id": "v4b-0009:negative-exists-v1:flower",
+          "family": "existence",
+          "text": "Is there a flower in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0009:negative-exists-v1:plate",
+          "atom_id": "v4b-0009:negative-exists-v1:plate",
+          "family": "existence",
+          "text": "Is there a plate in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0009:negative-exists-v1:key",
+          "atom_id": "v4b-0009:negative-exists-v1:key",
+          "family": "existence",
+          "text": "Is there a key in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        }
+      ],
+      "spec": {
+        "spec_id": "v4b-0009",
+        "prompt": "a red apple, a green pear, a brown book",
+        "objects": [
+          {
+            "object": "apple",
+            "color": "red",
+            "count": 1
+          },
+          {
+            "object": "pear",
+            "color": "green",
+            "count": 1
+          },
+          {
+            "object": "book",
+            "color": "brown",
+            "count": 1
+          }
+        ],
+        "relations": [],
+        "surface": "desk",
+        "metadata": {
+          "author": "llm",
+          "source_index": 4
+        }
+      },
+      "n_original_questions": 6,
+      "scene_sha256": "5edc9fa15b98598576c3ed7e33cd91edec658c7f960398ffd6dbe0b6b33e0acc",
+      "primary_scene_disjoint": true
+    },
+    {
+      "prompt_id": "main-2plus1:v4a-0047",
+      "run": "main-2plus1",
+      "spec_id": "v4a-0047",
+      "prompt": "one red tomato, two green pears",
+      "candidates": [
+        {
+          "candidate_id": "v4a-0047:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-0de0cd1af972104c823e-20261089-0.png",
+          "sampling_seed": 20261089,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "090afb40f314a476e29779f481d87973be86dd73e2fd549606cc53da77a2c6eb",
+          "rgb_sha256": "b44f97ab4b9edd5753e81cad5d4f9ac9f567951c67676b47e7b806477983a79b"
+        },
+        {
+          "candidate_id": "v4a-0047:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-0de0cd1af972104c823e-20261090-1.png",
+          "sampling_seed": 20261090,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "cef4d496b26a0472bf26453eab46e9c2e2c8f932d41c40c6c462de9aee5d7e9f",
+          "rgb_sha256": "1761b41e5a666a9b3713afd1ec3e063a934a14cd60f777a214ec9bef4aaeeb4d"
+        },
+        {
+          "candidate_id": "v4a-0047:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-0de0cd1af972104c823e-20261091-2.png",
+          "sampling_seed": 20261091,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "4c7caac85bf44bce943fdfcfbbbfbe79977bbbfa686662d368af749d38ede083",
+          "rgb_sha256": "c790d4219114438f029bd053264cb8873d1137d962d4bd2e8c4601d711802cc3"
+        },
+        {
+          "candidate_id": "v4a-0047:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-0de0cd1af972104c823e-20261092-3.png",
+          "sampling_seed": 20261092,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "1ee84d6dcbd65c26498aa6e1e93c8dba1b14103676ac1e2d7185a8e9f8a7323d",
+          "rgb_sha256": "892a6c3c68e3a6b40864550c248722619758a52514cc8f20adabc68b51eaffdf"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4a-0047:exists:0",
+          "atom_id": "v4a-0047:exists:red-tomato",
+          "family": "existence",
+          "text": "Is there a red tomato in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4a-0047:count:0",
+          "atom_id": "v4a-0047:count:red-tomato",
+          "family": "count",
+          "text": "How many red tomatos are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0047:exists:1",
+          "atom_id": "v4a-0047:exists:green-pear",
+          "family": "existence",
+          "text": "Is there a green pear in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4a-0047:count:1",
+          "atom_id": "v4a-0047:count:green-pear",
+          "family": "count",
+          "text": "How many green pears are in this picture? Answer with a single number.",
+          "expected_answer": "2",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0047:negative-exists-v1:carrot",
+          "atom_id": "v4a-0047:negative-exists-v1:carrot",
+          "family": "existence",
+          "text": "Is there a carrot in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4a-0047:negative-exists-v1:plate",
+          "atom_id": "v4a-0047:negative-exists-v1:plate",
+          "family": "existence",
+          "text": "Is there a plate in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        }
+      ],
+      "spec": {
+        "spec_id": "v4a-0047",
+        "prompt": "one red tomato, two green pears",
+        "objects": [
+          {
+            "object": "tomato",
+            "color": "red",
+            "count": 1
+          },
+          {
+            "object": "pear",
+            "color": "green",
+            "count": 2
+          }
+        ],
+        "relations": [],
+        "surface": "wooden table",
+        "metadata": {
+          "author": "llm",
+          "source_index": 8
+        }
+      },
+      "n_original_questions": 4,
+      "scene_sha256": "e37935eeca0933ffc7518a6c467d10877bb07498a2a6e948e6649caa2694d2d0",
+      "primary_scene_disjoint": true
+    },
+    {
+      "prompt_id": "conf-2plus1:v4a-0069",
+      "run": "conf-2plus1",
+      "spec_id": "v4a-0069",
+      "prompt": "one white candle, two green books",
+      "candidates": [
+        {
+          "candidate_id": "v4a-0069:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-15959a79d338cec014e4-21261315-0.png",
+          "sampling_seed": 21261315,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "4d4b77e9a8969201bb7f30cb838ce8c1718861770576a77a36389e0fb0e9ddec",
+          "rgb_sha256": "3c4188ca7c7d42016c61590ada81969518dd18166b7884ed180296b393b93beb"
+        },
+        {
+          "candidate_id": "v4a-0069:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-15959a79d338cec014e4-21261316-1.png",
+          "sampling_seed": 21261316,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "9ee9585eb9869c83572b9a239d40963cfab6806f45fa2fc37bd2bd9ac9f8ebf0",
+          "rgb_sha256": "57f1d0f55e4a05a5f8de634aca21656a2f25e96687db89ccdbcdee4521c2732e"
+        },
+        {
+          "candidate_id": "v4a-0069:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-15959a79d338cec014e4-21261317-2.png",
+          "sampling_seed": 21261317,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "398d4e23f561b05799dbe0942d1501160e7f7b3e81b8cb0c7d92ee17b00deb5e",
+          "rgb_sha256": "806cecbc9f65af2912ffe9ebd1af3b36989fb70524ad2ff5bf68b52fcf3bf308"
+        },
+        {
+          "candidate_id": "v4a-0069:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-15959a79d338cec014e4-21261318-3.png",
+          "sampling_seed": 21261318,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "de35d34b156b857f53d1037ae9463dfafeeddcef3aa61b13f908d38f8f3b1b12",
+          "rgb_sha256": "c21b15fc0b9e0f0197195e05afd5afa76cf654e0acfcb60b51b53b8fb8034f11"
+        },
+        {
+          "candidate_id": "v4a-0069:4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-15959a79d338cec014e4-21261319-4.png",
+          "sampling_seed": 21261319,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "9f8b473c43bb9c2d2305799a91753fcd4ce120626cc82edccf33b63100af4b0e",
+          "rgb_sha256": "d9b86ee17246f48ea3a33984d1a8e984d93b781c6efd4f76779cccb7e16c1fec"
+        },
+        {
+          "candidate_id": "v4a-0069:5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-15959a79d338cec014e4-21261320-5.png",
+          "sampling_seed": 21261320,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "01b465f4fc22990e1db2fa14f47b918a115e5a9a670dbcf577fd0c28b91cd36e",
+          "rgb_sha256": "8c77639605d95ce791754814297e412a68e18e15fbe7ade83305609199b78538"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4a-0069:exists:0",
+          "atom_id": "v4a-0069:exists:white-candle",
+          "family": "existence",
+          "text": "Is there a white candle in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4a-0069:count:0",
+          "atom_id": "v4a-0069:count:white-candle",
+          "family": "count",
+          "text": "How many white candles are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0069:exists:1",
+          "atom_id": "v4a-0069:exists:green-book",
+          "family": "existence",
+          "text": "Is there a green book in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4a-0069:count:1",
+          "atom_id": "v4a-0069:count:green-book",
+          "family": "count",
+          "text": "How many green books are in this picture? Answer with a single number.",
+          "expected_answer": "2",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0069:negative-exists-v1:stone",
+          "atom_id": "v4a-0069:negative-exists-v1:stone",
+          "family": "existence",
+          "text": "Is there a stone in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4a-0069:negative-exists-v1:ball",
+          "atom_id": "v4a-0069:negative-exists-v1:ball",
+          "family": "existence",
+          "text": "Is there a ball in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        }
+      ],
+      "spec": {
+        "spec_id": "v4a-0069",
+        "prompt": "one white candle, two green books",
+        "objects": [
+          {
+            "object": "candle",
+            "color": "white",
+            "count": 1
+          },
+          {
+            "object": "book",
+            "color": "green",
+            "count": 2
+          }
+        ],
+        "relations": [],
+        "surface": "metal tray",
+        "metadata": {
+          "author": "llm",
+          "source_index": 7
+        }
+      },
+      "n_original_questions": 4,
+      "scene_sha256": "b73c8c014aff66fca7805dd0f00a929227440e4087bb04f3151d877d9fbc0728",
+      "primary_scene_disjoint": true
+    },
+    {
+      "prompt_id": "conf-1plus1plus1:v4b-0113",
+      "run": "conf-1plus1plus1",
+      "spec_id": "v4b-0113",
+      "prompt": "one orange carrot, one white egg, one red bottle",
+      "candidates": [
+        {
+          "candidate_id": "v4b-0113:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-1fff616d0770f6186717-21261525-0.png",
+          "sampling_seed": 21261525,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "e7303feb5fe0685e46aeee2994d5405dbb62948f4aa5e513d59066e9870433ea",
+          "rgb_sha256": "fbae4f69066a31fe995e9a8593774fa1ba554d4c6b7bd2d84f2955799ee6a6ff"
+        },
+        {
+          "candidate_id": "v4b-0113:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-1fff616d0770f6186717-21261526-1.png",
+          "sampling_seed": 21261526,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "dc16a27c8eec2e23c2c285f81ac391243e7103b2bee674b345c901808ef364e8",
+          "rgb_sha256": "6d6ed4de22837fdf91da142af95c1c12156ba7a0f97aafc3ea344481dd8d8b61"
+        },
+        {
+          "candidate_id": "v4b-0113:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-1fff616d0770f6186717-21261527-2.png",
+          "sampling_seed": 21261527,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "c6a6f3c41271a7a45c6bdb3b1e592fc379d51c3613d65cda7fb55e67e50f22f5",
+          "rgb_sha256": "2c70f437387bd174db291a72883ab1014a5e6824a7be5cb0d3f8dd537800a8cf"
+        },
+        {
+          "candidate_id": "v4b-0113:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-1fff616d0770f6186717-21261528-3.png",
+          "sampling_seed": 21261528,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "af3f09de580d2d9464c887e4304822ad3c9c77b70dde040ad55c098c840fddd2",
+          "rgb_sha256": "389348c466bbcf228e92f22307654557e5bcf0069e425544ab9c698dc0169c61"
+        },
+        {
+          "candidate_id": "v4b-0113:4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-1fff616d0770f6186717-21261529-4.png",
+          "sampling_seed": 21261529,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "73a2b57f6e4ec64900a2e9ed9ee1f6b61b5ebe61f4ebf5226aedcf953af02fc6",
+          "rgb_sha256": "666804a8a33ecd00139f00342dd4816fa1a80b7d542446ed56828e073ed6ff2d"
+        },
+        {
+          "candidate_id": "v4b-0113:5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-1fff616d0770f6186717-21261530-5.png",
+          "sampling_seed": 21261530,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "72125ce2be5cb1223922cc0aa1d9950c6565e0caf22e93eb477aee3918c93120",
+          "rgb_sha256": "408cd5f57be02ccd6780da3794da0a1c37b19c71dccbe0a972d685aa661a03c4"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4b-0113:exists:0",
+          "atom_id": "v4b-0113:exists:orange-carrot",
+          "family": "existence",
+          "text": "Is there a orange carrot in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0113:count:0",
+          "atom_id": "v4b-0113:count:orange-carrot",
+          "family": "count",
+          "text": "How many orange carrots are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0113:exists:1",
+          "atom_id": "v4b-0113:exists:white-egg",
+          "family": "existence",
+          "text": "Is there a white egg in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0113:count:1",
+          "atom_id": "v4b-0113:count:white-egg",
+          "family": "count",
+          "text": "How many white eggs are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0113:exists:2",
+          "atom_id": "v4b-0113:exists:red-bottle",
+          "family": "existence",
+          "text": "Is there a red bottle in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0113:count:2",
+          "atom_id": "v4b-0113:count:red-bottle",
+          "family": "count",
+          "text": "How many red bottles are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0113:negative-exists-v1:plate",
+          "atom_id": "v4b-0113:negative-exists-v1:plate",
+          "family": "existence",
+          "text": "Is there a plate in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0113:negative-exists-v1:shell",
+          "atom_id": "v4b-0113:negative-exists-v1:shell",
+          "family": "existence",
+          "text": "Is there a shell in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0113:negative-exists-v1:box",
+          "atom_id": "v4b-0113:negative-exists-v1:box",
+          "family": "existence",
+          "text": "Is there a box in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        }
+      ],
+      "spec": {
+        "spec_id": "v4b-0113",
+        "prompt": "one orange carrot, one white egg, one red bottle",
+        "objects": [
+          {
+            "object": "carrot",
+            "color": "orange",
+            "count": 1
+          },
+          {
+            "object": "egg",
+            "color": "white",
+            "count": 1
+          },
+          {
+            "object": "bottle",
+            "color": "red",
+            "count": 1
+          }
+        ],
+        "relations": [],
+        "surface": "wooden table",
+        "metadata": {
+          "author": "llm",
+          "source_index": 10
+        }
+      },
+      "n_original_questions": 6,
+      "scene_sha256": "dfa8c1c92e24f88313208d9014865ef82b0402469b028a95a87a472159915efe",
+      "primary_scene_disjoint": true
+    },
+    {
+      "prompt_id": "conf-1plus1plus1:v4b-0013",
+      "run": "conf-1plus1plus1",
+      "spec_id": "v4b-0013",
+      "prompt": "a red tomato, a green leaf, a yellow lemon",
+      "candidates": [
+        {
+          "candidate_id": "v4b-0013:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-739fb3be4f8e51d00495-21260967-0.png",
+          "sampling_seed": 21260967,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "deac9a760b0a9e9bfc7d952d19a14d0c2e43677778fb866888e7ec33f1f7a03c",
+          "rgb_sha256": "4a0be0f38a17031a5bca46361dcdfec2bbee790458d2161b7716bc023007bd19"
+        },
+        {
+          "candidate_id": "v4b-0013:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-739fb3be4f8e51d00495-21260968-1.png",
+          "sampling_seed": 21260968,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "c6367b8da25e164deb002c9346d4721a5944a8ddaa97dbc1ec7ac9343947a6dd",
+          "rgb_sha256": "c530e33f914114858fe0356c650da3712ee59334e944cec7a121a44ece0e0b49"
+        },
+        {
+          "candidate_id": "v4b-0013:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-739fb3be4f8e51d00495-21260969-2.png",
+          "sampling_seed": 21260969,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "c1e731161bcc32a70e2d9d5c28a2de072c192fce44af284e53a1b31af3d2ed03",
+          "rgb_sha256": "73fcbe8e7a211562c1535ec27818e183154b3a394e5f5728a07e0267f5926918"
+        },
+        {
+          "candidate_id": "v4b-0013:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-739fb3be4f8e51d00495-21260970-3.png",
+          "sampling_seed": 21260970,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "01803b68a0de4278e5cdee49d57b890a9bd3557d46fab72c433a10154ac1fa27",
+          "rgb_sha256": "494fe00eae036a23932e399acca47794fa88c3fc89d71c7808a197971c2e51ae"
+        },
+        {
+          "candidate_id": "v4b-0013:4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-739fb3be4f8e51d00495-21260971-4.png",
+          "sampling_seed": 21260971,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "5857fc6334ca1da221cacefbf5953c4a7fe4e8dfbd1ffec85b0cc7aec5973a31",
+          "rgb_sha256": "09d5adebfe0fc883acc3dba6defbae6af8a35d9a6b41ecb4eb2aad3ae96812d9"
+        },
+        {
+          "candidate_id": "v4b-0013:5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-739fb3be4f8e51d00495-21260972-5.png",
+          "sampling_seed": 21260972,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "61e67c536ad0f977586a1572906046a0053e32ea6602dba6432ec11224ce0859",
+          "rgb_sha256": "7e51b2997694466daf6cc46d6816aa54bc4a6a7ecdc9987a6ffff74cf5352afb"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4b-0013:exists:0",
+          "atom_id": "v4b-0013:exists:red-tomato",
+          "family": "existence",
+          "text": "Is there a red tomato in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0013:count:0",
+          "atom_id": "v4b-0013:count:red-tomato",
+          "family": "count",
+          "text": "How many red tomatos are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0013:exists:1",
+          "atom_id": "v4b-0013:exists:green-leaf",
+          "family": "existence",
+          "text": "Is there a green leaf in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0013:count:1",
+          "atom_id": "v4b-0013:count:green-leaf",
+          "family": "count",
+          "text": "How many green leafs are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0013:exists:2",
+          "atom_id": "v4b-0013:exists:yellow-lemon",
+          "family": "existence",
+          "text": "Is there a yellow lemon in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0013:count:2",
+          "atom_id": "v4b-0013:count:yellow-lemon",
+          "family": "count",
+          "text": "How many yellow lemons are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0013:negative-exists-v1:pepper",
+          "atom_id": "v4b-0013:negative-exists-v1:pepper",
+          "family": "existence",
+          "text": "Is there a pepper in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0013:negative-exists-v1:banana",
+          "atom_id": "v4b-0013:negative-exists-v1:banana",
+          "family": "existence",
+          "text": "Is there a banana in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0013:negative-exists-v1:ball",
+          "atom_id": "v4b-0013:negative-exists-v1:ball",
+          "family": "existence",
+          "text": "Is there a ball in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        }
+      ],
+      "spec": {
+        "spec_id": "v4b-0013",
+        "prompt": "a red tomato, a green leaf, a yellow lemon",
+        "objects": [
+          {
+            "object": "tomato",
+            "color": "red",
+            "count": 1
+          },
+          {
+            "object": "leaf",
+            "color": "green",
+            "count": 1
+          },
+          {
+            "object": "lemon",
+            "color": "yellow",
+            "count": 1
+          }
+        ],
+        "relations": [],
+        "surface": "white cloth",
+        "metadata": {
+          "author": "llm",
+          "source_index": 2
+        }
+      },
+      "n_original_questions": 6,
+      "scene_sha256": "04c6b990318f8c5bd1457ec6adb7d68994f79d8b7cf99b3d0e7d24e56078ae65",
+      "primary_scene_disjoint": true
+    },
+    {
+      "prompt_id": "main-2plus1:v4a-0076",
+      "run": "main-2plus1",
+      "spec_id": "v4a-0076",
+      "prompt": "one blue plate, two black bottles",
+      "candidates": [
+        {
+          "candidate_id": "v4a-0076:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-f51d69797875e420ca2a-20261205-0.png",
+          "sampling_seed": 20261205,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "8a81287c274059900b277f4e4395b9f5bffee3fac377bb4a827a9c7ecdbb1c5c",
+          "rgb_sha256": "d4370e613f11c9785ce155d9e9a2a25345443bf71f7e6057fe77482a537091dd"
+        },
+        {
+          "candidate_id": "v4a-0076:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-f51d69797875e420ca2a-20261206-1.png",
+          "sampling_seed": 20261206,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "4",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "62af103f7371ce72ff136dc9798a0dee8966f3dfde13de15fbb10b86d119a056",
+          "rgb_sha256": "7cb3f48583b4072daf09d4daaf20595ec16bef7fb0d0c85ce733f3b3ca116b1c"
+        },
+        {
+          "candidate_id": "v4a-0076:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-f51d69797875e420ca2a-20261207-2.png",
+          "sampling_seed": 20261207,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "73134e5b9ebeb32c61df9ce9981cb9028f03a26d26d9d177c9bed7d08b0ba3d7",
+          "rgb_sha256": "d5add5db7321518c32914e9a5caecc1680470c28f4ed2f66102a4261c1b2b93f"
+        },
+        {
+          "candidate_id": "v4a-0076:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-f51d69797875e420ca2a-20261208-3.png",
+          "sampling_seed": 20261208,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "ebb734cb41184adf4d3003180ef06afed61cd311b3fde32d6eac1bca3d05a1d6",
+          "rgb_sha256": "1b7c545bedcdd7a2d1a081e296cdc47fe12f4d622cc7135c952518f055055c8b"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4a-0076:exists:0",
+          "atom_id": "v4a-0076:exists:blue-plate",
+          "family": "existence",
+          "text": "Is there a blue plate in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4a-0076:count:0",
+          "atom_id": "v4a-0076:count:blue-plate",
+          "family": "count",
+          "text": "How many blue plates are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0076:exists:1",
+          "atom_id": "v4a-0076:exists:black-bottle",
+          "family": "existence",
+          "text": "Is there a black bottle in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4a-0076:count:1",
+          "atom_id": "v4a-0076:count:black-bottle",
+          "family": "count",
+          "text": "How many black bottles are in this picture? Answer with a single number.",
+          "expected_answer": "2",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0076:negative-exists-v1:fork",
+          "atom_id": "v4a-0076:negative-exists-v1:fork",
+          "family": "existence",
+          "text": "Is there a fork in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4a-0076:negative-exists-v1:flower",
+          "atom_id": "v4a-0076:negative-exists-v1:flower",
+          "family": "existence",
+          "text": "Is there a flower in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        }
+      ],
+      "spec": {
+        "spec_id": "v4a-0076",
+        "prompt": "one blue plate, two black bottles",
+        "objects": [
+          {
+            "object": "plate",
+            "color": "blue",
+            "count": 1
+          },
+          {
+            "object": "bottle",
+            "color": "black",
+            "count": 2
+          }
+        ],
+        "relations": [],
+        "surface": "marble counter",
+        "metadata": {
+          "author": "llm",
+          "source_index": 17
+        }
+      },
+      "n_original_questions": 4,
+      "scene_sha256": "a57ecb8c0669b344c6fb92058737314664780f1f110aa5c1b6eeddcfa28fb9bb",
+      "primary_scene_disjoint": true
+    },
+    {
+      "prompt_id": "conf-1plus1plus1:v4b-0114",
+      "run": "conf-1plus1plus1",
+      "spec_id": "v4b-0114",
+      "prompt": "one blue mug, one red cup, one white bottle",
+      "candidates": [
+        {
+          "candidate_id": "v4b-0114:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-935945b97e8604692a0f-21261531-0.png",
+          "sampling_seed": 21261531,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "951895962106c3219059d7c34ecbfe54326a7dedb86eb1169c0fd907d226142c",
+          "rgb_sha256": "3213d67618e5c71afe363037a7ca7f14400eb62545f168f274a1c3e3ee17a6b7"
+        },
+        {
+          "candidate_id": "v4b-0114:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-935945b97e8604692a0f-21261532-1.png",
+          "sampling_seed": 21261532,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "3",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "bbd437bb37a7d72d5fa5a26d2329943bee7bf17d3d863f0ffce3c64e1caa3432",
+          "rgb_sha256": "dc2d6f9a5ecfad90f385ab6ae7b5d32a8ddbd2f7bfac88209cee81e1bb904353"
+        },
+        {
+          "candidate_id": "v4b-0114:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-935945b97e8604692a0f-21261533-2.png",
+          "sampling_seed": 21261533,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "47a7cfa936ab4a035c825ac762e3e0aee3482bab3b8e315ac9bf3a0269562eeb",
+          "rgb_sha256": "2c2d82892028c37a5fe03cf131f8f48438cec134ce6126b61d8f594be6848c46"
+        },
+        {
+          "candidate_id": "v4b-0114:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-935945b97e8604692a0f-21261534-3.png",
+          "sampling_seed": 21261534,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "daf79fa072784723b25c8887487ef84a64bf998d6117e856fd98f410d7cbd0ca",
+          "rgb_sha256": "29c13e907d5f92de31ddb1044e2d88f02d48ed1d561f3767b4b5ee045643462c"
+        },
+        {
+          "candidate_id": "v4b-0114:4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-935945b97e8604692a0f-21261535-4.png",
+          "sampling_seed": 21261535,
+          "correct": false,
+          "facts": [
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": false,
+              "answer": null,
+              "reason": "disputed_scope"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "0c8b3ae587e19c0e746e985d6c4079a3e9a9c3b0b077f3fb408be62b2b4a59f4",
+          "rgb_sha256": "156bec95020d28aafd16813f6ce5708e357202c2bcb80ebd0e20ad0937a61e83"
+        },
+        {
+          "candidate_id": "v4b-0114:5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-935945b97e8604692a0f-21261536-5.png",
+          "sampling_seed": 21261536,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "64c7d350eaccc2042c96c0263e5f408d9d5bfdc8f85960e655a07d4b63f9f2f2",
+          "rgb_sha256": "95691b195b2b325667a7b13e6c3eb5b92c038310b144794c528c2e735e3a1db3"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4b-0114:exists:0",
+          "atom_id": "v4b-0114:exists:blue-mug",
+          "family": "existence",
+          "text": "Is there a blue mug in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0114:count:0",
+          "atom_id": "v4b-0114:count:blue-mug",
+          "family": "count",
+          "text": "How many blue mugs are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0114:exists:1",
+          "atom_id": "v4b-0114:exists:red-mug",
+          "family": "existence",
+          "text": "Is there a red mug in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0114:count:1",
+          "atom_id": "v4b-0114:count:red-mug",
+          "family": "count",
+          "text": "How many red mugs are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0114:exists:2",
+          "atom_id": "v4b-0114:exists:white-bottle",
+          "family": "existence",
+          "text": "Is there a white bottle in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0114:count:2",
+          "atom_id": "v4b-0114:count:white-bottle",
+          "family": "count",
+          "text": "How many white bottles are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0114:negative-exists-v1:sock",
+          "atom_id": "v4b-0114:negative-exists-v1:sock",
+          "family": "existence",
+          "text": "Is there a sock in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0114:negative-exists-v1:bowl",
+          "atom_id": "v4b-0114:negative-exists-v1:bowl",
+          "family": "existence",
+          "text": "Is there a bowl in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0114:negative-exists-v1:shell",
+          "atom_id": "v4b-0114:negative-exists-v1:shell",
+          "family": "existence",
+          "text": "Is there a shell in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        }
+      ],
+      "spec": {
+        "spec_id": "v4b-0114",
+        "prompt": "one blue mug, one red cup, one white bottle",
+        "objects": [
+          {
+            "object": "mug",
+            "color": "blue",
+            "count": 1
+          },
+          {
+            "object": "mug",
+            "color": "red",
+            "count": 1
+          },
+          {
+            "object": "bottle",
+            "color": "white",
+            "count": 1
+          }
+        ],
+        "relations": [],
+        "surface": "marble counter",
+        "metadata": {
+          "author": "llm",
+          "source_index": 11
+        }
+      },
+      "n_original_questions": 6,
+      "scene_sha256": "42e207da75ac768b755f191ed2a1bff0769b6b0052a510a0c171ff8ba136cf7e",
+      "primary_scene_disjoint": true
+    },
+    {
+      "prompt_id": "conf-1plus1plus1:v4b-0100",
+      "run": "conf-1plus1plus1",
+      "spec_id": "v4b-0100",
+      "prompt": "a blue mug, a red cup, a green apple",
+      "candidates": [
+        {
+          "candidate_id": "v4b-0100:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-176c7b4ed8f91e9a27b6-21261453-0.png",
+          "sampling_seed": 21261453,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "3d5d3f4e1442404b935b548ae51e2fe90b1411d4f239c8d5a61d7a2a63997784",
+          "rgb_sha256": "50d87c97e80a0f2cbd71fcf35674f390032e66ccd0032af4f44a6f740460e6a0"
+        },
+        {
+          "candidate_id": "v4b-0100:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-176c7b4ed8f91e9a27b6-21261454-1.png",
+          "sampling_seed": 21261454,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "9e8415da84edf7f37068015ab15d37371fefaf9251132f17a302cf9f6f73e106",
+          "rgb_sha256": "28ad8a84302d67b4664a831a03cd796fb1a7d3dc024eca2ae904e5cbbc0b94a8"
+        },
+        {
+          "candidate_id": "v4b-0100:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-176c7b4ed8f91e9a27b6-21261455-2.png",
+          "sampling_seed": 21261455,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "bdaaf214eaf697814cc26f140869f706f0d4d727ffb00a6af9765cf55ea0cd18",
+          "rgb_sha256": "fda3aba8f359c4aa390fec0b6a7a66852a3dfb9f457620f861433e5d01fb548a"
+        },
+        {
+          "candidate_id": "v4b-0100:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-176c7b4ed8f91e9a27b6-21261456-3.png",
+          "sampling_seed": 21261456,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "0581df1d9305bdc244aa88d81724e3eae8117867a0e1a45a4fd15622cc039cce",
+          "rgb_sha256": "88eaa4161fb861171f78022f5ad9c0f2bde514d7c356d6df7e3596465d7d8683"
+        },
+        {
+          "candidate_id": "v4b-0100:4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-176c7b4ed8f91e9a27b6-21261457-4.png",
+          "sampling_seed": 21261457,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "ccce2f3e2a100572fd3bf1232f0601c8cb783e61b39adfc6daff2460546c02bc",
+          "rgb_sha256": "b5b5f93ba8c06f43001efb6b9660150268fad3e7be4b9aa4cedd423907e05a3e"
+        },
+        {
+          "candidate_id": "v4b-0100:5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-1plus1plus1\\images\\v4-main-176c7b4ed8f91e9a27b6-21261458-5.png",
+          "sampling_seed": 21261458,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "f7287b35157e2f70aaffef0e41f5e3a6b3d1541ccb160b2a933bb4967657f3cd",
+          "rgb_sha256": "1648797d82d57d3c37a1bc97537a23136b03b466407e7726faf3e0e6c9d0861d"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4b-0100:exists:0",
+          "atom_id": "v4b-0100:exists:blue-mug",
+          "family": "existence",
+          "text": "Is there a blue mug in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0100:count:0",
+          "atom_id": "v4b-0100:count:blue-mug",
+          "family": "count",
+          "text": "How many blue mugs are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0100:exists:1",
+          "atom_id": "v4b-0100:exists:red-mug",
+          "family": "existence",
+          "text": "Is there a red mug in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0100:count:1",
+          "atom_id": "v4b-0100:count:red-mug",
+          "family": "count",
+          "text": "How many red mugs are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0100:exists:2",
+          "atom_id": "v4b-0100:exists:green-apple",
+          "family": "existence",
+          "text": "Is there a green apple in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0100:count:2",
+          "atom_id": "v4b-0100:count:green-apple",
+          "family": "count",
+          "text": "How many green apples are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4b-0100:negative-exists-v1:bottle",
+          "atom_id": "v4b-0100:negative-exists-v1:bottle",
+          "family": "existence",
+          "text": "Is there a bottle in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4b-0100:negative-exists-v1:banana",
+          "atom_id": "v4b-0100:negative-exists-v1:banana",
+          "family": "existence",
+          "text": "Is there a banana in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4b-0100:negative-exists-v1:pear",
+          "atom_id": "v4b-0100:negative-exists-v1:pear",
+          "family": "existence",
+          "text": "Is there a pear in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        }
+      ],
+      "spec": {
+        "spec_id": "v4b-0100",
+        "prompt": "a blue mug, a red cup, a green apple",
+        "objects": [
+          {
+            "object": "mug",
+            "color": "blue",
+            "count": 1
+          },
+          {
+            "object": "mug",
+            "color": "red",
+            "count": 1
+          },
+          {
+            "object": "apple",
+            "color": "green",
+            "count": 1
+          }
+        ],
+        "relations": [],
+        "surface": "marble counter",
+        "metadata": {
+          "author": "llm",
+          "source_index": 11
+        }
+      },
+      "n_original_questions": 6,
+      "scene_sha256": "1ee5762b405610f4286f11550f030010ea7c43d35be5f72c045f2fc0a78a2d43",
+      "primary_scene_disjoint": true
+    },
+    {
+      "prompt_id": "conf-2plus1:v4a-0053",
+      "run": "conf-2plus1",
+      "spec_id": "v4a-0053",
+      "prompt": "one red apple, two blue bottles",
+      "candidates": [
+        {
+          "candidate_id": "v4a-0053:0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-8d0d294eb7fc1a3a6250-21261219-0.png",
+          "sampling_seed": 21261219,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "dbf79bf8724f34da08232d8a624305192b821c67f8e0dae32e666d9f815cc4bf",
+          "rgb_sha256": "34fcf7f12bef21974d82ab0565206e4507bc962ae89986f089e9e397e50b9ebb"
+        },
+        {
+          "candidate_id": "v4a-0053:1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-8d0d294eb7fc1a3a6250-21261220-1.png",
+          "sampling_seed": 21261220,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "039ddf3dfa6c8731a1fde34cd8a7c07ec14aa01cb2c11989e546f3f61e8945d9",
+          "rgb_sha256": "62016cfee7fcb240fa10bae72f1a91ec33decd2b384c8b118f8542a1a592fdf4"
+        },
+        {
+          "candidate_id": "v4a-0053:2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-8d0d294eb7fc1a3a6250-21261221-2.png",
+          "sampling_seed": 21261221,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "37db0ec603f8a13a9e40664bd8343ec0e67bfe08331f44ffdf8fe3c756ce4541",
+          "rgb_sha256": "fc9d7d5a75a57c0198a233c9de1252c2652c5278b3fe44d8c910bc63cb14c692"
+        },
+        {
+          "candidate_id": "v4a-0053:3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-8d0d294eb7fc1a3a6250-21261222-3.png",
+          "sampling_seed": 21261222,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "0",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "d4711eb76a28f06407db6247b4ba7e92fa291385d06df46f5239f2c2e07d6204",
+          "rgb_sha256": "c207ae2f7e4b95568c6c4b2c74672ec453c400ed8fe0dc6cec235f920c698bb3"
+        },
+        {
+          "candidate_id": "v4a-0053:4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-8d0d294eb7fc1a3a6250-21261223-4.png",
+          "sampling_seed": 21261223,
+          "correct": true,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "2",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "aedcc1842e47ac041de2894c8a593e3b3b1b6e72cb47439c327db49b11bf0565",
+          "rgb_sha256": "473dbaeb60826a0e4160fff45d282dd874b015bace88ddfaafde79dd161bec4d"
+        },
+        {
+          "candidate_id": "v4a-0053:5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\conf-2plus1\\images\\v4-main-8d0d294eb7fc1a3a6250-21261224-5.png",
+          "sampling_seed": 21261224,
+          "correct": false,
+          "facts": [
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "yes",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "1",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            },
+            {
+              "known": true,
+              "answer": "no",
+              "reason": "verified"
+            }
+          ],
+          "image_file_sha256": "169ba0ae3024cdc7d75ed5f5e45f24156ef04dca1f451bee1db5e142e346f1ed",
+          "rgb_sha256": "5c607259f2e853047ecc8228eabb9e9f5999d5958103d117221f21c7e7191e6e"
+        }
+      ],
+      "questions": [
+        {
+          "question_id": "v4a-0053:exists:0",
+          "atom_id": "v4a-0053:exists:red-apple",
+          "family": "existence",
+          "text": "Is there a red apple in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 66
+        },
+        {
+          "question_id": "v4a-0053:count:0",
+          "atom_id": "v4a-0053:count:red-apple",
+          "family": "count",
+          "text": "How many red apples are in this picture? Answer with a single number.",
+          "expected_answer": "1",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0053:exists:1",
+          "atom_id": "v4a-0053:exists:blue-bottle",
+          "family": "existence",
+          "text": "Is there a blue bottle in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "yes",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4a-0053:count:1",
+          "atom_id": "v4a-0053:count:blue-bottle",
+          "family": "count",
+          "text": "How many blue bottles are in this picture? Answer with a single number.",
+          "expected_answer": "2",
+          "question_format": "open",
+          "choices": [],
+          "choice_order_seed": 0
+        },
+        {
+          "question_id": "v4a-0053:negative-exists-v1:shoe",
+          "atom_id": "v4a-0053:negative-exists-v1:shoe",
+          "family": "existence",
+          "text": "Is there a shoe in this picture? Answer A or B only.\nA. no\nB. yes",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "no",
+            "yes"
+          ],
+          "choice_order_seed": 65
+        },
+        {
+          "question_id": "v4a-0053:negative-exists-v1:carrot",
+          "atom_id": "v4a-0053:negative-exists-v1:carrot",
+          "family": "existence",
+          "text": "Is there a carrot in this picture? Answer A or B only.\nA. yes\nB. no",
+          "expected_answer": "no",
+          "question_format": "forced_choice",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "choice_order_seed": 66
+        }
+      ],
+      "spec": {
+        "spec_id": "v4a-0053",
+        "prompt": "one red apple, two blue bottles",
+        "objects": [
+          {
+            "object": "apple",
+            "color": "red",
+            "count": 1
+          },
+          {
+            "object": "bottle",
+            "color": "blue",
+            "count": 2
+          }
+        ],
+        "relations": [],
+        "surface": "wooden table",
+        "metadata": {
+          "author": "llm",
+          "source_index": 5
+        }
+      },
+      "n_original_questions": 4,
+      "scene_sha256": "472a35116a2cd1b3e8d049463c0eed5a393c3672cb209734ebf30c46bbcb1651",
+      "primary_scene_disjoint": true
+    }
+  ]
+}

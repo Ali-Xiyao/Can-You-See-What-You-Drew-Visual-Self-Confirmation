@@ -1,0 +1,157 @@
+[
+  {
+    "prompt_id": "v4b-0019",
+    "candidate_id": "naive-r000-94a03340a35a3cb341fa-1082176483-3",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-94a03340a35a3cb341fa-1082176483-3.png",
+    "gold_image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\rfo_gold\\rfo_gold-r000-94a03340a35a3cb341fa-1082176483-3.png",
+    "rgb_sha256": "7692fe8d151519581ecf4f7150c8c1026b1764c54eb792587a3260b37b0a4dd0",
+    "unknown_reason": "pending_human",
+    "label_source": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\ladder\\rfo_gold\\verified.jsonl",
+      "record_sha256": "9bed4578e949ab28b79b0e085d2c301fc251ab54006759cb9348ac4f8486badc",
+      "resolution": "pending_human"
+    },
+    "conditional_gain_bounds": {
+      "False": {
+        "all_prompts": {
+          "low": {
+            "value": -0.07291666666666667,
+            "exact": "-7/96"
+          },
+          "high": {
+            "value": -0.010416666666666666,
+            "exact": "-1/96"
+          }
+        },
+        "trained_prompts": {
+          "low": {
+            "value": -0.08333333333333333,
+            "exact": "-1/12"
+          },
+          "high": {
+            "value": -0.013888888888888888,
+            "exact": "-1/72"
+          }
+        }
+      },
+      "True": {
+        "all_prompts": {
+          "low": {
+            "value": 0.0,
+            "exact": "0"
+          },
+          "high": {
+            "value": 0.0625,
+            "exact": "1/16"
+          }
+        },
+        "trained_prompts": {
+          "low": {
+            "value": 0.013888888888888888,
+            "exact": "1/72"
+          },
+          "high": {
+            "value": 0.08333333333333333,
+            "exact": "1/12"
+          }
+        }
+      }
+    },
+    "original_pending_verdict": {
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\rfo_gold\\rfo_gold-r000-94a03340a35a3cb341fa-1082176483-3.png",
+      "spec_id": "v4b-0019",
+      "detections": [
+        {
+          "object": "bottle",
+          "color": "red",
+          "bbox": [
+            87.69600000000001,
+            69.12,
+            183.6,
+            362.88
+          ],
+          "center": [
+            135.648,
+            216.0
+          ]
+        },
+        {
+          "object": "jar",
+          "color": "green",
+          "bbox": [
+            255.744,
+            183.6,
+            361.584,
+            319.68
+          ],
+          "center": [
+            308.664,
+            251.64
+          ]
+        },
+        {
+          "object": "box",
+          "color": "white",
+          "bbox": [
+            202.17600000000002,
+            302.4,
+            387.072,
+            382.32
+          ],
+          "center": [
+            294.624,
+            342.36
+          ]
+        }
+      ],
+      "image_correct": true,
+      "resolution": "pending_human",
+      "verifier_agreement": false,
+      "disputed": [
+        {
+          "object": "bottle",
+          "color": "green",
+          "reason": "not_confirmed_in_crop"
+        }
+      ],
+      "report": {
+        "count_ok": true,
+        "objects_ok": true,
+        "objects_and_color_ok": true,
+        "missing": [],
+        "extra": [],
+        "n_requested": 3,
+        "n_detected": 3
+      },
+      "candidate_index": 3,
+      "seed": 1082176483
+    },
+    "original_specification": {
+      "spec_id": "v4b-0019",
+      "prompt": "a red bottle, a green jar, a white box",
+      "objects": [
+        {
+          "object": "bottle",
+          "color": "red",
+          "count": 1
+        },
+        {
+          "object": "jar",
+          "color": "green",
+          "count": 1
+        },
+        {
+          "object": "box",
+          "color": "white",
+          "count": 1
+        }
+      ],
+      "relations": [],
+      "surface": "desk",
+      "metadata": {
+        "author": "llm",
+        "source_index": 4
+      }
+    }
+  }
+]

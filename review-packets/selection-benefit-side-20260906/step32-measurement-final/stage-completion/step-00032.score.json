@@ -1,0 +1,12 @@
+{
+  "stage": "step-00032.score",
+  "completed_unix": 1788684752.321407,
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\core\\python.exe",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\scripts\\v4_train.py",
+    "score",
+    "--outdir",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906"
+  ]
+}

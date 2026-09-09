@@ -1,0 +1,94 @@
+{
+  "banks": [
+    "gate-b",
+    "gate-b-openct",
+    "gate-b-openct2"
+  ],
+  "thresholds_from": "docs/prereg/2026-09-04-selector-resolution.md section 2",
+  "continuous_score_handling": "docs/prereg/2026-09-08-cycle-selector.md section 4",
+  "scorers": {
+    "atomic::gate-b": {
+      "measured": {
+        "mixed_pools": 232,
+        "all_pools": 232,
+        "correct_beats_wrong": 0.34913793103448276,
+        "correct_equals_wrong": 0.6120689655172413,
+        "correct_loses_to_wrong": 0.03879310344827586,
+        "all_candidates_tied": 0.603448275862069
+      },
+      "verdicts": {
+        "primary_correct_beats_wrong": false,
+        "primary_correct_equals_wrong": false,
+        "secondary_all_tied": false
+      },
+      "passes_all": false
+    },
+    "atomic::gate-b-openct": {
+      "measured": {
+        "mixed_pools": 232,
+        "all_pools": 232,
+        "correct_beats_wrong": 0.6163793103448276,
+        "correct_equals_wrong": 0.2974137931034483,
+        "correct_loses_to_wrong": 0.08620689655172414,
+        "all_candidates_tied": 0.25862068965517243
+      },
+      "verdicts": {
+        "primary_correct_beats_wrong": true,
+        "primary_correct_equals_wrong": false,
+        "secondary_all_tied": false
+      },
+      "passes_all": false
+    },
+    "atomic::gate-b-openct2": {
+      "measured": {
+        "mixed_pools": 232,
+        "all_pools": 232,
+        "correct_beats_wrong": 0.6422413793103449,
+        "correct_equals_wrong": 0.2974137931034483,
+        "correct_loses_to_wrong": 0.0603448275862069,
+        "all_candidates_tied": 0.2672413793103448
+      },
+      "verdicts": {
+        "primary_correct_beats_wrong": true,
+        "primary_correct_equals_wrong": false,
+        "secondary_all_tied": false
+      },
+      "passes_all": false
+    },
+    "cycle::gate-b-openct2": {
+      "measured": {
+        "mixed_pools": 232,
+        "all_pools": 232,
+        "correct_beats_wrong": 0.9267241379310345,
+        "correct_equals_wrong": 0.0,
+        "correct_loses_to_wrong": 0.07327586206896551,
+        "all_candidates_tied": 0.0
+      },
+      "verdicts": {
+        "primary_correct_beats_wrong": true,
+        "primary_correct_equals_wrong": true,
+        "secondary_all_tied": true
+      },
+      "passes_all": true
+    }
+  },
+  "reproduces_frozen_gate_b_numbers": {
+    "correct_beats_wrong": {
+      "recorded": 0.349,
+      "recomputed": 0.349,
+      "matches": true
+    },
+    "correct_equals_wrong": {
+      "recorded": 0.612,
+      "recomputed": 0.612,
+      "matches": true
+    },
+    "all_candidates_tied": {
+      "recorded": 0.603,
+      "recomputed": 0.603,
+      "matches": true
+    }
+  },
+  "full_marks_criterion": "N/A for cycle: log p(prompt|image) is unbounded, so there is no full-marks level to saturate. Declared not applicable in the 2026-09-08 prereg section 4 rather than replaced with a trivially-passed analogue.",
+  "already_known_before_this_run": "The cycle scorer's unique-top rate on this bank (96.6%) was measured on the morning of 2026-09-08, before the 2026-09-08 prereg was written, so secondary_all_tied is recorded as already-known and not as a blind test. The primary criterion had never been computed for either scorer and is blind."
+}

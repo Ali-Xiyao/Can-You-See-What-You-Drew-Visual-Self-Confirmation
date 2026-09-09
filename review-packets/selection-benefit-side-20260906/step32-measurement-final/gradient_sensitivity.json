@@ -1,0 +1,1466 @@
+{
+  "analysis_fingerprint": "2f814c12befb41000aa90abf902e0a3d28f6948a97a33653b0f975d1dce4b053",
+  "arms": {
+    "base": [
+      {
+        "checkpoint": {
+          "adapter_sha256": "62f350f04cac8241f258b773606217d2678bf6015a8bf27aed39be121c490cf1",
+          "arm": "base",
+          "manifest_sha256": "6408823a3c519dd6c431aa40f78090d4ecde9588a9c7753a1bb473ee25ca1c02",
+          "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\base\\round--01",
+          "round_index": -1,
+          "step": 0,
+          "type": "checkpoint"
+        },
+        "delta_from_base": {
+          "gda_free": {
+            "ci_high": 0.0,
+            "ci_low": 0.0,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": 0.0,
+            "point_difference": 0.0,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          },
+          "gda_gold": {
+            "ci_high": 0.0,
+            "ci_low": 0.0,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": 0.0,
+            "point_difference": 0.0,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          }
+        },
+        "gda_free": {
+          "ci_high": 0.9821907203719616,
+          "ci_low": 0.15600774877579565,
+          "confidence": 0.95,
+          "cosine": 0.7146705880414161,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.7146705880414161,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "gda_gold": {
+          "ci_high": 0.979391330436802,
+          "ci_low": 0.2290406191504692,
+          "confidence": 0.95,
+          "cosine": 0.7455354235019811,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.7455354235019811,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "missing_scene_disjoint_spec_ids": [],
+        "n_original_retained": 16,
+        "n_scene_clusters": 14,
+        "n_scene_disjoint_retained": 14,
+        "prompt_ids": [
+          "main-1plus1plus1:v4b-0108",
+          "main-2plus1:v4a-0012",
+          "main-2plus1:v4a-0061",
+          "main-1plus1plus1:v4b-0018",
+          "main-1plus1plus1:v4b-0074",
+          "conf-1plus1plus1:v4b-0009",
+          "main-2plus1:v4a-0047",
+          "conf-2plus1:v4a-0069",
+          "conf-1plus1plus1:v4b-0113",
+          "conf-1plus1plus1:v4b-0013",
+          "main-2plus1:v4a-0076",
+          "conf-1plus1plus1:v4b-0114",
+          "conf-1plus1plus1:v4b-0100",
+          "conf-2plus1:v4a-0053"
+        ],
+        "removed_spec_ids": [
+          "v4a-0087",
+          "v4a-0095"
+        ],
+        "source": {
+          "gram": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\base\\step-00000\\grams.npz",
+            "sha256": "7d71badf4946c5f01e3ba6845f27ba4f6958785903facbee6a7cbe6e7e735d71"
+          },
+          "report": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\base\\step-00000\\report.json",
+            "sha256": "c7b44d82dde502995d38a7cb53528ff2a9ce5a8fcd53ebbd3edb4c20ca579faa"
+          }
+        }
+      }
+    ],
+    "naive": [
+      {
+        "checkpoint": {
+          "adapter_sha256": "af0e9f218f6851bfe5d4f07e5aeadbb07777df482e025877930ad18116a08629",
+          "arm": "naive",
+          "manifest_sha256": "39648dc83f2ac215b7f674d45f085618bf3ec279e25e3fe4db3996e8ef0ed1eb",
+          "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-000",
+          "round_index": 0,
+          "step": 8,
+          "type": "checkpoint"
+        },
+        "delta_from_base": {
+          "gda_free": {
+            "ci_high": 0.030922550803593456,
+            "ci_low": -0.0698696211845057,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.04861118868109049,
+            "point_difference": -0.04861118868109049,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          },
+          "gda_gold": {
+            "ci_high": 0.0361555573255618,
+            "ci_low": -0.05417023202986906,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.03062527379349267,
+            "point_difference": -0.03062527379349267,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          }
+        },
+        "gda_free": {
+          "ci_high": 0.9757903923927306,
+          "ci_low": 0.1495362655977985,
+          "confidence": 0.95,
+          "cosine": 0.6660593993603257,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.6660593993603257,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "gda_gold": {
+          "ci_high": 0.9741096530234057,
+          "ci_low": 0.21622624619314287,
+          "confidence": 0.95,
+          "cosine": 0.7149101497084884,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.7149101497084884,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "missing_scene_disjoint_spec_ids": [],
+        "n_original_retained": 16,
+        "n_scene_clusters": 14,
+        "n_scene_disjoint_retained": 14,
+        "prompt_ids": [
+          "main-1plus1plus1:v4b-0108",
+          "main-2plus1:v4a-0012",
+          "main-2plus1:v4a-0061",
+          "main-1plus1plus1:v4b-0018",
+          "main-1plus1plus1:v4b-0074",
+          "conf-1plus1plus1:v4b-0009",
+          "main-2plus1:v4a-0047",
+          "conf-2plus1:v4a-0069",
+          "conf-1plus1plus1:v4b-0113",
+          "conf-1plus1plus1:v4b-0013",
+          "main-2plus1:v4a-0076",
+          "conf-1plus1plus1:v4b-0114",
+          "conf-1plus1plus1:v4b-0100",
+          "conf-2plus1:v4a-0053"
+        ],
+        "removed_spec_ids": [
+          "v4a-0087",
+          "v4a-0095"
+        ],
+        "source": {
+          "gram": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00008\\grams.npz",
+            "sha256": "611ace303745c83ab69dc7524fa0bd15d56cdf42629e9e7b8c46713f9942d95c"
+          },
+          "report": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00008\\report.json",
+            "sha256": "b2f4a96dbf3bfbda4aef0cafa1acaa83a33ffb5f23bf1da35c212fb9a6417917"
+          }
+        }
+      },
+      {
+        "checkpoint": {
+          "adapter_sha256": "2acc78ddd0deae46c1d5c387692c4d2ec6599b3801d56f8eb82a47a653fdd4e2",
+          "arm": "naive",
+          "manifest_sha256": "861319c5d09b3dfeb0bb5db003a1e25eec56e0246f1f90b91f3bea56563dc2e7",
+          "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-001",
+          "round_index": 1,
+          "step": 16,
+          "type": "checkpoint"
+        },
+        "delta_from_base": {
+          "gda_free": {
+            "ci_high": 0.35865143836811486,
+            "ci_low": -0.3094991911627157,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.3121771630718693,
+            "point_difference": -0.3121771630718693,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          },
+          "gda_gold": {
+            "ci_high": 0.32689924817805227,
+            "ci_low": -0.2617231664997129,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.24573380825686025,
+            "point_difference": -0.24573380825686025,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          }
+        },
+        "gda_free": {
+          "ci_high": 0.9795305272836929,
+          "ci_low": 0.16359138203942253,
+          "confidence": 0.95,
+          "cosine": 0.4024934249695468,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.4024934249695468,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "gda_gold": {
+          "ci_high": 0.978369679097103,
+          "ci_low": 0.20320756605462106,
+          "confidence": 0.95,
+          "cosine": 0.49980161524512084,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.49980161524512084,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "missing_scene_disjoint_spec_ids": [],
+        "n_original_retained": 16,
+        "n_scene_clusters": 14,
+        "n_scene_disjoint_retained": 14,
+        "prompt_ids": [
+          "main-1plus1plus1:v4b-0108",
+          "main-2plus1:v4a-0012",
+          "main-2plus1:v4a-0061",
+          "main-1plus1plus1:v4b-0018",
+          "main-1plus1plus1:v4b-0074",
+          "conf-1plus1plus1:v4b-0009",
+          "main-2plus1:v4a-0047",
+          "conf-2plus1:v4a-0069",
+          "conf-1plus1plus1:v4b-0113",
+          "conf-1plus1plus1:v4b-0013",
+          "main-2plus1:v4a-0076",
+          "conf-1plus1plus1:v4b-0114",
+          "conf-1plus1plus1:v4b-0100",
+          "conf-2plus1:v4a-0053"
+        ],
+        "removed_spec_ids": [
+          "v4a-0087",
+          "v4a-0095"
+        ],
+        "source": {
+          "gram": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00016\\grams.npz",
+            "sha256": "27f148ac6ba5647f31f1dfe5ecf5a32065059d07da2ea3819a7f369ff3b3c975"
+          },
+          "report": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00016\\report.json",
+            "sha256": "1ca27b413de58860d12128290f8242fa69f25d2402fbc389f6a066ee0c3cc1db"
+          }
+        }
+      },
+      {
+        "checkpoint": {
+          "adapter_sha256": "7d2351fabd9bf210e372eb05200955cba6c49a75ec0e32dd11a262078ca2cb34",
+          "arm": "naive",
+          "manifest_sha256": "a1fb5af901b3d4b3d59eae7f66be38d8e61a02287de2d19e80d2dc0b5bc94089",
+          "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-002",
+          "round_index": 2,
+          "step": 24,
+          "type": "checkpoint"
+        },
+        "delta_from_base": {
+          "gda_free": {
+            "ci_high": 0.5319996795156204,
+            "ci_low": -0.3417677259353382,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.18785931069804496,
+            "point_difference": -0.18785931069804496,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          },
+          "gda_gold": {
+            "ci_high": 0.44459536524593496,
+            "ci_low": -0.31213171446282,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.18557003916260506,
+            "point_difference": -0.18557003916260506,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          }
+        },
+        "gda_free": {
+          "ci_high": 0.984913729744038,
+          "ci_low": 0.25182608485773245,
+          "confidence": 0.95,
+          "cosine": 0.5268112773433712,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.5268112773433712,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "gda_gold": {
+          "ci_high": 0.9873467698001115,
+          "ci_low": 0.27418313856215965,
+          "confidence": 0.95,
+          "cosine": 0.559965384339376,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.559965384339376,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "missing_scene_disjoint_spec_ids": [],
+        "n_original_retained": 16,
+        "n_scene_clusters": 14,
+        "n_scene_disjoint_retained": 14,
+        "prompt_ids": [
+          "main-1plus1plus1:v4b-0108",
+          "main-2plus1:v4a-0012",
+          "main-2plus1:v4a-0061",
+          "main-1plus1plus1:v4b-0018",
+          "main-1plus1plus1:v4b-0074",
+          "conf-1plus1plus1:v4b-0009",
+          "main-2plus1:v4a-0047",
+          "conf-2plus1:v4a-0069",
+          "conf-1plus1plus1:v4b-0113",
+          "conf-1plus1plus1:v4b-0013",
+          "main-2plus1:v4a-0076",
+          "conf-1plus1plus1:v4b-0114",
+          "conf-1plus1plus1:v4b-0100",
+          "conf-2plus1:v4a-0053"
+        ],
+        "removed_spec_ids": [
+          "v4a-0087",
+          "v4a-0095"
+        ],
+        "source": {
+          "gram": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00024\\grams.npz",
+            "sha256": "7703def155875f9b1ee4c908096b9c7b367ccf2b3c5909362f7bd473fdaa76f5"
+          },
+          "report": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00024\\report.json",
+            "sha256": "19edba35ddf9cc3cc39d6cd536d1dcaf93d10c51856956a04ff59fda6d9c0751"
+          }
+        }
+      },
+      {
+        "checkpoint": {
+          "adapter_sha256": "05c7b04e2545b888a6df10345dd6363327775503961975bc472fd7231666302d",
+          "arm": "naive",
+          "manifest_sha256": "a4c3b204d8702938f448a013dce026d3e4fc5f57362c29eaf147a49701929b12",
+          "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\naive\\round-003",
+          "round_index": 3,
+          "step": 32,
+          "type": "checkpoint"
+        },
+        "delta_from_base": {
+          "gda_free": {
+            "ci_high": 0.6080092336274643,
+            "ci_low": -0.2278621645906168,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.0033554936181318107,
+            "point_difference": -0.0033554936181318107,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          },
+          "gda_gold": {
+            "ci_high": 0.5051945431366001,
+            "ci_low": -0.21787538110788465,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.03223884992128678,
+            "point_difference": -0.03223884992128678,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          }
+        },
+        "gda_free": {
+          "ci_high": 0.9856423108862707,
+          "ci_low": 0.4342253847575025,
+          "confidence": 0.95,
+          "cosine": 0.7113150944232843,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.7113150944232843,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "gda_gold": {
+          "ci_high": 0.9728565407417163,
+          "ci_low": 0.44452758575743145,
+          "confidence": 0.95,
+          "cosine": 0.7132965735806943,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.7132965735806943,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "missing_scene_disjoint_spec_ids": [],
+        "n_original_retained": 16,
+        "n_scene_clusters": 14,
+        "n_scene_disjoint_retained": 14,
+        "prompt_ids": [
+          "main-1plus1plus1:v4b-0108",
+          "main-2plus1:v4a-0012",
+          "main-2plus1:v4a-0061",
+          "main-1plus1plus1:v4b-0018",
+          "main-1plus1plus1:v4b-0074",
+          "conf-1plus1plus1:v4b-0009",
+          "main-2plus1:v4a-0047",
+          "conf-2plus1:v4a-0069",
+          "conf-1plus1plus1:v4b-0113",
+          "conf-1plus1plus1:v4b-0013",
+          "main-2plus1:v4a-0076",
+          "conf-1plus1plus1:v4b-0114",
+          "conf-1plus1plus1:v4b-0100",
+          "conf-2plus1:v4a-0053"
+        ],
+        "removed_spec_ids": [
+          "v4a-0087",
+          "v4a-0095"
+        ],
+        "source": {
+          "gram": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032\\grams.npz",
+            "sha256": "1592923a95b223aa68f190c7100e8bbfbc2ed4b1ba22064ffd2ce4318b296fdf"
+          },
+          "report": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032\\report.json",
+            "sha256": "e8bb31451af79aaff52429d1146eb37c2cda961bda19f3465e05edab307849ee"
+          }
+        }
+      }
+    ],
+    "rfo_gold": [
+      {
+        "checkpoint": {
+          "adapter_sha256": "4088fd1ee573a8032964b7aafb88dce0a7d1188970046c27ec287e1b4132d1f8",
+          "arm": "rfo_gold",
+          "manifest_sha256": "00b99c68f4852258f543a5a6a9c5cc7d527e8bea64f67488fef1530a0333b0e3",
+          "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\rfo_gold\\round-000",
+          "round_index": 0,
+          "step": 8,
+          "type": "checkpoint"
+        },
+        "delta_from_base": {
+          "gda_free": {
+            "ci_high": 0.0219648920613569,
+            "ci_low": -0.08692875627350392,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.06862959143712122,
+            "point_difference": -0.06862959143712122,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          },
+          "gda_gold": {
+            "ci_high": 0.023173978116337358,
+            "ci_low": -0.06975664228958865,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.049904800859456366,
+            "point_difference": -0.049904800859456366,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          }
+        },
+        "gda_free": {
+          "ci_high": 0.974791275667413,
+          "ci_low": 0.1481535788207744,
+          "confidence": 0.95,
+          "cosine": 0.6460409966042949,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.6460409966042949,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "gda_gold": {
+          "ci_high": 0.9716175536995079,
+          "ci_low": 0.21244651665877828,
+          "confidence": 0.95,
+          "cosine": 0.6956306226425247,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.6956306226425247,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "missing_scene_disjoint_spec_ids": [],
+        "n_original_retained": 16,
+        "n_scene_clusters": 14,
+        "n_scene_disjoint_retained": 14,
+        "prompt_ids": [
+          "main-1plus1plus1:v4b-0108",
+          "main-2plus1:v4a-0012",
+          "main-2plus1:v4a-0061",
+          "main-1plus1plus1:v4b-0018",
+          "main-1plus1plus1:v4b-0074",
+          "conf-1plus1plus1:v4b-0009",
+          "main-2plus1:v4a-0047",
+          "conf-2plus1:v4a-0069",
+          "conf-1plus1plus1:v4b-0113",
+          "conf-1plus1plus1:v4b-0013",
+          "main-2plus1:v4a-0076",
+          "conf-1plus1plus1:v4b-0114",
+          "conf-1plus1plus1:v4b-0100",
+          "conf-2plus1:v4a-0053"
+        ],
+        "removed_spec_ids": [
+          "v4a-0087",
+          "v4a-0095"
+        ],
+        "source": {
+          "gram": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00008\\grams.npz",
+            "sha256": "9cb28ec0291323f336993e5b10678c3b49ce153e8ff9aa5e682de4cb756e7bc4"
+          },
+          "report": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00008\\report.json",
+            "sha256": "3705af8e72ab904c6c4071bfc792c1550d0eb18b380a757000dce7201e18bf24"
+          }
+        }
+      },
+      {
+        "checkpoint": {
+          "adapter_sha256": "48dfa5fa780e56f5b6580d547aedd212dcd3dcd35b88f22494f008b78183c7d4",
+          "arm": "rfo_gold",
+          "manifest_sha256": "c53c271c712aaa0ad171c7039c41f1cf54d129504df8f2acfd2549a0329c78a2",
+          "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\rfo_gold\\round-001",
+          "round_index": 1,
+          "step": 16,
+          "type": "checkpoint"
+        },
+        "delta_from_base": {
+          "gda_free": {
+            "ci_high": 0.3433644150003294,
+            "ci_low": -0.26190725530370906,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.23120671295295492,
+            "point_difference": -0.23120671295295492,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          },
+          "gda_gold": {
+            "ci_high": 0.3092156230332789,
+            "ci_low": -0.23335435309657201,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.18451460077228554,
+            "point_difference": -0.18451460077228554,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          }
+        },
+        "gda_free": {
+          "ci_high": 0.9834951556901628,
+          "ci_low": 0.12578496775153378,
+          "confidence": 0.95,
+          "cosine": 0.4834638750884612,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.4834638750884612,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "gda_gold": {
+          "ci_high": 0.9821019438697931,
+          "ci_low": 0.16156798428523272,
+          "confidence": 0.95,
+          "cosine": 0.5610208227296956,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.5610208227296956,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "missing_scene_disjoint_spec_ids": [],
+        "n_original_retained": 16,
+        "n_scene_clusters": 14,
+        "n_scene_disjoint_retained": 14,
+        "prompt_ids": [
+          "main-1plus1plus1:v4b-0108",
+          "main-2plus1:v4a-0012",
+          "main-2plus1:v4a-0061",
+          "main-1plus1plus1:v4b-0018",
+          "main-1plus1plus1:v4b-0074",
+          "conf-1plus1plus1:v4b-0009",
+          "main-2plus1:v4a-0047",
+          "conf-2plus1:v4a-0069",
+          "conf-1plus1plus1:v4b-0113",
+          "conf-1plus1plus1:v4b-0013",
+          "main-2plus1:v4a-0076",
+          "conf-1plus1plus1:v4b-0114",
+          "conf-1plus1plus1:v4b-0100",
+          "conf-2plus1:v4a-0053"
+        ],
+        "removed_spec_ids": [
+          "v4a-0087",
+          "v4a-0095"
+        ],
+        "source": {
+          "gram": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00016\\grams.npz",
+            "sha256": "d73fc05f01a52817e7d3169dae427006e7e94213d397a943d04e42e5c144323e"
+          },
+          "report": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00016\\report.json",
+            "sha256": "f9d471f5fd1449887b7f252bda222e11cee14ee6ae7dbfd14a80104344ec442a"
+          }
+        }
+      },
+      {
+        "checkpoint": {
+          "adapter_sha256": "b8561bab9769f525250017e87f03aca93cb9be8383b3ce888403e88739b4224d",
+          "arm": "rfo_gold",
+          "manifest_sha256": "aacca92358e555919d822d697f114a34aed422840c0d8b35948c2fe4fb429b4b",
+          "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\rfo_gold\\round-002",
+          "round_index": 2,
+          "step": 24,
+          "type": "checkpoint"
+        },
+        "delta_from_base": {
+          "gda_free": {
+            "ci_high": 0.4502834400056853,
+            "ci_low": -0.318523606393658,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.10076616056552401,
+            "point_difference": -0.10076616056552401,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          },
+          "gda_gold": {
+            "ci_high": 0.4056777018040149,
+            "ci_low": -0.31614279422437075,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": -0.09100912401800565,
+            "point_difference": -0.09100912401800565,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          }
+        },
+        "gda_free": {
+          "ci_high": 0.9930251910255186,
+          "ci_low": 0.019670216912837886,
+          "confidence": 0.95,
+          "cosine": 0.6139044274758921,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.6139044274758921,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "gda_gold": {
+          "ci_high": 0.9944437981408026,
+          "ci_low": 0.03093514121311053,
+          "confidence": 0.95,
+          "cosine": 0.6545262994839754,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.6545262994839754,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "missing_scene_disjoint_spec_ids": [],
+        "n_original_retained": 16,
+        "n_scene_clusters": 14,
+        "n_scene_disjoint_retained": 14,
+        "prompt_ids": [
+          "main-1plus1plus1:v4b-0108",
+          "main-2plus1:v4a-0012",
+          "main-2plus1:v4a-0061",
+          "main-1plus1plus1:v4b-0018",
+          "main-1plus1plus1:v4b-0074",
+          "conf-1plus1plus1:v4b-0009",
+          "main-2plus1:v4a-0047",
+          "conf-2plus1:v4a-0069",
+          "conf-1plus1plus1:v4b-0113",
+          "conf-1plus1plus1:v4b-0013",
+          "main-2plus1:v4a-0076",
+          "conf-1plus1plus1:v4b-0114",
+          "conf-1plus1plus1:v4b-0100",
+          "conf-2plus1:v4a-0053"
+        ],
+        "removed_spec_ids": [
+          "v4a-0087",
+          "v4a-0095"
+        ],
+        "source": {
+          "gram": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00024\\grams.npz",
+            "sha256": "1dbe9954bc0515f52d7d98627b5191a7a6af3355b85e06c5d9d3fb0ad090f192"
+          },
+          "report": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00024\\report.json",
+            "sha256": "500867bf1a1b221beb321e32fd147cf5c4efaedcb1c15c0c7faf6a592d984117"
+          }
+        }
+      },
+      {
+        "checkpoint": {
+          "adapter_sha256": "da6b655af7cde787d1d50b7f3da5dc047208a2c4e44cad988dc91844c683b7e8",
+          "arm": "rfo_gold",
+          "manifest_sha256": "6bb09c92afbe66191ce3441b52f5d65d39b3f1bd98586c8114cad25633af0ff7",
+          "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\checkpoints\\rfo_gold\\round-003",
+          "round_index": 3,
+          "step": 32,
+          "type": "checkpoint"
+        },
+        "delta_from_base": {
+          "gda_free": {
+            "ci_high": 0.631335399413703,
+            "ci_low": -0.14823368088379016,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": 0.046205205665472926,
+            "point_difference": 0.046205205665472926,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          },
+          "gda_gold": {
+            "ci_high": 0.519272262391105,
+            "ci_low": -0.14184820887464994,
+            "confidence": 0.95,
+            "equal_scene_weights_for_point": false,
+            "finite_resamples": 2000,
+            "method": "paired_scene_cluster_bootstrap",
+            "n_clusters": 14,
+            "n_common": 14,
+            "n_prompts": 14,
+            "point": 0.0203445681679858,
+            "point_difference": 0.0203445681679858,
+            "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+            "prompt_ids": [
+              "main-1plus1plus1:v4b-0108",
+              "main-2plus1:v4a-0012",
+              "main-2plus1:v4a-0061",
+              "main-1plus1plus1:v4b-0018",
+              "main-1plus1plus1:v4b-0074",
+              "conf-1plus1plus1:v4b-0009",
+              "main-2plus1:v4a-0047",
+              "conf-2plus1:v4a-0069",
+              "conf-1plus1plus1:v4b-0113",
+              "conf-1plus1plus1:v4b-0013",
+              "main-2plus1:v4a-0076",
+              "conf-1plus1plus1:v4b-0114",
+              "conf-1plus1plus1:v4b-0100",
+              "conf-2plus1:v4a-0053"
+            ],
+            "reference_step": 0,
+            "resamples": 2000,
+            "seed": 20260906,
+            "status": "ok"
+          }
+        },
+        "gda_free": {
+          "ci_high": 0.9860422098871215,
+          "ci_low": 0.5195610831784448,
+          "confidence": 0.95,
+          "cosine": 0.7608757937068891,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.7608757937068891,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "gda_gold": {
+          "ci_high": 0.9730216067159777,
+          "ci_low": 0.5267871496716555,
+          "confidence": 0.95,
+          "cosine": 0.7658799916699669,
+          "equal_scene_weights_for_point": false,
+          "finite_resamples": 2000,
+          "method": "paired_scene_cluster_bootstrap",
+          "n_clusters": 14,
+          "n_prompts": 14,
+          "point": 0.7658799916699669,
+          "point_estimand": "cosine(prompt_weighted_mean_gradient_left, prompt_weighted_mean_gradient_right)",
+          "resamples": 2000,
+          "seed": 20260906,
+          "status": "ok"
+        },
+        "missing_scene_disjoint_spec_ids": [],
+        "n_original_retained": 16,
+        "n_scene_clusters": 14,
+        "n_scene_disjoint_retained": 14,
+        "prompt_ids": [
+          "main-1plus1plus1:v4b-0108",
+          "main-2plus1:v4a-0012",
+          "main-2plus1:v4a-0061",
+          "main-1plus1plus1:v4b-0018",
+          "main-1plus1plus1:v4b-0074",
+          "conf-1plus1plus1:v4b-0009",
+          "main-2plus1:v4a-0047",
+          "conf-2plus1:v4a-0069",
+          "conf-1plus1plus1:v4b-0113",
+          "conf-1plus1plus1:v4b-0013",
+          "main-2plus1:v4a-0076",
+          "conf-1plus1plus1:v4b-0114",
+          "conf-1plus1plus1:v4b-0100",
+          "conf-2plus1:v4a-0053"
+        ],
+        "removed_spec_ids": [
+          "v4a-0087",
+          "v4a-0095"
+        ],
+        "source": {
+          "gram": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00032\\grams.npz",
+            "sha256": "8c83a04f0620ef2828cedbfde7bd3946a8bdb69d3be746fab2a5a432fbfc8fbb"
+          },
+          "report": {
+            "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00032\\report.json",
+            "sha256": "4a23d9e69cde2f8575ac0e35ea6961bae4e721c71b7a51665e756b4e7f6bd656"
+          }
+        }
+      }
+    ]
+  },
+  "canonical_scene_definition": {
+    "algorithm": "Aggregate counts by (canonical_noun(object), color); sort noun/color; serialize [[noun,color_or_null,total_count],...] using selfsight.utils.hashing.sha256_json.",
+    "scope": "Equivalence under the object/color/count correctness instrument. Prompt order, quantifier spelling, noun synonyms, and unscored support-surface/context wording are ignored; identical key does not claim pixel-identical/full-scene semantics."
+  },
+  "created_utc": "2026-09-06T08:52:34.128101+00:00",
+  "excluded_spec_ids": [
+    "v4a-0087",
+    "v4a-0095"
+  ],
+  "frozen_inputs": {
+    "audit_sha256": "b305fce3d53172e16f7c524c516053041cc398aa4f9e674b396cad4513cfd1ce",
+    "bank_fingerprint": "daf31aa3da74877324c88df2a126040a15dfefcbe70c6a889133dbcf265dc59e",
+    "bank_sha256": "ebd7fac6d03d55465429e686a3b09d0720328b92905e4dad0b59de95036430d1",
+    "script_sha256": "e1e7d719644dda0b662576f0b336f2b35afed7a42045b2a67bd611bb4b0852d2"
+  },
+  "input_provenance": [
+    {
+      "gram": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\base\\step-00000\\grams.npz",
+        "sha256": "7d71badf4946c5f01e3ba6845f27ba4f6958785903facbee6a7cbe6e7e735d71"
+      },
+      "report": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\base\\step-00000\\report.json",
+        "sha256": "c7b44d82dde502995d38a7cb53528ff2a9ce5a8fcd53ebbd3edb4c20ca579faa"
+      }
+    },
+    {
+      "gram": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00008\\grams.npz",
+        "sha256": "611ace303745c83ab69dc7524fa0bd15d56cdf42629e9e7b8c46713f9942d95c"
+      },
+      "report": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00008\\report.json",
+        "sha256": "b2f4a96dbf3bfbda4aef0cafa1acaa83a33ffb5f23bf1da35c212fb9a6417917"
+      }
+    },
+    {
+      "gram": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00016\\grams.npz",
+        "sha256": "27f148ac6ba5647f31f1dfe5ecf5a32065059d07da2ea3819a7f369ff3b3c975"
+      },
+      "report": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00016\\report.json",
+        "sha256": "1ca27b413de58860d12128290f8242fa69f25d2402fbc389f6a066ee0c3cc1db"
+      }
+    },
+    {
+      "gram": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00024\\grams.npz",
+        "sha256": "7703def155875f9b1ee4c908096b9c7b367ccf2b3c5909362f7bd473fdaa76f5"
+      },
+      "report": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00024\\report.json",
+        "sha256": "19edba35ddf9cc3cc39d6cd536d1dcaf93d10c51856956a04ff59fda6d9c0751"
+      }
+    },
+    {
+      "gram": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032\\grams.npz",
+        "sha256": "1592923a95b223aa68f190c7100e8bbfbc2ed4b1ba22064ffd2ce4318b296fdf"
+      },
+      "report": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\naive\\step-00032\\report.json",
+        "sha256": "e8bb31451af79aaff52429d1146eb37c2cda961bda19f3465e05edab307849ee"
+      }
+    },
+    {
+      "gram": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00008\\grams.npz",
+        "sha256": "9cb28ec0291323f336993e5b10678c3b49ce153e8ff9aa5e682de4cb756e7bc4"
+      },
+      "report": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00008\\report.json",
+        "sha256": "3705af8e72ab904c6c4071bfc792c1550d0eb18b380a757000dce7201e18bf24"
+      }
+    },
+    {
+      "gram": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00016\\grams.npz",
+        "sha256": "d73fc05f01a52817e7d3169dae427006e7e94213d397a943d04e42e5c144323e"
+      },
+      "report": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00016\\report.json",
+        "sha256": "f9d471f5fd1449887b7f252bda222e11cee14ee6ae7dbfd14a80104344ec442a"
+      }
+    },
+    {
+      "gram": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00024\\grams.npz",
+        "sha256": "1dbe9954bc0515f52d7d98627b5191a7a6af3355b85e06c5d9d3fb0ad090f192"
+      },
+      "report": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00024\\report.json",
+        "sha256": "500867bf1a1b221beb321e32fd147cf5c4efaedcb1c15c0c7faf6a592d984117"
+      }
+    },
+    {
+      "gram": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00032\\grams.npz",
+        "sha256": "8c83a04f0620ef2828cedbfde7bd3946a8bdb69d3be746fab2a5a432fbfc8fbb"
+      },
+      "report": {
+        "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\gradient-probes\\rfo_gold\\step-00032\\report.json",
+        "sha256": "4a23d9e69cde2f8575ac0e35ea6961bae4e721c71b7a51665e756b4e7f6bd656"
+      }
+    }
+  ],
+  "limitations": [
+    "Supplementary diagnostic; original outcomes, reports, thresholds and bank are unchanged",
+    "Intervals cover clustered prompt sampling, not independent training runs",
+    "Multiple looks are not adjusted and no warning or divergence is confirmed",
+    "Missing prompts are paired on the reported intersection, not imputed"
+  ],
+  "message": "Supplementary scene-disjoint analysis; no confirmed warning is declared",
+  "n_bank": 16,
+  "n_target_retained": 14,
+  "retained_scene_clusters": 14,
+  "rules": {
+    "bootstrap": "draw G canonical scenes G times; propagate scene multiplicity to every member prompt",
+    "clustering_field": "within_probe_bank_clusters",
+    "confidence": 0.95,
+    "exclusion_field": "overlap.actual_probe_bank",
+    "minimum_clusters": 4,
+    "paired_difference": "current-minus-base on the exact prompt intersection using shared scene multiplicities",
+    "point_weights": "one per original prompt",
+    "resamples": 2000,
+    "seed": 20260906,
+    "version": "v4-gradient-scene-sensitivity-1",
+    "warning_declarations": false
+  },
+  "schema_version": "v4-gradient-scene-sensitivity-1",
+  "status": "supplementary"
+}

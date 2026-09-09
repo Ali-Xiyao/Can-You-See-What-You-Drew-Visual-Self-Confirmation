@@ -1,0 +1,48 @@
+{
+  "created_utc": "2026-09-06T10:04:50.552394+00:00",
+  "primary_arm": "naive",
+  "estimand": "Change in original deterministic selection gain on identical independent candidate pools; one pool per independent scene.",
+  "target_change": 0.1,
+  "confidence": 0.95,
+  "target_halfwidth": 0.05,
+  "target_power": 0.8,
+  "scenarios": [
+    {
+      "discordance_probability": 0.1,
+      "approx_n_for_95pct_halfwidth_5pp_near_zero_change": 154,
+      "approx_n_for_80pct_power_at_10pp_change": 71,
+      "approx_combined_n": 154,
+      "approx_halfwidth_at_200_scenes": 0.04382612702882907
+    },
+    {
+      "discordance_probability": 0.2,
+      "approx_n_for_95pct_halfwidth_5pp_near_zero_change": 308,
+      "approx_n_for_80pct_power_at_10pp_change": 150,
+      "approx_combined_n": 308,
+      "approx_halfwidth_at_200_scenes": 0.06197950323045614
+    },
+    {
+      "discordance_probability": 0.5,
+      "approx_n_for_95pct_halfwidth_5pp_near_zero_change": 769,
+      "approx_n_for_80pct_power_at_10pp_change": 385,
+      "approx_combined_n": 769,
+      "approx_halfwidth_at_200_scenes": 0.09799819922700269
+    },
+    {
+      "discordance_probability": 1.0,
+      "approx_n_for_95pct_halfwidth_5pp_near_zero_change": 1537,
+      "approx_n_for_80pct_power_at_10pp_change": 778,
+      "approx_combined_n": 1537,
+      "approx_halfwidth_at_200_scenes": 0.13859038243496774
+    }
+  ],
+  "limitations": [
+    "Normal approximations for planning only, not assurance of achieved power or coverage.",
+    "q is not fixed to a sparse pilot point estimate; multiple scenarios expose sensitivity.",
+    "Label uncertainty, clustering, scene sampling, repeated looks and training-seed variation require separate allowance.",
+    "These numbers do not address the generative D* 2pp margin and do not justify an automatic 800-scene choice.",
+    "200 pools times 8 candidates is 1600 images. A 10% unresolved assumption gives 160 referrals, not a guaranteed or maximum human workload.",
+    "A fixed-image validation set measures selector drift. Generative outcome evaluation requires checkpoint-specific generated images."
+  ],
+  "new_image_generation_authorized_by_this_file": false
+}
