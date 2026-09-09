@@ -303,9 +303,16 @@ class Pilot:
     def report(self, step: int) -> None:
         self.run(f"step-{step:05d}.score", "core", "scripts/v4_train.py",
                  ["score", "--outdir", str(self.out)])
+        # self.protocol_path, not a literal. The manifest records the protocol the
+        # run was launched under and refuses to start if it changes; hardcoding a
+        # different one here put the pilot's document into every report's frozen
+        # provenance block while run_manifest.json named the main-run protocol.
+        # The two disagreed for the whole of 2026-09-08, and because
+        # v4_decoupling_report.py freezes provenance across steps, the first
+        # report to land would have locked the wrong one in for all twelve.
         self.run(f"step-{step:05d}.report", "core", "scripts/v4_decoupling_report.py",
                  ["--outdir", str(self.out), "--config", str(self.config_path),
-                  "--protocol", str(ROOT / "docs/prereg/2026-09-06-decoupling-pilot.md")])
+                  "--protocol", str(self.protocol_path)])
         self.run(f"step-{step:05d}.gradient-sensitivity", "core", "scripts/v4_gradient_sensitivity.py",
                  ["--outdir", str(self.out)])
         self.run(f"step-{step:05d}.plot", "core", "scripts/v4_decoupling_plot.py",
