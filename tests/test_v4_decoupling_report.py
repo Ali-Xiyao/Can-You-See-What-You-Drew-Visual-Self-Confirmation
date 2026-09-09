@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import pathlib
 import importlib.util
 import math
 import sys
@@ -398,6 +399,54 @@ def test_scene_audit_loaded_and_its_identity_frozen_across_reports(tmp_path):
     audit_path.write_text(json.dumps(audit), encoding="utf-8")
     with pytest.raises(ValueError, match="Frozen scene_overlap changed"):
         build_report(tmp_path, bootstrap_samples=100)
+
+
+def _run_with_audit(tmp_path, *, recorded_run):
+    """A run whose audit says, in its own provenance, where it was built."""
+
+    (tmp_path / "split.json").write_text(json.dumps({"outcome": [f"s{i}" for i in range(64)]}),
+                                         encoding="utf-8")
+    for step in (0, 8, 16):
+        _write_checkpoint(tmp_path, step, [{"spec": f"s{i}", "score": 0.5 + step * 0.002,
+                                            "verdict": step < 16} for i in range(64)])
+    audit_path = tmp_path / "audit-splits" / "scene_overlap.json"
+    audit_path.parent.mkdir()
+    audit = _scene_audit()
+    audit["provenance"] = {
+        "split_sha256": _module.file_identity(tmp_path / "split.json")["sha256"],
+        "run": recorded_run}
+    audit_path.write_text(json.dumps(audit), encoding="utf-8")
+    return audit_path
+
+
+def test_an_audit_built_in_another_run_is_not_this_runs_freeze(tmp_path):
+    """Two runs off one config share a config digest and a split digest, so
+    every other check here passes on a copied file. The one that matters is
+    that the other run's audit may be honestly prospective there and post hoc
+    here -- which is exactly the case arm B and the main run are in."""
+
+    _run_with_audit(tmp_path, recorded_run=str(tmp_path.parent / "decoupling-main-20260908"))
+    with pytest.raises(ValueError, match="was built in"):
+        build_report(tmp_path, bootstrap_samples=100)
+
+
+def test_a_run_that_moved_can_still_read_its_own_audit(tmp_path):
+    """Compared by name rather than by path on purpose: after outcomes exist
+    the audit cannot be rebuilt, so a moved directory must not lose it."""
+
+    _run_with_audit(tmp_path, recorded_run=str(pathlib.PurePosixPath("/somewhere/else")
+                                               / tmp_path.name))
+    report = build_report(tmp_path, bootstrap_samples=100)
+    assert report["scene_audit_status"] == "prospectively_frozen_supplement_loaded"
+
+
+def test_an_audit_that_does_not_say_where_it_was_built_is_still_read(tmp_path):
+    """The pilot's audit predates the field. Requiring it would strand the one
+    run that has a hand-checked prospective freeze."""
+
+    _run_with_audit(tmp_path, recorded_run=None)
+    report = build_report(tmp_path, bootstrap_samples=100)
+    assert report["scene_audit_status"] == "prospectively_frozen_supplement_loaded"
 
 
 def test_scene_audit_cannot_silently_target_a_different_outcome_population(tmp_path):
