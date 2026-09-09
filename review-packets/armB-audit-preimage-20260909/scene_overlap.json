@@ -1,0 +1,4512 @@
+{
+  "canonical_scene_key_definition": {
+    "algorithm": "Aggregate counts by (canonical_noun(object), color); sort noun/color; serialize [[noun,color_or_null,total_count],...] using selfsight.utils.hashing.sha256_json.",
+    "scope": "Equivalence under the object/color/count correctness instrument. Prompt order, quantifier spelling, noun synonyms, and unscored support-surface/context wording are ignored; identical key does not claim pixel-identical/full-scene semantics."
+  },
+  "conservative_all_train_partition_sensitivity": {
+    "equals_scheduled_exposure": true,
+    "note": "Exposure taken as the whole train partition rather than the generation schedule. The two coincide whenever rounds x prompts_per_round covers the partition, and `equals_scheduled_exposure` says whether they did.",
+    "overlap": [
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "mug",
+            "blue",
+            2
+          ]
+        ],
+        "prompt": "one red apple, two blue mugs",
+        "scene_sha256": "7928ce5f723beb9c7fb6ce753f2912b4375b28654a864049d9df3b0f70dee5f6",
+        "spec_id": "v4a-0004",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "mug",
+                "blue",
+                2
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "one red apple, two blue cups",
+            "scene_sha256": "7928ce5f723beb9c7fb6ce753f2912b4375b28654a864049d9df3b0f70dee5f6",
+            "scheduled_rounds": [
+              10
+            ],
+            "spec_id": "v4a-0057"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "mug",
+            "black",
+            2
+          ],
+          [
+            "pear",
+            "green",
+            1
+          ]
+        ],
+        "prompt": "one green pear, two black mugs",
+        "scene_sha256": "ed112d9d7a9712e32694beaa4a98dce2829980f31f2fc559e91f67bf5bd25209",
+        "spec_id": "v4a-0014",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "mug",
+                "black",
+                2
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one green pear, two black cups",
+            "scene_sha256": "ed112d9d7a9712e32694beaa4a98dce2829980f31f2fc559e91f67bf5bd25209",
+            "scheduled_rounds": [
+              9
+            ],
+            "spec_id": "v4a-0064"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "mug",
+            "blue",
+            2
+          ]
+        ],
+        "prompt": "one red apple, two blue mugs on wooden table",
+        "scene_sha256": "7928ce5f723beb9c7fb6ce753f2912b4375b28654a864049d9df3b0f70dee5f6",
+        "spec_id": "v4a-0090",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "mug",
+                "blue",
+                2
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "one red apple, two blue cups",
+            "scene_sha256": "7928ce5f723beb9c7fb6ce753f2912b4375b28654a864049d9df3b0f70dee5f6",
+            "scheduled_rounds": [
+              10
+            ],
+            "spec_id": "v4a-0057"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "green",
+            1
+          ],
+          [
+            "mug",
+            "red",
+            2
+          ]
+        ],
+        "prompt": "one green apple, two red mugs on metal tray",
+        "scene_sha256": "1a6d7b5910049172ce8f994dc1ad0a34c2e5f672ff29b842ba756f1bc400f4ff",
+        "spec_id": "v4a-0105",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "green",
+                1
+              ],
+              [
+                "mug",
+                "red",
+                2
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one green apple, two red mugs",
+            "scene_sha256": "1a6d7b5910049172ce8f994dc1ad0a34c2e5f672ff29b842ba756f1bc400f4ff",
+            "scheduled_rounds": [
+              1
+            ],
+            "spec_id": "v4a-0010"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "ball",
+            "blue",
+            1
+          ],
+          [
+            "brush",
+            "green",
+            1
+          ],
+          [
+            "hat",
+            "red",
+            1
+          ]
+        ],
+        "prompt": "a red hat, a blue ball, a green brush",
+        "scene_sha256": "68fea5a7d7d38ae07539504c5f48bbcef625226b8404278d942d902726d9e673",
+        "spec_id": "v4b-0029",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "ball",
+                "blue",
+                1
+              ],
+              [
+                "brush",
+                "green",
+                1
+              ],
+              [
+                "hat",
+                "red",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "one red hat, one blue ball, one green brush",
+            "scene_sha256": "68fea5a7d7d38ae07539504c5f48bbcef625226b8404278d942d902726d9e673",
+            "scheduled_rounds": [
+              5
+            ],
+            "spec_id": "v4b-0086"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "banana",
+            "yellow",
+            1
+          ],
+          [
+            "pear",
+            "green",
+            1
+          ]
+        ],
+        "prompt": "one green pear, one red apple, one yellow banana",
+        "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+        "spec_id": "v4b-0049",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "a red apple, a yellow banana, a green pear",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              2
+            ],
+            "spec_id": "v4b-0000"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one red apple, one yellow banana, one green pear",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              5
+            ],
+            "spec_id": "v4b-0005"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "a red apple, a green pear, a yellow banana",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              8
+            ],
+            "spec_id": "v4b-0006"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "banana",
+            "yellow",
+            1
+          ],
+          [
+            "pear",
+            "green",
+            1
+          ]
+        ],
+        "prompt": "one green pear, one yellow banana, one red apple",
+        "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+        "spec_id": "v4b-0054",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "a red apple, a yellow banana, a green pear",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              2
+            ],
+            "spec_id": "v4b-0000"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one red apple, one yellow banana, one green pear",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              5
+            ],
+            "spec_id": "v4b-0005"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "a red apple, a green pear, a yellow banana",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              8
+            ],
+            "spec_id": "v4b-0006"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "banana",
+            "yellow",
+            1
+          ],
+          [
+            "pear",
+            "green",
+            1
+          ]
+        ],
+        "prompt": "a yellow banana, a red apple, a green pear",
+        "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+        "spec_id": "v4b-0055",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "a red apple, a yellow banana, a green pear",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              2
+            ],
+            "spec_id": "v4b-0000"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one red apple, one yellow banana, one green pear",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              5
+            ],
+            "spec_id": "v4b-0005"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "a red apple, a green pear, a yellow banana",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              8
+            ],
+            "spec_id": "v4b-0006"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "green",
+            1
+          ],
+          [
+            "banana",
+            "yellow",
+            1
+          ],
+          [
+            "mug",
+            "blue",
+            1
+          ]
+        ],
+        "prompt": "a blue mug, a green apple, a yellow banana",
+        "scene_sha256": "51467036b165bb972a594ef0e7f6f29352cfde7d391959462949b1f3caacbfd7",
+        "spec_id": "v4b-0099",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "green",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "mug",
+                "blue",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one blue mug, one green apple, one yellow banana",
+            "scene_sha256": "51467036b165bb972a594ef0e7f6f29352cfde7d391959462949b1f3caacbfd7",
+            "scheduled_rounds": [
+              0
+            ],
+            "spec_id": "v4b-0052"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "book",
+            "black",
+            1
+          ],
+          [
+            "book",
+            "red",
+            1
+          ],
+          [
+            "key",
+            "silver",
+            1
+          ]
+        ],
+        "prompt": "one red book, one black notebook, one silver key",
+        "scene_sha256": "1fcc1ebd0b239ba6e0a8b18639d4969c0ecab83981cd7e9c3b66e67de5d0959d",
+        "spec_id": "v4b-0106",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "book",
+                "black",
+                1
+              ],
+              [
+                "book",
+                "red",
+                1
+              ],
+              [
+                "key",
+                "silver",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "one black book, one red notebook, one silver key",
+            "scene_sha256": "1fcc1ebd0b239ba6e0a8b18639d4969c0ecab83981cd7e9c3b66e67de5d0959d",
+            "scheduled_rounds": [
+              10
+            ],
+            "spec_id": "v4b-0116"
+          }
+        ]
+      }
+    ],
+    "spec_ids": [
+      "v4a-0001",
+      "v4a-0007",
+      "v4a-0008",
+      "v4a-0009",
+      "v4a-0011",
+      "v4a-0023",
+      "v4a-0024",
+      "v4a-0030",
+      "v4a-0031",
+      "v4a-0032",
+      "v4a-0033",
+      "v4a-0039",
+      "v4a-0041",
+      "v4a-0058",
+      "v4a-0062",
+      "v4a-0066",
+      "v4a-0070",
+      "v4a-0071",
+      "v4a-0073",
+      "v4a-0078",
+      "v4a-0080",
+      "v4a-0084",
+      "v4a-0088",
+      "v4a-0097",
+      "v4a-0103",
+      "v4a-0104",
+      "v4a-0106",
+      "v4a-0107",
+      "v4a-0108",
+      "v4a-0113",
+      "v4b-0017",
+      "v4b-0021",
+      "v4b-0026",
+      "v4b-0032",
+      "v4b-0033",
+      "v4b-0045",
+      "v4b-0059",
+      "v4b-0060",
+      "v4b-0061",
+      "v4b-0062",
+      "v4b-0066",
+      "v4b-0069",
+      "v4b-0072",
+      "v4b-0075",
+      "v4b-0077",
+      "v4b-0082",
+      "v4b-0083",
+      "v4b-0088",
+      "v4b-0090",
+      "v4b-0092",
+      "v4b-0094",
+      "v4b-0097",
+      "v4b-0103",
+      "v4b-0104"
+    ],
+    "spec_ids_sha256": "8c638fb3efd86258fbc6e51146e18086e5c517acaa48d017a208a4e24bcb5264"
+  },
+  "consumer": "scripts/v4_decoupling_report.py (outcome sensitivity) and scripts/v4_gradient_sensitivity.py --audit (probe exclusions)",
+  "created": "2026-09-09T07:59:20Z",
+  "created_before_any_outcome_evaluation_artifact": true,
+  "exposure_definition": "Every prompt in the frozen train partition. rounds x prompts_per_round equals the partition size, so the schedule reaches all of them exactly once and membership does not depend on the seed; only the round assignment does. Replay draws from a pool restricted to the same partition, so it adds no scene the generation schedule has not already exposed.",
+  "kind": "prospective_scene_overlap_sensitivity_freeze",
+  "overlap": {
+    "actual_probe_bank": [
+      {
+        "canonical_scene": [
+          [
+            "book",
+            "black",
+            1
+          ],
+          [
+            "candle",
+            "white",
+            2
+          ]
+        ],
+        "prompt": "two white candles, one black notebook",
+        "scene_sha256": "6f54bc4ca66f63bc0e20b3a612c8c40c56bd872a16162bf00a404396679a6dc9",
+        "spec_id": "v4a-0087",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "book",
+                "black",
+                1
+              ],
+              [
+                "candle",
+                "white",
+                2
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "two white candles, one black book",
+            "scene_sha256": "6f54bc4ca66f63bc0e20b3a612c8c40c56bd872a16162bf00a404396679a6dc9",
+            "scheduled_rounds": [
+              9
+            ],
+            "spec_id": "v4a-0083"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            2
+          ],
+          [
+            "banana",
+            "yellow",
+            1
+          ]
+        ],
+        "prompt": "one yellow banana, two red apples on marble counter",
+        "scene_sha256": "a0e4ece2331bc7f9401487364ba38608847cbaacda9b6915ee0702a9b923aaa0",
+        "spec_id": "v4a-0095",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                2
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one yellow banana, two red apples",
+            "scene_sha256": "a0e4ece2331bc7f9401487364ba38608847cbaacda9b6915ee0702a9b923aaa0",
+            "scheduled_rounds": [
+              9
+            ],
+            "spec_id": "v4a-0045"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                2
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "two red apples and one yellow banana",
+            "scene_sha256": "a0e4ece2331bc7f9401487364ba38608847cbaacda9b6915ee0702a9b923aaa0",
+            "scheduled_rounds": [
+              9
+            ],
+            "spec_id": "v4a-0116"
+          }
+        ]
+      }
+    ],
+    "outcome": [
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "mug",
+            "blue",
+            2
+          ]
+        ],
+        "prompt": "one red apple, two blue mugs",
+        "scene_sha256": "7928ce5f723beb9c7fb6ce753f2912b4375b28654a864049d9df3b0f70dee5f6",
+        "spec_id": "v4a-0004",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "mug",
+                "blue",
+                2
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "one red apple, two blue cups",
+            "scene_sha256": "7928ce5f723beb9c7fb6ce753f2912b4375b28654a864049d9df3b0f70dee5f6",
+            "scheduled_rounds": [
+              10
+            ],
+            "spec_id": "v4a-0057"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "mug",
+            "black",
+            2
+          ],
+          [
+            "pear",
+            "green",
+            1
+          ]
+        ],
+        "prompt": "one green pear, two black mugs",
+        "scene_sha256": "ed112d9d7a9712e32694beaa4a98dce2829980f31f2fc559e91f67bf5bd25209",
+        "spec_id": "v4a-0014",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "mug",
+                "black",
+                2
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one green pear, two black cups",
+            "scene_sha256": "ed112d9d7a9712e32694beaa4a98dce2829980f31f2fc559e91f67bf5bd25209",
+            "scheduled_rounds": [
+              9
+            ],
+            "spec_id": "v4a-0064"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "mug",
+            "blue",
+            2
+          ]
+        ],
+        "prompt": "one red apple, two blue mugs on wooden table",
+        "scene_sha256": "7928ce5f723beb9c7fb6ce753f2912b4375b28654a864049d9df3b0f70dee5f6",
+        "spec_id": "v4a-0090",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "mug",
+                "blue",
+                2
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "one red apple, two blue cups",
+            "scene_sha256": "7928ce5f723beb9c7fb6ce753f2912b4375b28654a864049d9df3b0f70dee5f6",
+            "scheduled_rounds": [
+              10
+            ],
+            "spec_id": "v4a-0057"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "green",
+            1
+          ],
+          [
+            "mug",
+            "red",
+            2
+          ]
+        ],
+        "prompt": "one green apple, two red mugs on metal tray",
+        "scene_sha256": "1a6d7b5910049172ce8f994dc1ad0a34c2e5f672ff29b842ba756f1bc400f4ff",
+        "spec_id": "v4a-0105",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "green",
+                1
+              ],
+              [
+                "mug",
+                "red",
+                2
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one green apple, two red mugs",
+            "scene_sha256": "1a6d7b5910049172ce8f994dc1ad0a34c2e5f672ff29b842ba756f1bc400f4ff",
+            "scheduled_rounds": [
+              1
+            ],
+            "spec_id": "v4a-0010"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "ball",
+            "blue",
+            1
+          ],
+          [
+            "brush",
+            "green",
+            1
+          ],
+          [
+            "hat",
+            "red",
+            1
+          ]
+        ],
+        "prompt": "a red hat, a blue ball, a green brush",
+        "scene_sha256": "68fea5a7d7d38ae07539504c5f48bbcef625226b8404278d942d902726d9e673",
+        "spec_id": "v4b-0029",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "ball",
+                "blue",
+                1
+              ],
+              [
+                "brush",
+                "green",
+                1
+              ],
+              [
+                "hat",
+                "red",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "one red hat, one blue ball, one green brush",
+            "scene_sha256": "68fea5a7d7d38ae07539504c5f48bbcef625226b8404278d942d902726d9e673",
+            "scheduled_rounds": [
+              5
+            ],
+            "spec_id": "v4b-0086"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "banana",
+            "yellow",
+            1
+          ],
+          [
+            "pear",
+            "green",
+            1
+          ]
+        ],
+        "prompt": "one green pear, one red apple, one yellow banana",
+        "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+        "spec_id": "v4b-0049",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "a red apple, a yellow banana, a green pear",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              2
+            ],
+            "spec_id": "v4b-0000"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one red apple, one yellow banana, one green pear",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              5
+            ],
+            "spec_id": "v4b-0005"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "a red apple, a green pear, a yellow banana",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              8
+            ],
+            "spec_id": "v4b-0006"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "banana",
+            "yellow",
+            1
+          ],
+          [
+            "pear",
+            "green",
+            1
+          ]
+        ],
+        "prompt": "one green pear, one yellow banana, one red apple",
+        "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+        "spec_id": "v4b-0054",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "a red apple, a yellow banana, a green pear",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              2
+            ],
+            "spec_id": "v4b-0000"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one red apple, one yellow banana, one green pear",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              5
+            ],
+            "spec_id": "v4b-0005"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "a red apple, a green pear, a yellow banana",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              8
+            ],
+            "spec_id": "v4b-0006"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "banana",
+            "yellow",
+            1
+          ],
+          [
+            "pear",
+            "green",
+            1
+          ]
+        ],
+        "prompt": "a yellow banana, a red apple, a green pear",
+        "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+        "spec_id": "v4b-0055",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "a red apple, a yellow banana, a green pear",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              2
+            ],
+            "spec_id": "v4b-0000"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one red apple, one yellow banana, one green pear",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              5
+            ],
+            "spec_id": "v4b-0005"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "a red apple, a green pear, a yellow banana",
+            "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+            "scheduled_rounds": [
+              8
+            ],
+            "spec_id": "v4b-0006"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "green",
+            1
+          ],
+          [
+            "banana",
+            "yellow",
+            1
+          ],
+          [
+            "mug",
+            "blue",
+            1
+          ]
+        ],
+        "prompt": "a blue mug, a green apple, a yellow banana",
+        "scene_sha256": "51467036b165bb972a594ef0e7f6f29352cfde7d391959462949b1f3caacbfd7",
+        "spec_id": "v4b-0099",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "green",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ],
+              [
+                "mug",
+                "blue",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one blue mug, one green apple, one yellow banana",
+            "scene_sha256": "51467036b165bb972a594ef0e7f6f29352cfde7d391959462949b1f3caacbfd7",
+            "scheduled_rounds": [
+              0
+            ],
+            "spec_id": "v4b-0052"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "book",
+            "black",
+            1
+          ],
+          [
+            "book",
+            "red",
+            1
+          ],
+          [
+            "key",
+            "silver",
+            1
+          ]
+        ],
+        "prompt": "one red book, one black notebook, one silver key",
+        "scene_sha256": "1fcc1ebd0b239ba6e0a8b18639d4969c0ecab83981cd7e9c3b66e67de5d0959d",
+        "spec_id": "v4b-0106",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "book",
+                "black",
+                1
+              ],
+              [
+                "book",
+                "red",
+                1
+              ],
+              [
+                "key",
+                "silver",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "one black book, one red notebook, one silver key",
+            "scene_sha256": "1fcc1ebd0b239ba6e0a8b18639d4969c0ecab83981cd7e9c3b66e67de5d0959d",
+            "scheduled_rounds": [
+              10
+            ],
+            "spec_id": "v4b-0116"
+          }
+        ]
+      }
+    ],
+    "probe_partition": [
+      {
+        "canonical_scene": [
+          [
+            "book",
+            "black",
+            1
+          ],
+          [
+            "candle",
+            "white",
+            2
+          ]
+        ],
+        "prompt": "two white candles, one black notebook",
+        "scene_sha256": "6f54bc4ca66f63bc0e20b3a612c8c40c56bd872a16162bf00a404396679a6dc9",
+        "spec_id": "v4a-0087",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "book",
+                "black",
+                1
+              ],
+              [
+                "candle",
+                "white",
+                2
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "two white candles, one black book",
+            "scene_sha256": "6f54bc4ca66f63bc0e20b3a612c8c40c56bd872a16162bf00a404396679a6dc9",
+            "scheduled_rounds": [
+              9
+            ],
+            "spec_id": "v4a-0083"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "green",
+            1
+          ],
+          [
+            "banana",
+            "yellow",
+            2
+          ]
+        ],
+        "prompt": "one green apple, two yellow bananas on marble counter",
+        "scene_sha256": "621519e1f19e536cee7b6d436240892915be589a00ca88e2bbb409ddee1d3bd1",
+        "spec_id": "v4a-0091",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "green",
+                1
+              ],
+              [
+                "banana",
+                "yellow",
+                2
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "one green apple, two yellow bananas",
+            "scene_sha256": "621519e1f19e536cee7b6d436240892915be589a00ca88e2bbb409ddee1d3bd1",
+            "scheduled_rounds": [
+              6
+            ],
+            "spec_id": "v4a-0110"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "bowl",
+            "white",
+            2
+          ],
+          [
+            "carrot",
+            "orange",
+            1
+          ]
+        ],
+        "prompt": "one orange carrot, two white bowls on white cloth",
+        "scene_sha256": "30bf94fc36e32f0ca6ad458ae76bcbffb3a5ed1becc586434f14ae7856b283b5",
+        "spec_id": "v4a-0092",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "bowl",
+                "white",
+                2
+              ],
+              [
+                "carrot",
+                "orange",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "one orange carrot, two white bowls",
+            "scene_sha256": "30bf94fc36e32f0ca6ad458ae76bcbffb3a5ed1becc586434f14ae7856b283b5",
+            "scheduled_rounds": [
+              8
+            ],
+            "spec_id": "v4a-0006"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            2
+          ],
+          [
+            "banana",
+            "yellow",
+            1
+          ]
+        ],
+        "prompt": "one yellow banana, two red apples on marble counter",
+        "scene_sha256": "a0e4ece2331bc7f9401487364ba38608847cbaacda9b6915ee0702a9b923aaa0",
+        "spec_id": "v4a-0095",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                2
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one yellow banana, two red apples",
+            "scene_sha256": "a0e4ece2331bc7f9401487364ba38608847cbaacda9b6915ee0702a9b923aaa0",
+            "scheduled_rounds": [
+              9
+            ],
+            "spec_id": "v4a-0045"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                2
+              ],
+              [
+                "banana",
+                "yellow",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "two red apples and one yellow banana",
+            "scene_sha256": "a0e4ece2331bc7f9401487364ba38608847cbaacda9b6915ee0702a9b923aaa0",
+            "scheduled_rounds": [
+              9
+            ],
+            "spec_id": "v4a-0116"
+          }
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "lemon",
+            "yellow",
+            1
+          ],
+          [
+            "pear",
+            "green",
+            1
+          ]
+        ],
+        "prompt": "a red apple, a yellow lemon, a green pear",
+        "scene_sha256": "9ae7854384184c421d1f6511c33c086b2f8ee28b16753be8fafd4cdb3942611a",
+        "spec_id": "v4b-0043",
+        "training_matches": [
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "lemon",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one yellow lemon, one red apple, one green pear",
+            "scene_sha256": "9ae7854384184c421d1f6511c33c086b2f8ee28b16753be8fafd4cdb3942611a",
+            "scheduled_rounds": [
+              2
+            ],
+            "spec_id": "v4b-0089"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "lemon",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "a red apple, a green pear, a yellow lemon",
+            "scene_sha256": "9ae7854384184c421d1f6511c33c086b2f8ee28b16753be8fafd4cdb3942611a",
+            "scheduled_rounds": [
+              5
+            ],
+            "spec_id": "v4b-0096"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "lemon",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": true,
+            "prompt": "one yellow lemon, one green pear, one red apple",
+            "scene_sha256": "9ae7854384184c421d1f6511c33c086b2f8ee28b16753be8fafd4cdb3942611a",
+            "scheduled_rounds": [
+              6
+            ],
+            "spec_id": "v4b-0107"
+          },
+          {
+            "canonical_scene": [
+              [
+                "apple",
+                "red",
+                1
+              ],
+              [
+                "lemon",
+                "yellow",
+                1
+              ],
+              [
+                "pear",
+                "green",
+                1
+              ]
+            ],
+            "in_train_only_replay_pool": false,
+            "prompt": "one red apple, one green pear, one yellow lemon",
+            "scene_sha256": "9ae7854384184c421d1f6511c33c086b2f8ee28b16753be8fafd4cdb3942611a",
+            "scheduled_rounds": [
+              8
+            ],
+            "spec_id": "v4b-0112"
+          }
+        ]
+      }
+    ]
+  },
+  "provenance": {
+    "bank_fingerprint": "7a90dc396882b859f14417d024694adc633ba4e3124156041b263d6c1b0a40b3",
+    "bank_sha256": "5468b22e74e77f618e0b8ff1221c21d3de7cff1665e0d82929562080772c62f8",
+    "config_path": "configs\\v4_decoupling_main_20260908.yaml",
+    "config_sha256": "620ba17921eb06fc1f3077f021f4d7af392c742f301d4515d6e877389d0e1dee",
+    "corpus_runs": [
+      "runs/v4/main-2plus1",
+      "runs/v4/main-1plus1plus1"
+    ],
+    "run": "C:\\Users\\Admin\\AppData\\Local\\Temp\\claude\\H--Xiyao-Wang-062-Can-You-See-What-You-Drew-Visual-Self-Confirmation\\50b552c8-39fa-410d-bfae-904908772905\\scratchpad\\armB-dry",
+    "schedule": {
+      "max_epochs": 1,
+      "prompts_per_round": 12,
+      "rounds": 11,
+      "rounds_checked_against_executed_selection": [],
+      "seed": 20260906
+    },
+    "split_digest": "9bab14d427f2b61bea001b710126dcf18d610972985f723665534209231f9d58",
+    "split_sha256": "83b7eaa696726a1f6261327a5ac70c2d494629e5e736bcae7799eed0482f7094"
+  },
+  "recommendations": [
+    "Keep the prompt-level main analysis unchanged.",
+    "Add the sensitivity prespecified by this file on scene_disjoint_outcome_sensitivity.spec_ids.",
+    "Add a canonical-scene cluster bootstrap: resample whole scene clusters, keeping all prompt variants and all checkpoints/arms together; report the original prompt-weighted estimator plus the cluster count, and do not silently replace its population with scene-equal weighting.",
+    "The frozen probe bank has its own overlap and cluster inventory; report the sensitivity that excludes exposed scenes if the sample size permits, without replacing the bank."
+  ],
+  "scene_disjoint_outcome_sensitivity": {
+    "canonical_scene_clusters": [
+      {
+        "canonical_scene": [
+          [
+            "spoon",
+            "brown",
+            2
+          ],
+          [
+            "tomato",
+            "red",
+            1
+          ]
+        ],
+        "scene_sha256": "01e27e72a3f2e66c7f5c5d9ffada38539534760583c3a1a0b9180767d91346c4",
+        "spec_ids": [
+          "v4a-0066"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "egg",
+            "brown",
+            1
+          ],
+          [
+            "plate",
+            "white",
+            2
+          ]
+        ],
+        "scene_sha256": "045a1f849c4bc5d8e845e62c52a3a1305720c9db4558d18fcb7045d75c1056de",
+        "spec_ids": [
+          "v4a-0032",
+          "v4a-0107"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "green",
+            1
+          ],
+          [
+            "banana",
+            "yellow",
+            1
+          ],
+          [
+            "bottle",
+            "brown",
+            1
+          ]
+        ],
+        "scene_sha256": "101fc749351509cea376190543410717fed1f3db1932e8bec7c0ff40e3d166cc",
+        "spec_ids": [
+          "v4b-0097"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "clock",
+            "orange",
+            1
+          ],
+          [
+            "key",
+            "black",
+            1
+          ],
+          [
+            "sock",
+            "white",
+            1
+          ]
+        ],
+        "scene_sha256": "14499483df5706a2e11dc89af4bc25a53a534f861321378471b1bb9a21633c2d",
+        "spec_ids": [
+          "v4b-0094"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "book",
+            "white",
+            1
+          ],
+          [
+            "pen",
+            "blue",
+            2
+          ]
+        ],
+        "scene_sha256": "1afc445e28b972369cc74c70e5f30bc03f12db011f080d5cc4926684b8a14481",
+        "spec_ids": [
+          "v4a-0001"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "book",
+            "white",
+            1
+          ],
+          [
+            "mug",
+            "blue",
+            2
+          ]
+        ],
+        "scene_sha256": "1c61c9ff4672efc38cd43ab56c85b747d6033f6c141ae700573cdf1d5ce81f24",
+        "spec_ids": [
+          "v4a-0084"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "flower",
+            "blue",
+            1
+          ],
+          [
+            "leaf",
+            "green",
+            1
+          ],
+          [
+            "stone",
+            "red",
+            1
+          ]
+        ],
+        "scene_sha256": "22a23200e8ce8c58cc56d6ab3175295fc40ce454b4345bbc6f95ea2b6fd2dacc",
+        "spec_ids": [
+          "v4b-0032"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "bottle",
+            "black",
+            1
+          ],
+          [
+            "mug",
+            "red",
+            2
+          ]
+        ],
+        "scene_sha256": "22be6d086675fa582a4158f206c74fff9cc2587e7572938c85698e8da2ad105f",
+        "spec_ids": [
+          "v4a-0097"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "bottle",
+            "blue",
+            1
+          ],
+          [
+            "clock",
+            "red",
+            1
+          ],
+          [
+            "jar",
+            "green",
+            1
+          ]
+        ],
+        "scene_sha256": "308b13e5ceb3807c8fc5b8b290ad95d11e6fad457bd7b92897bc457ec10cc21c",
+        "spec_ids": [
+          "v4b-0072"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "lemon",
+            "yellow",
+            1
+          ],
+          [
+            "pepper",
+            "green",
+            1
+          ],
+          [
+            "tomato",
+            "red",
+            1
+          ]
+        ],
+        "scene_sha256": "3200b04e38d519fb1315a7ec1648d059982dd9e03b959a73587aa54e19710897",
+        "spec_ids": [
+          "v4b-0082"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            2
+          ],
+          [
+            "pear",
+            "green",
+            1
+          ]
+        ],
+        "scene_sha256": "3dfce1bcf816edb03dc9e79a2836ab8ee99438a9e1cc20c014f4d11aa815b504",
+        "spec_ids": [
+          "v4a-0024"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "bottle",
+            "red",
+            2
+          ],
+          [
+            "leaf",
+            "green",
+            1
+          ]
+        ],
+        "scene_sha256": "465fe1f8d0817a7185bf155368ce57442332c7e45fede694020649aae89f9131",
+        "spec_ids": [
+          "v4a-0108"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "mug",
+            "blue",
+            1
+          ],
+          [
+            "mug",
+            "green",
+            1
+          ],
+          [
+            "plate",
+            "white",
+            1
+          ]
+        ],
+        "scene_sha256": "4b6859eabf5651c9185521dcd24dd9178c92d4934f064335b92422d2c153c40c",
+        "spec_ids": [
+          "v4b-0060"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "carrot",
+            "orange",
+            1
+          ],
+          [
+            "lemon",
+            "yellow",
+            2
+          ]
+        ],
+        "scene_sha256": "5481aea8046891f3ca74cfe33a196c77851aa7045d608a26f373b1c1da744751",
+        "spec_ids": [
+          "v4a-0030"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "banana",
+            "yellow",
+            1
+          ],
+          [
+            "mug",
+            "green",
+            2
+          ]
+        ],
+        "scene_sha256": "55a1e055f7796e21b0014518939cb9c1a4fa21c4867483c9f43086303cd1ddd1",
+        "spec_ids": [
+          "v4a-0058"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "bottle",
+            "brown",
+            2
+          ],
+          [
+            "pear",
+            "green",
+            1
+          ]
+        ],
+        "scene_sha256": "56e7047a190735e1b28ed9bf08c5f58e50b79cddfdd0762691596fde4d52656b",
+        "spec_ids": [
+          "v4a-0008"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "banana",
+            "yellow",
+            1
+          ],
+          [
+            "bowl",
+            "blue",
+            2
+          ]
+        ],
+        "scene_sha256": "59106220d64fb96166ae0d0849dfcd292f42ae420464ee6d4dc5fa1c962c7f02",
+        "spec_ids": [
+          "v4a-0106"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "fork",
+            "white",
+            1
+          ],
+          [
+            "plate",
+            "red",
+            1
+          ],
+          [
+            "spoon",
+            "blue",
+            1
+          ]
+        ],
+        "scene_sha256": "5944384afc9c56d8315b2af95fe0683a78437dbdce3e701b089a76638beaa2fc",
+        "spec_ids": [
+          "v4b-0026"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "fork",
+            "silver",
+            1
+          ],
+          [
+            "plate",
+            "black",
+            1
+          ],
+          [
+            "spoon",
+            "red",
+            1
+          ]
+        ],
+        "scene_sha256": "5a33c240e59c336d732c9818084a33f60b320dd998d767ad696c8416a2bace78",
+        "spec_ids": [
+          "v4b-0017"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "mug",
+            "black",
+            2
+          ],
+          [
+            "tomato",
+            "red",
+            1
+          ]
+        ],
+        "scene_sha256": "5e6787f20ba845a76cf9fcb7c9ab50b2b3d23f335e0d5162fa33e0f667aa1098",
+        "spec_ids": [
+          "v4a-0007"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "brush",
+            "green",
+            1
+          ],
+          [
+            "key",
+            "red",
+            1
+          ],
+          [
+            "sock",
+            "blue",
+            1
+          ]
+        ],
+        "scene_sha256": "75293d0cd90018a10cb9678288c9cbbcc78ece35516df4e5119168245fa4528b",
+        "spec_ids": [
+          "v4b-0077"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "banana",
+            "yellow",
+            1
+          ],
+          [
+            "leaf",
+            "green",
+            1
+          ]
+        ],
+        "scene_sha256": "763a62ddc6c5a87646b05bd25bfdf3a5d31ecd5342de02ba9a102481565abfcb",
+        "spec_ids": [
+          "v4b-0104"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "egg",
+            "brown",
+            2
+          ],
+          [
+            "lemon",
+            "yellow",
+            1
+          ]
+        ],
+        "scene_sha256": "789acdcefca0a63e5892b4f55360afc38e713be0396a723c6bc067f21827b857",
+        "spec_ids": [
+          "v4a-0023"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "ball",
+            "red",
+            1
+          ],
+          [
+            "book",
+            "blue",
+            2
+          ]
+        ],
+        "scene_sha256": "7bea1d2a6072d5f768b55a5b47ede5af63661125b275ffa8dda946074a5bf832",
+        "spec_ids": [
+          "v4a-0073"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "green",
+            2
+          ],
+          [
+            "lemon",
+            "yellow",
+            1
+          ]
+        ],
+        "scene_sha256": "7df27d605fe448b8cb5908afeb3dff3a35e1fb412f6c631ba01113b114af0685",
+        "spec_ids": [
+          "v4a-0113"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "leaf",
+            "green",
+            1
+          ],
+          [
+            "lemon",
+            "yellow",
+            1
+          ]
+        ],
+        "scene_sha256": "815059348dcfae2019e74da220483c5e6157266d817a6b5ad26ef8d4d88592c6",
+        "spec_ids": [
+          "v4b-0062"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "bottle",
+            "brown",
+            1
+          ],
+          [
+            "mug",
+            "blue",
+            2
+          ]
+        ],
+        "scene_sha256": "8287148d020dcc7a53eb0f7913de035e0f9bbc2489ca8455ae01e1bddfd4c4c6",
+        "spec_ids": [
+          "v4a-0080"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "book",
+            "black",
+            1
+          ],
+          [
+            "book",
+            "red",
+            1
+          ],
+          [
+            "candle",
+            "silver",
+            1
+          ]
+        ],
+        "scene_sha256": "85e7215e347f048a1c2f2e5326a2e0d41a49caf1617abc90060267954e21bb0d",
+        "spec_ids": [
+          "v4b-0092"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "book",
+            "red",
+            2
+          ],
+          [
+            "egg",
+            "brown",
+            1
+          ]
+        ],
+        "scene_sha256": "86ea9848f0361673967675f6aaf4d0519101c32f7947b0145f463cd32b7d4731",
+        "spec_ids": [
+          "v4a-0103"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "flower",
+            "green",
+            1
+          ],
+          [
+            "shell",
+            "red",
+            1
+          ],
+          [
+            "stone",
+            "brown",
+            1
+          ]
+        ],
+        "scene_sha256": "8800f5571c81579c34694a611cd57078ab2d5fb31a42a6aa97d7af11429bb421",
+        "spec_ids": [
+          "v4b-0088"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "book",
+            "green",
+            1
+          ],
+          [
+            "box",
+            "brown",
+            2
+          ]
+        ],
+        "scene_sha256": "8ae3809a17b699921f48cfa9f6622441ef40e0715b6a3d62f7b520981a200eff",
+        "spec_ids": [
+          "v4a-0078"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "bowl",
+            "blue",
+            2
+          ],
+          [
+            "carrot",
+            "orange",
+            1
+          ]
+        ],
+        "scene_sha256": "8b1fec9f171c491434938e19f51fba8eae917d344fc583131eae252a72b7540b",
+        "spec_ids": [
+          "v4a-0011"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "mug",
+            "red",
+            1
+          ],
+          [
+            "pear",
+            "green",
+            1
+          ],
+          [
+            "plate",
+            "white",
+            1
+          ]
+        ],
+        "scene_sha256": "8f8e3aed6fc644e916998fc20ccb6584a10814865c6b0d9220eff22a877f4723",
+        "spec_ids": [
+          "v4b-0045"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "mug",
+            "blue",
+            2
+          ],
+          [
+            "tomato",
+            "red",
+            1
+          ]
+        ],
+        "scene_sha256": "908a20ce0685b77c233452b215a632ae631021e19ec391f48e50081ee99aa524",
+        "spec_ids": [
+          "v4a-0088"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "lemon",
+            "yellow",
+            1
+          ],
+          [
+            "plate",
+            "blue",
+            2
+          ]
+        ],
+        "scene_sha256": "90f89312a25f59694f19d816c5162c7f593fb215809679d51a5e58d0b4704191",
+        "spec_ids": [
+          "v4a-0009"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "bottle",
+            "white",
+            1
+          ],
+          [
+            "box",
+            "blue",
+            2
+          ]
+        ],
+        "scene_sha256": "93b1cee9a7c200568b5060c7839bfc626ee633b218ff8a34ca6a52edac3bd823",
+        "spec_ids": [
+          "v4a-0104"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "red",
+            1
+          ],
+          [
+            "pear",
+            "green",
+            2
+          ]
+        ],
+        "scene_sha256": "976b5efce011926e3bec764feec6e871fa397b3efd7e1e57706309f92fce517b",
+        "spec_ids": [
+          "v4a-0033",
+          "v4a-0039"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "carrot",
+            "orange",
+            1
+          ],
+          [
+            "mug",
+            "green",
+            2
+          ]
+        ],
+        "scene_sha256": "97de6d63c3c003524822411d41fe45b412bbc527645c3b810919b8f47cefa01d",
+        "spec_ids": [
+          "v4a-0062"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "fork",
+            "yellow",
+            1
+          ],
+          [
+            "mug",
+            "blue",
+            1
+          ],
+          [
+            "spoon",
+            "red",
+            1
+          ]
+        ],
+        "scene_sha256": "a51b11a9b62ead76d39f508657eac81aea8ba2291f636b94dc61869ed2ee31b1",
+        "spec_ids": [
+          "v4b-0090"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "ball",
+            "yellow",
+            1
+          ],
+          [
+            "hat",
+            "green",
+            1
+          ],
+          [
+            "sock",
+            "red",
+            1
+          ]
+        ],
+        "scene_sha256": "b3075f846431a58ac25bf74f259ebdc7293943c60a7b10d5c839c75bcbfddd39",
+        "spec_ids": [
+          "v4b-0033"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "clock",
+            "silver",
+            1
+          ],
+          [
+            "key",
+            "red",
+            1
+          ],
+          [
+            "sock",
+            "black",
+            1
+          ]
+        ],
+        "scene_sha256": "b379f93c86f6dcf3034431d7aee00d585629bcb701adb3ed7ca98676415e1553",
+        "spec_ids": [
+          "v4b-0021"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "green",
+            1
+          ],
+          [
+            "lemon",
+            "yellow",
+            1
+          ],
+          [
+            "mug",
+            "blue",
+            1
+          ]
+        ],
+        "scene_sha256": "b38c0ab204ec3ebc6fdf5896e9aee9dba33272ea001cea3d33e132d0d1d7801b",
+        "spec_ids": [
+          "v4b-0103"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "book",
+            "red",
+            1
+          ],
+          [
+            "bottle",
+            "blue",
+            1
+          ],
+          [
+            "candle",
+            "green",
+            1
+          ]
+        ],
+        "scene_sha256": "b5f61480bb764c550ea611b7d670aaa058746cbea1b9765dc4a06b3831cdb3af",
+        "spec_ids": [
+          "v4b-0075"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "bottle",
+            "red",
+            1
+          ],
+          [
+            "box",
+            "white",
+            1
+          ],
+          [
+            "jar",
+            "blue",
+            1
+          ]
+        ],
+        "scene_sha256": "b8c3c49e36e94ff3e5f39e67bac4ae174c2d649f5414fe83a29d6bece907cfe5",
+        "spec_ids": [
+          "v4b-0069"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "apple",
+            "green",
+            1
+          ],
+          [
+            "carrot",
+            "orange",
+            2
+          ]
+        ],
+        "scene_sha256": "bbfda34babc5ab339b28e18059728be9a92c344ca9b551ca6715be5db3ceb16c",
+        "spec_ids": [
+          "v4a-0041"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "bottle",
+            "brown",
+            1
+          ],
+          [
+            "egg",
+            "white",
+            1
+          ],
+          [
+            "tomato",
+            "red",
+            1
+          ]
+        ],
+        "scene_sha256": "ca215935bf5d3e33b07b035844ea4c23254a411eb497d5a1d545fdc071c2cae4",
+        "spec_ids": [
+          "v4b-0059"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "bowl",
+            "brown",
+            1
+          ],
+          [
+            "mug",
+            "blue",
+            1
+          ],
+          [
+            "spoon",
+            "silver",
+            1
+          ]
+        ],
+        "scene_sha256": "ce8d0b872c06432fb047d6c9416a5323cd28fd0c05cce0afcd5fb290d439e143",
+        "spec_ids": [
+          "v4b-0083"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "brush",
+            "green",
+            1
+          ],
+          [
+            "key",
+            "red",
+            2
+          ]
+        ],
+        "scene_sha256": "d62424652a3a315758c607e56da59b66f8c0584f97f8367252d56e620a7a848a",
+        "spec_ids": [
+          "v4a-0071"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "box",
+            "black",
+            1
+          ],
+          [
+            "hat",
+            "yellow",
+            2
+          ]
+        ],
+        "scene_sha256": "e2e36213c8ecafacfe7f8ff86bbc5b89f7c49e13f68c38416109add8a9f08588",
+        "spec_ids": [
+          "v4a-0070"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "flower",
+            "white",
+            1
+          ],
+          [
+            "shell",
+            "brown",
+            1
+          ],
+          [
+            "stone",
+            "gray",
+            1
+          ]
+        ],
+        "scene_sha256": "e67ec6460cc755ac8d7689b76d9a35d7b03d03cb8ac4f76eba30d30ca8c176ef",
+        "spec_ids": [
+          "v4b-0066"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "book",
+            "black",
+            1
+          ],
+          [
+            "book",
+            "red",
+            1
+          ],
+          [
+            "spoon",
+            "silver",
+            1
+          ]
+        ],
+        "scene_sha256": "e7e21a474d4da71c16665085092041f3c4e5701f2834ddf4c12af2805b6ef120",
+        "spec_ids": [
+          "v4b-0061"
+        ]
+      },
+      {
+        "canonical_scene": [
+          [
+            "banana",
+            "yellow",
+            1
+          ],
+          [
+            "mug",
+            "blue",
+            2
+          ]
+        ],
+        "scene_sha256": "fe86907eb18daabfe2536c60d3c24a1892a7a4a176088d55ee80a7c0b38da217",
+        "spec_ids": [
+          "v4a-0031"
+        ]
+      }
+    ],
+    "spec_ids": [
+      "v4a-0001",
+      "v4a-0007",
+      "v4a-0008",
+      "v4a-0009",
+      "v4a-0011",
+      "v4a-0023",
+      "v4a-0024",
+      "v4a-0030",
+      "v4a-0031",
+      "v4a-0032",
+      "v4a-0033",
+      "v4a-0039",
+      "v4a-0041",
+      "v4a-0058",
+      "v4a-0062",
+      "v4a-0066",
+      "v4a-0070",
+      "v4a-0071",
+      "v4a-0073",
+      "v4a-0078",
+      "v4a-0080",
+      "v4a-0084",
+      "v4a-0088",
+      "v4a-0097",
+      "v4a-0103",
+      "v4a-0104",
+      "v4a-0106",
+      "v4a-0107",
+      "v4a-0108",
+      "v4a-0113",
+      "v4b-0017",
+      "v4b-0021",
+      "v4b-0026",
+      "v4b-0032",
+      "v4b-0033",
+      "v4b-0045",
+      "v4b-0059",
+      "v4b-0060",
+      "v4b-0061",
+      "v4b-0062",
+      "v4b-0066",
+      "v4b-0069",
+      "v4b-0072",
+      "v4b-0075",
+      "v4b-0077",
+      "v4b-0082",
+      "v4b-0083",
+      "v4b-0088",
+      "v4b-0090",
+      "v4b-0092",
+      "v4b-0094",
+      "v4b-0097",
+      "v4b-0103",
+      "v4b-0104"
+    ],
+    "spec_ids_sha256": "8c638fb3efd86258fbc6e51146e18086e5c517acaa48d017a208a4e24bcb5264",
+    "status": "prespecified_before_any_outcome_evaluation_artifact"
+  },
+  "summary": {
+    "actual_probe_bank_overlap_n": 2,
+    "conservative_all_train_partition_outcome_overlap_n": 10,
+    "exposed_scene_n": 120,
+    "outcome_n": 64,
+    "outcome_overlap_n": 10,
+    "outcome_prompts_in_repeated_scene_groups": 9,
+    "outcome_repeated_scene_groups": 4,
+    "outcome_unique_canonical_scenes": 59,
+    "probe_bank_n": 16,
+    "probe_bank_scene_n": 16,
+    "probe_partition_overlap_n": 5,
+    "scene_disjoint_outcome_n": 54,
+    "scheduled_train_prompt_n": 132,
+    "train_only_replay_pool_examples": 706,
+    "train_only_replay_pool_prompt_n": 82,
+    "train_partition_n": 132
+  },
+  "version": "v4-scene-overlap-audit-1",
+  "within_outcome_clusters": [
+    {
+      "canonical_scene": [
+        [
+          "spoon",
+          "brown",
+          2
+        ],
+        [
+          "tomato",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "01e27e72a3f2e66c7f5c5d9ffada38539534760583c3a1a0b9180767d91346c4",
+      "spec_ids": [
+        "v4a-0066"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "egg",
+          "brown",
+          1
+        ],
+        [
+          "plate",
+          "white",
+          2
+        ]
+      ],
+      "scene_sha256": "045a1f849c4bc5d8e845e62c52a3a1305720c9db4558d18fcb7045d75c1056de",
+      "spec_ids": [
+        "v4a-0032",
+        "v4a-0107"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "green",
+          1
+        ],
+        [
+          "banana",
+          "yellow",
+          1
+        ],
+        [
+          "bottle",
+          "brown",
+          1
+        ]
+      ],
+      "scene_sha256": "101fc749351509cea376190543410717fed1f3db1932e8bec7c0ff40e3d166cc",
+      "spec_ids": [
+        "v4b-0097"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "clock",
+          "orange",
+          1
+        ],
+        [
+          "key",
+          "black",
+          1
+        ],
+        [
+          "sock",
+          "white",
+          1
+        ]
+      ],
+      "scene_sha256": "14499483df5706a2e11dc89af4bc25a53a534f861321378471b1bb9a21633c2d",
+      "spec_ids": [
+        "v4b-0094"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "green",
+          1
+        ],
+        [
+          "mug",
+          "red",
+          2
+        ]
+      ],
+      "scene_sha256": "1a6d7b5910049172ce8f994dc1ad0a34c2e5f672ff29b842ba756f1bc400f4ff",
+      "spec_ids": [
+        "v4a-0105"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "book",
+          "white",
+          1
+        ],
+        [
+          "pen",
+          "blue",
+          2
+        ]
+      ],
+      "scene_sha256": "1afc445e28b972369cc74c70e5f30bc03f12db011f080d5cc4926684b8a14481",
+      "spec_ids": [
+        "v4a-0001"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "book",
+          "white",
+          1
+        ],
+        [
+          "mug",
+          "blue",
+          2
+        ]
+      ],
+      "scene_sha256": "1c61c9ff4672efc38cd43ab56c85b747d6033f6c141ae700573cdf1d5ce81f24",
+      "spec_ids": [
+        "v4a-0084"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "book",
+          "black",
+          1
+        ],
+        [
+          "book",
+          "red",
+          1
+        ],
+        [
+          "key",
+          "silver",
+          1
+        ]
+      ],
+      "scene_sha256": "1fcc1ebd0b239ba6e0a8b18639d4969c0ecab83981cd7e9c3b66e67de5d0959d",
+      "spec_ids": [
+        "v4b-0106"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "flower",
+          "blue",
+          1
+        ],
+        [
+          "leaf",
+          "green",
+          1
+        ],
+        [
+          "stone",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "22a23200e8ce8c58cc56d6ab3175295fc40ce454b4345bbc6f95ea2b6fd2dacc",
+      "spec_ids": [
+        "v4b-0032"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bottle",
+          "black",
+          1
+        ],
+        [
+          "mug",
+          "red",
+          2
+        ]
+      ],
+      "scene_sha256": "22be6d086675fa582a4158f206c74fff9cc2587e7572938c85698e8da2ad105f",
+      "spec_ids": [
+        "v4a-0097"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bottle",
+          "blue",
+          1
+        ],
+        [
+          "clock",
+          "red",
+          1
+        ],
+        [
+          "jar",
+          "green",
+          1
+        ]
+      ],
+      "scene_sha256": "308b13e5ceb3807c8fc5b8b290ad95d11e6fad457bd7b92897bc457ec10cc21c",
+      "spec_ids": [
+        "v4b-0072"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "red",
+          1
+        ],
+        [
+          "banana",
+          "yellow",
+          1
+        ],
+        [
+          "pear",
+          "green",
+          1
+        ]
+      ],
+      "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+      "spec_ids": [
+        "v4b-0049",
+        "v4b-0054",
+        "v4b-0055"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "lemon",
+          "yellow",
+          1
+        ],
+        [
+          "pepper",
+          "green",
+          1
+        ],
+        [
+          "tomato",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "3200b04e38d519fb1315a7ec1648d059982dd9e03b959a73587aa54e19710897",
+      "spec_ids": [
+        "v4b-0082"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "red",
+          2
+        ],
+        [
+          "pear",
+          "green",
+          1
+        ]
+      ],
+      "scene_sha256": "3dfce1bcf816edb03dc9e79a2836ab8ee99438a9e1cc20c014f4d11aa815b504",
+      "spec_ids": [
+        "v4a-0024"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bottle",
+          "red",
+          2
+        ],
+        [
+          "leaf",
+          "green",
+          1
+        ]
+      ],
+      "scene_sha256": "465fe1f8d0817a7185bf155368ce57442332c7e45fede694020649aae89f9131",
+      "spec_ids": [
+        "v4a-0108"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "mug",
+          "blue",
+          1
+        ],
+        [
+          "mug",
+          "green",
+          1
+        ],
+        [
+          "plate",
+          "white",
+          1
+        ]
+      ],
+      "scene_sha256": "4b6859eabf5651c9185521dcd24dd9178c92d4934f064335b92422d2c153c40c",
+      "spec_ids": [
+        "v4b-0060"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "green",
+          1
+        ],
+        [
+          "banana",
+          "yellow",
+          1
+        ],
+        [
+          "mug",
+          "blue",
+          1
+        ]
+      ],
+      "scene_sha256": "51467036b165bb972a594ef0e7f6f29352cfde7d391959462949b1f3caacbfd7",
+      "spec_ids": [
+        "v4b-0099"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "carrot",
+          "orange",
+          1
+        ],
+        [
+          "lemon",
+          "yellow",
+          2
+        ]
+      ],
+      "scene_sha256": "5481aea8046891f3ca74cfe33a196c77851aa7045d608a26f373b1c1da744751",
+      "spec_ids": [
+        "v4a-0030"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "banana",
+          "yellow",
+          1
+        ],
+        [
+          "mug",
+          "green",
+          2
+        ]
+      ],
+      "scene_sha256": "55a1e055f7796e21b0014518939cb9c1a4fa21c4867483c9f43086303cd1ddd1",
+      "spec_ids": [
+        "v4a-0058"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bottle",
+          "brown",
+          2
+        ],
+        [
+          "pear",
+          "green",
+          1
+        ]
+      ],
+      "scene_sha256": "56e7047a190735e1b28ed9bf08c5f58e50b79cddfdd0762691596fde4d52656b",
+      "spec_ids": [
+        "v4a-0008"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "banana",
+          "yellow",
+          1
+        ],
+        [
+          "bowl",
+          "blue",
+          2
+        ]
+      ],
+      "scene_sha256": "59106220d64fb96166ae0d0849dfcd292f42ae420464ee6d4dc5fa1c962c7f02",
+      "spec_ids": [
+        "v4a-0106"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "fork",
+          "white",
+          1
+        ],
+        [
+          "plate",
+          "red",
+          1
+        ],
+        [
+          "spoon",
+          "blue",
+          1
+        ]
+      ],
+      "scene_sha256": "5944384afc9c56d8315b2af95fe0683a78437dbdce3e701b089a76638beaa2fc",
+      "spec_ids": [
+        "v4b-0026"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "fork",
+          "silver",
+          1
+        ],
+        [
+          "plate",
+          "black",
+          1
+        ],
+        [
+          "spoon",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "5a33c240e59c336d732c9818084a33f60b320dd998d767ad696c8416a2bace78",
+      "spec_ids": [
+        "v4b-0017"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "mug",
+          "black",
+          2
+        ],
+        [
+          "tomato",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "5e6787f20ba845a76cf9fcb7c9ab50b2b3d23f335e0d5162fa33e0f667aa1098",
+      "spec_ids": [
+        "v4a-0007"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "ball",
+          "blue",
+          1
+        ],
+        [
+          "brush",
+          "green",
+          1
+        ],
+        [
+          "hat",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "68fea5a7d7d38ae07539504c5f48bbcef625226b8404278d942d902726d9e673",
+      "spec_ids": [
+        "v4b-0029"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "brush",
+          "green",
+          1
+        ],
+        [
+          "key",
+          "red",
+          1
+        ],
+        [
+          "sock",
+          "blue",
+          1
+        ]
+      ],
+      "scene_sha256": "75293d0cd90018a10cb9678288c9cbbcc78ece35516df4e5119168245fa4528b",
+      "spec_ids": [
+        "v4b-0077"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "red",
+          1
+        ],
+        [
+          "banana",
+          "yellow",
+          1
+        ],
+        [
+          "leaf",
+          "green",
+          1
+        ]
+      ],
+      "scene_sha256": "763a62ddc6c5a87646b05bd25bfdf3a5d31ecd5342de02ba9a102481565abfcb",
+      "spec_ids": [
+        "v4b-0104"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "egg",
+          "brown",
+          2
+        ],
+        [
+          "lemon",
+          "yellow",
+          1
+        ]
+      ],
+      "scene_sha256": "789acdcefca0a63e5892b4f55360afc38e713be0396a723c6bc067f21827b857",
+      "spec_ids": [
+        "v4a-0023"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "red",
+          1
+        ],
+        [
+          "mug",
+          "blue",
+          2
+        ]
+      ],
+      "scene_sha256": "7928ce5f723beb9c7fb6ce753f2912b4375b28654a864049d9df3b0f70dee5f6",
+      "spec_ids": [
+        "v4a-0004",
+        "v4a-0090"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "ball",
+          "red",
+          1
+        ],
+        [
+          "book",
+          "blue",
+          2
+        ]
+      ],
+      "scene_sha256": "7bea1d2a6072d5f768b55a5b47ede5af63661125b275ffa8dda946074a5bf832",
+      "spec_ids": [
+        "v4a-0073"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "green",
+          2
+        ],
+        [
+          "lemon",
+          "yellow",
+          1
+        ]
+      ],
+      "scene_sha256": "7df27d605fe448b8cb5908afeb3dff3a35e1fb412f6c631ba01113b114af0685",
+      "spec_ids": [
+        "v4a-0113"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "red",
+          1
+        ],
+        [
+          "leaf",
+          "green",
+          1
+        ],
+        [
+          "lemon",
+          "yellow",
+          1
+        ]
+      ],
+      "scene_sha256": "815059348dcfae2019e74da220483c5e6157266d817a6b5ad26ef8d4d88592c6",
+      "spec_ids": [
+        "v4b-0062"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bottle",
+          "brown",
+          1
+        ],
+        [
+          "mug",
+          "blue",
+          2
+        ]
+      ],
+      "scene_sha256": "8287148d020dcc7a53eb0f7913de035e0f9bbc2489ca8455ae01e1bddfd4c4c6",
+      "spec_ids": [
+        "v4a-0080"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "book",
+          "black",
+          1
+        ],
+        [
+          "book",
+          "red",
+          1
+        ],
+        [
+          "candle",
+          "silver",
+          1
+        ]
+      ],
+      "scene_sha256": "85e7215e347f048a1c2f2e5326a2e0d41a49caf1617abc90060267954e21bb0d",
+      "spec_ids": [
+        "v4b-0092"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "book",
+          "red",
+          2
+        ],
+        [
+          "egg",
+          "brown",
+          1
+        ]
+      ],
+      "scene_sha256": "86ea9848f0361673967675f6aaf4d0519101c32f7947b0145f463cd32b7d4731",
+      "spec_ids": [
+        "v4a-0103"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "flower",
+          "green",
+          1
+        ],
+        [
+          "shell",
+          "red",
+          1
+        ],
+        [
+          "stone",
+          "brown",
+          1
+        ]
+      ],
+      "scene_sha256": "8800f5571c81579c34694a611cd57078ab2d5fb31a42a6aa97d7af11429bb421",
+      "spec_ids": [
+        "v4b-0088"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "book",
+          "green",
+          1
+        ],
+        [
+          "box",
+          "brown",
+          2
+        ]
+      ],
+      "scene_sha256": "8ae3809a17b699921f48cfa9f6622441ef40e0715b6a3d62f7b520981a200eff",
+      "spec_ids": [
+        "v4a-0078"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bowl",
+          "blue",
+          2
+        ],
+        [
+          "carrot",
+          "orange",
+          1
+        ]
+      ],
+      "scene_sha256": "8b1fec9f171c491434938e19f51fba8eae917d344fc583131eae252a72b7540b",
+      "spec_ids": [
+        "v4a-0011"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "mug",
+          "red",
+          1
+        ],
+        [
+          "pear",
+          "green",
+          1
+        ],
+        [
+          "plate",
+          "white",
+          1
+        ]
+      ],
+      "scene_sha256": "8f8e3aed6fc644e916998fc20ccb6584a10814865c6b0d9220eff22a877f4723",
+      "spec_ids": [
+        "v4b-0045"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "mug",
+          "blue",
+          2
+        ],
+        [
+          "tomato",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "908a20ce0685b77c233452b215a632ae631021e19ec391f48e50081ee99aa524",
+      "spec_ids": [
+        "v4a-0088"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "lemon",
+          "yellow",
+          1
+        ],
+        [
+          "plate",
+          "blue",
+          2
+        ]
+      ],
+      "scene_sha256": "90f89312a25f59694f19d816c5162c7f593fb215809679d51a5e58d0b4704191",
+      "spec_ids": [
+        "v4a-0009"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bottle",
+          "white",
+          1
+        ],
+        [
+          "box",
+          "blue",
+          2
+        ]
+      ],
+      "scene_sha256": "93b1cee9a7c200568b5060c7839bfc626ee633b218ff8a34ca6a52edac3bd823",
+      "spec_ids": [
+        "v4a-0104"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "red",
+          1
+        ],
+        [
+          "pear",
+          "green",
+          2
+        ]
+      ],
+      "scene_sha256": "976b5efce011926e3bec764feec6e871fa397b3efd7e1e57706309f92fce517b",
+      "spec_ids": [
+        "v4a-0033",
+        "v4a-0039"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "carrot",
+          "orange",
+          1
+        ],
+        [
+          "mug",
+          "green",
+          2
+        ]
+      ],
+      "scene_sha256": "97de6d63c3c003524822411d41fe45b412bbc527645c3b810919b8f47cefa01d",
+      "spec_ids": [
+        "v4a-0062"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "fork",
+          "yellow",
+          1
+        ],
+        [
+          "mug",
+          "blue",
+          1
+        ],
+        [
+          "spoon",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "a51b11a9b62ead76d39f508657eac81aea8ba2291f636b94dc61869ed2ee31b1",
+      "spec_ids": [
+        "v4b-0090"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "ball",
+          "yellow",
+          1
+        ],
+        [
+          "hat",
+          "green",
+          1
+        ],
+        [
+          "sock",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "b3075f846431a58ac25bf74f259ebdc7293943c60a7b10d5c839c75bcbfddd39",
+      "spec_ids": [
+        "v4b-0033"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "clock",
+          "silver",
+          1
+        ],
+        [
+          "key",
+          "red",
+          1
+        ],
+        [
+          "sock",
+          "black",
+          1
+        ]
+      ],
+      "scene_sha256": "b379f93c86f6dcf3034431d7aee00d585629bcb701adb3ed7ca98676415e1553",
+      "spec_ids": [
+        "v4b-0021"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "green",
+          1
+        ],
+        [
+          "lemon",
+          "yellow",
+          1
+        ],
+        [
+          "mug",
+          "blue",
+          1
+        ]
+      ],
+      "scene_sha256": "b38c0ab204ec3ebc6fdf5896e9aee9dba33272ea001cea3d33e132d0d1d7801b",
+      "spec_ids": [
+        "v4b-0103"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "book",
+          "red",
+          1
+        ],
+        [
+          "bottle",
+          "blue",
+          1
+        ],
+        [
+          "candle",
+          "green",
+          1
+        ]
+      ],
+      "scene_sha256": "b5f61480bb764c550ea611b7d670aaa058746cbea1b9765dc4a06b3831cdb3af",
+      "spec_ids": [
+        "v4b-0075"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bottle",
+          "red",
+          1
+        ],
+        [
+          "box",
+          "white",
+          1
+        ],
+        [
+          "jar",
+          "blue",
+          1
+        ]
+      ],
+      "scene_sha256": "b8c3c49e36e94ff3e5f39e67bac4ae174c2d649f5414fe83a29d6bece907cfe5",
+      "spec_ids": [
+        "v4b-0069"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "green",
+          1
+        ],
+        [
+          "carrot",
+          "orange",
+          2
+        ]
+      ],
+      "scene_sha256": "bbfda34babc5ab339b28e18059728be9a92c344ca9b551ca6715be5db3ceb16c",
+      "spec_ids": [
+        "v4a-0041"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bottle",
+          "brown",
+          1
+        ],
+        [
+          "egg",
+          "white",
+          1
+        ],
+        [
+          "tomato",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "ca215935bf5d3e33b07b035844ea4c23254a411eb497d5a1d545fdc071c2cae4",
+      "spec_ids": [
+        "v4b-0059"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bowl",
+          "brown",
+          1
+        ],
+        [
+          "mug",
+          "blue",
+          1
+        ],
+        [
+          "spoon",
+          "silver",
+          1
+        ]
+      ],
+      "scene_sha256": "ce8d0b872c06432fb047d6c9416a5323cd28fd0c05cce0afcd5fb290d439e143",
+      "spec_ids": [
+        "v4b-0083"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "brush",
+          "green",
+          1
+        ],
+        [
+          "key",
+          "red",
+          2
+        ]
+      ],
+      "scene_sha256": "d62424652a3a315758c607e56da59b66f8c0584f97f8367252d56e620a7a848a",
+      "spec_ids": [
+        "v4a-0071"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "box",
+          "black",
+          1
+        ],
+        [
+          "hat",
+          "yellow",
+          2
+        ]
+      ],
+      "scene_sha256": "e2e36213c8ecafacfe7f8ff86bbc5b89f7c49e13f68c38416109add8a9f08588",
+      "spec_ids": [
+        "v4a-0070"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "flower",
+          "white",
+          1
+        ],
+        [
+          "shell",
+          "brown",
+          1
+        ],
+        [
+          "stone",
+          "gray",
+          1
+        ]
+      ],
+      "scene_sha256": "e67ec6460cc755ac8d7689b76d9a35d7b03d03cb8ac4f76eba30d30ca8c176ef",
+      "spec_ids": [
+        "v4b-0066"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "book",
+          "black",
+          1
+        ],
+        [
+          "book",
+          "red",
+          1
+        ],
+        [
+          "spoon",
+          "silver",
+          1
+        ]
+      ],
+      "scene_sha256": "e7e21a474d4da71c16665085092041f3c4e5701f2834ddf4c12af2805b6ef120",
+      "spec_ids": [
+        "v4b-0061"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "mug",
+          "black",
+          2
+        ],
+        [
+          "pear",
+          "green",
+          1
+        ]
+      ],
+      "scene_sha256": "ed112d9d7a9712e32694beaa4a98dce2829980f31f2fc559e91f67bf5bd25209",
+      "spec_ids": [
+        "v4a-0014"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "banana",
+          "yellow",
+          1
+        ],
+        [
+          "mug",
+          "blue",
+          2
+        ]
+      ],
+      "scene_sha256": "fe86907eb18daabfe2536c60d3c24a1892a7a4a176088d55ee80a7c0b38da217",
+      "spec_ids": [
+        "v4a-0031"
+      ]
+    }
+  ],
+  "within_outcome_duplicate_scene_groups": [
+    {
+      "canonical_scene": [
+        [
+          "egg",
+          "brown",
+          1
+        ],
+        [
+          "plate",
+          "white",
+          2
+        ]
+      ],
+      "scene_sha256": "045a1f849c4bc5d8e845e62c52a3a1305720c9db4558d18fcb7045d75c1056de",
+      "spec_ids": [
+        "v4a-0032",
+        "v4a-0107"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "red",
+          1
+        ],
+        [
+          "banana",
+          "yellow",
+          1
+        ],
+        [
+          "pear",
+          "green",
+          1
+        ]
+      ],
+      "scene_sha256": "3151026544dd76f07384c487a60903438349f6f0cd79ca727e8b0531b6439512",
+      "spec_ids": [
+        "v4b-0049",
+        "v4b-0054",
+        "v4b-0055"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "red",
+          1
+        ],
+        [
+          "mug",
+          "blue",
+          2
+        ]
+      ],
+      "scene_sha256": "7928ce5f723beb9c7fb6ce753f2912b4375b28654a864049d9df3b0f70dee5f6",
+      "spec_ids": [
+        "v4a-0004",
+        "v4a-0090"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "red",
+          1
+        ],
+        [
+          "pear",
+          "green",
+          2
+        ]
+      ],
+      "scene_sha256": "976b5efce011926e3bec764feec6e871fa397b3efd7e1e57706309f92fce517b",
+      "spec_ids": [
+        "v4a-0033",
+        "v4a-0039"
+      ]
+    }
+  ],
+  "within_probe_bank_clusters": [
+    {
+      "canonical_scene": [
+        [
+          "leaf",
+          "green",
+          1
+        ],
+        [
+          "lemon",
+          "yellow",
+          1
+        ],
+        [
+          "tomato",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "04c6b990318f8c5bd1457ec6adb7d68994f79d8b7cf99b3d0e7d24e56078ae65",
+      "spec_ids": [
+        "v4b-0013"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "green",
+          1
+        ],
+        [
+          "mug",
+          "blue",
+          1
+        ],
+        [
+          "mug",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "1ee5762b405610f4286f11550f030010ea7c43d35be5f72c045f2fc0a78a2d43",
+      "spec_ids": [
+        "v4b-0100"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bottle",
+          "white",
+          1
+        ],
+        [
+          "mug",
+          "blue",
+          1
+        ],
+        [
+          "mug",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "42e207da75ac768b755f191ed2a1bff0769b6b0052a510a0c171ff8ba136cf7e",
+      "spec_ids": [
+        "v4b-0114"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "red",
+          1
+        ],
+        [
+          "bottle",
+          "blue",
+          2
+        ]
+      ],
+      "scene_sha256": "472a35116a2cd1b3e8d049463c0eed5a393c3672cb209734ebf30c46bbcb1651",
+      "spec_ids": [
+        "v4a-0053"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "banana",
+          "yellow",
+          1
+        ],
+        [
+          "plate",
+          "green",
+          2
+        ]
+      ],
+      "scene_sha256": "557750c4311b30698c67318147a83dd11f0f2f81b14c4a2985ce6ed35a1269ae",
+      "spec_ids": [
+        "v4a-0012"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "red",
+          1
+        ],
+        [
+          "book",
+          "brown",
+          1
+        ],
+        [
+          "pear",
+          "green",
+          1
+        ]
+      ],
+      "scene_sha256": "5edc9fa15b98598576c3ed7e33cd91edec658c7f960398ffd6dbe0b6b33e0acc",
+      "spec_ids": [
+        "v4b-0009"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "book",
+          "black",
+          1
+        ],
+        [
+          "candle",
+          "white",
+          2
+        ]
+      ],
+      "scene_sha256": "6f54bc4ca66f63bc0e20b3a612c8c40c56bd872a16162bf00a404396679a6dc9",
+      "spec_ids": [
+        "v4a-0087"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "lemon",
+          "yellow",
+          1
+        ],
+        [
+          "mug",
+          "blue",
+          2
+        ]
+      ],
+      "scene_sha256": "86f9e536477f2b27f1321e64c5ab617ec6c3fd9ff3dfe46dec402148588e615d",
+      "spec_ids": [
+        "v4a-0061"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "apple",
+          "red",
+          2
+        ],
+        [
+          "banana",
+          "yellow",
+          1
+        ]
+      ],
+      "scene_sha256": "a0e4ece2331bc7f9401487364ba38608847cbaacda9b6915ee0702a9b923aaa0",
+      "spec_ids": [
+        "v4a-0095"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bottle",
+          "black",
+          2
+        ],
+        [
+          "plate",
+          "blue",
+          1
+        ]
+      ],
+      "scene_sha256": "a57ecb8c0669b344c6fb92058737314664780f1f110aa5c1b6eeddcfa28fb9bb",
+      "spec_ids": [
+        "v4a-0076"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "book",
+          "green",
+          2
+        ],
+        [
+          "candle",
+          "white",
+          1
+        ]
+      ],
+      "scene_sha256": "b73c8c014aff66fca7805dd0f00a929227440e4087bb04f3151d877d9fbc0728",
+      "spec_ids": [
+        "v4a-0069"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "book",
+          "blue",
+          1
+        ],
+        [
+          "book",
+          "red",
+          1
+        ],
+        [
+          "candle",
+          "yellow",
+          1
+        ]
+      ],
+      "scene_sha256": "da262b87d02725539dcc358c6045363196586189a15d0a6031ab3e15c87d244c",
+      "spec_ids": [
+        "v4b-0018"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bowl",
+          "green",
+          1
+        ],
+        [
+          "mug",
+          "red",
+          1
+        ],
+        [
+          "plate",
+          "blue",
+          1
+        ]
+      ],
+      "scene_sha256": "dc7178d27706bf3aa484344917dcc060976fcc56d75687ea5cd4b4b9f56fd3bc",
+      "spec_ids": [
+        "v4b-0074"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bottle",
+          "red",
+          1
+        ],
+        [
+          "carrot",
+          "orange",
+          1
+        ],
+        [
+          "egg",
+          "white",
+          1
+        ]
+      ],
+      "scene_sha256": "dfa8c1c92e24f88313208d9014865ef82b0402469b028a95a87a472159915efe",
+      "spec_ids": [
+        "v4b-0113"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "bottle",
+          "brown",
+          1
+        ],
+        [
+          "carrot",
+          "orange",
+          1
+        ],
+        [
+          "egg",
+          "white",
+          1
+        ]
+      ],
+      "scene_sha256": "e2505807913bec84c3377e56d89bd2e340e456a3ba56a82f41b69beb2e97e9b2",
+      "spec_ids": [
+        "v4b-0108"
+      ]
+    },
+    {
+      "canonical_scene": [
+        [
+          "pear",
+          "green",
+          2
+        ],
+        [
+          "tomato",
+          "red",
+          1
+        ]
+      ],
+      "scene_sha256": "e37935eeca0933ffc7518a6c467d10877bb07498a2a6e948e6649caa2694d2d0",
+      "spec_ids": [
+        "v4a-0047"
+      ]
+    }
+  ]
+}
