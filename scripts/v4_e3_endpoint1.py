@@ -33,6 +33,7 @@ from selfsight.analysis.endpoint1 import (
     SeedResult,
     between_seed_spread,
     bootstrap_interval,
+    completed_steps,
     exact_mcnemar,
     load_checkpoint,
     paired_difference,
@@ -43,17 +44,6 @@ from selfsight.analysis.endpoint1 import (
 # Deviation 9: the five seed values were fixed in advance, 20260908 skipped
 # because section 3 had already spent it.
 REGISTERED_SEEDS = (20260906, 20260907, 20260909, 20260910, 20260911)
-
-
-def completed_steps(run: Path, arm: str) -> list[int]:
-    directory = run / "evaluations" / arm
-    if not directory.is_dir():
-        return []
-    steps = []
-    for child in sorted(directory.glob("step-*")):
-        if (child / "verified.jsonl").exists():
-            steps.append(int(child.name.split("-")[1]))
-    return steps
 
 
 def analyse_run(run: Path, seed: int, arm_a: str, arm_b: str,

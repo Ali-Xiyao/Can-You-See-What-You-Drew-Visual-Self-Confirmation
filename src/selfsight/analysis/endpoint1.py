@@ -140,6 +140,23 @@ def _manifest_keys(run: Path, arm: str, step: int) -> set[tuple[str, int]]:
     return {(str(row["spec_id"]), int(row["candidate_index"])) for row in _rows(path)}
 
 
+def completed_steps(run: Path, arm: str) -> list[int]:
+    """The checkpoints this arm has an adjudicated outcome set for.
+
+    Endpoints 1 and 2 both need this and need it to mean the same thing: a
+    step counts once `verified.jsonl` exists, whatever else in the checkpoint
+    directory is or is not finished. It lives here rather than in either
+    driver script because two copies would be free to drift, and the two
+    endpoints would then disagree about which checkpoints the run has.
+    """
+
+    directory = Path(run) / "evaluations" / arm
+    if not directory.is_dir():
+        return []
+    return sorted(int(child.name.split("-")[1]) for child in directory.glob("step-*")
+                  if (child / "verified.jsonl").exists())
+
+
 def load_checkpoint(run: Path, step: int, arm_a: str, arm_b: str) -> PairedCheckpoint:
     """Read one checkpoint from both arms and apply deviation 10's rule."""
 

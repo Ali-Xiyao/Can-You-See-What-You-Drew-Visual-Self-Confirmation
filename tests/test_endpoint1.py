@@ -25,6 +25,7 @@ from selfsight.analysis.endpoint1 import (
     PairedCheckpoint,
     between_seed_spread,
     bootstrap_interval,
+    completed_steps,
     exact_mcnemar,
     load_checkpoint,
     paired_difference,
@@ -486,3 +487,19 @@ def _results(points: list[float]):
                        mcnemar_b_only=0, mcnemar_a_only=0, mcnemar_p=1.0,
                        coverage=Coverage(256, 256, 64, 64, 0, 0))
             for index, point in enumerate(points)]
+
+
+def test_completed_steps_needs_an_adjudicated_outcome_set(tmp_path: Path):
+    """Both endpoints ask this question and must get the same answer.
+
+    It used to live in `scripts/v4_e3_endpoint1.py`. Endpoint 2 needs the same
+    ladder to know which checkpoints its blind pass is missing, and two copies
+    of "which checkpoints does this run have" would be free to disagree.
+    """
+
+    run = tmp_path / "run"
+    (run / "evaluations" / "naive" / "step-00008").mkdir(parents=True)
+    for step in (16, 0):
+        _write_arm(run, "naive", step, [_row("p1", 0, True)])
+    assert completed_steps(run, "naive") == [0, 16]
+    assert completed_steps(run, "blind_self") == []
