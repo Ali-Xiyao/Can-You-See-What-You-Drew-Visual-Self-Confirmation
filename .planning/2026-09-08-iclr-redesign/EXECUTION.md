@@ -42,6 +42,7 @@
 | arm B 合并(**重跑,取代上面那一行的结论**)| **不是快进,是真合并;已重演并验通**(§3.3):两条分支已分叉 25 / 30,`paper/iclr-2028` 那 25 个是偏离 14 / 15 与 §12。`merge-tree` 干净出树 `10b0e74`(§3.1 的那一个冲突没了——`staging/arm-b-merged` 相对 `codex/blind-self-arm-20260908` 是 23 领先 0 落后,解法已在那条分支上)。核过合并后的字节:评测 latent 那处 `partition_seed` + `candidate_index` 两边都在。探针树 detached 真做一次得 `f33555a`,tree 与空跑逐位相同。**全量** 1031 测试,只两处失败,都是探针树没有 `runs/`,主树单独跑都绿——其中一处 §3.1 没见过,因为它只跑了五个文件 | CPU,不占卡 |
 | 启动 preflight 彩排过了 | `v4_e3_launch_preflight.py` 现在跑,**六个闸拦下五个**(主运行未完成 / 合并未落地 / 两卡不空 / 排卡未裁定 / `SELFSIGHT_MODEL_ROOT` 未设),退出 1。就是它该有的样子。顺带核清两件事:(一) 它印的 `31.0 h` 是 `state.json` 里**上次状态写入时的快照**,不是活钟,而 96 h 那条线在 supervisor 里是活的(`deadline = started + max_wall_hours*3600`,阶段间查一次、阶段内用 `process.wait(timeout=...)` 兜住),消息里同时印了「距上次写入 76 min」,两个数加起来自洽,**不是缺陷,不改**;(二) 那一刻两张卡上的两个进程**都是主运行自己的**——卡 1 是 `v4_train.py`(就是 `state.json` 记的 `child_pid`),卡 0 是 round-003 rfo_gold 的 detect,没有外来作业,但也意味着**整个主运行期间不存在两卡皆空的窗口**,§0.3 的空载基准只能等它结束 | CPU,不占卡 |
 | 排卡的那个闸读错了文件(**上一行写早了**)| 上一行「就是它该有的样子」是在**读 `card_benchmark.py` 之前**写的,不改,记在这里:六个闸里 `gate_card_schedule_decided` 读的是 `verdict.json` 的顶层 `serialise_detect`,而基准写的是 `card_benchmark.json` 的 `verdict.adopt_serial`,**文件名和键名两处都对不上**,而且这两个名字在预注册和任何别的脚本里都不存在。基准在 arm B 的 review packet 里、闸在这条分支上,**今天预演合并之前两者没在同一棵树里待过**,加上这个闸零测试,所以没有任何一次运行能碰到。它不会误放行,它会**永远拦着**——代价落在只开一次的那 1.5 h 窗口里,唯一出路是手写决定文件。已修(`8f5304d`,只动闸不动 packet),9 测试 12/12 变异全杀,详见 §3.4。**不追加偏离**:判据没有含糊,`card_benchmark.py` 已经实现对了,这是接线错误不是口径缺口 | CPU,不占卡 |
+| 偏离 7.2 的守卫会拒绝每一对合法运行 | **已修**(`4d852dc`):`drift.split_digest` 把整份 `split.json` **连 `"created"` 时间戳一起**做规范化哈希,而 `load_columns` 拿它比主运行和 replicate。两个留出 prompt 逐个相同的运行,split stage 在两个时刻跑、字节必不同——**守卫会对每一对合法的 (主运行, replicate) 抛错**,而且是在分析那一刻、400 GPU-h 花完之后。套件看不见,因为每个夹具的 split 都是合成 dict、没有 `created` 键。新测试**对旧代码先验红**;identity 改成「除时间戳外的全部内容」,比读 `digest` 字段更严(配方 + 配方产生的名单);9/9 变异全杀。顺带更正 §1「启动前必查 1」:它点名的 `83b7eaa6...` 是**文件字节**的 sha256,照字面比会把五个正确的 replicate 全停掉;三个数已钉在 `tests/test_main_run_split_identity.py`,详见 §1.1 | CPU,不占卡 |
 
 两张 3090 都被主运行占着,而且它按 checkpoint 在两张卡之间来回。
 `nvidia-smi` 显示 GPU 0 空闲**不代表它是空的**——那是 detect 和 crop
@@ -577,6 +578,52 @@ envs/core/python.exe -c "import pathlib,sys; sys.exit(0 if 'def training_seed(' 
 3. `configs/v4_decoupling_main_20260908.yaml` 至今仍未纳入 git(主树 `??`)。
    manifest 会冻结它的 sha256,所以两个运行用的是不是同一份 config 事后查得出来,
    但文件本身没有版本记录。
+
+### 1.1 更正:「启动前必查 1」点名的是错的那个数(2026-09-09 16:1x)
+
+上面「启动前必查」第 1 条写的是:split digest 要与主运行一致,
+主运行的值是 `83b7eaa6...`,「它既是 `runs/v4/decoupling-main-20260908/split.json`
+的 sha256」。**那句描述对,那个数错。**
+
+`split.json` 的第一个字段是 `"created": "2026-09-08T14:33:14Z"`,一个墙钟戳。
+一个 replicate 就算**留出的 prompt 逐个相同**,它的 split stage 也在另一个时刻跑,
+写出的字节不同、sha256 必然不同。而第 1 条注册的反应是「不一致就停,不要往下走」。
+**照字面执行,它会把五个正确的 replicate 全停掉。**
+
+**有三个数,上面只提了两个:**
+
+| | 值 | 是什么 | 跨运行 |
+|---|---|---|---|
+| 文件 sha256 | `83b7eaa6...` | 字节,含 `created` | **必不相同** |
+| `digest` | `9bab14d4...` | 配方:`sha256_json({runs, seed, outcome, probe})` | 相同 |
+| identity | `41c5f1b2...` | 除 `created` 外的全部内容 | 相同 |
+
+**配方那一半已经有代码,而且一直有**:`v4_train.read_split()` 每个 stage 都拿
+`payload["digest"]` 和当前 config 重算的值比,不等就 `SystemExit`。
+所以「这个 run 的 split 和它自己的 config 一致」不需要人查。
+**缺的是「和主运行一致」那一半。**
+
+**identity 这一列今天才是对的。** 偏离 7.2 的守卫
+(`selfsight.analysis.drift.split_digest`,`load_columns` 里比 main 和 replicate)
+原来把整份 payload **连 `created` 一起**做规范化哈希,也就是说
+**它会对每一对合法的 (主运行, replicate) 抛「different splits」**——
+在分析那一刻,400 GPU-h 花完之后。已修(`4d852dc`),9/9 变异全杀;
+新测试对旧代码**先验红**,缺陷是实测出来的不是读出来的。
+夹具看不见它,是因为每个 split 都是合成 dict、根本没有 `created` 键。
+
+**还剩的口子,以及为什么现在不补**:没有任何东西在**启动时**比 main 和 replicate。
+7.2 的守卫在分析时比(太晚),`v4_verify_replicates.py` 只比五个 replicate
+**彼此**、而且读的是配方 `digest` 不是 identity。补在哪儿是清楚的
+——合并之后加进 `v4_verify_replicates.py`;**现在加不了**:那个文件只在
+`staging/arm-b-merged` 上,在这条分支上同路径新建会造成 add/add 冲突。
+也做不成 preflight 的闸:replicate 的 split 在启动前还不存在。
+
+**现在能做的那一半已经做了**:三个数钉在
+`tests/test_main_run_split_identity.py` 里(`runs/` 缺失时 skip),
+参考值从此是一条被检查的事实,不是散文里的一串十六进制。
+replicate 1 的 split stage 一跑完,拿它的 identity 和 `41c5f1b2...` 比。
+`runs` 字段不用担心:supervisor 用的是模块级常量 `RUNS`,
+和主运行 split.json 里记的逐字相同。
 
 ---
 
