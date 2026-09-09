@@ -23,7 +23,11 @@ from selfsight.analysis.endpoint1 import load_checkpoint, paired_difference
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPT = ROOT / "scripts" / "v4_e3_drift.py"
 
-SPLIT = {"train": ["p1", "p2"], "outcome": ["p3", "p4"]}
+# A real split.json opens with a wall clock stamp. It is not part of the
+# split identity and the guard excludes it, but the fixture carries one so
+# that stays a checked fact rather than a fixture that never had the field.
+SPLIT = {"created": "2026-09-08T14:33:14Z",
+         "train": ["p1", "p2"], "outcome": ["p3", "p4"]}
 KEYS = (("p1", 0), ("p1", 1), ("p2", 0), ("p2", 1))
 STEPS = (0, 8, 16)
 
@@ -92,7 +96,10 @@ def _endpoint1(tmp_path: Path, *, confirmed: bool = True,
                detected: dict[int, bool] | None = None,
                status: str = "done") -> Path:
     path = tmp_path / "endpoint1.json"
-    payload = {"status": status, "sign_test": {"confirmed": confirmed},
+    # "endpoint" is not decoration: the gate reads it to refuse endpoint 2's or
+    # 3's file, and a fixture without it would let that guard be deleted.
+    payload = {"endpoint": "E3 endpoint 1: final external correctness, B > A",
+               "status": status, "sign_test": {"confirmed": confirmed},
                "seeds": [{"seed": seed, "verdict": {"detected": value}}
                          for seed, value in (detected or {}).items()]}
     path.write_text(json.dumps(payload), encoding="utf-8")
@@ -308,3 +315,88 @@ def test_the_round_differences_are_endpoint_1_s(tmp_path: Path):
     for step, value in found.items():
         assert value == pytest.approx(
             paired_difference(load_checkpoint(run, step, "naive", "blind_self")))
+
+
+# --- the two drivers against each other ------------------------------------
+#
+# Everything above builds endpoint1.json by hand, which pins what this driver
+# expects rather than what endpoint 1 writes. Two defects found on 2026-09-09
+# lived in exactly that gap: a launch gate reading a file nothing wrote, and
+# this module's split guard hashing a timestamp. So the tests below run the
+# real endpoint 1 driver and hand its actual output to the gate.
+
+_e1_spec = importlib.util.spec_from_file_location(
+    "v4_e3_endpoint1_for_drift", ROOT / "scripts" / "v4_e3_endpoint1.py")
+endpoint1_driver = importlib.util.module_from_spec(_e1_spec)
+assert _e1_spec.loader is not None
+_e1_spec.loader.exec_module(endpoint1_driver)
+
+
+def test_endpoint_1s_real_output_satisfies_the_gate(monkeypatch, tmp_path: Path):
+    """Run endpoint 1 for real, then read its file with this driver's gate.
+
+    The hand-built fixture above says `status: done`; endpoint 1 writes no
+    `status` at all. That is harmless -- the gate uses `.get` -- but it is
+    only known to be harmless because something looked at the real payload.
+    The keys that matter, `sign_test.confirmed` and `seeds[].verdict.detected`,
+    have no other check that the two drivers agree on where they live.
+    """
+
+    runs = []
+    for index, seed in enumerate(endpoint1_driver.REGISTERED_SEEDS):
+        run = _run_dir(tmp_path, f"e3-s{seed}")
+        # Five real replicates split at five different moments.
+        (run / "split.json").write_text(
+            json.dumps({**SPLIT, "created": f"2026-09-1{index}T02:07:55Z"}),
+            encoding="utf-8")
+        for step in STEPS:
+            _checkpoint(run, "naive", step, (True, False, False, False))
+            _checkpoint(run, "blind_self", step,
+                        (True, False, False, False) if step == 0
+                        else (True, True, True, True))
+        runs.append(run)
+
+    outdir = tmp_path / "e1-out"
+    monkeypatch.setattr(sys, "argv",
+                        ["v4_e3_endpoint1.py", "--outdir", str(outdir),
+                         "--resamples", "200",
+                         "--runs", *[str(run) for run in runs]])
+    endpoint1_driver.main()
+
+    written = outdir / "endpoint1.json"
+    payload = json.loads(written.read_text(encoding="utf-8"))
+    assert "confirmed" in payload["sign_test"]
+    assert payload["seeds"] and all("seed" in row and "detected" in row["verdict"]
+                                    for row in payload["seeds"])
+
+    confirmed, detected = driver.endpoint1_gate(written)
+    assert confirmed is True
+    assert set(detected) == set(endpoint1_driver.REGISTERED_SEEDS)
+    assert all(detected.values())
+
+
+def test_another_endpoints_verdict_is_refused_rather_than_out_of_force(tmp_path: Path):
+    """Endpoint 2's file handed to endpoint 1's flag must not exit 2.
+
+    Out of force is a registered outcome: deviation 14.6 says 7.2 does not
+    apply when endpoint 1 is not detected, and the driver exits 2 to say so.
+    An operator who passed the wrong path would otherwise get that same exit,
+    and the record would show a rule that was evaluated and found not to
+    apply rather than one nobody looked at. The three files sit side by side
+    under review-packets/ with names one character apart.
+    """
+
+    path = tmp_path / "endpoint2.json"
+    path.write_text(json.dumps({
+        "endpoint": "E3 endpoint 2: blind discrimination gap vs step",
+        "status": "done"}), encoding="utf-8")
+    with pytest.raises(SystemExit, match="not endpoint 1"):
+        driver.endpoint1_gate(path)
+
+
+def test_a_file_that_names_no_endpoint_is_refused(tmp_path: Path):
+    path = tmp_path / "endpoint1.json"
+    path.write_text(json.dumps({"sign_test": {"confirmed": True}, "seeds": []}),
+                    encoding="utf-8")
+    with pytest.raises(SystemExit, match="not endpoint 1"):
+        driver.endpoint1_gate(path)

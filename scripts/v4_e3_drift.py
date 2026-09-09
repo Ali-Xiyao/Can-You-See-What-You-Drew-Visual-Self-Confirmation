@@ -61,6 +61,18 @@ def endpoint1_gate(path: Path) -> tuple[bool, dict[int, bool]]:
         raise OutOfForce(f"No endpoint 1 verdict at {path}; deviation 7.2 only applies "
                          f"once endpoint 1 is judged, and it is not judged here")
     payload = json.loads(path.read_text(encoding="utf-8"))
+    # All three endpoint drivers write an "endpoint" line, and their outputs sit
+    # side by side under review-packets/ with names one character apart. Being
+    # handed the wrong one must not come out as out of force: that exits 2 and
+    # records a legitimate-looking non-result for a rule nobody evaluated.
+    label = str(payload.get("endpoint", ""))
+    if "endpoint 1" not in label:
+        raise SystemExit(f"{path} is not endpoint 1: it says {label!r}. Deviation 7.2 "
+                         f"reads endpoint 1, and reading another endpoint here would "
+                         f"be a different quantity under the same name")
+    # Endpoint 1 has no not-done path of its own -- its early exits happen
+    # before anything is written, so a file that exists is a complete one.
+    # This stays for a truncated or foreign file that got past the line above.
     if payload.get("status") == "not_done":
         raise OutOfForce("endpoint 1 reads not done")
     confirmed = bool(payload["sign_test"]["confirmed"])
