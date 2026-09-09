@@ -1,0 +1,276 @@
+{
+  "created_at": "2026-09-09T08:16:17.236530+00:00",
+  "created_before_any_outcome_evaluation_artifact": true,
+  "kind": "prospective_independent_scene_representative_sensitivity",
+  "n_independent_scene_representatives": 52,
+  "parent_scene_audit_sha256": "83abca8cb34b8c5da17e1968ba5d7fc47226b6b9101dc842d69edf5698a374b1",
+  "representatives": [
+    {
+      "scene_sha256": "1afc445e28b972369cc74c70e5f30bc03f12db011f080d5cc4926684b8a14481",
+      "spec_id": "v4a-0001"
+    },
+    {
+      "scene_sha256": "5e6787f20ba845a76cf9fcb7c9ab50b2b3d23f335e0d5162fa33e0f667aa1098",
+      "spec_id": "v4a-0007"
+    },
+    {
+      "scene_sha256": "56e7047a190735e1b28ed9bf08c5f58e50b79cddfdd0762691596fde4d52656b",
+      "spec_id": "v4a-0008"
+    },
+    {
+      "scene_sha256": "90f89312a25f59694f19d816c5162c7f593fb215809679d51a5e58d0b4704191",
+      "spec_id": "v4a-0009"
+    },
+    {
+      "scene_sha256": "8b1fec9f171c491434938e19f51fba8eae917d344fc583131eae252a72b7540b",
+      "spec_id": "v4a-0011"
+    },
+    {
+      "scene_sha256": "789acdcefca0a63e5892b4f55360afc38e713be0396a723c6bc067f21827b857",
+      "spec_id": "v4a-0023"
+    },
+    {
+      "scene_sha256": "3dfce1bcf816edb03dc9e79a2836ab8ee99438a9e1cc20c014f4d11aa815b504",
+      "spec_id": "v4a-0024"
+    },
+    {
+      "scene_sha256": "5481aea8046891f3ca74cfe33a196c77851aa7045d608a26f373b1c1da744751",
+      "spec_id": "v4a-0030"
+    },
+    {
+      "scene_sha256": "fe86907eb18daabfe2536c60d3c24a1892a7a4a176088d55ee80a7c0b38da217",
+      "spec_id": "v4a-0031"
+    },
+    {
+      "scene_sha256": "045a1f849c4bc5d8e845e62c52a3a1305720c9db4558d18fcb7045d75c1056de",
+      "spec_id": "v4a-0032"
+    },
+    {
+      "scene_sha256": "976b5efce011926e3bec764feec6e871fa397b3efd7e1e57706309f92fce517b",
+      "spec_id": "v4a-0033"
+    },
+    {
+      "scene_sha256": "bbfda34babc5ab339b28e18059728be9a92c344ca9b551ca6715be5db3ceb16c",
+      "spec_id": "v4a-0041"
+    },
+    {
+      "scene_sha256": "55a1e055f7796e21b0014518939cb9c1a4fa21c4867483c9f43086303cd1ddd1",
+      "spec_id": "v4a-0058"
+    },
+    {
+      "scene_sha256": "97de6d63c3c003524822411d41fe45b412bbc527645c3b810919b8f47cefa01d",
+      "spec_id": "v4a-0062"
+    },
+    {
+      "scene_sha256": "01e27e72a3f2e66c7f5c5d9ffada38539534760583c3a1a0b9180767d91346c4",
+      "spec_id": "v4a-0066"
+    },
+    {
+      "scene_sha256": "e2e36213c8ecafacfe7f8ff86bbc5b89f7c49e13f68c38416109add8a9f08588",
+      "spec_id": "v4a-0070"
+    },
+    {
+      "scene_sha256": "d62424652a3a315758c607e56da59b66f8c0584f97f8367252d56e620a7a848a",
+      "spec_id": "v4a-0071"
+    },
+    {
+      "scene_sha256": "7bea1d2a6072d5f768b55a5b47ede5af63661125b275ffa8dda946074a5bf832",
+      "spec_id": "v4a-0073"
+    },
+    {
+      "scene_sha256": "8ae3809a17b699921f48cfa9f6622441ef40e0715b6a3d62f7b520981a200eff",
+      "spec_id": "v4a-0078"
+    },
+    {
+      "scene_sha256": "8287148d020dcc7a53eb0f7913de035e0f9bbc2489ca8455ae01e1bddfd4c4c6",
+      "spec_id": "v4a-0080"
+    },
+    {
+      "scene_sha256": "1c61c9ff4672efc38cd43ab56c85b747d6033f6c141ae700573cdf1d5ce81f24",
+      "spec_id": "v4a-0084"
+    },
+    {
+      "scene_sha256": "908a20ce0685b77c233452b215a632ae631021e19ec391f48e50081ee99aa524",
+      "spec_id": "v4a-0088"
+    },
+    {
+      "scene_sha256": "22be6d086675fa582a4158f206c74fff9cc2587e7572938c85698e8da2ad105f",
+      "spec_id": "v4a-0097"
+    },
+    {
+      "scene_sha256": "86ea9848f0361673967675f6aaf4d0519101c32f7947b0145f463cd32b7d4731",
+      "spec_id": "v4a-0103"
+    },
+    {
+      "scene_sha256": "93b1cee9a7c200568b5060c7839bfc626ee633b218ff8a34ca6a52edac3bd823",
+      "spec_id": "v4a-0104"
+    },
+    {
+      "scene_sha256": "59106220d64fb96166ae0d0849dfcd292f42ae420464ee6d4dc5fa1c962c7f02",
+      "spec_id": "v4a-0106"
+    },
+    {
+      "scene_sha256": "465fe1f8d0817a7185bf155368ce57442332c7e45fede694020649aae89f9131",
+      "spec_id": "v4a-0108"
+    },
+    {
+      "scene_sha256": "7df27d605fe448b8cb5908afeb3dff3a35e1fb412f6c631ba01113b114af0685",
+      "spec_id": "v4a-0113"
+    },
+    {
+      "scene_sha256": "5a33c240e59c336d732c9818084a33f60b320dd998d767ad696c8416a2bace78",
+      "spec_id": "v4b-0017"
+    },
+    {
+      "scene_sha256": "b379f93c86f6dcf3034431d7aee00d585629bcb701adb3ed7ca98676415e1553",
+      "spec_id": "v4b-0021"
+    },
+    {
+      "scene_sha256": "5944384afc9c56d8315b2af95fe0683a78437dbdce3e701b089a76638beaa2fc",
+      "spec_id": "v4b-0026"
+    },
+    {
+      "scene_sha256": "22a23200e8ce8c58cc56d6ab3175295fc40ce454b4345bbc6f95ea2b6fd2dacc",
+      "spec_id": "v4b-0032"
+    },
+    {
+      "scene_sha256": "b3075f846431a58ac25bf74f259ebdc7293943c60a7b10d5c839c75bcbfddd39",
+      "spec_id": "v4b-0033"
+    },
+    {
+      "scene_sha256": "8f8e3aed6fc644e916998fc20ccb6584a10814865c6b0d9220eff22a877f4723",
+      "spec_id": "v4b-0045"
+    },
+    {
+      "scene_sha256": "ca215935bf5d3e33b07b035844ea4c23254a411eb497d5a1d545fdc071c2cae4",
+      "spec_id": "v4b-0059"
+    },
+    {
+      "scene_sha256": "4b6859eabf5651c9185521dcd24dd9178c92d4934f064335b92422d2c153c40c",
+      "spec_id": "v4b-0060"
+    },
+    {
+      "scene_sha256": "e7e21a474d4da71c16665085092041f3c4e5701f2834ddf4c12af2805b6ef120",
+      "spec_id": "v4b-0061"
+    },
+    {
+      "scene_sha256": "815059348dcfae2019e74da220483c5e6157266d817a6b5ad26ef8d4d88592c6",
+      "spec_id": "v4b-0062"
+    },
+    {
+      "scene_sha256": "e67ec6460cc755ac8d7689b76d9a35d7b03d03cb8ac4f76eba30d30ca8c176ef",
+      "spec_id": "v4b-0066"
+    },
+    {
+      "scene_sha256": "b8c3c49e36e94ff3e5f39e67bac4ae174c2d649f5414fe83a29d6bece907cfe5",
+      "spec_id": "v4b-0069"
+    },
+    {
+      "scene_sha256": "308b13e5ceb3807c8fc5b8b290ad95d11e6fad457bd7b92897bc457ec10cc21c",
+      "spec_id": "v4b-0072"
+    },
+    {
+      "scene_sha256": "b5f61480bb764c550ea611b7d670aaa058746cbea1b9765dc4a06b3831cdb3af",
+      "spec_id": "v4b-0075"
+    },
+    {
+      "scene_sha256": "75293d0cd90018a10cb9678288c9cbbcc78ece35516df4e5119168245fa4528b",
+      "spec_id": "v4b-0077"
+    },
+    {
+      "scene_sha256": "3200b04e38d519fb1315a7ec1648d059982dd9e03b959a73587aa54e19710897",
+      "spec_id": "v4b-0082"
+    },
+    {
+      "scene_sha256": "ce8d0b872c06432fb047d6c9416a5323cd28fd0c05cce0afcd5fb290d439e143",
+      "spec_id": "v4b-0083"
+    },
+    {
+      "scene_sha256": "8800f5571c81579c34694a611cd57078ab2d5fb31a42a6aa97d7af11429bb421",
+      "spec_id": "v4b-0088"
+    },
+    {
+      "scene_sha256": "a51b11a9b62ead76d39f508657eac81aea8ba2291f636b94dc61869ed2ee31b1",
+      "spec_id": "v4b-0090"
+    },
+    {
+      "scene_sha256": "85e7215e347f048a1c2f2e5326a2e0d41a49caf1617abc90060267954e21bb0d",
+      "spec_id": "v4b-0092"
+    },
+    {
+      "scene_sha256": "14499483df5706a2e11dc89af4bc25a53a534f861321378471b1bb9a21633c2d",
+      "spec_id": "v4b-0094"
+    },
+    {
+      "scene_sha256": "101fc749351509cea376190543410717fed1f3db1932e8bec7c0ff40e3d166cc",
+      "spec_id": "v4b-0097"
+    },
+    {
+      "scene_sha256": "b38c0ab204ec3ebc6fdf5896e9aee9dba33272ea001cea3d33e132d0d1d7801b",
+      "spec_id": "v4b-0103"
+    },
+    {
+      "scene_sha256": "763a62ddc6c5a87646b05bd25bfdf3a5d31ecd5342de02ba9a102481565abfcb",
+      "spec_id": "v4b-0104"
+    }
+  ],
+  "schema_version": 1,
+  "selection_rule": "For every frozen canonical scene, select its lexicographically first outcome spec; exclude the entire scene if any member lies outside the previously frozen scene-disjoint sensitivity. No outcome values are read.",
+  "spec_ids": [
+    "v4a-0001",
+    "v4a-0007",
+    "v4a-0008",
+    "v4a-0009",
+    "v4a-0011",
+    "v4a-0023",
+    "v4a-0024",
+    "v4a-0030",
+    "v4a-0031",
+    "v4a-0032",
+    "v4a-0033",
+    "v4a-0041",
+    "v4a-0058",
+    "v4a-0062",
+    "v4a-0066",
+    "v4a-0070",
+    "v4a-0071",
+    "v4a-0073",
+    "v4a-0078",
+    "v4a-0080",
+    "v4a-0084",
+    "v4a-0088",
+    "v4a-0097",
+    "v4a-0103",
+    "v4a-0104",
+    "v4a-0106",
+    "v4a-0108",
+    "v4a-0113",
+    "v4b-0017",
+    "v4b-0021",
+    "v4b-0026",
+    "v4b-0032",
+    "v4b-0033",
+    "v4b-0045",
+    "v4b-0059",
+    "v4b-0060",
+    "v4b-0061",
+    "v4b-0062",
+    "v4b-0066",
+    "v4b-0069",
+    "v4b-0072",
+    "v4b-0075",
+    "v4b-0077",
+    "v4b-0082",
+    "v4b-0083",
+    "v4b-0088",
+    "v4b-0090",
+    "v4b-0092",
+    "v4b-0094",
+    "v4b-0097",
+    "v4b-0103",
+    "v4b-0104"
+  ],
+  "spec_ids_hash_encoding": "UTF-8 JSON list, ensure_ascii=False, compact comma/colon separators",
+  "spec_ids_sha256": "7f44b386ed6490544b49c411b17783e1e2edd34b2ffac8eadf6f5e6476e5a2c1",
+  "status": "supplementary; conditional independence and sparse-binary CP assumptions; does not replace original64 or sensitivity54"
+}

@@ -683,7 +683,7 @@
     "spec_ids_sha256": "8c638fb3efd86258fbc6e51146e18086e5c517acaa48d017a208a4e24bcb5264"
   },
   "consumer": "scripts/v4_decoupling_report.py (outcome sensitivity) and scripts/v4_gradient_sensitivity.py --audit (probe exclusions)",
-  "created": "2026-09-09T07:59:20Z",
+  "created": "2026-09-09T08:16:17Z",
   "created_before_any_outcome_evaluation_artifact": true,
   "exposure_definition": "Every prompt in the frozen train partition. rounds x prompts_per_round equals the partition size, so the schedule reaches all of them exactly once and membership does not depend on the seed; only the round assignment does. Replay draws from a pool restricted to the same partition, so it adds no scene the generation schedule has not already exposed.",
   "kind": "prospective_scene_overlap_sensitivity_freeze",

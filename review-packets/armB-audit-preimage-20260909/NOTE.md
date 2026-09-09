@@ -35,9 +35,38 @@ arm B 的 `audit-splits/scene_overlap.json` 落地后,下面几个必须一模�
 | `summary.outcome_overlap_n` | 10 |
 | `summary.actual_probe_bank_overlap_n` | 2 |
 | `summary.scheduled_train_prompt_n` / `train_partition_n` | 132 / 132 |
+| `scene_representatives.json` → `spec_ids_sha256` | `7f44b386ed6490544b49c411b17783e1e2edd34b2ffac8eadf6f5e6476e5a2c1` |
+| `scene_representatives.json` → `n_independent_scene_representatives` | 52 |
 
 两次跑的结果除了 `created` 时间戳和 `provenance.run` 路径以外逐字节相同,
 所以上面这些数字不是某一次的运气。
+
+## 顺带补上的一个缺口:`scene_representatives.json` 以前没有脚本能造
+
+`v4_decoupling_report.py` 会读 `audit-splits/scene_representatives.json`,
+读到就多出一条 `independent_scene_representative_sensitivity`
+(每个场景只留一个 outcome prompt,让那条敏感性分析的行之间互相独立)。
+pilot 有这个文件,**而整棵树里没有任何脚本会写它**——它是 2026-09-05 手工造的。
+后果有两层:一是 arm B 会缺一条它的对照臂有的分析;二是一份进了结论的产物
+没有可复现的来源。
+
+现在 `v4_scene_audit.py --prospective` 会连带写出这个子文件(worktree)。
+不做成单独的命令,是因为报告把这一对当作一对来查:子文件里记着父文件的
+sha256,父文件一动报告就拒绝。两条命令等于给「只冻结了一半」留了两次机会。
+
+**它对着 pilot 那份手工产物验过**:用 pilot 的 `scene_overlap.json` 喂进去,
+新函数产出的 `scene_representatives.json` 除 `created_at` 外**每个字段逐字相同**,
+包括 54 个 spec_id、`spec_ids_sha256 = f52826b9…`、54 行 representatives、
+父文件摘要,以及那句 `does not replace original64 or sensitivity57`。
+选择规则本身也不是新发明的:报告在使用前会自己按父 audit 重算一遍并拒绝不符的文件,
+所以这里加的只是产物,不是选择权。
+
+arm B 这份是 **52 个**(59 个场景里,52 个的全部 outcome prompt 都在
+scene-disjoint 集内);pilot 是 54 / 59。
+
+变异测试 9/9 击杀,其中一个专门盯着最容易写错的那条规则:
+「代表本身在 disjoint 集里就留下」——正确的规则是**整个场景**都要在集内,
+否则这个代表就代表了一个训练已经通过别的 prompt 见过的场景。
 
 ## 和 pilot 不一样的一处,是好的方向
 
