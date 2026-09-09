@@ -142,3 +142,142 @@ def test_an_absent_state_file_is_refused_by_path(tmp_path):
     passed, message = preflight.gate_main_run_finished(tmp_path / "state.json")
     assert passed is False
     assert "state.json" in message
+
+
+# --- gate_card_schedule_decided -------------------------------------------
+#
+# This gate had no test, which is how it came to read a file and a key that
+# nothing writes. `card_benchmark.py` lives in the arm B branch's review
+# packet and this preflight lives here; until the merge rehearsal of
+# 2026-09-09 the two had never been in one tree, so no run of anything could
+# have noticed that the gate wanted `verdict.json["serialise_detect"]` and
+# the benchmark wrote `card_benchmark.json["verdict"]["adopt_serial"]`.
+#
+# The fixture below is therefore built from the benchmark's own payload keys
+# rather than from the gate's expectations, which is the only ordering that
+# would have caught the original defect.
+
+PACKET = "review-packets/card-scheduling-20260909"
+
+
+def write_benchmark(root: Path, **fields) -> Path:
+    """The shape `card_benchmark.py:main` writes, minus the timing detail."""
+
+    payload = {"images": 64, "manifest": "runs/v4/.../manifest.jsonl",
+               "no_load": True, "margin": 0.90,
+               "results": [{"detector": "internvl"}, {"detector": "qwen3vl"}],
+               "verdict": {"adopt_serial": True,
+                           "reason": "serial clears the 10% margin on every detector"}}
+    payload.update(fields)
+    packet = root / PACKET
+    packet.mkdir(parents=True, exist_ok=True)
+    path = packet / "card_benchmark.json"
+    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    return path
+
+
+def test_the_gate_reads_the_file_the_benchmark_writes(tmp_path):
+    write_benchmark(tmp_path)
+    passed, message = preflight.gate_card_schedule_decided(tmp_path)
+    assert passed is True
+    assert "adopt_serial=True" in message
+    # The reason travels with the decision: an operator reading this at four
+    # in the morning should not have to open the JSON to learn which way the
+    # criterion fell or why.
+    assert "every detector" in message
+
+
+def test_a_verdict_against_serialising_is_still_a_decision(tmp_path):
+    """`adopt_serial: False` passes the gate. It is a decision, not a failure.
+
+    The gate exists so the criterion cannot be skipped, not so it comes out
+    a particular way -- the registered tie-break (keep the per-arm pinning)
+    is one of its two legitimate answers.
+    """
+
+    write_benchmark(tmp_path, verdict={"adopt_serial": False,
+                                       "reason": "serial clears the margin on "
+                                                 "['internvl'], not on all"})
+    passed, message = preflight.gate_card_schedule_decided(tmp_path)
+    assert passed is True
+    assert "adopt_serial=False" in message
+
+
+def test_a_missing_benchmark_names_the_file_and_the_outdir(tmp_path):
+    passed, message = preflight.gate_card_schedule_decided(tmp_path)
+    assert passed is False
+    # Naming the outdir is the point: the benchmark takes --outdir as a
+    # required argument and will happily write a correct answer somewhere
+    # this gate does not look.
+    assert "card_benchmark.json" in message
+    assert "--outdir" in message and PACKET.replace("/", "\\") in message.replace("/", "\\")
+
+
+def test_the_old_verdict_json_no_longer_satisfies_the_gate(tmp_path):
+    """A hand-written file with the old key must not pass.
+
+    The old key was invented by this gate and appears in no pre-registration
+    and in no other script. Leaving it as an accepted alternative would keep
+    open exactly the path the defect created: a decision typed by hand at the
+    moment the measurement is inconvenient.
+    """
+
+    packet = tmp_path / PACKET
+    packet.mkdir(parents=True)
+    (packet / "verdict.json").write_text(json.dumps({"serialise_detect": True}),
+                                         encoding="utf-8")
+    passed, message = preflight.gate_card_schedule_decided(tmp_path)
+    assert passed is False
+    assert "card_benchmark.json" in message
+
+
+def test_a_benchmark_with_no_decision_is_refused(tmp_path):
+    write_benchmark(tmp_path, verdict={})
+    passed, message = preflight.gate_card_schedule_decided(tmp_path)
+    assert passed is False
+    assert "adopt_serial" in message
+
+
+def test_a_busy_card_measurement_is_refused(tmp_path):
+    """`--allow-busy-cards` records `no_load: false` and the gate must read it.
+
+    Section 0.3 is a no-load benchmark; the numbers in it that are already
+    known to be contaminated by another process are the reason it exists.
+    """
+
+    write_benchmark(tmp_path, no_load=False)
+    passed, message = preflight.gate_card_schedule_decided(tmp_path)
+    assert passed is False
+    assert "no_load" in message
+
+
+def test_a_margin_other_than_the_registered_one_is_refused(tmp_path):
+    write_benchmark(tmp_path, margin=0.95)
+    passed, message = preflight.gate_card_schedule_decided(tmp_path)
+    assert passed is False
+    assert "0.9" in message
+
+
+def test_the_registered_margin_is_the_number_section_0_3_fixed():
+    # 0.90, fixed before the measurement. The gate does not re-derive the
+    # criterion -- card_benchmark.py owns that -- but it does refuse a report
+    # produced under a different one.
+    assert preflight.CARD_MARGIN == 0.90
+
+
+def test_a_report_with_no_no_load_key_is_refused(tmp_path):
+    """Absent is not the same as true, and the safe default is refuse.
+
+    `card_benchmark.py` always writes the key, so a report without it did
+    not come from the benchmark as it stands -- an older copy, a hand-edited
+    file, or something else entirely. Every one of those is a reason to look
+    rather than to assume the cards were empty.
+    """
+
+    payload = json.loads(write_benchmark(tmp_path).read_text(encoding="utf-8"))
+    del payload["no_load"]
+    (tmp_path / PACKET / "card_benchmark.json").write_text(json.dumps(payload),
+                                                           encoding="utf-8")
+    passed, message = preflight.gate_card_schedule_decided(tmp_path)
+    assert passed is False
+    assert "no_load" in message

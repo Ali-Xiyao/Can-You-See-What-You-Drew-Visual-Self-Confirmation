@@ -34,6 +34,8 @@ REGISTERED_SEEDS = (20260906, 20260907, 20260909, 20260910, 20260911)
 REGISTERED_ARMS = ["naive", "blind_self"]
 MAIN_RUN = ROOT / "runs/v4/decoupling-main-20260908"
 IDLE_MIB = 500
+# Section 0.3, registered before the measurement.
+CARD_MARGIN = 0.90
 
 Gate = tuple[bool, str]
 
@@ -211,25 +213,51 @@ def gate_cards_free(idle_mib: int = IDLE_MIB) -> Gate:
 
 
 def gate_card_schedule_decided(root: Path = ROOT) -> Gate:
-    """Section 0.3's benchmark has run and its registered criterion applied.
+    """Section 0.3's benchmark has run, at no load, and decided.
 
     The window for it is the one this preflight sits in: both cards free
     between the main run ending and replicate 1 starting. Once replicate 1
     starts the window is gone until all five finish, and the criterion was
     registered before the measurement precisely so it could not be skipped
     once the cards were needed.
+
+    This reads what `card_benchmark.py` writes and does not re-apply the
+    criterion. An earlier version of this gate looked for a `verdict.json`
+    with a top-level `serialise_detect`, a file and a key that exist nowhere
+    else -- the benchmark writes `card_benchmark.json` and puts the decision
+    under `verdict.adopt_serial`. The two scripts were written on two
+    branches and had never been in one tree, so nothing could catch it, and
+    the cost would have been paid as a hand-written decision file at the one
+    moment the registered criterion is easiest to replace with a judgement
+    call.
+
+    What is checked besides the decision is that the recorded run was the
+    registered one: no load, and the registered 10% margin. Neither is a new
+    condition -- section 0.3 is titled 先测空载 and the benchmark refuses
+    busy cards without `--allow-busy-cards` -- but an unchecked flag in a
+    file is not a check.
     """
 
-    verdict = root / "review-packets/card-scheduling-20260909/verdict.json"
-    if not verdict.exists():
-        return False, (f"no {verdict.relative_to(root)}; run card_benchmark.py while both "
-                       "cards are free and apply the registered criterion "
+    packet = root / "review-packets/card-scheduling-20260909"
+    report = packet / "card_benchmark.json"
+    if not report.exists():
+        return False, (f"no {report.relative_to(root)}; run card_benchmark.py with "
+                       f"--outdir {packet.relative_to(root)} while both cards are free. "
+                       "It applies the registered criterion itself "
                        "(wall_S <= 0.90 x wall_P on both detectors)")
-    payload = json.loads(verdict.read_text(encoding="utf-8"))
-    if "serialise_detect" not in payload:
-        return False, f"{verdict.name} has no serialise_detect decision"
-    return True, f"decided: serialise_detect={payload['serialise_detect']}"
-
+    payload = json.loads(report.read_text(encoding="utf-8"))
+    decision = payload.get("verdict") or {}
+    if "adopt_serial" not in decision:
+        return False, f"{report.name} has no verdict.adopt_serial decision"
+    if not payload.get("no_load"):
+        return False, (f"{report.name} records no_load=false; section 0.3 registered a "
+                       "no-load benchmark, and a measurement taken beside another job "
+                       "is not the one the criterion was written for")
+    if payload.get("margin") != CARD_MARGIN:
+        return False, (f"{report.name} was produced with margin {payload.get('margin')!r}, "
+                       f"not the registered {CARD_MARGIN}")
+    return True, (f"decided: adopt_serial={decision['adopt_serial']} -- "
+                  f"{decision.get('reason', 'no reason recorded')}")
 
 def gate_model_root() -> Gate:
     root = os.environ.get("SELFSIGHT_MODEL_ROOT")
