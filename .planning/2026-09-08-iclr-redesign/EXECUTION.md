@@ -77,10 +77,13 @@ rfo_gold step-00000 整条链          +3.95 h(同上,两臂本应并行)
 
 ---
 
-## 0.2 两臂不对称的原因:卡 1 挂在 PCIe 3.0 x4 上
+## 0.2 两臂不对称的原因:卡 1 挂在 PCIe 3.0 x4 上——**这条 STATUS 早就记着**
 
-§0.1 记的「rfo_gold 的 internvl 用 1.19 h,naive 的用 0.38 h,而且不是抢卡」,
-原因不在软件。只读查询(`nvidia-smi --query-gpu=...`,没有碰任何作业):
+**先更正一句**:我 2026-09-08 深夜把这条当成新发现报了,它不是。
+`STATUS.md` 第 19 行和 §32(2026-09-03)已经写着「GPU1 挂在 PCIe gen3 x4、
+GPU0 是 gen4 x16,逐图检测慢 7.5 倍但生成只慢 7%」,连操作规则都定了:
+**传输受限的活(detect / observe)留给 GPU0,算力受限的活(生成、梯度)才给 GPU1。**
+今晚的只读复核(`nvidia-smi`,没有碰任何作业)只是把它再确认一遍:
 
 ```
 index  name       temp  power        clocks.sm  clocks.max.sm  pcie.width  pcie.gen
@@ -88,32 +91,52 @@ index  name       temp  power        clocks.sm  clocks.max.sm  pcie.width  pcie.
 1      RTX 3090   42C    88.11 W /350   1245 MHz       2130 MHz     4 / 16     3 / 3
 ```
 
-**卡 0 是 PCIe 4.0 x16,卡 1 是 PCIe 3.0 x4**,主机↔显存带宽差约 8 倍
-(31.5 vs 3.9 GB/s)。这是主板插槽的物理限制,软件改不了。
+`clocks_throttle_reasons` 全部 `Not Active`,88 W / 350 W、1245 / 2130 MHz——
+在等数据不在算,和 §32 的判断一致。
 
-不是过热也不是功耗墙:卡 1 满负荷时 `clocks_throttle_reasons` 全部 `Not Active`,
-功耗只有 88 W(上限 350),SM 频率 1245 MHz(上限 2130)。算力受限会顶频,
-**它在等数据**。逐图推理和多分片权重加载是带宽敏感的,吃亏最大。
+### 新的部分之一:§0.1 的问号和这条事实之间的线
 
-同一检测器、同样 256 张图的实测:
+§0.1 写「原因未查明」,是因为没人把这条已知事实接到那个具体现象上。接上就是:
+`run_decoupling_pilot.py` 的 `ARM_DEVICE` 把 **一整条链**(generate → detect ×2 →
+crop → verify → probe)按臂钉死在一张卡上,rfo_gold 整条都在 cuda:1。
+于是 detect 也跑在慢卡上,而一个 checkpoint 的墙钟取两臂的大者。
+§0.1 的 3.95 h vs 1.90 h 就是这么来的。
+
+### 新的部分之二:§32 说缺的那个对照,现在有了一半
+
+§32 记的是「没有干净的同机对照」,7.5 倍和 36% 两个数都在不干净的竞争条件下测的,
+「要定这件事需要两卡各跑一次空载基准,现在卡没空」。今晚拿到的不是空载基准,
+但是**同一个检测器、同样 256 张图、同一次运行、同时在跑**的两臂对照:
 
 | 阶段 | cuda:0 (naive) | cuda:1 (rfo_gold) | 比 |
 |---|---|---|---|
 | internvl | 10.0 s/img | 14.6 s/img | 1.46x |
 | qwen3vl | 12.6 s/img | 19.8 s/img | 1.57x |
 
-**对排期的影响。** `run_decoupling_pilot.py` 的 `ARM_DEVICE` 把 naive 钉在 cuda:0、
-rfo_gold 钉在 cuda:1,而一个 checkpoint 的墙钟由慢的那臂决定,所以卡 0 每个 block
-空转约 2 h。这就是 §0.1 里 3.95 h 与 1.90 h 的来源。**估两卡并行作业时按 max 算,
-不要按平均;要平衡就给 cuda:0 多分活(容量比约 1 : 0.7),不要对半分。**
-起 arm B 前的预检里,除了「卡是不是空的」再加一条:
+**1.46 倍,不是 7.5 倍。** 差别不在卡变快了,在分母变慢了:两臂同时检测时
+cuda:0 自己也被拖到 10.0 s/img,而 §0.1 记的 round 0(那时 rfo_gold 还没开始检测)
+naive 的 internvl 是 0.38 h / 256 = **5.3 s/img**。所以正确的读法是——
+**当 cuda:0 本身已经饱和时,把 detect 放到 cuda:1 的边际代价远小于 7.5 倍。**
+7.5 倍那个数描述的是「空载 GPU0 vs 满载 GPU1」,不是排期时会遇到的情形。
+
+### 由此产生的一个待裁定的问题(**不改正在跑的运行**)
+
+按 §32 的规则,两臂的 detect 都应该在 cuda:0 上、串行,generate 才给 cuda:1。
+用本运行自己的数字估一下 internvl 那一段:
 
 ```
-nvidia-smi --query-gpu=index,clocks.sm,clocks.max.sm,power.draw,pcie.link.width.current,pcie.link.gen.current --format=csv
+现在(两臂各一张卡,并行)      max(256×10.0, 256×14.6) = 3738 s = 1.04 h
+都在 cuda:0(串行,按 5.3 s/img) 2 × 256 × 5.3         = 2714 s = 0.75 h
 ```
 
-顺带排除掉的一个猜测:桌面端应用在卡 1 上做 UI 渲染确实有影响,但关掉后只快约 10%,
-不是主因。当时我先归因于它,是错的,已向用户更正。
+**串行可能反而快约 28%**,而且能把 cuda:1 空出来跑生成。这只是外推,5.3 s/img
+是单点;要坐实需要一次真正的对照。但它足以说明现在的 `ARM_DEVICE` 与 §32 的规则
+是冲突的,而冲突的那一边是代码。
+
+**现在不动它。** 三个理由:`run_decoupling_pilot.py` 在自己的 `SOURCES` 里,
+改了正在跑的主运行下一个阶段就会拒绝继续;主运行已经过半;而这个改动的收益
+是估出来的、不是测出来的。**arm B 是验证它的地方**——起 arm B 之前可以先花
+十几分钟各测一次空载速率,拿到数再决定,那时两张卡本来就是空的。
 
 ---
 
