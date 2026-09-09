@@ -17,6 +17,7 @@ from pathlib import Path
 import pytest
 
 from selfsight.analysis.endpoint2 import BLIND_CONDITION
+from selfsight.v4.checkpoint_reload import checkpoint_for
 from selfsight.v4.observe import PROMPTED_PREAMBLE
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -46,7 +47,7 @@ def _question(index: int, text: str) -> dict:
 def test_step_zero_is_the_untrained_base_for_both_arms():
     run = Path("run")
     for arm in ("naive", "rfo_gold"):
-        assert blind.checkpoint_for(run, arm, 0, 8) == run / "checkpoints/base/round--01"
+        assert checkpoint_for(run, arm, 0, 8) == run / "checkpoints/base/round--01"
 
 
 def test_the_first_trained_checkpoint_is_round_zero():
@@ -54,19 +55,19 @@ def test_the_first_trained_checkpoint_is_round_zero():
     # checkpoint against the adapter from one round earlier, and the resulting
     # curve would still look like a curve.
     run = Path("run")
-    assert blind.checkpoint_for(run, "naive", 8, 8) == run / "checkpoints/naive/round-000"
-    assert blind.checkpoint_for(run, "naive", 24, 8) == run / "checkpoints/naive/round-002"
-    assert blind.checkpoint_for(run, "rfo_gold", 88, 8) == run / "checkpoints/rfo_gold/round-010"
+    assert checkpoint_for(run, "naive", 8, 8) == run / "checkpoints/naive/round-000"
+    assert checkpoint_for(run, "naive", 24, 8) == run / "checkpoints/naive/round-002"
+    assert checkpoint_for(run, "rfo_gold", 88, 8) == run / "checkpoints/rfo_gold/round-010"
 
 
 def test_a_step_between_checkpoints_is_refused():
     with pytest.raises(ValueError, match="multiple of 8"):
-        blind.checkpoint_for(Path("run"), "naive", 12, 8)
+        checkpoint_for(Path("run"), "naive", 12, 8)
 
 
 def test_the_round_size_comes_from_the_config_not_a_constant():
     run = Path("run")
-    assert blind.checkpoint_for(run, "naive", 8, 4) == run / "checkpoints/naive/round-001"
+    assert checkpoint_for(run, "naive", 8, 4) == run / "checkpoints/naive/round-001"
 
 
 # --- what gets asked --------------------------------------------------------

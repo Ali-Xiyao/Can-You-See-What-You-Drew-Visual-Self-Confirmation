@@ -45,11 +45,8 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from selfsight.schemas import AtomicQuestion
 from selfsight.utils.hashing import sha256_json
+from selfsight.v4.checkpoint_reload import checkpoint_for, load_trained_backbone
 from selfsight.v4.observe import PROMPTED_PREAMBLE
-
-# scripts/v4_train.py's constant, restated. Importing v4_train would drag in
-# the training stack and its side effects for a read-only pass.
-LORA_TARGETS = ROOT / "runs/readiness/showo2-1p5b/a4-lora-targets-r1.json"
 
 CONDITION = "image_only"
 
@@ -59,22 +56,6 @@ CONDITION = "image_only"
 # below is what stops it becoming a stale one.
 PREAMBLE_MARKER = "You were asked to draw a picture"
 assert PREAMBLE_MARKER in PROMPTED_PREAMBLE, "the marker no longer matches the preamble"
-
-
-def checkpoint_for(run: Path, arm: str, step: int, steps_per_round: int) -> Path:
-    """Step 0 is the untrained base; step (i+1)*k is arm `arm`'s round i.
-
-    Both arms share `checkpoints/base/round--01` at step 0, which is not a
-    mistake to be tidied away: the two arms are the same model until the first
-    optimizer step, and the blind pass measures each of them there anyway
-    because the *images* differ from step 0 onwards.
-    """
-
-    if step == 0:
-        return run / "checkpoints" / "base" / "round--01"
-    if step % steps_per_round:
-        raise ValueError(f"step {step} is not a multiple of {steps_per_round}")
-    return run / "checkpoints" / arm / f"round-{step // steps_per_round - 1:03d}"
 
 
 def prompted_rows(run: Path, arm: str, step: int) -> list[dict]:
@@ -234,12 +215,6 @@ def main() -> int:
         print("dry run: nothing loaded, nothing written")
         return 0
 
-    from selfsight.backbones.showo2 import Showo2Adapter
-    from selfsight.training.checkpoint import load_checkpoint
-    from selfsight.v4.train import parameter_digest, seed_training, trainable_snapshot
-
-    targets = json.loads(LORA_TARGETS.read_text(encoding="utf-8"))
-    lora = config["training"]["lora"]
     digest = sha256_json(config)
     summary = []
     # One adapter load per arm-checkpoint: 26 for the main run, and the
@@ -249,19 +224,8 @@ def main() -> int:
     # that makes this restartable.
     for arm, step, checkpoint, _, _ in plan:
         print(f"loading {checkpoint.relative_to(args.run)} on {args.device}", flush=True)
-        # Both seeds are the training loop's, in the training loop's order:
-        # once before the adapter is constructed and once immediately before
-        # attach_lora, which randomises LoRA A. A blind pass whose adapter was
-        # initialised differently would be measuring a different model.
-        seed_training(int(config["seed"]))
-        backbone = Showo2Adapter(device=args.device, lazy=False)
-        seed_training(int(config["seed"]))
-        backbone.attach_lora(target_modules=targets["target_modules"], rank=int(lora["rank"]),
-                             alpha=int(lora["alpha"]), dropout=float(lora["dropout"]),
-                             gradient_checkpointing=False)
-        load_checkpoint(checkpoint, model=backbone.model, optimizer=None, scheduler=None,
-                        expected_config_digest=digest)
-        adapter_digest = parameter_digest(trainable_snapshot(backbone.model))
+        backbone, adapter_digest = load_trained_backbone(config, checkpoint,
+                                                         device=args.device)
         summary.append(observe_step(backbone, args.run, arm, step, out_root / arm,
                                     model_id=backbone.model_id, adapter_digest=adapter_digest))
         del backbone
