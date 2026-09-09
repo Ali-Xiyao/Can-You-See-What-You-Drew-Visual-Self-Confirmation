@@ -689,6 +689,18 @@ def build_report(outdir: Path, *, bootstrap_samples: int = 2000, seed: int = 202
                               ("split_sha256", file_identity(split_path) if split_path.exists() else None)):
             if audit_provenance.get(key) and (not identity or audit_provenance[key] != identity["sha256"]):
                 raise ValueError(f"Scene audit {key} does not match this run")
+        # An audit is a claim about the run it was built in, and copying one
+        # between runs is how a post hoc subset becomes a prospective freeze:
+        # two runs off the same config share a config digest and a split
+        # digest, so nothing checked above tells them apart. Compared by
+        # directory name, not by full path, because moving a run must not make
+        # its audit unreadable -- once outcomes exist it cannot be rebuilt.
+        recorded_run = audit_provenance.get("run")
+        if recorded_run and Path(recorded_run).name != outdir.resolve().name:
+            raise ValueError(
+                f"Scene audit was built in {recorded_run}, not {outdir}; an audit copied "
+                f"from another run of the same config clears every other check here and "
+                f"would freeze this run's outcome subsets on that run's authority")
         audited_ids = [sid for group in audit["within_outcome_clusters"] for sid in group["spec_ids"]]
         if len(audited_ids) != len(set(audited_ids)):
             raise ValueError("Scene audit repeats an outcome spec")

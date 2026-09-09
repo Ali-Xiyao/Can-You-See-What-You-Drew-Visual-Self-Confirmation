@@ -1,4 +1,5 @@
 """The scene audit must stay readable by the analysis it exists to feed."""
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -39,7 +40,18 @@ SPECS = {
     "v4a-004": spec("v4a-004", "one green leaf", [("leaf", "green", 1)]),
     "v4b-005": spec("v4b-005", "red apples, two of them", [("apples", "red", 2)]),
     "v4b-006": spec("v4b-006", "one yellow lemon", [("lemon", "yellow", 1)]),
+    # Four more, used only by the prospective tests: two that restate a trained
+    # scene, and two that restate each other without matching anything trained.
+    "v4b-007": spec("v4b-007", "a lemon and a leaf", [("lemon", "yellow", 1),
+                                                      ("leaf", "green", 1)]),
+    "v4b-008": spec("v4b-008", "one green leaf beside one yellow lemon",
+                    [("leaf", "green", 1), ("lemon", "yellow", 1)]),
+    "v4b-009": spec("v4b-009", "a couple of red apples", [("apple", "red", 2)]),
+    "v4b-010": spec("v4b-010", "a single blue mug", [("mug", "blue", 1)]),
 }
+# Deliberately not in sorted order: the audit sorts, and a reader of the file
+# has to be able to tell that from the file rather than from the split.
+PROSPECTIVE_OUTCOME = ["v4b-010", "v4b-006", "v4b-009", "v4b-008", "v4b-007"]
 TRAIN = ["v4a-001", "v4a-002", "v4a-003", "v4a-004"]
 CONFIG = "seed: 7\ntraining:\n  rounds: 2\n  prompts_per_round: 2\n  candidate_k: 2\n"
 
@@ -58,6 +70,20 @@ def build_run(tmp_path: Path, *, train=TRAIN, rounds: int = 2) -> tuple[Path, Pa
     (run / "probe-bank" / "bank.json").write_text(json.dumps(bank), encoding="utf-8")
     config = tmp_path / "config.yaml"
     config.write_text(CONFIG.replace("rounds: 2", f"rounds: {rounds}"), encoding="utf-8")
+    return run, config
+
+
+def build_prospective_run(tmp_path: Path) -> tuple[Path, Path]:
+    """`build_run` with an outcome population worth auditing.
+
+    Its one outcome prompt cannot show a duplicate scene group, an overlap
+    ordering, or the difference between one exposed prompt and two.
+    """
+    run, config = build_run(tmp_path)
+    split_path = run / "split.json"
+    split = json.loads(split_path.read_text(encoding="utf-8"))
+    split["outcome"] = list(PROSPECTIVE_OUTCOME)
+    split_path.write_text(json.dumps(split), encoding="utf-8")
     return run, config
 
 
@@ -250,3 +276,289 @@ def test_a_bank_holding_two_pools_for_one_spec_is_refused(tmp_path, corpus):
                          encoding="utf-8")
     with pytest.raises(ValueError, match="one pool per spec"):
         AUDIT.build_audit(run, config)
+
+
+# ------------------------------------------ the prospective half, for arm B
+
+
+def test_the_prospective_audit_is_the_one_the_report_will_accept(tmp_path, corpus):
+    """The other contract, checked the same way as the gradient one.
+
+    v4_decoupling_report.py validates the audit against the frozen split
+    before it uses it: the flag, the provenance hashes, and that the audited
+    outcome population is exactly the split's. Building the arguments it
+    checks and running that validation is the only way to know the file is
+    admissible without spending a run to find out.
+    """
+    run, config = build_run(tmp_path)
+    audit = AUDIT.build_audit(run, config, prospective=True)
+
+    assert audit["created_before_any_outcome_evaluation_artifact"] is True
+    audited = [sid for group in audit["within_outcome_clusters"] for sid in group["spec_ids"]]
+    split = json.loads((run / "split.json").read_text(encoding="utf-8"))
+    assert sorted(audited) == sorted(split["outcome"]), "the report compares these as sets"
+    assert len(audited) == len(set(audited)), "the report refuses a repeated outcome spec"
+    sensitivity = set(audit["scene_disjoint_outcome_sensitivity"]["spec_ids"])
+    assert sensitivity <= set(audited), "the report refuses ids outside the population"
+    assert audit["provenance"]["config_sha256"] == AUDIT.sha256_file(config)
+    assert audit["provenance"]["split_sha256"] == AUDIT.sha256_file(run / "split.json")
+
+
+def test_the_prospective_audit_still_reads_as_a_gradient_audit(tmp_path, corpus):
+    """One file, two consumers. Adding the outcome half must not move the
+    probe-bank half out from under read_partition."""
+    run, config = build_run(tmp_path)
+    audit_path = tmp_path / "scene_overlap.json"
+    audit_path.write_text(json.dumps(AUDIT.build_audit(run, config, prospective=True)),
+                          encoding="utf-8")
+
+    _audit, _bank, scenes, excluded = SENSITIVITY.read_partition(run, audit_path)
+    assert set(scenes) == {"v4b-005", "v4b-006"}
+    assert excluded == {"v4b-005"}
+
+
+def test_an_outcome_prompt_restating_a_trained_scene_is_not_in_the_disjoint_set(
+        tmp_path, corpus, monkeypatch):
+    """The whole point of the subset. v4b-006 is a lemon nothing trains on, so
+    it is disjoint; make it restate the apples and it must drop out."""
+    run, config = build_run(tmp_path)
+    assert AUDIT.build_audit(run, config, prospective=True)[
+        "scene_disjoint_outcome_sensitivity"]["spec_ids"] == ["v4b-006"]
+
+    restated = dict(SPECS)
+    restated["v4b-006"] = spec("v4b-006", "two red apples again", [("apple", "red", 2)])
+    monkeypatch.setattr(AUDIT, "load_training_corpus", lambda runs: TrainingCorpus(
+        specs=restated,
+        replay=(ReplayExample(image_path="a.png", question="q", answer="yes",
+                              sample_id="s1", prompt_id="v4a-001"),)))
+    audit = AUDIT.build_audit(run, config, prospective=True)
+    assert audit["scene_disjoint_outcome_sensitivity"]["spec_ids"] == []
+    assert audit["summary"]["outcome_overlap_n"] == 1
+
+
+@pytest.mark.parametrize("artifact", [
+    "evaluations", "checkpoints", "gradient-probes", "rounds",
+    "checkpoint_metrics.csv", "decoupling_report.json",
+])
+def test_a_run_that_has_already_produced_something_cannot_be_frozen_prospectively(
+        tmp_path, corpus, artifact):
+    """The flag is a claim about the world, so the world is what gets checked.
+
+    An allowlist, so an artifact nobody thought of stops the audit instead of
+    passing through it.
+    """
+    run, config = build_run(tmp_path)
+    target = run / artifact
+    if target.suffix:
+        target.write_text("{}", encoding="utf-8")
+    else:
+        target.mkdir()
+    with pytest.raises(ValueError, match="prospective audit claims") as failure:
+        AUDIT.build_audit(run, config, prospective=True)
+    assert artifact in str(failure.value), "say which artifact stopped it"
+
+
+def test_the_two_stages_that_run_before_any_arm_draws_anything_are_allowed(tmp_path, corpus):
+    """split and freeze-probe produce the audit's own inputs. Refusing them
+    would leave no moment at which a prospective audit could be built."""
+    run, config = build_run(tmp_path)
+    (run / "stage-completion").mkdir()
+    for stage in ("split", "freeze-probe"):
+        (run / "stage-completion" / f"{stage}.json").write_text("{}", encoding="utf-8")
+    (run / "run_manifest.json").write_text("{}", encoding="utf-8")
+    (run / "logs").mkdir()
+
+    assert AUDIT.outcome_evaluation_artifacts(run) == []
+    assert AUDIT.build_audit(run, config, prospective=True)[
+        "created_before_any_outcome_evaluation_artifact"] is True
+
+
+def test_a_completed_training_round_is_not_one_of_those_two_stages(tmp_path, corpus):
+    run, _config = build_run(tmp_path)
+    (run / "stage-completion").mkdir()
+    (run / "stage-completion" / "round-000.train.json").write_text("{}", encoding="utf-8")
+    assert AUDIT.outcome_evaluation_artifacts(run) == ["stage-completion/round-000.train.json"]
+
+
+def test_the_cli_will_not_write_a_prospective_audit_anywhere_the_report_cannot_see_it(
+        tmp_path, corpus, monkeypatch):
+    """A freeze nobody reads is not a freeze. The report only ever looks at
+    RUN/audit-splits/scene_overlap.json."""
+    run, config = build_run(tmp_path)
+    monkeypatch.setattr("sys.argv", [
+        "v4_scene_audit.py", "--outdir", str(run), "--config", str(config),
+        "--output", str(tmp_path / "somewhere-else.json"), "--prospective"])
+    with pytest.raises(SystemExit) as failure:
+        AUDIT.main()
+    assert failure.value.code == 2
+    assert not (tmp_path / "somewhere-else.json").exists()
+
+
+def test_the_cli_writes_the_prospective_audit_where_the_report_reads_it(tmp_path, corpus,
+                                                                       monkeypatch, capsys):
+    run, config = build_run(tmp_path)
+    output = run / "audit-splits" / "scene_overlap.json"
+    monkeypatch.setattr("sys.argv", [
+        "v4_scene_audit.py", "--outdir", str(run), "--config", str(config),
+        "--output", str(output), "--prospective"])
+    AUDIT.main()
+
+    written = json.loads(output.read_text(encoding="utf-8"))
+    assert written["kind"] == AUDIT.PROSPECTIVE_KIND
+    assert written["created_before_any_outcome_evaluation_artifact"] is True
+    assert "retrospective_notice" not in written, "it is not one"
+    assert "scene-disjoint" in capsys.readouterr().out
+
+
+def test_outcome_prompts_that_restate_each_other_are_one_cluster_and_are_named(tmp_path, corpus):
+    """`within_outcome_duplicate_scene_groups` is what tells the reader the
+    outcome population is not 5 independent prompts but 4 scenes."""
+    run, config = build_prospective_run(tmp_path)
+    audit = AUDIT.build_audit(run, config, prospective=True)
+
+    assert [group["spec_ids"] for group in audit["within_outcome_clusters"]
+            if len(group["spec_ids"]) > 1] == [["v4b-007", "v4b-008"]]
+    assert audit["within_outcome_duplicate_scene_groups"] == [
+        group for group in audit["within_outcome_clusters"] if len(group["spec_ids"]) > 1]
+    assert audit["summary"]["outcome_unique_canonical_scenes"] == 4
+    assert audit["summary"]["outcome_repeated_scene_groups"] == 1
+    assert audit["summary"]["outcome_prompts_in_repeated_scene_groups"] == 2
+    assert audit["summary"]["scene_disjoint_outcome_n"] == 3
+
+
+def test_the_overlap_rows_come_out_sorted_whatever_order_the_split_lists(tmp_path, corpus):
+    """Two runs of this over the same frozen split have to produce the same
+    bytes, and the split's own ordering is not something the audit controls."""
+    run, config = build_prospective_run(tmp_path)
+    rows = AUDIT.build_audit(run, config, prospective=True)["overlap"]["outcome"]
+
+    assert [row["spec_id"] for row in rows] == ["v4b-009", "v4b-010"]
+    assert PROSPECTIVE_OUTCOME.index("v4b-010") < PROSPECTIVE_OUTCOME.index("v4b-009"), (
+        "the split has to disagree with the sort or this proves nothing")
+
+
+def test_an_overlap_row_says_which_round_trains_the_scene_it_matches(tmp_path, corpus):
+    """Without the round the row says a scene is contaminated but not when,
+    which is the part that decides whether a checkpoint predates it."""
+    run, config = build_prospective_run(tmp_path)
+    split = json.loads((run / "split.json").read_text(encoding="utf-8"))
+    scheduled = AUDIT.planned_exposure(
+        AUDIT.yaml.safe_load(config.read_text(encoding="utf-8")), split)
+    rows = AUDIT.build_audit(run, config, prospective=True)["overlap"]["outcome"]
+
+    for row in rows:
+        for match in row["training_matches"]:
+            assert match["scheduled_rounds"] == [scheduled[match["spec_id"]]]
+    assert {match["scheduled_rounds"][0]
+            for row in rows for match in row["training_matches"]}, "no rounds recorded at all"
+
+
+# ------------------------------------- the representative child audit
+
+
+def _prospective_parent(tmp_path):
+    run, config = build_prospective_run(tmp_path)
+    return AUDIT.build_audit(run, config, prospective=True)
+
+
+def _expected_representatives(parent):
+    """The rule as scripts/v4_decoupling_report.py recomputes it, spelled out."""
+
+    sensitivity = set(parent["scene_disjoint_outcome_sensitivity"]["spec_ids"])
+    return sorted(min(group["spec_ids"]) for group in parent["within_outcome_clusters"]
+                  if set(group["spec_ids"]) <= sensitivity)
+
+
+def test_one_representative_per_scene_and_it_is_the_first_prompt_by_name(tmp_path, corpus):
+    """The report refuses any other set, so the only question is whether the
+    artifact exists at all -- and until now nothing in the tree wrote one."""
+
+    parent = _prospective_parent(tmp_path)
+    child = AUDIT.build_representatives(parent, "0" * 64)
+
+    expected = _expected_representatives(parent)
+    assert expected, "the fixture has scenes that qualify"
+    assert child["spec_ids"] == expected
+    assert child["n_independent_scene_representatives"] == len(expected)
+    assert [row["spec_id"] for row in child["representatives"]] == expected
+    scenes = [row["scene_sha256"] for row in child["representatives"]]
+    assert len(set(scenes)) == len(scenes), "one row per scene is the whole point"
+
+
+def test_a_scene_loses_its_representative_when_any_member_is_not_disjoint(tmp_path, corpus):
+    """Not 'drop the exposed prompt and keep its scene': the representative
+    would then stand for a scene that training saw through another prompt."""
+
+    parent = _prospective_parent(tmp_path)
+    group = next(g for g in parent["within_outcome_clusters"] if len(g["spec_ids"]) > 1)
+    sensitivity = parent["scene_disjoint_outcome_sensitivity"]["spec_ids"]
+    assert set(group["spec_ids"]) <= set(sensitivity), "the fixture keeps this scene today"
+
+    # Drop a member that is *not* the one the rule would nominate. Dropping the
+    # nominee instead is the weaker test: a rule that only asks whether the
+    # representative itself is disjoint passes that one, and it is the rule a
+    # reader is most likely to write by mistake.
+    representative, exposed = min(group["spec_ids"]), max(group["spec_ids"])
+    parent["scene_disjoint_outcome_sensitivity"]["spec_ids"] = [
+        sid for sid in sensitivity if sid != exposed]
+    child = AUDIT.build_representatives(parent, "0" * 64)
+
+    assert representative not in child["spec_ids"], "the scene goes, not just the one prompt"
+    assert group["scene_sha256"] not in [row["scene_sha256"] for row in child["representatives"]]
+
+
+def test_the_hash_is_the_one_the_report_recomputes(tmp_path, corpus):
+    """v4_decoupling_report.py hashes the ids inline rather than through
+    selfsight.utils.hashing, so agreeing with sha256_json is not enough."""
+
+    child = AUDIT.build_representatives(_prospective_parent(tmp_path), "0" * 64)
+    payload = json.dumps(child["spec_ids"], ensure_ascii=False, separators=(",", ":"))
+
+    assert child["spec_ids_sha256"] == hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    assert child["spec_ids_sha256"] == sha256_json(child["spec_ids"]), "and through it too"
+    assert "ensure_ascii=False" in child["spec_ids_hash_encoding"]
+
+
+def test_the_status_names_the_two_populations_it_does_not_replace(tmp_path, corpus):
+    """Reproducing the pilot's wording exactly is what lets the two runs'
+    artifacts be read side by side."""
+
+    parent = _prospective_parent(tmp_path)
+    child = AUDIT.build_representatives(parent, "0" * 64)
+
+    assert f"original{parent['summary']['outcome_n']}" in child["status"]
+    assert f"sensitivity{parent['summary']['scene_disjoint_outcome_n']}" in child["status"]
+    assert child["kind"] == AUDIT.REPRESENTATIVE_KIND
+    assert child["created_before_any_outcome_evaluation_artifact"] is True
+
+
+def test_the_child_carries_the_parent_file_digest_so_the_report_can_pair_them(tmp_path, corpus,
+                                                                             monkeypatch):
+    """The report matches parent_scene_audit_sha256 against the bytes it read,
+    which is why the child is written by the same command and not by hand."""
+
+    run, config = build_prospective_run(tmp_path)
+    output = run / "audit-splits" / "scene_overlap.json"
+    monkeypatch.setattr("sys.argv", [
+        "v4_scene_audit.py", "--outdir", str(run), "--config", str(config),
+        "--output", str(output), "--prospective"])
+    AUDIT.main()
+
+    child = json.loads((output.parent / "scene_representatives.json").read_text(encoding="utf-8"))
+    assert child["parent_scene_audit_sha256"] == hashlib.sha256(output.read_bytes()).hexdigest()
+    assert child["spec_ids"] == _expected_representatives(
+        json.loads(output.read_text(encoding="utf-8")))
+
+
+def test_a_retrospective_audit_is_given_no_representatives(tmp_path, corpus, monkeypatch):
+    """The report only reads the child next to a prospective parent, and a
+    retrospective audit is not allowed next to it in the first place."""
+
+    run, config = build_prospective_run(tmp_path)
+    output = run / "retrospective-scene-audit" / "scene_overlap.json"
+    monkeypatch.setattr("sys.argv", [
+        "v4_scene_audit.py", "--outdir", str(run), "--config", str(config),
+        "--output", str(output)])
+    AUDIT.main()
+
+    assert not (output.parent / "scene_representatives.json").exists()

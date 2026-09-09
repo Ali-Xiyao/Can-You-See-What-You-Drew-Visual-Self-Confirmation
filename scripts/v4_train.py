@@ -54,6 +54,7 @@ from selfsight.v4.evaluate import (
 from selfsight.v4.train import (
     ARMS,
     RFO_SELF,
+    SELECTORS,
     build_schedule,
     completed_rounds,
     generate_candidates,
@@ -89,6 +90,39 @@ def load_config(path: str | Path) -> dict[str, Any]:
     return yaml.safe_load(Path(path).read_text(encoding="utf-8"))
 
 
+def partition_seed(config: dict[str, Any]) -> int:
+    """The seed the split and the evaluation latents use, which replicates share."""
+
+    return int(config["seed"])
+
+
+def training_seed(config: dict[str, Any]) -> int:
+    """The seed for what differs between replicate runs of one design.
+
+    Deliberately not the seed above. Three seeds have to land on one partition
+    with one set of frozen latents, or they are three experiments on three
+    populations rather than three draws of the same one, and nothing pairs
+    across them.
+
+    Absent, this is the top-level seed, so a config written before the key
+    existed behaves to the byte as it did.
+    """
+
+    training = config.get("training", {})
+    if "seed" in training:
+        return int(training["seed"])
+    # `training.seeds` is the plural key the v2.x formal pipeline reads. Nothing
+    # in v4 has ever read it, so setting it to a new value is a request that
+    # gets silently ignored -- and silently training every replicate on one seed
+    # is the single failure this helper exists to prevent.
+    registered = [int(item) for item in training.get("seeds", [])]
+    if registered and registered != [partition_seed(config)]:
+        raise ValueError(
+            f"training.seeds={registered} is read by the v2.x formal pipeline, never by v4; "
+            f"set training.seed (singular) to move the training seed, or leave both alone")
+    return partition_seed(config)
+
+
 def split_digest(config: dict[str, Any], runs: tuple[str, ...]) -> str:
     """What the split is a function of, and nothing else.
 
@@ -99,7 +133,7 @@ def split_digest(config: dict[str, Any], runs: tuple[str, ...]) -> str:
 
     return sha256_json({
         "runs": sorted(runs),
-        "seed": int(config["seed"]),
+        "seed": partition_seed(config),
         "outcome": int(config["data"]["local_outcome"]),
         "probe": int(config["data"]["local_probe"]),
     })
@@ -115,7 +149,7 @@ def stage_split(args: argparse.Namespace) -> None:
         corpus.prompt_ids,
         outcome=int(config["data"]["local_outcome"]),
         probe=int(config["data"]["local_probe"]),
-        seed=int(config["seed"]),
+        seed=partition_seed(config),
     )
     out = Path(args.outdir)
     out.mkdir(parents=True, exist_ok=True)
@@ -128,7 +162,7 @@ def stage_split(args: argparse.Namespace) -> None:
         "created": now(),
         "digest": split_digest(config, tuple(args.runs)),
         "runs": list(args.runs),
-        "seed": int(config["seed"]),
+        "seed": partition_seed(config),
         "train": list(split.train),
         "outcome": list(split.outcome),
         "probe": list(split.probe),
@@ -255,9 +289,37 @@ def adjudicate(
     return verified
 
 
+def resolve_arms(args: argparse.Namespace) -> tuple[str, ...]:
+    """The arms this invocation trains, defaulting to the registered pairing.
+
+    `ARMS` stayed a module constant for as long as there was exactly one
+    pairing. Blind-Self is a third selector over the same pools, and it is a
+    separate run rather than a third column of the registered one, so the set
+    has to come from the command line. The default is unchanged, which is what
+    keeps an existing command reproducing an existing run.
+    """
+
+    # getattr, matching how round_index and max_rounds are read a few lines
+    # below: stage_train is called with a hand-built namespace in the tests, and
+    # an arm set is exactly the kind of thing those callers have no opinion
+    # about. Validating here rather than at first use keeps a bad --arms a
+    # command-line error instead of a crash an hour into a round.
+    # `None` is "did not say"; `[]` is "said none", which is a mistake worth
+    # stopping on rather than quietly turning back into the registered pairing.
+    requested = getattr(args, "arms", None)
+    requested = list(ARMS if requested is None else requested)
+    arms = tuple(dict.fromkeys(requested))
+    if len(arms) != len(requested):
+        raise SystemExit(f"--arms repeats an arm: {requested}")
+    if not arms:
+        raise SystemExit("--arms needs at least one arm")
+    return arms
+
+
 def stage_train(args: argparse.Namespace) -> None:
     """Rounds of paired selection and SFT. Resumable at round granularity."""
 
+    arms = resolve_arms(args)
     config = load_config(args.config)
     out = Path(args.outdir)
     training = config["training"]
@@ -287,11 +349,11 @@ def stage_train(args: argparse.Namespace) -> None:
         rounds=int(training["rounds"]),
         prompts_per_round=int(training["prompts_per_round"]),
         candidate_k=int(training["candidate_k"]),
-        seed=int(config["seed"]),
+        seed=training_seed(config),
         max_epochs=args.max_epochs,
     )
 
-    for arm in ARMS:
+    for arm in arms:
         previous_checkpoint(out, arm, pending[0])
 
     # This stage needs the ladder on a different card and there is no way round
@@ -313,7 +375,7 @@ def stage_train(args: argparse.Namespace) -> None:
             f"train needs the ladder on another card: --device {args.device} and "
             f"--ladder-device {args.ladder_device} are the same one. The backbone is "
             f"resident for the whole round and the adjudicator cannot load beside it.")
-    seed_training(int(config["seed"]))
+    seed_training(training_seed(config))
     backbone = Showo2Adapter(device=args.device, lazy=False)
     targets = json.loads(Path(LORA_TARGETS).read_text(encoding="utf-8"))
     lora = training["lora"]
@@ -325,7 +387,7 @@ def stage_train(args: argparse.Namespace) -> None:
     leaked = sorted(targets.get("forbidden_modules_selected", []))
     if leaked:
         raise SystemExit(f"{LORA_TARGETS} selects forbidden modules: {leaked}")
-    seed_training(int(config["seed"]))
+    seed_training(training_seed(config))
     backbone.attach_lora(
         target_modules=targets["target_modules"],
         rank=int(lora["rank"]),
@@ -340,7 +402,7 @@ def stage_train(args: argparse.Namespace) -> None:
     # for a component that pass 1 never calls. The frozen-ness check still runs
     # whenever it *is* built, which is the part that matters.
     observer = None
-    if RFO_SELF in ARMS:
+    if RFO_SELF in arms:
         observer_config = yaml.safe_load(
             Path(RFO_OBSERVER_CONFIG).read_text(encoding="utf-8"))
         if observer_config.get("trainable", False):
@@ -357,22 +419,22 @@ def stage_train(args: argparse.Namespace) -> None:
     optimizers = {
         arm: torch.optim.AdamW(parameters, lr=float(training["learning_rate"]),
                                weight_decay=float(training["weight_decay"]))
-        for arm in ARMS
+        for arm in arms
     }
     total_steps = int(training["rounds"]) * int(training["optimizer_steps_per_round"])
     warmup = max(1, round(total_steps * float(training["warmup_ratio"])))
     schedulers = {
         arm: torch.optim.lr_scheduler.LambdaLR(
             optimizers[arm], lr_lambda=lambda step: min(1.0, float(step + 1) / warmup))
-        for arm in ARMS
+        for arm in arms
     }
     base_checkpoint = out / "checkpoints" / "base" / "round--01"
-    initialize_base_checkpoint(base_checkpoint, model=backbone.model, optimizer=optimizers[ARMS[0]],
-                               scheduler=schedulers[ARMS[0]], config=config)
+    initialize_base_checkpoint(base_checkpoint, model=backbone.model, optimizer=optimizers[arms[0]],
+                               scheduler=schedulers[arms[0]], config=config)
     base_state = capture_base_state(backbone.model)
 
     for round_index in pending:
-        round_dir = prepare_round(out, round_index)
+        round_dir = prepare_round(out, round_index, arms=arms)
         entries = round_entries(schedule, round_index)
         print(f"=== {now()} round {round_index}: {len(entries)} prompts ===")
 
@@ -382,7 +444,7 @@ def stage_train(args: argparse.Namespace) -> None:
         # comparison would be "which selector picks better from the naive arm's
         # images" rather than "which selector trains a better model".
         pools: dict[str, Any] = {}
-        for arm in ARMS:
+        for arm in arms:
             restore_arm_state(
                 previous_checkpoint(out, arm, round_index),
                 model=backbone.model, optimizer=optimizers[arm],
@@ -396,7 +458,7 @@ def stage_train(args: argparse.Namespace) -> None:
             )
 
         decisions: dict[str, Any] = {}
-        for arm in ARMS:
+        for arm in arms:
             if arm == "rfo_gold":
                 ladder_dir = round_dir / "ladder" / arm
                 write_candidate_manifest(ladder_dir, corpus=corpus, pools=pools[arm])
@@ -426,12 +488,12 @@ def stage_train(args: argparse.Namespace) -> None:
             "round": round_index,
             "decisions": {arm: [asdict(decision) for decision in values]
                           for arm, values in decisions.items()},
-            "paired_prompt_ids": [decision.prompt_id for decision in paired[ARMS[0]]],
+            "paired_prompt_ids": [decision.prompt_id for decision in paired[arms[0]]],
         }, indent=2), encoding="utf-8")
         print(f"    {kept}/{len(entries)} prompts survived pairing")
 
         reports = []
-        for arm in ARMS:
+        for arm in arms:
             checkpoint = out / "checkpoints" / arm / f"round-{round_index:03d}"
             # The one that was actually wrong: with no previous checkpoint the
             # old code did nothing, so round 0's second arm trained on top of
@@ -451,7 +513,7 @@ def stage_train(args: argparse.Namespace) -> None:
                 candidates=[c for pool in pools[arm].values() for c in pool],
                 corpus=corpus,
                 training=training,
-                seed=int(config["seed"]),
+                seed=training_seed(config),
                 round_index=round_index,
             )
             save_checkpoint(
@@ -470,7 +532,7 @@ def stage_train(args: argparse.Namespace) -> None:
         write_done(round_dir, {
             "round": round_index, "finished": now(),
             "prompts": len(entries), "paired": kept, "arms": reports,
-            "initialization_seed": int(config["seed"]), "train_replay_examples": len(corpus.replay),
+            "initialization_seed": training_seed(config), "train_replay_examples": len(corpus.replay),
         })
     print(f"=== {now()} invocation complete: rounds {pending}; "
           f"{len(done) + len(pending)}/{training['rounds']} total ===")
@@ -500,11 +562,11 @@ def stage_generate(args: argparse.Namespace) -> None:
     if args.round >= 0 and not checkpoint.is_dir():
         raise SystemExit(f"No checkpoint at {checkpoint}")
 
-    seed_training(int(config["seed"]))
+    seed_training(training_seed(config))
     backbone = Showo2Adapter(device=args.device, lazy=False)
     targets = json.loads(Path(LORA_TARGETS).read_text(encoding="utf-8"))
     lora = config["training"]["lora"]
-    seed_training(int(config["seed"]))
+    seed_training(training_seed(config))
     backbone.attach_lora(target_modules=targets["target_modules"], rank=int(lora["rank"]),
                          alpha=int(lora["alpha"]), dropout=float(lora["dropout"]),
                          gradient_checkpointing=False)
@@ -529,7 +591,11 @@ def stage_generate(args: argparse.Namespace) -> None:
     if draws < 1:
         raise SystemExit("data.images_per_outcome_prompt must be at least 1")
     keys = [(prompt_id, index) for prompt_id in prompt_ids for index in range(draws)]
-    seeds = {key: evaluation_seed(seed=int(config["seed"]), arm=args.arm,
+    # partition_seed, not training_seed: these latents are the paired part of
+    # the design. Five replicates have to draw the same images for the same
+    # prompts, or their external curves are five samples rather than five
+    # measurements of one.
+    seeds = {key: evaluation_seed(seed=partition_seed(config), arm=args.arm,
                                   step=seed_step, prompt_id=key[0], candidate_index=key[1])
              for key in keys}
     drawn = backbone.generate_images(
@@ -560,7 +626,7 @@ def stage_generate(args: argparse.Namespace) -> None:
         output_path=eval_dir / "s_select.jsonl", metadata={
             "arm": args.arm, "round": args.round, "step": step,
             "config_digest": sha256_json(config), "parameter_digest": model_digest,
-            "initialization_seed": int(config["seed"]),
+            "initialization_seed": training_seed(config),
             "evaluation_seed_step": seed_step,
             "outcome_draws_per_prompt": draws,
             "internal_curve_scope": "first_draw_only",
@@ -572,7 +638,7 @@ def stage_generate(args: argparse.Namespace) -> None:
     (eval_dir / "cycle.json").write_text(json.dumps({
         "arm": args.arm, "round": args.round, "step": step,
         "mean": mean, "sem": sem, "n": count, "scores": scores,
-        "parameter_digest": model_digest, "initialization_seed": int(config["seed"]),
+        "parameter_digest": model_digest, "initialization_seed": training_seed(config),
     }, indent=2), encoding="utf-8")
     print(f"{args.arm} step {step}: cycle {mean} +/- {sem} over {count} images "
           f"(first draw of {len(prompt_ids)} prompts); "
@@ -629,9 +695,9 @@ def stage_report(args: argparse.Namespace) -> None:
     out = Path(args.outdir)
     rows = read_metrics_csv(out / "checkpoint_metrics.csv")
     payload = {}
-    for arm in ARMS:
-        if not any(row.arm == arm for row in rows):
-            continue
+    # Off the table, not off ARMS: a blind-self run has neither of the
+    # registered arms in it and used to report nothing at all.
+    for arm in sorted({row.arm for row in rows}):
         try:
             report = divergence_report(rows, arm)
         except ValueError as exc:
@@ -695,6 +761,9 @@ def main() -> None:
     t.add_argument("--observer-python", default="envs/observer/python.exe",
                    help="the environment the detectors live in")
     t.add_argument("--core-python", default="envs/core/python.exe")
+    t.add_argument("--arms", nargs="+", default=list(ARMS), choices=list(SELECTORS),
+                   metavar="ARM",
+                   help="which selectors to train; default is the registered pairing")
     t.add_argument("--max-epochs", type=int, default=1,
                    help="passes over the prompt bank; >1 mixes memorisation into the curve")
     rounds = t.add_mutually_exclusive_group()
@@ -706,7 +775,7 @@ def main() -> None:
 
     g = sub.add_parser("generate", help="outcome images + internal curve for one checkpoint")
     common(g)
-    g.add_argument("--arm", choices=list(ARMS), required=True)
+    g.add_argument("--arm", choices=list(SELECTORS), required=True)
     g.add_argument("--round", type=int, required=True, help="-1 is the untrained step-0 baseline")
     g.add_argument("--device", default="cuda:0")
     g.set_defaults(func=stage_generate)

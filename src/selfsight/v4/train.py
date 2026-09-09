@@ -66,7 +66,7 @@ from typing import Any
 
 from selfsight.schemas import CandidateRecord, SelectionDecision
 from selfsight.training.paired import PromptScheduleEntry, _seed_from_parts
-from selfsight.v4.observe import observe_naive, observe_rfo
+from selfsight.v4.observe import observe_blind_self, observe_naive, observe_rfo
 from selfsight.v4.probe import UNADJUDICATED, build_pools, spec_questions
 from selfsight.v4.spec import SceneSpec
 from selfsight.v4.evaluate import fixed_atomic_score
@@ -89,7 +89,20 @@ mechanism-first ordering was written down, and it is not the registered pairing.
 RFO_SELF = "rfo_self"
 """Pass 2's arm. Selectable, never part of the default pairing."""
 
-SELECTORS = ("naive", "rfo_gold", RFO_SELF)
+BLIND_SELF = "blind_self"
+"""Naive with the description withheld, and nothing else changed.
+
+Naive and RFO-Gold differ in who is looking *and* in what they are told, so the
+pairing cannot say which factor produces the gap. This arm holds the model fixed
+and removes only the context, which is the one manipulation the measured
+context effect asks for: on trials where the picture and the description
+disagree, the same backbone answers 0.654 blind and 0.336 told
+(review-packets/context-ablation-20260908).
+
+Selectable, never part of the default pairing.
+"""
+
+SELECTORS = ("naive", "rfo_gold", RFO_SELF, BLIND_SELF)
 NAMESPACE = "v4-train"
 
 
@@ -411,13 +424,34 @@ def abandon_incomplete(path: str | Path) -> Path | None:
     return destination
 
 
-def prepare_round(run_root: str | Path, round_index: int) -> Path:
-    """Archive all partial-round artifacts, including a checkpoint saved by one arm."""
+def prepare_round(
+    run_root: str | Path,
+    round_index: int,
+    *,
+    arms: Sequence[str],
+) -> Path:
+    """Archive all partial-round artifacts, including a checkpoint saved by one arm.
+
+    `arms` is the set this invocation is training, not the registered pairing,
+    and it has no default on purpose. A blind-self run saves
+    `checkpoints/blind_self/round-NNN`; archiving only the two registered arms
+    would leave that one in place, the retry would start from a checkpoint
+    written by the attempt that crashed, and arm B's trajectory would be wrong
+    from that round on with nothing in the output saying so. Recovery is not a
+    rare path -- §2b of the main-run protocol is a list of the ways this run
+    has already crashed.
+
+    A default of `ARMS` would be that same silent wrong answer, one level up:
+    correct for the registered pairing and quietly incorrect for every other
+    run. Required, a caller that forgets fails in the first second of the first
+    round instead of twenty hours in.
+    """
+
     root = Path(run_root).resolve()
     round_dir = root / "rounds" / f"round-{round_index:03d}"
     if (round_dir / "DONE.json").exists():
         raise FileExistsError(f"Refusing to restart completed round: {round_dir}")
-    checkpoints = {arm: root / "checkpoints" / arm / f"round-{round_index:03d}" for arm in ARMS}
+    checkpoints = {arm: root / "checkpoints" / arm / f"round-{round_index:03d}" for arm in arms}
     if any(not path.resolve().is_relative_to(root) for path in (round_dir, *checkpoints.values())):
         raise ValueError("Partial round archive escapes run directory")
     if any(path.exists() for path in checkpoints.values()):
@@ -494,17 +528,21 @@ def select_by_observation(
     pools: dict[str, list[CandidateRecord]],
     observation_path: str | Path | None = None,
 ) -> list[SelectionDecision]:
-    """Naive and RFO-Self: pick by asking something to look at the picture.
+    """Naive, Blind-Self and RFO-Self: pick by asking something to look at the picture.
 
-    `observer` is used only by the RFO arms and must be `None` for naive. An
-    observer sitting unused in the naive path is one refactor away from being
-    called there, and that call is the entire experiment.
+    `observer` is used only by the RFO arms and must be `None` for the two self
+    arms. An observer sitting unused in a self path is one refactor away from
+    being called there, and that call is the entire experiment.
+
+    Naive and Blind-Self run the same model over the same pool and differ only
+    in whether the generating description is in context when it answers.
     """
 
-    if arm not in ("naive", RFO_SELF):
+    if arm not in ("naive", BLIND_SELF, RFO_SELF):
         raise ValueError(f"{arm} does not select by observation")
     if (arm == RFO_SELF) != (observer is not None):
-        raise ValueError("The RFO-Self arm needs a frozen observer; naive must not have one")
+        raise ValueError(
+            "The RFO-Self arm needs a frozen observer; the self arms must not have one")
 
     decisions = []
     for prompt_id in sorted(pools):
@@ -515,6 +553,10 @@ def select_by_observation(
         for candidate in candidates:
             if arm == "naive":
                 observations[candidate.candidate_id] = observe_naive(
+                    backbone, prompt=spec.prompt, questions=questions,
+                    image_path=candidate.image_path)
+            elif arm == BLIND_SELF:
+                observations[candidate.candidate_id] = observe_blind_self(
                     backbone, prompt=spec.prompt, questions=questions,
                     image_path=candidate.image_path)
             else:
