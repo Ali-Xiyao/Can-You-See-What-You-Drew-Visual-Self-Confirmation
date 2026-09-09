@@ -346,7 +346,14 @@ envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/blind-s
    要核对的是 `scene_disjoint_outcome_sensitivity.spec_ids_sha256` =
    `8c638fb3efd86258fbc6e51146e18086e5c517acaa48d017a208a4e24bcb5264`,
    以及 `summary` 的 outcome 64 / scene-disjoint 54 / probe bank 排除 2 /
-   train 132-of-132。那份 NOTE 里还记着一件顺带验到的事:主 config 排满
+   train 132-of-132。
+
+   同一条命令还会写出 `audit-splits/scene_representatives.json`(worktree
+   `8019e3f` 起)。这个文件报告一直会读、读到就多一条行间独立的敏感性分析,
+   pilot 有,而在此之前**树里没有脚本能造它**——它是手工做的。arm B 的这份
+   应当是 52 条,`spec_ids_sha256` =
+   `7f44b386ed6490544b49c411b17783e1e2edd34b2ffac8eadf6f5e6476e5a2c1`。
+   新写的构造函数对着 pilot 那份手工产物验过,除 `created_at` 外逐字段相同。那份 NOTE 里还记着一件顺带验到的事:主 config 排满
    132/132,所以保守口径和实际日程口径重合,排除集不依赖日程种子——
    pilot 不是这样(120/132)。
 3. `configs/v4_decoupling_main_20260908.yaml` 至今仍未纳入 git(主树 `??`)。
