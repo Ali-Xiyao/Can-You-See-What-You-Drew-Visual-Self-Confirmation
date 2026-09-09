@@ -35,13 +35,14 @@ import argparse
 import json
 import sys
 import time
-from collections import Counter
+from collections import Counter, defaultdict
 from dataclasses import replace
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
+from selfsight.analysis.endpoint3 import MIN_CANDIDATES
 from selfsight.utils.hashing import sha256_json
 from selfsight.v4.checkpoint_reload import checkpoint_for, load_trained_backbone
 from selfsight.v4.observe import PROMPTED_PREAMBLE
@@ -85,9 +86,13 @@ def plan_step(run: Path, arm: str, step: int) -> tuple[list[dict], dict[str, int
     verified = {row["image_path"]: row for row in _rows(eval_dir / "verified.jsonl")}
     work: list[dict] = []
     counts = Counter()
+    every: dict[str, list[bool]] = defaultdict(list)
+    kept: dict[str, list[bool]] = defaultdict(list)
     for row in _rows(eval_dir / "manifest.jsonl"):
         counts["images"] += 1
         image = row["image_path"]
+        if image in verified:
+            every[row["spec_id"]].append(bool(verified[image]["image_correct"]))
         if image not in verified:
             # Deviation 12's skipped row seen from the other side: the detector
             # found nothing, so there is no verdict to select on.
@@ -103,8 +108,36 @@ def plan_step(run: Path, arm: str, step: int) -> tuple[list[dict], dict[str, int
             counts["no_questions"] += 1
             continue
         work.append({"row": row, "verdict": verified[image], "questions": questions})
+        kept[row["spec_id"]].append(bool(verified[image]["image_correct"]))
         counts["trials"] += len(questions)
+    counts.update(_selectability(every, kept))
     return work, dict(counts)
+
+
+def _selectability(every: dict[str, list[bool]], kept: dict[str, list[bool]]) -> dict:
+    """How much of the selection task the unaskable images take away.
+
+    An image that supports no question leaves the pool, and on the main run
+    every such image is externally incorrect -- `build_counting` returns None
+    when none of the requested categories was detected at all, which is also
+    the definition of a miss. So the exclusion removes candidates that are all
+    wrong, which raises the ceiling a selection loop is scored against and, in
+    the worst case, drops a prompt below two candidates entirely.
+
+    It cancels between the conditions by construction, because the question set
+    depends on the image and not on the condition, and endpoint 3's y is a
+    difference within one pool. What it does not cancel is the pool
+    composition, so the size is counted per checkpoint rather than asserted to
+    be small: on the main run's first three checkpoints it costs 0 to 3 prompts
+    of 64 and moves the ceiling by at most +0.033.
+    """
+
+    surviving = {spec_id: values for spec_id, values in kept.items()
+                 if len(values) >= MIN_CANDIDATES}
+    return {"prompts": len(every),
+            "pools_kept": len(surviving),
+            "pools_kept_with_correct": sum(any(values) for values in surviving.values()),
+            "prompts_with_correct": sum(any(values) for values in every.values())}
 
 
 def resume_state(path: Path, expected: dict[str, int]) -> tuple[set, list[dict] | None]:
@@ -252,6 +285,7 @@ def main() -> int:
         print(f"  {arm:<10} step {step:>5}  {checkpoint.relative_to(args.run)}  "
               f"{done}/{total} image-conditions done, {counts.get('trials', 0)} trials, "
               f"{counts.get('unnameable', 0)} unnameable, "
+              f"{counts.get('no_questions', 0)} unaskable, "
               f"{counts.get('unverified', 0)} unverified")
     if args.dry_run:
         print()

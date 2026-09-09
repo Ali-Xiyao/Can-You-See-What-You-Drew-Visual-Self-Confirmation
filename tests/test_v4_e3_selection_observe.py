@@ -233,6 +233,48 @@ def test_steps_present_needs_both_the_manifest_and_the_verdicts(tmp_path: Path):
     assert observe.steps_present(run, "rfo_gold") == []
 
 
+def test_the_pass_counts_what_the_unaskable_images_cost(tmp_path: Path):
+    _, summary = _run(tmp_path, Backbone())
+    assert summary["prompts"] == 2
+    assert summary["pools_kept"] == 2
+    assert summary["pools_kept_with_correct"] == 2
+    assert summary["prompts_with_correct"] == 2
+
+
+def test_the_ceiling_is_counted_over_the_candidates_that_left_as_well():
+    """The diagnostic has to be able to move in both directions.
+
+    On the main run every image that supports no question is externally
+    incorrect -- `build_counting` returns None when none of the requested
+    categories was detected, which is also what a miss is -- so the exclusion
+    only ever drops wrong candidates and the kept ceiling comes out at or above
+    the real one (at most +0.033 over the first three checkpoints). That is a
+    finding about this run, not an invariant, and a counter that assumed it by
+    reading the all-candidate ceiling off the surviving pools would report no
+    cost at all, which is the one number this exists to expose.
+
+    Here p3 is the case that assumption forbids: its only correct candidate is
+    among the ones that left, so the kept ceiling is 1/2 against the real 2/3.
+    """
+
+    every = {"p1": [False, False, False, True],
+             "p2": [False, False, False, False],
+             "p3": [False, False, False, True]}
+    kept = {"p1": [False, False, False, True],
+            "p2": [False],
+            "p3": [False, False]}
+    assert observe._selectability(every, kept) == {
+        "prompts": 3, "pools_kept": 2, "pools_kept_with_correct": 1,
+        "prompts_with_correct": 2}
+
+
+def test_a_pool_is_kept_by_the_reader_s_rule(tmp_path: Path):
+    # The writer counts pools and the reader builds them. Two definitions of
+    # "enough candidates to choose between" would make the recorded cost a
+    # measurement of something else.
+    assert observe.MIN_CANDIDATES == endpoint3.MIN_CANDIDATES == 2
+
+
 # --- resuming ---------------------------------------------------------------
 
 
