@@ -1,4 +1,5 @@
 """The scene audit must stay readable by the analysis it exists to feed."""
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -450,3 +451,114 @@ def test_an_overlap_row_says_which_round_trains_the_scene_it_matches(tmp_path, c
             assert match["scheduled_rounds"] == [scheduled[match["spec_id"]]]
     assert {match["scheduled_rounds"][0]
             for row in rows for match in row["training_matches"]}, "no rounds recorded at all"
+
+
+# ------------------------------------- the representative child audit
+
+
+def _prospective_parent(tmp_path):
+    run, config = build_prospective_run(tmp_path)
+    return AUDIT.build_audit(run, config, prospective=True)
+
+
+def _expected_representatives(parent):
+    """The rule as scripts/v4_decoupling_report.py recomputes it, spelled out."""
+
+    sensitivity = set(parent["scene_disjoint_outcome_sensitivity"]["spec_ids"])
+    return sorted(min(group["spec_ids"]) for group in parent["within_outcome_clusters"]
+                  if set(group["spec_ids"]) <= sensitivity)
+
+
+def test_one_representative_per_scene_and_it_is_the_first_prompt_by_name(tmp_path, corpus):
+    """The report refuses any other set, so the only question is whether the
+    artifact exists at all -- and until now nothing in the tree wrote one."""
+
+    parent = _prospective_parent(tmp_path)
+    child = AUDIT.build_representatives(parent, "0" * 64)
+
+    expected = _expected_representatives(parent)
+    assert expected, "the fixture has scenes that qualify"
+    assert child["spec_ids"] == expected
+    assert child["n_independent_scene_representatives"] == len(expected)
+    assert [row["spec_id"] for row in child["representatives"]] == expected
+    scenes = [row["scene_sha256"] for row in child["representatives"]]
+    assert len(set(scenes)) == len(scenes), "one row per scene is the whole point"
+
+
+def test_a_scene_loses_its_representative_when_any_member_is_not_disjoint(tmp_path, corpus):
+    """Not 'drop the exposed prompt and keep its scene': the representative
+    would then stand for a scene that training saw through another prompt."""
+
+    parent = _prospective_parent(tmp_path)
+    group = next(g for g in parent["within_outcome_clusters"] if len(g["spec_ids"]) > 1)
+    sensitivity = parent["scene_disjoint_outcome_sensitivity"]["spec_ids"]
+    assert set(group["spec_ids"]) <= set(sensitivity), "the fixture keeps this scene today"
+
+    # Drop a member that is *not* the one the rule would nominate. Dropping the
+    # nominee instead is the weaker test: a rule that only asks whether the
+    # representative itself is disjoint passes that one, and it is the rule a
+    # reader is most likely to write by mistake.
+    representative, exposed = min(group["spec_ids"]), max(group["spec_ids"])
+    parent["scene_disjoint_outcome_sensitivity"]["spec_ids"] = [
+        sid for sid in sensitivity if sid != exposed]
+    child = AUDIT.build_representatives(parent, "0" * 64)
+
+    assert representative not in child["spec_ids"], "the scene goes, not just the one prompt"
+    assert group["scene_sha256"] not in [row["scene_sha256"] for row in child["representatives"]]
+
+
+def test_the_hash_is_the_one_the_report_recomputes(tmp_path, corpus):
+    """v4_decoupling_report.py hashes the ids inline rather than through
+    selfsight.utils.hashing, so agreeing with sha256_json is not enough."""
+
+    child = AUDIT.build_representatives(_prospective_parent(tmp_path), "0" * 64)
+    payload = json.dumps(child["spec_ids"], ensure_ascii=False, separators=(",", ":"))
+
+    assert child["spec_ids_sha256"] == hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    assert child["spec_ids_sha256"] == sha256_json(child["spec_ids"]), "and through it too"
+    assert "ensure_ascii=False" in child["spec_ids_hash_encoding"]
+
+
+def test_the_status_names_the_two_populations_it_does_not_replace(tmp_path, corpus):
+    """Reproducing the pilot's wording exactly is what lets the two runs'
+    artifacts be read side by side."""
+
+    parent = _prospective_parent(tmp_path)
+    child = AUDIT.build_representatives(parent, "0" * 64)
+
+    assert f"original{parent['summary']['outcome_n']}" in child["status"]
+    assert f"sensitivity{parent['summary']['scene_disjoint_outcome_n']}" in child["status"]
+    assert child["kind"] == AUDIT.REPRESENTATIVE_KIND
+    assert child["created_before_any_outcome_evaluation_artifact"] is True
+
+
+def test_the_child_carries_the_parent_file_digest_so_the_report_can_pair_them(tmp_path, corpus,
+                                                                             monkeypatch):
+    """The report matches parent_scene_audit_sha256 against the bytes it read,
+    which is why the child is written by the same command and not by hand."""
+
+    run, config = build_prospective_run(tmp_path)
+    output = run / "audit-splits" / "scene_overlap.json"
+    monkeypatch.setattr("sys.argv", [
+        "v4_scene_audit.py", "--outdir", str(run), "--config", str(config),
+        "--output", str(output), "--prospective"])
+    AUDIT.main()
+
+    child = json.loads((output.parent / "scene_representatives.json").read_text(encoding="utf-8"))
+    assert child["parent_scene_audit_sha256"] == hashlib.sha256(output.read_bytes()).hexdigest()
+    assert child["spec_ids"] == _expected_representatives(
+        json.loads(output.read_text(encoding="utf-8")))
+
+
+def test_a_retrospective_audit_is_given_no_representatives(tmp_path, corpus, monkeypatch):
+    """The report only reads the child next to a prospective parent, and a
+    retrospective audit is not allowed next to it in the first place."""
+
+    run, config = build_prospective_run(tmp_path)
+    output = run / "retrospective-scene-audit" / "scene_overlap.json"
+    monkeypatch.setattr("sys.argv", [
+        "v4_scene_audit.py", "--outdir", str(run), "--config", str(config),
+        "--output", str(output)])
+    AUDIT.main()
+
+    assert not (output.parent / "scene_representatives.json").exists()

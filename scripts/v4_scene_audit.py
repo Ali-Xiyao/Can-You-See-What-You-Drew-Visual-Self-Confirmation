@@ -46,6 +46,13 @@ from selfsight.v4.train import build_schedule, load_training_corpus, restrict_re
 
 VERSION = "v4-scene-overlap-audit-1"
 PROSPECTIVE_KIND = "prospective_scene_overlap_sensitivity_freeze"
+REPRESENTATIVE_KIND = "prospective_independent_scene_representative_sensitivity"
+REPRESENTATIVE_RULE = (
+    "For every frozen canonical scene, select its lexicographically first outcome spec; "
+    "exclude the entire scene if any member lies outside the previously frozen "
+    "scene-disjoint sensitivity. No outcome values are read.")
+REPRESENTATIVE_ENCODING = ("UTF-8 JSON list, ensure_ascii=False, "
+                           "compact comma/colon separators")
 
 # Carried forward verbatim from the pilot's published audit so a reader comparing
 # the two files sees the same instructions, not a reworded version of them. They
@@ -378,6 +385,51 @@ def with_outcome_side(audit: dict[str, Any], split: dict[str, Any],
     return audit
 
 
+def build_representatives(audit: dict[str, Any], parent_sha256: str) -> dict[str, Any]:
+    """One outcome prompt per scene, so the sensitivity has independent rows.
+
+    scripts/v4_decoupling_report.py consumes this and recomputes the rule from
+    the parent audit before using it, refusing any file that disagrees -- so
+    the only thing this adds is the artifact, not a choice. It was still
+    missing: runs/v4/decoupling-pilot-20260906 has one, no script in the tree
+    wrote it, and arm B would have gone without the analysis its comparison
+    arm has.
+
+    Written from the parent's bytes as they landed on disk, because the
+    report matches `parent_scene_audit_sha256` against the file it read.
+    """
+
+    sensitivity = set(audit["scene_disjoint_outcome_sensitivity"]["spec_ids"])
+    representatives = sorted(
+        ({"scene_sha256": group["scene_sha256"], "spec_id": min(group["spec_ids"])}
+         for group in audit["within_outcome_clusters"]
+         if set(group["spec_ids"]) <= sensitivity),
+        key=lambda row: row["spec_id"])
+    spec_ids = [row["spec_id"] for row in representatives]
+    # Counted off the clusters rather than read out of `summary`, so this also
+    # runs against the pilot's audit, which is the same schema_version but
+    # predates the outcome-side summary keys. That file is the only ground
+    # truth there is for the rule, and a builder that cannot read it cannot be
+    # checked against it.
+    outcome_n = sum(len(group["spec_ids"]) for group in audit["within_outcome_clusters"])
+    return {
+        "schema_version": 1,
+        "kind": REPRESENTATIVE_KIND,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_before_any_outcome_evaluation_artifact": True,
+        "selection_rule": REPRESENTATIVE_RULE,
+        "parent_scene_audit_sha256": parent_sha256,
+        "spec_ids": spec_ids,
+        "spec_ids_sha256": sha256_json(spec_ids),
+        "spec_ids_hash_encoding": REPRESENTATIVE_ENCODING,
+        "representatives": representatives,
+        "n_independent_scene_representatives": len(representatives),
+        "status": ("supplementary; conditional independence and sparse-binary CP "
+                   f"assumptions; does not replace original{outcome_n} "
+                   f"or sensitivity{len(sensitivity)}"),
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--outdir", type=Path, required=True, help="Existing run directory")
@@ -403,10 +455,22 @@ def main() -> None:
     atomic_write_json(args.output, audit)
     summary = audit["summary"]
     print(f"{VERSION}: wrote {args.output}")
+    child = None
+    if args.prospective:
+        # Not a separate command, because the pair is checked as a pair: the
+        # child carries the parent's file digest and the report refuses a child
+        # whose parent has moved. Two commands is two chances to freeze one.
+        child = build_representatives(audit, sha256_file(args.output))
+        child_path = args.output.parent / "scene_representatives.json"
+        atomic_write_json(child_path, child)
+        print(f"{VERSION}: wrote {child_path}")
     print(f"  probe bank {summary['probe_bank_n']} prompts in "
           f"{summary['probe_bank_scene_n']} scenes; excluding "
           f"{summary['actual_probe_bank_overlap_n']} for training exposure")
     if args.prospective:
+        print(f"  {child['n_independent_scene_representatives']} independent scene "
+              f"representatives, one per scene whose outcome prompts are all "
+              f"scene-disjoint")
         print(f"  outcome {summary['outcome_n']} prompts in "
               f"{summary['outcome_unique_canonical_scenes']} scenes; "
               f"{summary['scene_disjoint_outcome_n']} scene-disjoint, "
