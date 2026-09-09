@@ -17,7 +17,7 @@ D* / D_g / Lead 降为附录里的仪器负结果。
 | 文件 | 内容 | 状态 |
 |---|---|---|
 | `.planning/2026-09-08-iclr-redesign/PROPOSAL.md` | 为什么换路线,依据全部是既有数据上实测的 | 冻结 |
-| `.planning/2026-09-08-iclr-redesign/PREREG.md` | **预注册**:E3 三臂协同进化、E4 跨模型复制、失败条件。偏离 1–5 只追加不改写 | 冻结 |
+| `.planning/2026-09-08-iclr-redesign/PREREG.md` | **预注册**:E3 三臂协同进化、E4 跨模型复制、失败条件。**偏离 1–6 只追加,正文一个字未改写** | 冻结 |
 | `.planning/2026-09-08-iclr-redesign/EXECUTION.md` | 每一步在等什么。**§0 是这条线的实时状态** | 活的 |
 | `.planning/2026-09-08-iclr-redesign/ICLR-2028.md` | 能不能发:三种结局在看到数字之前先定死。§8 是 09-09 追记 | 活的 |
 | `.planning/2026-09-08-iclr-redesign/PAPER.md` | 论文结构(取代 PROPOSAL 里的实验编号) | 活的 |
