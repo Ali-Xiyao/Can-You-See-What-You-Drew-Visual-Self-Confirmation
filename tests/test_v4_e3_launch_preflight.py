@@ -281,3 +281,340 @@ def test_a_report_with_no_no_load_key_is_refused(tmp_path):
     passed, message = preflight.gate_card_schedule_decided(tmp_path)
     assert passed is False
     assert "no_load" in message
+
+
+# --- the three gates that had no test at all -------------------------------
+#
+# Six gates stand between the main run finishing and 400 GPU-hours starting.
+# Two were tested. The card-schedule gate above shows what the other four were
+# worth: it read a file and a key nothing writes, and no run of anything could
+# have noticed. What follows exercises the *refusal* side of the remaining
+# four, because a gate that cannot refuse is worse than no gate -- it is read,
+# at whatever hour the run finishes, as permission.
+#
+# Fixtures are built from what the writer produces: the five real configs, and
+# the arm B branch's real files. A gate checked against a fixture built from
+# its own expectations agrees with itself.
+
+
+def _load(path: Path) -> dict:
+    import yaml
+
+    return yaml.safe_load(path.read_text(encoding="utf-8"))
+
+
+def _dump(path: Path, payload: dict) -> None:
+    import yaml
+
+    path.write_text(yaml.safe_dump(payload, sort_keys=False), encoding="utf-8")
+
+
+REPLICATES = [ROOT / f"configs/v4_e3_replicate_s{seed}.yaml"
+              for seed in preflight.REGISTERED_SEEDS]
+
+
+def write_replicates(root: Path, mutate=None) -> Path:
+    """The five real configs, re-emitted into `root` with one field changed.
+
+    Returning None from `mutate` drops that config, which is how the missing
+    file case is built without inventing what a config looks like.
+    """
+
+    (root / "configs").mkdir(parents=True, exist_ok=True)
+    for seed, source in zip(preflight.REGISTERED_SEEDS, REPLICATES):
+        payload = _load(source)
+        if mutate is not None:
+            payload = mutate(seed, payload)
+        if payload is not None:
+            _dump(root / "configs" / source.name, payload)
+    return root
+
+
+def test_the_five_real_configs_satisfy_the_gate():
+    passed, message = preflight.gate_configs(ROOT)
+    assert passed, message
+    assert "one split" in message
+
+
+def test_the_fixture_itself_passes_before_anything_is_mutated(tmp_path):
+    """Otherwise every refusal below could be refusing the round trip."""
+
+    passed, message = preflight.gate_configs(write_replicates(tmp_path))
+    assert passed, message
+
+
+def test_a_training_seed_that_is_not_its_filename_is_refused(tmp_path):
+    """20260908 is the main run's seed, deliberately skipped by deviation 9.
+
+    A replicate carrying it would look like a sixth measurement of the study
+    and be a second measurement of the run it is supposed to replicate.
+    """
+
+    def collide(seed, payload):
+        if seed == preflight.REGISTERED_SEEDS[2]:
+            payload["training"]["seed"] = 20260908
+        return payload
+
+    passed, message = preflight.gate_configs(write_replicates(tmp_path, collide))
+    assert not passed
+    assert "training.seed is 20260908" in message
+
+
+def test_a_missing_config_is_refused_by_name(tmp_path):
+    def drop(seed, payload):
+        return None if seed == preflight.REGISTERED_SEEDS[0] else payload
+
+    passed, message = preflight.gate_configs(write_replicates(tmp_path, drop))
+    assert not passed
+    assert "v4_e3_replicate_s20260906.yaml is missing" in message
+
+
+def test_the_plural_seeds_key_is_refused_as_dead_config(tmp_path):
+    """`training.seeds` is read by the v2.x pipeline and never by v4.
+
+    Setting it is a request that is granted silently and ignored completely,
+    which is the one failure mode no downstream artifact records.
+    """
+
+    def revive(seed, payload):
+        payload["training"]["seeds"] = [seed]
+        return payload
+
+    passed, message = preflight.gate_configs(write_replicates(tmp_path, revive))
+    assert not passed
+    assert "dead config in v4" in message
+
+
+def test_an_arm_set_other_than_the_registered_pair_is_refused(tmp_path):
+    """The exact confusion the supervisor's own guard was added for.
+
+    naive+rfo_gold under a replicate's name trains the registered pairing and
+    writes it into `e3-s20260906`; config, logs and directory name all agree,
+    and only the frozen manifest disagrees, on resume.
+    """
+
+    def swap(seed, payload):
+        payload["training"]["arms"] = ["naive", "rfo_gold"]
+        return payload
+
+    passed, message = preflight.gate_configs(write_replicates(tmp_path, swap))
+    assert not passed
+    assert "training.arms is ['naive', 'rfo_gold']" in message
+
+
+def test_a_second_partition_seed_is_refused(tmp_path):
+    """The failure that produces five runs nothing can pair.
+
+    Top-level `seed` fixes the split, the split digest and the evaluation
+    latents. One config carrying a different one is not a variant of the study
+    but a different study, and endpoint 1 pairs over (prompt, draw) across
+    replicates.
+    """
+
+    def drift(seed, payload):
+        if seed == preflight.REGISTERED_SEEDS[4]:
+            payload["seed"] = 20260907
+        return payload
+
+    passed, message = preflight.gate_configs(write_replicates(tmp_path, drift))
+    assert not passed
+    assert "top-level seed differs across configs" in message
+    assert "nothing would pair" in message
+
+
+def test_a_different_split_input_is_refused_even_at_one_seed(tmp_path):
+    """Same seed, different pool sizes, so the same digest over a different
+    corpus. The partition seed alone does not make two splits the same.
+    """
+
+    def shrink(seed, payload):
+        if seed == preflight.REGISTERED_SEEDS[1]:
+            payload["data"]["local_outcome"] = 63
+        return payload
+
+    passed, message = preflight.gate_configs(write_replicates(tmp_path, shrink))
+    assert not passed
+    assert "split inputs differ across configs" in message
+
+
+# --- gate_cards_free -------------------------------------------------------
+
+
+class _Smi:
+    """Stands in for nvidia-smi. `rows` is its stdout, or an exception."""
+
+    def __init__(self, rows):
+        self.rows = rows
+
+    def __call__(self, *args, **kwargs):
+        if isinstance(self.rows, Exception):
+            raise self.rows
+        return type("R", (), {"stdout": self.rows})()
+
+
+def _cards(monkeypatch, rows):
+    monkeypatch.setattr(preflight.subprocess, "run", _Smi(rows))
+    return preflight.gate_cards_free()
+
+
+def test_two_idle_cards_pass(monkeypatch):
+    passed, message = _cards(monkeypatch, "0, 4\n1, 11\n")
+    assert passed
+    assert message == "both cards idle"
+
+
+def test_a_busy_card_is_refused_and_says_not_to_preempt(monkeypatch):
+    """The machine carries jobs that are not this project's.
+
+    The wording matters as much as the verdict: this runs unattended and the
+    operator reading it has to be told not to clear the card.
+    """
+
+    passed, message = _cards(monkeypatch, "0, 16965\n1, 11\n")
+    assert not passed
+    assert "cuda:0 holds 16965 MiB" in message
+    assert "do not preempt" in message
+
+
+def test_one_visible_card_is_refused(monkeypatch):
+    passed, message = _cards(monkeypatch, "0, 4\n")
+    assert not passed
+    assert "only 1 card visible" in message
+
+
+def test_an_unreadable_nvidia_smi_is_not_treated_as_idle(monkeypatch):
+    """Cannot tell must refuse. The alternative is a gate that opens widest
+    exactly when the machine has stopped answering questions about itself.
+    """
+
+    passed, message = _cards(monkeypatch, OSError("nvidia-smi not found"))
+    assert not passed
+    assert "could not read nvidia-smi" in message
+
+
+def test_no_card_at_all_is_refused_rather_than_counted_as_idle(monkeypatch):
+    passed, message = _cards(monkeypatch, "\n")
+    assert not passed
+    assert "only 0 card visible" in message
+
+
+def test_the_idle_threshold_is_the_registered_one():
+    assert preflight.IDLE_MIB == 500
+
+
+# --- gate_model_root -------------------------------------------------------
+
+
+def test_an_unset_model_root_is_refused(monkeypatch):
+    monkeypatch.delenv("SELFSIGHT_MODEL_ROOT", raising=False)
+    passed, message = preflight.gate_model_root()
+    assert not passed
+    assert message == "SELFSIGHT_MODEL_ROOT is unset"
+
+
+def test_a_model_root_that_is_not_a_directory_is_refused(monkeypatch, tmp_path):
+    target = tmp_path / "weights"
+    target.write_text("not a directory", encoding="utf-8")
+    monkeypatch.setenv("SELFSIGHT_MODEL_ROOT", str(target))
+    passed, message = preflight.gate_model_root()
+    assert not passed
+    assert "is not a directory" in message
+
+
+def test_an_empty_model_root_is_refused_rather_than_accepted(monkeypatch):
+    """An exported-but-empty variable is the shape a failed profile leaves."""
+
+    monkeypatch.setenv("SELFSIGHT_MODEL_ROOT", "")
+    passed, message = preflight.gate_model_root()
+    assert not passed
+    assert message == "SELFSIGHT_MODEL_ROOT is unset"
+
+
+def test_a_real_directory_passes(monkeypatch, tmp_path):
+    monkeypatch.setenv("SELFSIGHT_MODEL_ROOT", str(tmp_path))
+    passed, message = preflight.gate_model_root()
+    assert passed
+    assert message == str(tmp_path)
+
+
+# --- gate_merge_landed -----------------------------------------------------
+#
+# This gate names six things the merge has to provide. Nothing had checked
+# that the merge provides them -- the gate lives here and the code it looks
+# for lives on the other branch, which is the same separation that let the
+# card-schedule gate read an invented filename.
+
+ARM_B = "staging/arm-b-merged"
+MERGE_FILES = ("scripts/v4_train.py", "scripts/run_decoupling_pilot.py",
+               "scripts/v4_verify_replicates.py")
+MARKERS = ("def training_seed(", "def partition_seed(", '"--arms"',
+           "self.arm_device", "registered_arms")
+
+
+def _branch_files():
+    import subprocess
+
+    out = {}
+    for name in MERGE_FILES:
+        result = subprocess.run(["git", "show", f"{ARM_B}:{name}"], cwd=ROOT,
+                                capture_output=True, check=False)
+        if result.returncode != 0:
+            return None
+        out[name] = result.stdout.decode("utf-8")
+    return out
+
+
+def _plant(root: Path, files: dict) -> Path:
+    for name, body in files.items():
+        target = root / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(body, encoding="utf-8")
+    return root
+
+
+def test_the_arm_b_branch_really_provides_what_the_gate_asks_for(tmp_path):
+    """The writer-first half. Skipped once the branch is gone."""
+
+    files = _branch_files()
+    if files is None:
+        pytest.skip(f"{ARM_B} is not in this checkout")
+    passed, message = preflight.gate_merge_landed(_plant(tmp_path, files))
+    assert passed, message
+    assert message == "merged"
+
+
+@pytest.mark.parametrize("marker", MARKERS)
+def test_removing_any_one_marker_is_caught(tmp_path, marker):
+    files = _branch_files()
+    if files is None:
+        pytest.skip(f"{ARM_B} is not in this checkout")
+    hits = sum(body.count(marker) for body in files.values())
+    assert hits, f"{marker!r} is not in the merged files at all"
+    files = {name: body.replace(marker, "REMOVED") for name, body in files.items()}
+    passed, message = preflight.gate_merge_landed(_plant(tmp_path, files))
+    assert not passed, f"removing {marker!r} left the gate green"
+    assert message != "merged"
+
+
+def test_an_absent_verify_script_is_caught(tmp_path):
+    files = _branch_files()
+    if files is None:
+        pytest.skip(f"{ARM_B} is not in this checkout")
+    del files["scripts/v4_verify_replicates.py"]
+    passed, message = preflight.gate_merge_landed(_plant(tmp_path, files))
+    assert not passed
+    assert "v4_verify_replicates.py is absent" in message
+
+
+def test_the_unmerged_side_would_be_refused_for_every_reason(tmp_path):
+    """Five reasons, not one -- the sixth needs the file to be absent, not
+    empty. An operator woken at 04:00 gets told what is missing rather
+    than that something is.
+    """
+
+    _plant(tmp_path, {name: "" for name in MERGE_FILES})
+    passed, message = preflight.gate_merge_landed(tmp_path)
+    assert not passed
+    assert message.count(";") == 4
+    assert "training_seed" in message
+    assert "the arm set is still hardcoded" in message
