@@ -996,6 +996,66 @@ pid 8028 = 2.26 核             pid 28344 = 1.03 核    pid 29224 = 1.05 核
 
 我方仍然不钉。检验场地仍然是 `card_benchmark.py`。
 
+## 0.16 合并提前验过了,四件事全部落地(2026-09-10 10:5x,主运行仍在跑)
+
+主运行还有约 40 h,但合并这一步会在 `pilot_complete` 之后立刻执行,
+盲着做不如现在知道。**关键约束:不能在工作区试。**
+`run_decoupling_pilot.py:194` 每个 stage 开头核 `source_sha256`,
+而合并要改的四个文件里有三个在 `SOURCES` 里——**在工作区试合并会当场把主运行打死**。
+用 `git merge-tree --write-tree`,只在对象库里算,一个字节不落工作区。
+
+分歧点 `90431bf`,`paper/iclr-2028` 领先 49,`staging/arm-b-merged` 领先 30。
+
+### 一、无冲突
+
+```
+git merge-tree --write-tree HEAD staging/arm-b-merged
+-> exit 0, f798821ba91d94729404f7fc18b26af0029fb22d
+```
+
+exit 0 且只吐一个 tree OID = **干净合并**。共改 31 个文件,
+其中 `SOURCES` 里的 4 个:`run_decoupling_pilot.py`、`v4_decoupling_report.py`、
+`v4_train.py`、`src/selfsight/v4/train.py`。
+
+### 二、补丁和合并的先后顺序是自由的(本来可能不是)
+
+**合并会改 `scripts/v4_decoupling_report.py`,而那正是补丁要打的文件。**
+先打后合可能冲突,先合后打可能锚点失效——两条都得排除。
+
+实际改动只有 **+12 / −0**,插在**第 689 行**(scene audit 的 provenance 检查:
+两个同 config 的运行共享 config 摘要和 split 摘要,所以从别的运行拷来的 audit
+能通过上面每一道检查)。`read_outcome` 在 150–170 行,**两处相隔六百行**。
+
+对合并结果树逐字核过:补丁的两个锚点在合并后各自**恰好出现一次**,和现在一样。
+所以**先打后合会三方自动合并干净,先合后打锚点照样命中**。这条不再是风险。
+
+### 三、`gate_merge_landed` 的六条,对合并结果树全绿
+
+```
+PASS  v4_train.py 有 training_seed        PASS  supervisor 有 self.arm_device
+PASS  v4_train.py 有 partition_seed       PASS  v4_verify_replicates.py 存在
+PASS  supervisor 有 --arms                PASS  supervisor 有 registered_arms
+```
+
+不是对 `staging/arm-b-merged` 核的,是对**合并后实际会落到磁盘上的那棵树**核的。
+
+### 四、scene audit 的虚惊,记下来因为它差点是个真雷
+
+现在的 supervisor 在构造时就要求 `retrospective-scene-audit/scene_overlap.json`
+存在,否则 `raise FileNotFoundError`。**而 §1.3 的五条启动命令里没有建 audit 的步骤。**
+按现在的代码,五个 replicate 会在启动的第一秒全部抛错。
+
+合并解决了它:`resolve_audit(required=False)` 允许构造时没有,
+`freeze_scene_audit()` 在「造出输入的两个 stage 之后、任何可能成为 outcome 的东西之前」
+用 `--prospective` **在运行内自建**。所以每个 replicate 建自己的,
+也正好满足第二条新增的那个 provenance 检查。§1029–1034 已经写过 prospective/retrospective
+这对区别,这里补的是「五条命令不需要加一步」这个结论。
+
+### 五、这一节不做的事
+
+不合并、不打补丁、不碰工作区任何字节(`git status` 在本节前后一致)。
+本节只是把凌晨那一步的四个未知变成已知。真正执行仍然等 `pilot_complete`。
+
 ## 1. arm B 的启动:代码已就位,只等主运行让出卡
 
 预注册钉死了跑法:**同一份 config,`--arms naive blind_self`,新输出目录**。
