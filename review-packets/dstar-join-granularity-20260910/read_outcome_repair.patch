@@ -1,0 +1,29 @@
+--- a/scripts/v4_decoupling_report.py
++++ b/scripts/v4_decoupling_report.py
+@@ -153,21 +153,21 @@
+         size = len(values)
+         scores = [score for score, _ in values if score is not None]
+         verdicts = [verdict for _, verdict in values if verdict is not None]
+         measurements[spec_id] = {
+-            "s_select": sum(scores) / size if len(scores) == size else None,
++            "s_select": sum(scores) / len(scores) if scores else None,
+             "external": sum(verdicts) / size if len(verdicts) == size else None,
+             "n_images": size,
+             "s_select_low": sum(scores) / size,
+             "s_select_high": (sum(scores) + size - len(scores)) / size,
+             "external_low": sum(verdicts) / size,
+             "external_high": (sum(verdicts) + size - len(verdicts)) / size,
+         }
+-        if all(score is not None and verdict is not None for score, verdict in values):
++        if scores and len(verdicts) == size:
+             complete[spec_id] = {
+-                "s_select": sum(score for score, _ in values) / len(values),
+-                "external": sum(verdict for _, verdict in values) / len(values),
+-                "n_images": len(values),
++                "s_select": sum(scores) / len(scores),
++                "external": sum(verdicts) / size,
++                "n_images": size,
+             }
+     counts["specs"] = len(grouped)
+     counts["expected_specs"] = len(expected)
+     counts["missing_manifest_specs"] = len(expected - set(grouped))

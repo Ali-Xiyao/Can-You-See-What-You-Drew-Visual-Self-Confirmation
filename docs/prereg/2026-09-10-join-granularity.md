@@ -130,3 +130,49 @@ naive 在 step-40 的内部 CI 下界是 `+5.05e-18`,对 `1e-12` 的门槛而言
   那是阴性结果,**要按阴性结果写**,并同时报检出力(每窗约 44–49 对,不是 64)。
 - 本文不许可任何其他读手改动。`read_outcome` 之外的函数若也与写手不符,
   按同样流程另行登记,**不搭这次的便车**。
+
+## 9. 补:同一处缺陷还有第二个出口(2026-09-10 09:3x 追加)
+
+**追加时点与可核查性**:本节写于 2026-09-10 09:3x。此时**没有任何 run 冻结过本文的摘要**
+——`runs/*/*/run_manifest.json` 共 3 份,均不引用本文,五个 replicate 尚未启动。
+所以这是一次追加而不是改写。追加的内容与 §2 同源、同理由、**同样没有自由参数**。
+
+**§2 只覆盖了「配对集」,而 `read_outcome` 里还有第二处用同一个判据。**
+`measurements[spec_id]["s_select"]` 写作
+`sum(scores) / size if len(scores) == size else None`。
+R=4 而按协议 §3 只有第 0 张有分时,`len(scores)=1 != size=4`,
+**该字段对每个 spec 恒为 None**。它喂 `full_population_screen` 的 `internal` 列表
+(条件是 `a["s_select"] is not None and b["s_select"] is not None`),于是那条链整条为空。
+
+主运行冻结报告的 robustness block 里可以逐字看到:
+
+```
+"n_external_paired_specs": 44,   "n_internal_paired_specs": 0,
+"internal_pair_coverage": 0.0,   "internal_all_available_delta": null,
+"internal_all_available_bootstrap_ci": null,   "internal_supported": false
+```
+
+外部那半是有输入的(44/64),内部那半**由构造为空**。
+`internal_supported: false` 看起来像测量结果,实际是结构性的零。
+这个 block 自称 `supplementary_robustness_check_not_registered_confirmation`,
+不是登记的主检验,**但它在报告里,会被当成证据读**。
+
+**登记的修复**:`measurements[spec_id]["s_select"]` 改为
+
+```python
+sum(scores) / len(scores) if scores else None
+```
+
+理由与 §2 逐字相同——内部曲线按协议 §3 只在第一张图上测,分母就该是有分的那些图。
+同一字典里的 `external` 保持 `sum(verdicts) / size if len(verdicts) == size else None`,
+**不改**:那四张图本来就都该裁定,缺的是真缺。
+
+**明确不改的**:`s_select_low` / `s_select_high` 保持原样。它们把没打分的图当缺失值,
+在 R>1 下给出近乎无信息的区间(单张 0.95 时是 `[0.2375, 0.9875]`)。
+但**全仓库没有任何地方读它们**——只在 `read_outcome` 里写入、
+在 `_measurements` 的兼容分支和 `unknown` 缺省里构造,再无消费者。
+它们是死字段,**改死字段等于在没有检验的地方动手,不做**。
+将来若有人要读,那时按同一流程另行登记。
+
+**§8 那句「不搭便车」仍然有效。** 本节改的两个出口都在 `read_outcome` 内部,
+都是协议 §3 同一句话的同一次落地。`read_outcome` 之外仍然一个字节不动。
