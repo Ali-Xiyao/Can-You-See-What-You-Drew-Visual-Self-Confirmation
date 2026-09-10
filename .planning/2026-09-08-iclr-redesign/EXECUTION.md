@@ -1111,6 +1111,101 @@ class 0 (E 核): [16,17,18,19]
 
 `step-00056` 的生成链数据仍按登记的样子记录并交付 027,好坏都给,不加工。
 
+## 0.18 §1 尾部登记的那个口子,补丁和测试提前做完了(2026-09-10 10:4x–11:0x)
+
+主运行仍在跑(`naive.step-00048.detect.internvl`,10:59 时 192/256),
+`step-00048.report` 还没落地。这段等待里做的是 §1 尾部
+「**还剩的口子,以及为什么现在不补**」登记的那件事——**除了落地**,全部做完并验过。
+
+全部材料在 `review-packets/replicate-split-identity-20260910/`。
+**没有碰任何冻结件,没有碰 `staging/arm-b-merged`,没有碰运行目录。**
+
+### 一、登记时说的两个口子
+
+`scripts/v4_verify_replicates.py` 只比五个 replicate 彼此,不比主运行;
+而且比的是配方 `digest`,不是 identity。这两条 §1 尾部已经写了,不重复。
+
+### 二、新查出来的第三件:那个条件恒为真
+
+`v4_train.split_digest(config, runs)` 是四项的纯函数——`sorted(runs)`、
+`config["seed"]`、`data.local_outcome`、`data.local_probe`,**一行数据都不读**。
+`run_decoupling_pilot.py:26` 的 `RUNS` 是模块级常量,每个运行都一样;
+五份 replicate 配置共用 partition seed(`gate_configs` 断言的正是这条)。
+
+从配置文本算出来,六份配置一个数:
+
+```
+v4_decoupling_main_20260908.yaml   seed=20260906 out=64 probe=32 -> 9bab14d427f2b61b
+v4_e3_replicate_s20260906.yaml     seed=20260906 out=64 probe=32 -> 9bab14d427f2b61b
+v4_e3_replicate_s20260907.yaml     seed=20260906 out=64 probe=32 -> 9bab14d427f2b61b
+v4_e3_replicate_s20260909.yaml     seed=20260906 out=64 probe=32 -> 9bab14d427f2b61b
+v4_e3_replicate_s20260910.yaml     seed=20260906 out=64 probe=32 -> 9bab14d427f2b61b
+v4_e3_replicate_s20260911.yaml     seed=20260906 out=64 probe=32 -> 9bab14d427f2b61b
+```
+
+所以 `split_shared` 不是「弱一点的检查」,**是不可能为假的条件**。
+它能抓的只有配置差异,而配置差异在更早的 preflight `gate_configs` 已经拦过。
+那个文件的 docstring 写「Two conditions, and both are required」,其中一条是同义反复。
+
+**这是今天第三次遇到同一族**:`read_outcome` 在 R>1 下两个出口恒空(§3.9 / 今早的
+packet §1)、`*.patch` 只在需要它那天才变成 CRLF(`SECOND-OUTLET.md` §7)、
+以及本节。共同点是**一段永远不会执行或永远不会失败的东西,而没有任何检查会说出来**。
+
+它放过的真实情形是可构造的:`--runs` 下某个源运行在五次启动之间(§11 登记的
+304–352 h 窗口)多了一个 prompt,`split_prompts` 产出不同的 outcome 列表,
+配方一字未改。实测把这种数据喂给合并树那份:`verdict='five seeds'`、
+`split_shared=True`——它放行了它自己命名的那个失败。
+
+### 三、补丁与测试,以及先验红
+
+`split_check.patch`(−17/+53)把比较量换成
+`selfsight.analysis.drift.split_digest`(identity),加第三个条件
+`split_matches_main`,并且**命令行上 `--main` 必填**。
+配方 digest 仍然报,只作信息:配方同 / identity 异 = 语料动了,配方异 = 配置动了。
+
+`verify_split_check.py` 从对象库读出合并树那份(blob `b5fd8b94…`),
+在临时目录里用**真的 `git apply`** 打上补丁,与随包的完整文件逐字节比对,再跑两套测试:
+
+- 合并树自带的 **6 个测试逐字节不改,全部通过**。`verify()` 里 `main` 保持可选就是为此;
+  这只有在人走的那条路无法跳过它时才安全,所以有一个测试专盯命令行会拒绝。
+- 新的 5 个里 **4 个先验红**,绿在补丁上。第 5 个两边都绿,它不碰这个 verifier,
+  照实说明。
+
+真正的红不是三个 `TypeError`——签名变了只证明签名变了——而是这两行:
+
+```
+merged file : verdict='five seeds'          split_shared=True
+patched     : verdict='NOT independent seeds'  recipe_digests_shared=True
+```
+
+`tests/test_replicate_split_matches_main.py` 已在本分支落地,6 个测试。
+其中 `test_the_recipe_digest_is_one_number_for_all_six_configs` **不跳过**,
+今天就在跑,是上面那张表的可执行形式;另外五个 `skipif(not VERIFIER.exists())`,
+合并一落地自动生效,**补丁没打就是红的**。
+
+### 四、顺带:`git apply` 也吃 `.gitattributes`
+
+第一次跑验证脚本,`git apply` 成功而结果对不上:沙箱里没有 `.gitattributes`,
+`core.autocrlf=true` 下 **`git apply` 把 123 行全写回成了 CRLF**。
+
+今早 `SECOND-OUTLET.md` §7 钉的是 `*.patch text eol=lf`——补丁**自己**得是 LF 才打得上。
+今天这条是另一半:**目标文件也得被钉成 `eol=lf`,否则 `git apply` 写回去的是 CRLF**。
+`*.py text eol=lf` 早就在 `.gitattributes` 里,所以真实落地安全;
+沙箱现在会把它复制进去,不然沙箱不是落地路径的模型。
+这一条对 `read_outcome_repair.patch` 同样成立,而它的目标是冻结 SOURCE、
+每个 stage 都核 sha256。
+
+### 五、这一节不许可什么
+
+- **不改任何已有判定。** 六个既有测试逐字通过,`verdict` 的两个旧条件原样保留。
+- **不产生任何数。** 这是仪器,不是结果。
+- **落地仍然被门挡着**,顺序不变:`pilot_complete` → `read_outcome_repair.patch`
+  → 摘三个 `NEEDS_REPAIR` → preflight → 合并 → **然后**才是本节这个补丁。
+  合并后若 `staging/arm-b-merged:scripts/v4_verify_replicates.py` 不再是
+  blob `b5fd8b94…`,验证脚本第一行就拒绝。
+- **`--main` 必填不等于比过了。** 报告里 `checked_against_main` 是独立字段;
+  论文引「五个 seed 落在同一 split 上」要引 identity 那一栏,不是配方 digest。
+
 ## 1. arm B 的启动:代码已就位,只等主运行让出卡
 
 预注册钉死了跑法:**同一份 config,`--arms naive blind_self`,新输出目录**。
