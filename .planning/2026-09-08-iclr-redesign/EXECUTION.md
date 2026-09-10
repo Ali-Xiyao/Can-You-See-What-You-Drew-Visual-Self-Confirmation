@@ -40,6 +40,7 @@
 | 冻结输入的仓库版本 != 磁盘版本 | **已查清并钉住**(§3.5):`run_manifest.json` 冻结 14 个输入,其中 4 个(主 config、主 protocol、`v4_train.py`、`evaluate.py`)的已提交 blob 是 LF、工作树是 CRLF,差别**只有行尾**,没有内容分歧。一次 `git checkout` 这四个路径中的任何一个,都会改掉在跑的运行读的字节:源码可用 `--accept-code-update` 记一条 repair 续上,**config 与 protocol 没有豁免**——config 当场停且 resume 抛「use a new run version」,protocol 安静到下次 resume 才发现。自动合并的变更集不含这四个路径(已核,是运气不是设计)。`tests/test_frozen_inputs_vs_git.py` 6 测试,**14/14 变异全杀**(跑在隔离复制品里——在真树上造这些变异就是要防的那个事故) | 不影响在跑的运行,但主运行活着时不许 checkout 这四个路径 |
 | ^ 上一行末句更正 | **上一行说「自动合并的变更集不含这四个路径」,这半句错了**(§3.6)。合并在当前 HEAD 上无冲突,但变更集 31 个路径,与冻结的 14 个交出 **4 个**:`run_decoupling_pilot.py` / `v4_decoupling_report.py` / `v4_train.py` / `src/selfsight/v4/train.py`——全都在 **source** 那一类,`--accept-code-update` 可修复。两个**无豁免**的(主 config、主 protocol)确实不在变更集里,所以合并不会让主运行不可 resume。由此的操作纪律:**要补跑的 stage 必须在合并前补完**。上一行原文保留 | 不影响在跑的运行 |
 | 启动闸 | **六个闸全部有测试了**(§3.7):原来只有 `gate_main_run_finished` 和 §3.4 补的 `gate_card_schedule_decided` 有,`gate_merge_landed` / `gate_configs` / `gate_cards_free` / `gate_model_root` **一个都没有**。补 26 个,**19/19 变异全杀**;夹具照写方造(五份真 config、`staging/arm-b-merged` 的三个真文件)。真树上现在 5 拒 1 过,退出码 1,`gate_merge_landed` 的拒路第一次被证明走得通 | CPU,不占卡 |
+| 五条启动命令少了 `--protocol` | **已更正并钉住**(§1.2):`run_decoupling_pilot.py` 的缺省是**试点**协议 `2026-09-06-decoupling-pilot.md`,而主运行冻的是 `2026-09-08-dstar-main-run.md`。照 §1 原样起,五个 replicate 会把试点协议冻进 `run_manifest.json` 的 `protocol_sha256`(构造时)和第一份 report 的 `provenance.protocol`,**两处都没有回头路**(都抛「use a new run version」);而命令不报错,目录名 / config / 日志 / seed 全对,要到写论文查 provenance 才看得见,那时是 5 × 约 80 GPU-h。同一个坑 2026-09-08 踩过一次,那次修的是「两处一致」而不是「那一处对」。更正后的五条在 §1.2,`tests/test_section_1_launch_commands.py` 把它们**从文档里读出来**逐条核,12 测试、**10/10 变异全杀**——第一个变异就是 §1 的原命令 | CPU,不占卡 |
 
 | 四条失败条件里有两条**印不出来** | **已登记并修好**(偏离 15,`2481a91`):偏离 14 收尾后做了一遍**覆盖清查**——把预注册里每条有约束力的判定逐条对到执行它的代码。端点 1/2/3 的判定、偏离 7.2/7.3/9.3/9.4/10/12/13 都有代码;**「预先声明的失败条件」四条里 1 和 2 没有**。第 2 条更糟:缺的不是那句话,是那个量——「B 也塌」不是「B 超过 A」的否定(B 可以一边塌一边超过 A,那样端点 2 确证而 §2 的机制同时被证伪),而 `endpoint2.py` **从来没对 B 自己的抽样取过分位**,这条子句根本算不出来。15.1 用 13.1 给 A 的同一个单侧读法补上,跨 seed 用同一个 4/5(14.3 拒绝过把这个 4 借给 7.2,差别写在 docstring 里:同端点、同斜率、同 seed,只换臂;而且 4 和 5 里 4 是让不利结论更容易成立的那个)。第 1 条的后果句(不得声称「BSV 提升生成」)只活在预注册里——端点 3 有 `DOWNGRADE`、偏离 7.2 有两句,最重的那条反而没有;现在按 14.6 的层读研究级并印出。**端点 1 的驱动此前一个测试都没有**,注册句子就是这么进到没测过的代码里的,已补 6 个测试。另外 §3 的「两者都报」在端点 3 上只报了两列、只拟合了一支,15.3 读作两支都拟合(同一批重采样),判定仍只看期望值那支,两支不一致时正文必须写明。失败条件 3 / 4 **有**代码但比注册**更严**(一次不可恢复失败就停、守卫抛错停机而不是作废重跑),都在保守方向,15.4 登记,主运行期间不改。27 变异全杀(第一轮 7 个活口,形状全一样:夹具里注册读法和错读法碰巧同值)| CPU,不占卡 |
 | arm B 合并(**重跑,取代上面那一行的结论**)| **不是快进,是真合并;已重演并验通**(§3.3):两条分支已分叉 25 / 30,`paper/iclr-2028` 那 25 个是偏离 14 / 15 与 §12。`merge-tree` 干净出树 `10b0e74`(§3.1 的那一个冲突没了——`staging/arm-b-merged` 相对 `codex/blind-self-arm-20260908` 是 23 领先 0 落后,解法已在那条分支上)。核过合并后的字节:评测 latent 那处 `partition_seed` + `candidate_index` 两边都在。探针树 detached 真做一次得 `f33555a`,tree 与空跑逐位相同。**全量** 1031 测试,只两处失败,都是探针树没有 `runs/`,主树单独跑都绿——其中一处 §3.1 没见过,因为它只跑了五个文件 | CPU,不占卡 |
@@ -627,6 +628,58 @@ envs/core/python.exe -c "import pathlib,sys; sys.exit(0 if 'def training_seed(' 
 replicate 1 的 split stage 一跑完,拿它的 identity 和 `41c5f1b2...` 比。
 `runs` 字段不用担心:supervisor 用的是模块级常量 `RUNS`,
 和主运行 split.json 里记的逐字相同。
+
+---
+
+### 1.2 更正上面那五条命令:少了 `--protocol`,而它没有回头路(2026-09-09 18:1x)
+
+§1 的五条启动命令没有 `--protocol`。`run_decoupling_pilot.py` 的缺省是
+`docs/prereg/2026-09-06-decoupling-pilot.md`——**试点那份**,不是主运行那份。
+主运行冻的是 `docs\prereg\2026-09-08-dstar-main-run.md`(从它自己的 manifest 读的)。
+照 §1 原样起,五个 replicate 会各自把**试点协议**冻进两个地方:
+
+| 冻在哪 | 什么时候 | 改得回来吗 |
+|---|---|---|
+| `run_manifest.json` 的 `protocol_sha256` | 构造时 | **不能**。resume 那条 `for key in (...)` 抛「use a new run version」,无豁免(§3.5)|
+| `decoupling_report.json` 的 `provenance.protocol` | **第一份** report | **不能**。后面每份都比对第一份,不符抛「Frozen protocol changed; use a new run version」|
+
+**这件事已经发生过一次。** `run_decoupling_pilot.py` 的 `report()` 里那段注释记着:
+2026-09-08 一整天,report 硬编码了试点协议,而 `run_manifest.json` 指着主运行协议,
+两边不一致。那次的修法是让 report 改用 `self.protocol_path`——
+**修的是「两处一致」,不是「那一处对」**。现在再踩,就是一致地错。
+
+**而且它长得完全正常**:命令不报错,目录名、config、日志、seed 全对,
+只有 provenance 那一块指着一份描述**另一个规模**的文档
+(试点是 10 round / 每 prompt 1 张图;replicate 是 11 round / 4 张图)。
+要到写论文查 provenance 时才看得见,而那时候已经是 5 × 约 80 GPU-h。
+
+**改成这五条**,唯一的差别是每条末尾多一个 `--protocol`:
+
+```
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260906 --config configs/v4_e3_replicate_s20260906.yaml --arms naive blind_self --protocol docs/prereg/2026-09-08-dstar-main-run.md
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260907 --config configs/v4_e3_replicate_s20260907.yaml --arms naive blind_self --protocol docs/prereg/2026-09-08-dstar-main-run.md
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260909 --config configs/v4_e3_replicate_s20260909.yaml --arms naive blind_self --protocol docs/prereg/2026-09-08-dstar-main-run.md
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260910 --config configs/v4_e3_replicate_s20260910.yaml --arms naive blind_self --protocol docs/prereg/2026-09-08-dstar-main-run.md
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260911 --config configs/v4_e3_replicate_s20260911.yaml --arms naive blind_self --protocol docs/prereg/2026-09-08-dstar-main-run.md
+```
+
+**为什么是 `2026-09-08-dstar-main-run.md`。** 它开头自己就写着「这不是新的科学预注册,
+`2026-09-06-decoupling-pilot.md` 的假设、终态与禁止事项原样继承」,登记的是**规模**:
+11 round / 12 checkpoint / 每 prompt 4 张图 / 64 个 outcome prompt。
+**五个 replicate 跑的正是这个规模**;试点那份描述的是另一个规模。
+而且端点 1 要把主运行和五个 replicate 放在一起读,provenance 指同一份文档才对得上。
+
+**一处不吻合,写在这里而不是藏着**:那份文档末尾有一句
+「单 seed,描述性轨迹,**不得写成显著性结论**」——那是就主运行**这一次运行**说的;
+偏离 9 的五 seed 在**研究层面**取代了它(§34 的符号检验)。
+文档本身不改,它是冻结记录。**若要另写一份 replicate 专用协议,必须在启动之前写完**,
+因为启动之后这个选择就没有回头路。这是一个可以做的决定,不做也走得通。
+
+**钉住的办法**:`tests/test_section_1_launch_commands.py` 把上面这五条**从本文件里读出来**,
+逐条核:`--outdir` 的 seed 与 `--config` 的 `training.seed` 一致、config 文件在、
+`--arms` 是注册的那一对、`--protocol` **写明了**而且文件在、五条指同一份协议、
+并且那份**不是 supervisor 的缺省**——缺省哪天被改成对的,这条会提醒连本节一起改,
+而不是让两处悄悄分家。**§1 原文的五条保留**,更正登记在这里。
 
 ---
 
