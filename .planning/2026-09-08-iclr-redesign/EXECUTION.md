@@ -1185,3 +1185,58 @@ audit 的 `provenance.run` 记着它在哪个运行目录里造出来,报告现�
 又写了一遍四格判据表——那是重复,README 明写过不许再开一份计划类文档,
 这条规矩对判据文档同样成立。已删,只在原处追记这两天新出的三条
 (见 `ICLR-2028.md` §8)。
+
+### 3.9 预注册的主检验从来没有过一个可测的输入(2026-09-10 05:3x)
+
+`step-00040.report` 在 05:04:40 落地。八个窗口(两 arm × 四次 look)全部是
+`n_paired_specs: 0`、`external.delta: null`、`ci_status:
+insufficient_paired_specs`、`candidate: false`,于是
+`first_candidate_step: None`。
+
+**这读起来像阴性结果,但它不是。主检验一次都没有被求值过,因为它从来没有输入。**
+
+`read_outcome` 只在一个 spec 的**每一张**图都同时有 `s_select` 和判决时才保留它
+(`scripts/v4_decoupling_report.py:165`)。写手不产出这个形状,而且从来没有过。
+两个 arm 的每个 checkpoint 上都是:
+
+    images = 256   specs = 64   每 spec 4 张(整齐)
+    verified.jsonl = 256 行   每张图都有判决
+    s_select.jsonl =  64 行   每 spec 只有被选中的那一张有分
+    每 spec 已打分图数分布 = {1: 64}     全部打分的 spec = 0
+
+64 个 `s_select` 路径全在 manifest 里,所以**不是路径对不上,是粒度对不上**。
+读手是照着它以为写手会产出的形状写的——与 §3.4、§3.8 同一个失败家族,也是同一条
+writer-first 纪律。剩下六轮不会改变它,五个 replicate 会原样继承它。
+
+**修法只改一个判定**:一个 spec 在「至少一张图有分且所有图都已判决」时计入;
+`s_select` 改成在有分的那些图上取均值(原为四张取均值),`external` 不变。
+`review-packets/dstar-join-granularity-20260910/reanalyze_dstar_join.py`
+导入并驱动冻结模块本身——估计量、阈值、bootstrap 次数、种子全部沿用它自己的,
+`read_outcome` 先被真实调用一次(重复图检查和 spec-id 校验照跑),之后只重建
+`complete_specs`。**运行目录一个字节都没写。**
+
+先用运行自己已经发布过的数验证读手:修好后按 spec 平均的 `s_select` 与
+`checkpoint_metrics.csv` 那一列在全部 12 个 checkpoint 上相差 ≤0.01,残差来自
+CSV 在 64 个 spec 上平均而修复版在 44–49 个完整 spec 上平均。
+
+修好之后规则能跑了,配对数 44–49。`first_candidate_step` 两个 arm 都变成 **16**;
+`first_bootstrap_rule_supported_step` 两个 arm 仍是 **None**。三件事值得记:
+
+1. **两个 arm 卡在规则的相反两半上。** `naive` 在 step 40 通过外部条件
+   (`ext ci_high +0.0114 <= 0.02`)而卡在内部条件;`rfo_gold` 在 step 32 和 40
+   通过内部条件(`int ci_low +0.0127 / +0.0142 > 0`)而卡在外部条件。
+   两半各自都被满足过至少一次,所以**这是精度问题,不是结构性不可达**。
+2. **`naive` 在 step 40 差的是算术能表示的最小间距**:它的 2.5 分位是
+   `5.05e-18`,即「恰好为零」加上浮点残渣,阈值是 `1e-12`。下界为零的 95% 区间
+   不排除零,所以判 not supported **是对的,不许拿去争**。记下来只是因为 44 个
+   spec 上的 `s_select` 差分是离散的,「恰好为零」是一个质点而不是巧合。
+3. **丢掉的配对就是判决缺口**:每个 checkpoint 有 14–23 张图(共 256)没有判决,
+   代价是 64 个 spec 里的 15–20 个。补上它会不会翻转任何一个判定,那是五个
+   replicate 上的既定流程要回答的问题,不是这个 packet 能回答的。
+
+**没有动任何冻结文件。** `scripts/v4_decoupling_report.py` 是 12 个冻结 SOURCES
+之一,而且 supervisor 在 step-00048 还要调用它;此刻改它会同时踩「改冻结源」和
+「改正在跑的脚本」两条。05:04:40 那份 `decoupling_report.json` 原样保留为不可变记录。
+
+**还没定的事(预注册层面,不是我能替他判的)**:修复后的粒度要不要写进预注册、
+`s_select` 本来就该是每 spec 一张还是每张图都该打分。这一节只是把缺陷登记为新证据。
