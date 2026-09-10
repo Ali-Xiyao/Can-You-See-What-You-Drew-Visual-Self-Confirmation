@@ -12,5 +12,12 @@
 *.toml text eol=lf
 *.md text eol=lf
 
+# A patch is matched byte-for-byte against sources that are eol=lf above, so a
+# CRLF working-tree copy of one cannot apply. Verified 2026-09-10: the CRLF copy
+# of read_outcome_repair.patch dies with "patch does not apply" at the first
+# hunk. Without this line *.patch falls to "* text=auto" and core.autocrlf.
+*.patch text eol=lf
+*.diff text eol=lf
+
 # Native Windows entry points use conventional CRLF working-tree endings.
 *.ps1 text eol=crlf

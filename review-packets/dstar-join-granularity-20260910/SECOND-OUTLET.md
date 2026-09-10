@@ -114,3 +114,31 @@ naive 在 step-40 也有 +0.0299,但 CI 下界没过零,所以是 false——
 主运行 2026-09-10 09:4x 仍在跑。补丁在主运行到达 `pilot_complete` 之后应用;
 五个 replicate 于是在构造时自然冻结修复后的指纹,**不需要 `--accept-code-update`**。
 详见预注册 §6。
+
+## 7. 补:补丁差点在需要它的那一刻才失效(2026-09-10 10:0x 追加)
+
+上面第 2 节说「九个测试」,现在是十个。第十个不测 `read_outcome`,测**这个补丁文件本身**。
+
+`git apply` 是把上下文行逐字节比对 `scripts/v4_decoupling_report.py`,
+而 `.gitattributes` 把 `*.py` 钉成 `eol=lf`。但 `*.patch` **没被钉**,
+落到 `* text=auto` + `core.autocrlf=true`——**新 checkout 出来的补丁会是 CRLF**。
+实测:把本补丁转成 CRLF 后 `git apply --check` 死在第一个 hunk,
+`error: patch failed: scripts/v4_decoupling_report.py:153`。
+
+危险的地方是时点。工作区里这份现在是 LF(写它的时候就是 LF),所以今天一切正常;
+坏掉要等到某次 checkout / clone / stash 之后,也就是 `pilot_complete` 那天
+——**补丁唯一要用的那一刻**。这和本 packet 记的缺陷是同一族:
+一段永远不会执行或永远不会成功的东西,而没有任何检查会说出来。
+
+改动两处,都不碰任何冻结件:
+
+- `.gitattributes` 追加 `*.patch text eol=lf` 与 `*.diff text eol=lf`(+7/0)。
+  本补丁是仓库里唯一的 `.patch`,该规则不波及其它文件。
+  验证方式是把工作区副本删掉、`git checkout --` 取回:CRLF=0,与提交前逐字节相同,`git apply --check` 通过。
+- `tests/test_read_outcome_join_granularity.py::test_the_patch_is_checked_out_with_lf_endings`。
+  它同时断言**字节**与 **`git check-attr` 的属性**:删掉 `.gitattributes` 那行以后,
+  工作区字节要到下一次 checkout 才变坏,只查字节的测试会在那个提交上保持绿。
+  两个断言分别验过会红(`has CR bytes` / `eol: unspecified`)。
+
+**上面 1–6 节一个字节未改。** 第 3 节那张复现表、第 4 节那八行数、
+`README.md` 和 `reanalyze_dstar_join.py` 全部原样。

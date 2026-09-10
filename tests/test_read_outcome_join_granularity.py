@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -194,3 +195,28 @@ def test_the_writer_still_stamps_first_draw_only(report):
     source = (ROOT / "scripts/v4_train.py").read_text(encoding="utf-8")
     assert '"internal_curve_scope": "first_draw_only"' in source
     assert "first_draw = {prompt_id: images[(prompt_id, 0)] for prompt_id in prompt_ids}" in source
+PATCH = "review-packets/dstar-join-granularity-20260910/read_outcome_repair.patch"
+
+
+def test_the_patch_is_checked_out_with_lf_endings():
+    """A CRLF copy of the patch cannot apply, and nothing else would say so.
+
+    `git apply` matches the context lines byte for byte against
+    `scripts/v4_decoupling_report.py`, which `.gitattributes` pins to eol=lf.
+    Verified on 2026-09-10: a CRLF copy of this patch dies with "patch does
+    not apply" at the first hunk. `*.patch` was falling through to
+    `* text=auto` under core.autocrlf=true, so a fresh Windows checkout would
+    have produced exactly that copy -- and the failure would surface at
+    pilot_complete, the one moment the patch is needed.
+
+    The attribute is asserted as well as the bytes. Deleting the
+    `.gitattributes` line leaves the working tree LF until the next checkout,
+    so a byte check alone would stay green across the commit that breaks it.
+    """
+
+    assert b"\r" not in (ROOT / PATCH).read_bytes(), f"{PATCH} has CR bytes and will not apply"
+    attributes = subprocess.run(
+        ["git", "check-attr", "eol", "--", PATCH],
+        cwd=ROOT, capture_output=True, text=True, check=True).stdout
+    assert attributes.strip().endswith(": eol: lf"), (
+        f"git would not restore {PATCH} as LF; got {attributes.strip()!r}")
