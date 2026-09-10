@@ -754,6 +754,97 @@ rfo_gold 反而稳在 14–23。测量当时主机上**没有任何一样东西�
 
 **下一次收窄**:`step-00048.report` 真值。它同时判 §0.8 的 51.9 h 和本节的 53.0 h。
 
+## 0.13 启动前把四件事验了,其中一件是我自己的假警报(2026-09-10 10:1x)
+
+主运行还有约 40 h,`§13` 的判定是「数出来之后」的门,现在写就是照着数画。
+所以这一节验的是**不依赖结果、但会在结果出来那天挡路**的东西。
+
+### 一、粒度缺陷的波及面:恰好一个文件
+
+今天修的那两个出口都在 `read_outcome` 里。**它们会不会污染端点 1/2/3?不会。**
+`git grep` 全部追踪文件加未追踪 `.py`,读 `complete_specs` / `spec_measurements` 的只有:
+
+```
+scripts/v4_decoupling_report.py           读手自己
+review-packets/…/reanalyze_dstar_join.py  本 packet 的重分析
+tests/test_v4_decoupling_report.py        既有测试
+tests/test_read_outcome_join_granularity.py  今天新增
+```
+
+**`src/selfsight/` 里一处都没有。** 端点、漂移、formal 三条链都不经过这两个字段。
+D\* 的报告是唯一受影响的东西。
+
+### 二、`endpoint2.py` 独立地把同一个粒度做对了
+
+`src/selfsight/analysis/endpoint2.py` 顶部写着偏离 11.1:
+外部标签取 `candidate_index == 0`,即自报分实际算在的那一张。
+`load_series` 里 `if key[1] == 0` 过滤,盲测通道遇到非 0 直接 `raise`。
+
+于是「第一张图」这个粒度有**四个独立见证**:主运行协议 §3(2026-09-08,任何结果之前)、
+`v4_train.py` 的实现与落盘戳记、`endpoint2.py` 的偏离 11.1、以及 2026-09-10 的预注册。
+**只有 `read_outcome` 没收到通知。** 这让「零自由参数」那条论证更硬,不是更软。
+
+注意两处 external 定义**不同,而且都是对的**:D\* 的外部曲线按 4 张平均
+(协议 §3:多出的三张只服务外部曲线),端点 2 只取第 0 张
+(它要把盲自报和同一张图的外部标签配对)。**论文里要写明这个区别**,
+不写会被当成前后不一致。
+
+### 三、端点通道对着磁盘上真实的 R=4 数据跑过了
+
+不是读代码判断的,是拿 `runs/v4/decoupling-main-20260908` 真实产物跑
+`endpoint1._verdicts` / `_manifest_keys` / `completed_steps`:
+
+| arm | step | verified 行 | manifest 键 | candidate0 | 其中未裁定 |
+|---|---|---|---|---|---|
+| naive | 32 | 256 | 256 | 64 | 7 |
+| naive | 40 | 256 | 256 | 64 | 6 |
+| rfo_gold | 32 | 256 | 256 | 64 | 5 |
+| rfo_gold | 40 | 256 | 256 | 64 | 6 |
+
+形状对得上(`set(verified) == manifest_keys`),candidate0 恰好 64。
+**端点 2 每步只丢 5–7 / 64(8–11%),而 D\* 主规则要求四张全裁定,丢 15–20 / 64。**
+端点 2 付的裁定代价小得多,这个数以前没写下来过。
+
+`completed_steps` 两臂都是 `[0, 8, 16, 24, 32, 40]`。
+`analysis/blind_observe/` **不存在**——端点 2/3 在那两趟重测跑完之前一步也走不了,
+而重测要 GPU,排在主运行之后。这是排期上的一条实边,不是缺陷。
+
+### 四、preflight 最贵的那道 gate,确认会响
+
+`v4_e3_launch_preflight.py` 的 docstring 把最贵的失败写死了:
+「Against a v4_train.py from before the arm B merge, `training.seed` is silently
+ignored, and five replicates all train on 20260906 … it costs 400 GPU-hours to make.」
+今天合并还没落地,所以现在就是那个状态,**天然的验证机会**。实跑:
+
+```
+FAIL  main run finished       still running: naive.step-00048.detect.internvl, 50.4 h
+FAIL  arm B merge landed      scripts/v4_train.py has no training_seed: every replicate
+                              would silently train on the top-level seed; …
+ok    five replicate configs  5 configs, training seeds [20260906, 20260907, 20260909,
+                              20260910, 20260911], one partition seed 20260906, one split
+FAIL  both cards free / card schedule decided / model root
+BLOCKED by 5 gate(s)
+```
+
+**逐字响了,退出码 1。** (第一次量成 0 是因为管了 `| head`,那是 `head` 的退出码。)
+
+### 五、我自己的假警报,照记
+
+我看到五份 replicate config 的**顶层** `seed` 全是 `20260906`、只有 `training.seed`
+按文件名变,判断为「五个 replicate 会跑同一个 seed」。**这是错的。**
+合并分支上 `partition_seed()`(顶层)与 `training_seed()`(`training.seed`)是
+两个函数、两个用途:五个 replicate **必须共用一个划分种子**,否则
+「三个 seed 落在一个 partition 上」变成三个总体上的三个实验,跨 seed 什么都配不上。
+`gate_configs` 正是这么断言的(`len(partition_seeds) > 1` 才报错)。
+
+记下来的理由:下一个人读到那五行会得出和我一样的错误结论,
+而且这条的正确答案**已经被 preflight 的 docstring 事前写过**,不是我发现的。
+
+### 不改的东西
+
+不改 `§12`(冻结的结局图)、不写 `§13`(要等数)、不动五条启动命令、
+不碰任何 replicate config。本节只登记验证,不新增判据。
+
 ## 1. arm B 的启动:代码已就位,只等主运行让出卡
 
 预注册钉死了跑法:**同一份 config,`--arms naive blind_self`,新输出目录**。
