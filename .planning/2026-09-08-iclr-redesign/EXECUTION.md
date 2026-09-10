@@ -681,6 +681,37 @@ envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s202
 并且那份**不是 supervisor 的缺省**——缺省哪天被改成对的,这条会提醒连本节一起改,
 而不是让两处悄悄分家。**§1 原文的五条保留**,更正登记在这里。
 
+### 1.3 再更正一次:replicate 的 `--protocol` 指向粒度修订(2026-09-10 06:1x)
+
+§1.2 结尾留了一句「**若要另写一份 replicate 专用协议,必须在启动之前写完**」。
+写完了:`docs/prereg/2026-09-10-join-granularity.md`。**§1.2 的五条原样保留**,
+更正登记在这里——理由正是 §1.2 自己钉住的那条:协议要描述这次运行实际跑的东西。
+
+§3.9 查出预注册的主检验从来没有过一个可测的输入。`read_outcome` 要求一个 spec 的
+每张图都同时有 `s_select` 和裁定,而主运行协议 §3 早就登记了内部曲线**只打第一张图**;
+两者在 R=4 下不可能同时成立。修复必须赶在五个 replicate 起跑前进 `scripts/`
+(时机见新文档 §6),**于是 replicate 跑的读手,不是 2026-09-08 那份文档描述的那个**。
+让它们继续指向 `2026-09-08-dstar-main-run.md`,就是把一份不描述其读手的协议冻进
+`run_manifest.json`——和 §1.2 修的是同一类错,换个地方犯,而且同样没有回头路。
+
+新文档以 sha256 引用 2026-09-08 那份(`e276f3c7…6b46ef`),该文件**逐字节不动**:
+主运行的 provenance 因此完好,replicate 冻的是描述自己的那一份。
+§1.2 点出的「单 seed / 五 seed」不吻合,也在新文档 §8 里当场处置了,不再悬着。
+
+**改成这五条**,与 §1.2 唯一的差别是 `--protocol` 换了文件:
+
+```
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260906 --config configs/v4_e3_replicate_s20260906.yaml --arms naive blind_self --protocol docs/prereg/2026-09-10-join-granularity.md
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260907 --config configs/v4_e3_replicate_s20260907.yaml --arms naive blind_self --protocol docs/prereg/2026-09-10-join-granularity.md
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260909 --config configs/v4_e3_replicate_s20260909.yaml --arms naive blind_self --protocol docs/prereg/2026-09-10-join-granularity.md
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260910 --config configs/v4_e3_replicate_s20260910.yaml --arms naive blind_self --protocol docs/prereg/2026-09-10-join-granularity.md
+envs/core/python.exe -u scripts/run_decoupling_pilot.py --outdir runs/v4/e3-s20260911 --config configs/v4_e3_replicate_s20260911.yaml --arms naive blind_self --protocol docs/prereg/2026-09-10-join-granularity.md
+```
+
+`tests/test_section_1_launch_commands.py` 改读本节(`SECTION = "### 1.3 "`,
+`PROTOCOL` 跟着换),12 个测试原样有效。它仍然核「那份不是 supervisor 的缺省」,
+所以缺省哪天被改成 2026-09-10 这份,这条会提醒连本节一起改。
+
 ---
 
 ## 2. E4 的三条命令 —— 已跑完,3/3 复现
