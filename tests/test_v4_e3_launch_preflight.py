@@ -618,3 +618,86 @@ def test_the_unmerged_side_would_be_refused_for_every_reason(tmp_path):
     assert message.count(";") == 4
     assert "training_seed" in message
     assert "the arm set is still hardcoded" in message
+
+
+# --- gate_split_check_landed -----------------------------------------------
+#
+# The merge supplies the verifier at version 1; version 2 is a patch applied
+# after it. Same separation as above, and the same danger: a gate that asks
+# for something nobody provides, or names a file that does not exist.
+
+SPLIT_PACKET = "review-packets/replicate-split-identity-20260910"
+PATCHED = Path(ROOT) / SPLIT_PACKET / "v4_verify_replicates.patched.py"
+
+
+def test_the_packet_really_provides_what_the_split_gate_asks_for(tmp_path):
+    """The writer-first half, and it needs no branch: the provider is here."""
+
+    assert PATCHED.exists(), f"{PATCHED} is what the gate is written against"
+    _plant(tmp_path, {"scripts/v4_verify_replicates.py":
+                      PATCHED.read_text(encoding="utf-8")})
+    passed, message = preflight.gate_split_check_landed(tmp_path)
+    assert passed, message
+    assert message == "version 2, --main required"
+
+
+def test_the_patch_the_gate_names_is_a_file_that_exists():
+    """An operator reading the refusal has to be able to run what it says.
+
+    The card-schedule gate once named a filename nobody had written. A gate
+    whose remedy does not exist is worse than no gate: it is read as done.
+    """
+
+    assert (Path(ROOT) / preflight.SPLIT_PATCH).exists()
+    assert preflight.SPLIT_CHECK == "scripts/v4_verify_replicates.py"
+
+
+def test_the_merged_version_of_the_verifier_is_refused(tmp_path):
+    """Version 1 is what the merge lands, and it is not enough on its own."""
+
+    files = _branch_files()
+    if files is None:
+        pytest.skip(f"{ARM_B} is not in this checkout")
+    _plant(tmp_path, {"scripts/v4_verify_replicates.py":
+                      files["scripts/v4_verify_replicates.py"]})
+    passed, message = preflight.gate_split_check_landed(tmp_path)
+    assert not passed
+    assert "is not version 2" in message
+    assert preflight.SPLIT_PATCH in message
+
+
+def test_an_absent_verifier_is_sent_to_the_merge_gate(tmp_path):
+    """Two gates fail on one cause; only one of them should claim to explain it."""
+
+    passed, message = preflight.gate_split_check_landed(tmp_path)
+    assert not passed
+    assert "see the arm B merge gate first" in message
+
+
+def test_dropping_required_on_main_is_caught(tmp_path):
+    """`verify()` keeps `main` optional so the older tests still call it.
+
+    The command line is the only thing that makes that safe, so this gate has
+    to notice if someone relaxes it.
+    """
+
+    source = PATCHED.read_text(encoding="utf-8").replace("required=True", "required=False")
+    _plant(tmp_path, {"scripts/v4_verify_replicates.py": source})
+    passed, message = preflight.gate_split_check_landed(tmp_path)
+    assert not passed
+    assert "--main is not required" in message
+
+
+def test_dropping_the_main_comparison_is_caught(tmp_path):
+    source = PATCHED.read_text(encoding="utf-8").replace("split_matches_main", "gone")
+    _plant(tmp_path, {"scripts/v4_verify_replicates.py": source})
+    passed, message = preflight.gate_split_check_landed(tmp_path)
+    assert not passed
+    assert "not the main run's" not in message  # that is the verifier's wording
+    assert "compares the replicates' split to the main run's" in message
+
+
+def test_the_gate_is_in_the_registry_under_its_own_name():
+    """A gate that is never called is the failure family this repo keeps hitting."""
+
+    assert preflight.GATES["replicate split check"] is preflight.gate_split_check_landed

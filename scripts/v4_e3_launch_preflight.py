@@ -146,6 +146,44 @@ def gate_merge_landed(root: Path = ROOT) -> Gate:
     return (not missing), ("merged" if not missing else "; ".join(missing))
 
 
+SPLIT_CHECK = "scripts/v4_verify_replicates.py"
+SPLIT_PATCH = "review-packets/replicate-split-identity-20260910/split_check.patch"
+
+
+def gate_split_check_landed(root: Path = ROOT) -> Gate:
+    """The split check is a patch on top of the merge, not part of it.
+
+    `staging/arm-b-merged` supplies the verifier at version 1, which compares
+    the five replicates only with each other and compares them by the recipe
+    `digest`. Measured 2026-09-10: that digest is one number for the main
+    config and all five replicate configs, computable from config text before
+    a split stage has run, so the condition cannot fail -- and it stays true
+    for a replicate whose corpus grew and whose held-out set therefore
+    differs. Version 2 compares identity and requires the main run.
+
+    The test suite says all this too, by going red. This gate exists because
+    the preflight is what actually runs at four in the morning, and a patch
+    with no gate is a patch someone forgets.
+    """
+
+    path = root / SPLIT_CHECK
+    if not path.exists():
+        return False, f"{SPLIT_CHECK} is absent; see the arm B merge gate first"
+    source = path.read_text(encoding="utf-8")
+    missing = []
+    if 'VERSION = "v4_verify_replicates 2"' not in source:
+        missing.append(f"{SPLIT_CHECK} is not version 2: the split it compares is the "
+                       f"recipe digest, which is one number for all six configs and "
+                       f"cannot fail. Apply {SPLIT_PATCH}")
+    if "split_matches_main" not in source:
+        missing.append("nothing compares the replicates' split to the main run's")
+    if '"--main"' not in source or "required=True" not in source:
+        missing.append("--main is not required on the command line, so the comparison "
+                       "can be skipped by leaving a flag off")
+    return (not missing), ("version 2, --main required" if not missing
+                           else "; ".join(missing))
+
+
 def gate_configs(root: Path = ROOT) -> Gate:
     """Five configs, five training seeds, one partition."""
 
@@ -271,6 +309,7 @@ def gate_model_root() -> Gate:
 GATES = {
     "main run finished": gate_main_run_finished,
     "arm B merge landed": gate_merge_landed,
+    "replicate split check": gate_split_check_landed,
     "five replicate configs": gate_configs,
     "both cards free": gate_cards_free,
     "card schedule decided": gate_card_schedule_decided,

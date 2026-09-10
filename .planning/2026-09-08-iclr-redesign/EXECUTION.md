@@ -1235,6 +1235,58 @@ patched     : verdict='NOT independent seeds'  recipe_digests_shared=True
 `step-00056` 的生成链数据仍按登记的样子记录并交付,好坏都给,不加工。
 当前在 step-00048,还没到。
 
+## 0.20 §0.18 那个补丁在真正会跑的那条路上没有闸,补上(2026-09-10 11:2x)
+
+§0.18 做的逼落地机制是 `skipif` 测试:合并一落地它们生效,补丁没打就是红的。
+**前提是有人跑 pytest。** 而启动前真正会跑的是
+`scripts/v4_e3_launch_preflight.py`,它对那个文件只查「存在」。
+**一个没有闸的补丁,就是一个会被忘掉的补丁。**
+
+加了第七道闸 `gate_split_check_landed`,注册名 `replicate split check`。
+它和 `arm B merge landed` 分开,因为事实就是分开的:合并交付的是 version 1,
+version 2 来自合并之后的另一个补丁。
+
+查三件事,任一不成立即红:
+
+- `VERSION = "v4_verify_replicates 2"`,红的时候直接给出要打的补丁路径;
+- 源码里有 `split_matches_main`;
+- 命令行上 `"--main"` 且 `required=True`——`verify()` 里 `main` 保持可选,
+  只有在人走的那条路无法跳过时才安全,所以放松它要被看见。
+
+文件不存在时它不重复解释,只说「see the arm B merge gate first」:
+两道闸倒在同一个原因上,只该有一道声称自己在解释它。
+
+**writer-first 那一半不需要分支。** 提供方是 packet 里的
+`v4_verify_replicates.patched.py`,今天就在这条分支上,所以那个测试不 skip。
+另外还钉了一条:**闸给出的补救路径必须是真实存在的文件**——
+`gate_card_schedule_decided` 的注释里记着,早先有一版闸引用了一个谁都没写过的文件名,
+而「补救不存在的闸」比没有闸更坏,因为它会被读成已完成。
+
+实跑(主运行仍在 `rfo_gold.step-00048.detect.internvl`):
+
+```
+FAIL  arm B merge landed      ... scripts/v4_verify_replicates.py is absent ...
+FAIL  replicate split check   scripts/v4_verify_replicates.py is absent; see the arm B merge gate first
+ok    five replicate configs  5 configs, ... one partition seed 20260906, one split
+BLOCKED by 6 gate(s)
+```
+
+### 一个我自己犯的错,照记
+
+追加测试时我在文件末尾定义了 `PACKET = "review-packets/replicate-split-identity-20260910"`,
+**把该文件已有的模块级 `PACKET = "review-packets/card-scheduling-20260909"` 覆盖了**,
+`write_benchmark` 于是写进错误的目录,六个 card-schedule 测试当场红。改名 `SPLIT_PACKET` 后
+55 个全过。
+
+值得记的不是这个错本身,是它为什么一分钟内就被发现:**那六个测试存在**。
+往一个没有测试碰过该常量的文件末尾追加同名常量,同样的覆盖不会有任何声音——
+和本项目反复遇到的那一族(永远不执行 / 永远不失败 / 没人会说出来)是同一个形状,
+只是这次仪器在我这边工作了。
+
+`scripts/v4_e3_launch_preflight.py` 与 `tests/test_v4_e3_launch_preflight.py`
+在 HEAD 和合并树上是**同一个 blob**(`0ab9d5c1` / `f691d4f0`),
+所以在这条分支上改它们不会给合并制造冲突。两者都不在 `SOURCES` 里,主运行不核它们。
+
 ## 1. arm B 的启动:代码已就位,只等主运行让出卡
 
 预注册钉死了跑法:**同一份 config,`--arms naive blind_self`,新输出目录**。
