@@ -36,6 +36,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import random
+import statistics
 import sys
 from pathlib import Path
 
@@ -75,6 +77,54 @@ def rate(segs, lens):
     return t / n, t / (c / 100.0), n, len(segs)
 
 
+def null_ratio(segs, lens, draws: int, seed: int = 20260911):
+    """The half/half ratio with the time ordering destroyed and nothing else.
+
+    Each segment keeps its own (dt, rows, chars); only their order is shuffled,
+    then the same rows-balanced split is applied.  This is the control 0.35 SS4
+    registered: treatment and control are the same data, and differ in exactly
+    the one variable a trajectory claim is about.  Returns
+    (median, sd, lo95, hi95, max, observed, sd_above_median, p).
+    """
+    triples = [(dt, hi - lo, sum(lens[lo:hi])) for lo, hi, dt in segs]
+
+    def ratio(order):
+        half = sum(x[1] for x in order) / 2
+        acc, cut = 0.0, 0
+        for i, x in enumerate(order):
+            if acc >= half:
+                break
+            acc += x[1]
+            cut = i + 1
+        a, b = order[:cut], order[cut:]
+        if not a or not b or not sum(x[2] for x in a) or not sum(x[2] for x in b):
+            return None
+        ra = sum(x[0] for x in a) / (sum(x[2] for x in a) / 100.0)
+        rb = sum(x[0] for x in b) / (sum(x[2] for x in b) / 100.0)
+        return ra / rb
+
+    obs = ratio(triples)
+    if obs is None:
+        return None
+    rng = random.Random(seed)
+    draw = []
+    for _ in range(draws):
+        o = triples[:]
+        rng.shuffle(o)
+        r = ratio(o)
+        if r is not None:
+            draw.append(r)
+    if not draw:
+        return None
+    draw.sort()
+    n = len(draw)
+    med, sd = statistics.median(draw), statistics.pstdev(draw)
+    # two-sided: how often does a shuffle depart from 1.0 by at least as much?
+    pv = sum(1 for x in draw if abs(x - 1.0) >= abs(obs - 1.0)) / n
+    return (med, sd, draw[int(0.025 * n)], draw[int(0.975 * n)], draw[-1],
+            obs, (obs - med) / sd if sd else float("nan"), pv)
+
+
 def fmt(r):
     return "   (none)" if r is None else f"{r[0]:6.2f} s/img  {r[1]:6.3f} s/100ch  n={r[2]:3d} seg={r[3]:2d}"
 
@@ -85,6 +135,9 @@ def main() -> None:
     ap.add_argument("--step", default=None, help="override; else read from the csv")
     ap.add_argument("--arm", default=None, help="for single-cell csvs with no arm column")
     ap.add_argument("--det", default=None)
+    ap.add_argument("--perm", type=int, default=0,
+                    help="shuffled-ordering null for the half/half ratio, N draws "
+                         "(0.35 SS4 used 5000); off by default so the plain output is stable")
     args = ap.parse_args()
 
     rows = Path(args.profile).read_text(encoding="utf-8").splitlines()
@@ -124,7 +177,8 @@ def main() -> None:
         whole = rate(segs, lens)
         results[key] = dict(first=rate(first, lens), second=rate(second, lens),
                             odd=rate(odd, lens), even=rate(even, lens), whole=whole,
-                            lo=lo, hi=hi, total=len(lens))
+                            lo=lo, hi=hi, total=len(lens),
+                            null=null_ratio(segs, lens, args.perm) if args.perm else None)
         print(f"{arm+'.'+det:<22}rows {lo:3d}-{hi:3d} of {len(lens):3d}   {fmt(whole)}")
 
     print("\nwithin-cell trajectory, in s/100chars (0.27 unit rule)")
@@ -140,6 +194,18 @@ def main() -> None:
         ctrl = (e[1] - o[1]) / o[1] * 100
         print(f"{arm+'.'+det:<22}{f1[1]:10.3f}{f2[1]:10.3f}{traj:+8.1f}%   "
               f"{o[1]:9.3f}{e[1]:9.3f}{ctrl:+8.1f}%")
+
+    if any(r["null"] for r in results.values()):
+        print()
+        print(f"shuffled-ordering null for the half/half ratio ({args.perm} draws)")
+        print(f"{'cell':<22}{'observed':>10}{'null med':>10}{'sd':>8}"
+              f"{'95% of null':>18}{'null max':>10}{'sd above':>10}{'p':>9}")
+        for key, r in results.items():
+            if not r["null"]:
+                continue
+            med, sd, lo95, hi95, mx, obs, z, pv = r["null"]
+            print(f"{key[1] + '.' + key[2]:<22}{obs:10.3f}{med:10.3f}{sd:8.4f}"
+                  f"   [{lo95:6.3f}, {hi95:6.3f}]{mx:10.3f}{z:10.1f}{pv:9.4f}")
 
     if len(results) >= 2:
         print("\nbetween-cell, in s/img (the between-cell unit)")
