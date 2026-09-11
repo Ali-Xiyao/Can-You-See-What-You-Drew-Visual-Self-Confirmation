@@ -2608,6 +2608,152 @@ reply 长度的轨迹倒是整列一致(首32→末32 上升 48%–73%,中位 54
 §0.29 的三条(平台 / external 不动 / 两臂分不开)**仍然没有结算**,结算点是 `step-00088.report`。
 没有碰运行目录(只读 mtime / 行数 / reply 长度),没有跑 GPU,没有改任何已冻结的记录。
 
+## 0.34 `step-00064.report` 的收窄点:余量从 +3.13 涨到 +5.67 h;两个终点在同一个 checkpoint 上翻号(2026-09-11 00:0x)
+
+`step-00064.report` 落地 **09-10 23:59:25**,`round-008.train` 00:02 起跑。
+
+### 一、收窄点(`scripts/v4_wall_clock_projection.py` 出数,不手算)
+
+```
+ladder 0..88(12 个报告),已落地 9,最后一个 step-00064 @ 09-10 23:59:25,剩 3
+本轮 -> step-00064   6.10 h
+elapsed 64.44 h of 96   left 31.56 h   3 rounds   budget 10.52 h/round
+
+pace                     h/round        finish     elapsed   margin
+worst full round            8.63    09-12 01:53     90.33    +5.67
+mean of the last four       6.89    09-11 20:38     85.09   +10.91
+mean of every full round    6.67    09-11 20:00     84.45   +11.55
+fastest full round          5.38    09-11 16:07     80.57   +15.43
+stop line  09-12 07:33:13
+```
+
+**最坏情况余量从 §0.31 的 +3.13 h 涨到 +5.67 h。** 每少一轮,最坏情况就少乘一次 8.63。
+**而且这一轮里含着 §0.31 那 61 分钟未归因载荷,仍然只有 6.10 h。**
+§0.31 §七 估那次载荷值 ≈ +0.42 h;没有它这一轮约 5.7 h,和 step-56 的 5.38 h 同档。
+
+### 二、step-64 的阶段梯子(臂内、按 barrier 裁剪)
+
+```
+round-007.train                     09-10 19:31:24
+naive    generate          20:58:36   87.20 min      rfo_gold generate         21:26:00  114.60 min
+         detect.qwen3vl    21:27:17   28.68          detect.qwen3vl   22:50:20   84.33
+         detect.internvl   21:56:33   29.26          detect.internvl  23:48:11   57.85
+         crop              22:00:56    4.39          crop             23:54:22    6.19
+         verify            22:00:58    0.03          verify           23:54:23    0.00
+         gradient          22:07:57    6.97          gradient         23:59:17    4.91
+step-00064.score 23:59:23   report 23:59:25   gradient-sensitivity 23:59:26   plot 23:59:31
+```
+
+naive 的链条 22:07:57 就结束了,**报告等了 1 小时 51 分钟等 gold**。关键路径全程在 gold。
+
+### 三、主终点数值:**记,不结算**
+
+```
+ step   naive int   gold int     臂差   |  naive ext   gold ext     臂差
+   48    -2.0450    -2.0712   +0.0261  |    0.2641     0.2457   +0.0184
+   56    -2.0516    -2.0433   -0.0082  |    0.2479     0.2681   -0.0202
+   64    -2.0967    -2.0571   -0.0396  |    0.2532     0.2803   -0.0272   <- 新
+```
+
+```
+step-64 naive     internal_sem 0.09638  n 64   external_n 237  unadjudicated 19  s_select 0.9141
+step-64 rfo_gold  internal_sem 0.09822  n 64   external_n 239  unadjudicated 17  s_select 0.9063
+两臂 s_select_available 316 / 316
+```
+
+- **naive 的 internal 掉了 0.0451。** 这是 step-16→24 以来最大的单步变化,
+  而且**比 §0.29 §二.1 说的那个「平台」(step-32..56 整段跨度 0.0194)还大一倍以上**。
+  gold 只掉 0.0138。
+- 两个 external 都仍在 §0.29 (B) 的 0.203–0.317 里(gold 的 0.2803 是全表最高值)。
+- internal 臂差 0.0396 落在 §0.29 (C) **预先声明的模糊带 0.027–0.08** 里。
+
+**不结算。** §0.29 §五 写死了:「中途的 64 / 72 / 80 照常记,但不在中途结算——
+这三条是对 step-88 写的。」**结算点仍是 `step-00088.report`。**
+
+### 四、两个终点在同一个 checkpoint 上翻号,而且在 step-64 一起变大
+
+臂差(naive − gold)按 step 排:
+
+```
+step        08      16      24      32      40      48      56      64
+internal  -0.0013 +0.0267 +0.0055 +0.0112 +0.0210 +0.0261 -0.0082 -0.0396
+external  +0.0060 +0.0049 +0.0155 +0.0159 +0.0013 +0.0184 -0.0202 -0.0272
+```
+
+**两条都在 step-56 从正翻到负,都在 step-64 继续变大**,而且
+**两条在 step-64 都是全程绝对值最大**(internal 此前最大 0.0267,external 此前最大 0.0202)。
+
+**这是描述,n=2。** 两个 checkpoint 不是趋势;写下来是因为如果它继续,
+§0.29 (C) 会在 step-88 被判否——**而那是 (C) 该发生的事,不是需要现在解释的事。**
+
+### 五、(C) 的阈值该拿什么当参照——不是不配对 SE
+
+§0.29 §三 说过「internal 的 SEM 0.094 是水平量的 SEM,不是差值的 SE;
+差值要配对,而配对数据正好是拿不到的那个」。**那句是对的,但它没说该用什么。**
+现在能算:
+
+```
+不配对地合成差值 SE   sqrt(0.09638^2 + 0.09822^2) = 0.1376
+臂差自身在 8 个 checkpoint 上的经验离散度   sd = 0.0221     <- 小 6.2 倍
+```
+
+小 6.2 倍,是因为**两臂在每个 checkpoint 上评的是同一批 64 个 spec**——
+配对在 spec 层面客观存在,只是报告没有把它露出来。
+
+于是 §0.29 (C) 的阈值:
+
+```
+                  按不配对 SE      按经验离散度
+internal  0.08      0.58 SE          3.6 sd
+external  0.057        --            3.4 sd
+step-64 实测 internal 0.0396 = 1.8 sd,external 0.0272 = 1.6 sd
+```
+
+**如果拿不配对 SE 当参照,(C) 是一条坏判据**:零假设下单个 checkpoint 越过 0.08 的概率
+是 P(|Z| >= 0.58) = 0.56,四个 checkpoint 至少一次是 **96%**——**几乎必然被判否**。
+按经验离散度它是 3.6 sd,是一条正常的判据。**(C) 站得住,但站住的理由和 §0.29 写的不是同一个。**
+
+**这个经验离散度自己也有个限制**:后两个 checkpoint 翻了号,
+所以 0.0221 里混着趋势和噪声,是个偏大的估计。**不拿它做显著性检验**,只用来说明阈值的量级。
+
+### 六、结构性零在第九个 checkpoint 上原样重现
+
+```
+两臂 first_candidate_step = None
+七个 window 全部:n_paired_specs 0,n_start_complete 0,n_end_complete 0,
+                  ci_status "insufficient_paired_specs",candidate false
+最新窗口 [48, 56, 64] 也一样
+scene_audit_status  absent; spec independence is an unchecked assumption
+```
+
+**一个新细节**:同一个窗口里,**补充性的 robustness 路径拿得到配对**——
+`n_population_specs 64`,`n_external_paired_specs 41`,`n_external_unknown_pairs 23`。
+所以 join granularity 的缺陷**专杀已注册的那条路径**,而补充路径活着。
+这正是 `read_outcome_repair.patch` 针对的东西(§0.30 已验过它把三条红变绿),
+也解释了为什么「报告里有数」和「判决拿得到」是两回事。
+
+### 七、§0.31 那次载荷不污染本节的数值
+
+**墙钟载荷改变的是速度,不是输出。** 没有任何机制让「一小时跑得慢」改变
+`internal_cycle` 或 `external_correct`。写这一句是因为 step-64 的 internal 正好
+出现了全程最大的单步移动,而同一个 step-64 又正好是载荷 cell——
+**这两件事在这里相遇纯属同一个 checkpoint,不是因果。**
+
+### 八、ETA 仪器校验
+
+```
+22:25 用整列中位估    report ~00:16      实际 23:59:25    早 17 min(94 min 视界)
+23:52 用剩余阶段估    report ~00:08      实际 23:59:25    早  9 min(16 min 视界)
+```
+
+两次都偏晚,原因是 gold 的 crop 用了 6.19 min(列中位 10.65)、gradient 4.91 min(中位 5.4)。
+**列中位对整条链够用(§0.32 §五 naive 那次差 2.7%),对尾部两个短阶段偏保守。**
+
+### 九、没动的东西
+
+§0.29 的三条**仍未结算**。没有碰运行目录(只读 CSV / JSON / 标记 mtime),没有跑 GPU,
+没有改任何已冻结的记录,`ICLR-2028.md` §12 没有打开。
+
 ## 1. arm B 的启动:代码已就位,只等主运行让出卡
 
 预注册钉死了跑法:**同一份 config,`--arms naive blind_self`,新输出目录**。
