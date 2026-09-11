@@ -43,3 +43,9 @@ htmlcov/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Generated images inside these two review packets stay on disk, not in git
+# (see 8b76566): 1037 files, 179 MB, the same class of artifact /runs/ holds.
+# Their reports, protocols, answers.jsonl and results.json ARE tracked.
+review-packets/generator-repair-validation-20260907/**/*.png
+review-packets/replay-ablation-20260906/**/*.png
