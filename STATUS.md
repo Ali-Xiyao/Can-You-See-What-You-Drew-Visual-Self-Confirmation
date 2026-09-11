@@ -10,7 +10,7 @@
 下的 `user-pause-request.json`、`controller-paused.json`、`pause-inventory.json`。以后恢复须由用户另行授权，
 不得按旧心跳继续或把暂停当成完成。
 
-最后更新：2026-09-06（America/Los_Angeles） · 分支 `codex/decoupling-pilot-20260906` · backbone `showlab/show-o2-1.5B` rev `07ec1658`（432px）
+最后更新：2026-09-11（America/Los_Angeles） · 分支 `paper/iclr-2028` · backbone `showlab/show-o2-1.5B` rev `07ec1658`（432px）
 
 > **2026-09-03 更正：主 backbone 是普通版 1.5B，不是 HQ。** 全部 v4 语料实际由普通版生成
 > （图为 432×432，HQ 是 512px）。此前本页多处写 HQ 是错的。v2.x/v3 时代的就绪审计与难度标定
@@ -19,6 +19,18 @@
 ---
 
 ## 正在跑
+
+**最新：v4 脱钩主运行仍在跑，已过 64.4/96 小时，12 个报告落地 9 个（§43.25）。**
+运行目录 `runs/v4/decoupling-main-20260908`，2026-09-08 07:33:13 启动，96 小时硬墙钟且不重置，
+停止线 2026-09-12 07:33:13。报告阶梯为 0/8/…/88 共 12 个，已落地到 `step-00064`
+（2026-09-10 23:59:25），剩 72/80/88；`round-008.train` 于 2026-09-11 00:02 起跑。
+按最慢整轮 8.63 h/轮外推，完成于 09-12 01:53、耗时 90.33 h，**余量 +5.67 h**；
+按最近四轮均值 6.89 h/轮则余量 +10.91 h。工期一律由 `scripts/v4_wall_clock_projection.py` 出数，不手算。
+**主终点是描述性的，不是显著性**：单 seed、看了九次、未做多重校正，报告自带
+`exploratory: true`、`multiple_looks_adjusted: false`，两臂 `status: descriptive`。
+**D\* 判决仍然拿不到**：两臂 `first_candidate_step` 皆为 None，七个窗口 `n_paired_specs` 全为 0。
+§0.29 登记的三条预测**结算点是 `step-00088.report`**，中途的 64/72/80 只记不算。
+过程与仪器证据见 `.planning/2026-09-08-iclr-redesign/EXECUTION.md` §0.21–§0.34。
 
 **最新：A阶段已完成并独立核验，B阶段已启动（2026-09-07 06:15:54 UTC，§43.24A）。**
 A于05:25:40 UTC完成：128张配对图、8次base重复、256个配对损失实例、15360条回答及512个cycle。
@@ -3288,6 +3300,48 @@ pending_human、image_correct=null、factual_truth_unavailable=true，未添加d
 （SHA256 `6612e6b8de3a69538078af2d5efedd2cb6dc0d3616b17be445a343cc9355f80e`）及
 R2/secondary-workload-20260908T083923-1788856763778101900/results.json
 （SHA256 `3e5d4e5981979b8e90be76797bc95ab7681d70c24b268ef5564eed6e407279e2`）。
+
+**43.25 v4 脱钩主运行的中途状态：9/12 个 checkpoint，D\* 判决仍拿不到（2026-09-08 07:33 启动，截至 2026-09-11 00:0x）。**
+运行目录 `runs/v4/decoupling-main-20260908`，两臂 `naive` 与 `rfo_gold`，每个 checkpoint 每臂 256 张图、64 个 spec。
+96 小时墙钟是硬的且不重置。报告阶梯 `[0] + [(i+1)*8 for i in range(11)]` = 0/8/…/88 共 12 个，
+由配置导出而非写死（`scripts/run_decoupling_pilot.py:362-379`）。已落地 9 个，剩 72/80/88。
+
+**整轮耗时（报告到报告）**：7.06 / 6.22 / 5.89 / 8.63 / 7.44 / 5.38 / 6.10 h
+（0→8 的 5.48 h 不是整轮，索引 0 带两个报告、其间无训练）。最坏整轮外推余量 **+5.67 h**。
+
+**主终点的描述性轨迹。** `internal_cycle`（= `log p(prompt|image)`）在 step-24 之前涨完约 0.25 nat
+（naive +0.2590、rfo_gold +0.2535），其后基本平；step-64 上 naive 掉 0.0451、gold 掉 0.0138。
+`external_correct` 十八个（臂, checkpoint）值全部落在 **0.2457–0.2803**，而 n≈238 时 p=0.26 的二项 SE 是 0.0284。
+**D\* 的形状在描述性意义上在场，但它在两臂上同样在场**，所以产生它的不是臂之间的对比。
+臂差（naive − gold）在 internal 与 external 上**都在 step-56 由正翻负、在 step-64 继续变大**
+（0.0396 / 0.0272，均为全程最大）；这是 n=2 的描述，不是趋势。臂差自身在八个 checkpoint 上的
+经验离散度为 0.0221，比不配对合成的 0.1376 小 6.2 倍——**差值的参照应当用前者**，因为两臂评的是同一批 spec。
+
+**D\* 判决拿不到的机制。** `scripts/v4_decoupling_report.py:165` 要求一个 spec 的**每一张图**同时有 score 与 verdict
+才算 complete；每 checkpoint 是 256 图 / 64 spec = 每 spec 四张，而带分数的只有 64 张（每 spec 一张、仅首次绘制），
+于是 `complete_specs` 结构性为 0，七个窗口 `n_paired_specs` 全 0、`ci_status` 全为 `insufficient_paired_specs`。
+同一窗口内**补充性的 robustness 路径拿得到配对**（`n_external_paired_specs` 41 / 64），
+所以缺陷专杀已注册的那条路径。修法是 `review-packets/dstar-join-granularity-20260910/read_outcome_repair.patch`，
+已干跑验过：打上后它要修的三条红测试变绿，而未打时三条确实是红的（判据两边都能失败）。
+`scene_audit_status` 仍为 `absent; spec independence is an unchecked assumption`。
+
+**本轮登记的仪器缺陷（旧记录一律原样保留，缺陷作为新证据登记）。**
+§0.27 单位错误：一个「+22% 的变化」在 s/100chars 下只有 1.2%，被解释的对象根本不存在。
+§0.28 差一轮：一处与旧记录的分歧被当成了进度。
+§0.31 一段 61 分钟的未归因载荷（2026-09-10 19:44→20:45），两臂按墙钟同时起落，
+已排除自查命令、本项目阶段切换、外来 GPU 作业、每日时段与热降频五项，代价约 +0.42 h；
+同节证伪了「载荷把两臂按同比例拖慢」。§0.32 证伪了「step-56 是唯一干净的 cell」（r = +0.005）。
+§0.33 我自己写的预注册三段不互斥，且判决取决于没钉死的单位——结算为未判定。
+§0.33 还量到：一个 cell 内部前后半的差距等于整列九个 cell 的全距，
+所以 cell 总量可比的前提是「内部轨迹形状相同」，这条从未检查过且只能在跑的时候检查；
+记录器与首份轨迹在 `review-packets/detect-cell-profile-20260910/`。
+
+**主运行结束后才做的事（已干跑，不在结束前动）**：打 `read_outcome_repair.patch`；
+摘 `tests/test_read_outcome_join_granularity.py:96/103/116` 三个 `NEEDS_REPAIR`；设 `SELFSIGHT_MODEL_ROOT`；
+跑 `scripts/v4_e3_launch_preflight.py`（当前 `BLOCKED by 6 gate(s)`，五条等卡、一条等该环境变量）；
+非快进合并 `staging/arm-b-merged`（当前无冲突）；打 `split_check.patch`；跑 card benchmark；起五个 replicate。
+
+**这一节不宣布任何结论。** 不是显著性、不是 D\*、不是 D_g；§0.29 的三条预测结算点是 `step-00088.report`。
 
 ## 已作废 / 已被取代
 
