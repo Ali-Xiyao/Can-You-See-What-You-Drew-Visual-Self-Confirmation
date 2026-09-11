@@ -1,0 +1,30 @@
+[
+  {
+    "device": "cuda:0",
+    "pid": 11240,
+    "command": [
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+      "-B",
+      "-u",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\worker.py",
+      "--device",
+      "cuda:0",
+      "--deadline",
+      "1788714886.8788164"
+    ]
+  },
+  {
+    "device": "cuda:1",
+    "pid": 33140,
+    "command": [
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+      "-B",
+      "-u",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\worker.py",
+      "--device",
+      "cuda:1",
+      "--deadline",
+      "1788714886.8788164"
+    ]
+  }
+]

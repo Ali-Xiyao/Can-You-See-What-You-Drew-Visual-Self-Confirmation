@@ -1,0 +1,8 @@
+{
+  "at_utc": "2026-09-08T03:53:42.949103+00:00",
+  "successor_pid": 20608,
+  "handoff_directory": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v3",
+  "reason": "scheduler_optimization",
+  "old_controller_pid": 7700,
+  "old_workers_preserved": true
+}

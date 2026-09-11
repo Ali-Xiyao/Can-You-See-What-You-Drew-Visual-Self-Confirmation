@@ -1,0 +1,15 @@
+{
+  "at_utc": "2026-09-06T13:47:41.360795+00:00",
+  "task": {
+    "id": "naive-balanced_absence",
+    "arm": "naive",
+    "variant": "balanced_absence",
+    "device": "cuda:0"
+  },
+  "steps": 32,
+  "n_probe_answers": 6600,
+  "n_full_answers": 5454,
+  "parameter_digest": "f1f47185b1b67da91b66934bcb36b6dc3cadb1e6322c5aa0d6a4ee889d86fed2",
+  "training_sha256": "be12cc9342b4c2e1bae794f85475bfe774197a34aba924688e6f520334d055a9",
+  "research_goal_complete": false
+}

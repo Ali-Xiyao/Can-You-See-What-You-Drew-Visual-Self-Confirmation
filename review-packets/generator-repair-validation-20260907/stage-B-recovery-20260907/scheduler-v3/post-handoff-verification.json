@@ -1,0 +1,83 @@
+{
+  "at_utc": "2026-09-08T03:54:02.323694+00:00",
+  "controller": {
+    "at_utc": "2026-09-08T03:53:43.669255+00:00",
+    "pid": 20608,
+    "deadline": 1788894000.0,
+    "identity": {
+      "pid": 20608,
+      "create_time": 1788839615.6756227,
+      "cmdline": [
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\core\\python.exe",
+        "-B",
+        "-u",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v3\\scheduler.py"
+      ]
+    },
+    "handoff_sha256": "d75ccbea10718977909c5dd95715f33e6f5c3762307a25d28f80749af5add8ee",
+    "recovery_plan_sha256": "e94cf2d7ba3622889df07e0b5cf369914ded2307690b4dadab0c83031bf295d8",
+    "scheduler_sha256": "2f67744bdae646b173b5128de31867c61e9daf2979c3c4e4f17215921704542f",
+    "new_optimizer_steps": 0,
+    "observer_devices_unchanged": true,
+    "whole_batch_shared_detection_queue": true
+  },
+  "state": {
+    "at_utc": "2026-09-08T03:53:58.707145+00:00",
+    "status": "running",
+    "pid": 20608,
+    "deadline": 1788894000.0,
+    "active_jobs": [
+      {
+        "pid": 4896,
+        "create_time": 1788837654.8717682,
+        "cmdline": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\observation_resume.py",
+          "--shard",
+          "0",
+          "--deadline",
+          "1788894000.0"
+        ],
+        "name": "observe-gpu0",
+        "kind": "observation",
+        "shard": 0,
+        "device": "cuda:0",
+        "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\observe-gpu0.log"
+      },
+      {
+        "pid": 20472,
+        "create_time": 1788838146.0861485,
+        "cmdline": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\detector_recovery.py",
+          "detect-batch",
+          "--batch",
+          "batch-01",
+          "--deadline",
+          "1788894000.0",
+          "--device",
+          "cuda:1"
+        ],
+        "name": "detect-batch-01",
+        "kind": "detection",
+        "batch": "batch-01",
+        "device": "cuda:1",
+        "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\detect-batch-01.log"
+      }
+    ],
+    "completed_batches": [
+      "batch-00"
+    ],
+    "completed_observer_shards": []
+  },
+  "old_controller_exited": true,
+  "worker_identities_unchanged": true,
+  "observation_answers": 27948,
+  "current_qwen_calls": 88,
+  "current_qwen_latest_finished_utc": null,
+  "failure_markers": false
+}

@@ -1,0 +1,406 @@
+{
+  "schema_version": 1,
+  "sampled_at_utc": "2026-09-08T03:48:28.896772+00:00",
+  "purpose": "Read-only evidence snapshot and conditional ETA for device-preserving scheduler-v2; no experiment inputs or live processes modified.",
+  "snapshot_is_atomic_across_files": false,
+  "parse_warnings": [],
+  "current_qwen_detect": {
+    "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\generation\\batch-01\\raw-calls.detect.qwen3vl.jsonl",
+    "completed_calls": 65,
+    "latency_seconds": {
+      "n": 65,
+      "mean": 16.717611615384616,
+      "median": 14.691946,
+      "p90_nearest_rank": 28.26711,
+      "minimum": 7.105481,
+      "maximum": 38.334063
+    },
+    "first_started_utc": "2026-09-08T03:30:07.292680+00:00",
+    "last_finished_utc": "2026-09-08T03:48:14.659561+00:00",
+    "status_counts": {
+      "ok": 65
+    }
+  },
+  "completed_crop_calls": {
+    "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\generation\\batch-00\\raw-calls.crop.qwen3vl.jsonl",
+    "completed_calls": 28,
+    "latency_seconds": {
+      "n": 28,
+      "mean": 10.876492142857142,
+      "median": 9.1700405,
+      "p90_nearest_rank": 18.512021,
+      "minimum": 5.873901,
+      "maximum": 20.993876
+    },
+    "first_started_utc": "2026-09-08T03:23:54.052137+00:00",
+    "last_finished_utc": "2026-09-08T03:28:59.010116+00:00",
+    "status_counts": {
+      "ok": 28
+    }
+  },
+  "old_qwen_visible_reply_token_audit": {
+    "n": 150,
+    "tokenizer_path": "H:\\Xiyao_Wang\\001_models\\Qwen3-VL-8B-Instruct\\tokenizer.json",
+    "method": "CPU tokenizer encode(decoded reply, add_special_tokens=False); this is visible reply length, not captured generated token IDs.",
+    "token_counts": {
+      "n": 150,
+      "mean": 101.32666666666667,
+      "median": 106.0,
+      "p90_nearest_rank": 144,
+      "minimum": 36,
+      "maximum": 215
+    },
+    "complete_json_arrays": 150,
+    "replies_at_least_500_tokens": 0,
+    "supports_most_qwen_calls_hit_512": false
+  },
+  "new_qwen_visible_reply_tokens": {
+    "n": 65,
+    "mean": 81.66153846153846,
+    "median": 72,
+    "p90_nearest_rank": 143,
+    "minimum": 36,
+    "maximum": 179
+  },
+  "internvl_failure_diagnostic": {
+    "source": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\diagnostic-result.json",
+    "model": "internvl",
+    "replay_reply_tokens": 512,
+    "was_qwen": false,
+    "claim_supported": "The diagnostic InternVL reply ends at 512 visible tokens and is truncated invalid JSON; this does not establish a Qwen slowdown cause."
+  },
+  "old_timing_audit": {
+    "source": "review-packets\\generator-repair-validation-20260907\\stage-B\\detect-batch-00.log",
+    "waiting_log_entries": 14,
+    "minimum_queue_seconds": 3900,
+    "waiting_log_interval_seconds": 300,
+    "task_started_to_output_mtime_is_not_pure_inference": true,
+    "cumulative_loop_timer_starts_after_gpu_queue_and_loading": true,
+    "derived_loop_intervals": [
+      {
+        "first_image": 2,
+        "last_image": 26,
+        "seconds_per_image": 129.216
+      },
+      {
+        "first_image": 27,
+        "last_image": 51,
+        "seconds_per_image": 200.88
+      },
+      {
+        "first_image": 52,
+        "last_image": 76,
+        "seconds_per_image": 118.624
+      },
+      {
+        "first_image": 77,
+        "last_image": 101,
+        "seconds_per_image": 18.316
+      },
+      {
+        "first_image": 102,
+        "last_image": 126,
+        "seconds_per_image": 14.092
+      }
+    ],
+    "earlier_slow_segment_cause": "undetermined from available logs"
+  },
+  "observations": {
+    "expected_answers": 108000,
+    "completed_answers": 26892,
+    "shards": {
+      "0": {
+        "expected_answers": 72000,
+        "completed_answers": 26892,
+        "remaining_answers": 45108
+      },
+      "1": {
+        "expected_answers": 36000,
+        "completed_answers": 0,
+        "remaining_answers": 36000
+      }
+    },
+    "files": [
+      {
+        "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\observations\\gpu0\\base\\answers.jsonl",
+        "shard": "0",
+        "observer": "base",
+        "rows": 1800,
+        "answers": 18000,
+        "answer_errors": 0,
+        "abstentions": 0,
+        "latest_finished_utc": "2026-09-07T11:54:45.848959+00:00",
+        "question_latency_seconds_mean": 0.2921300049722033,
+        "recent_recovery_answer_count": 0,
+        "recent_question_latency_seconds_mean": null,
+        "recent_wall_seconds_per_answer": null,
+        "complete_marker_exists": true
+      },
+      {
+        "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\observations\\gpu0\\naive-original\\answers.jsonl",
+        "shard": "0",
+        "observer": "naive-original",
+        "rows": 897,
+        "answers": 8892,
+        "answer_errors": 0,
+        "abstentions": 0,
+        "latest_finished_utc": "2026-09-08T03:48:28.741015+00:00",
+        "question_latency_seconds_mean": 0.2756894278901227,
+        "recent_recovery_answer_count": 2092,
+        "recent_question_latency_seconds_mean": 0.32464522844167126,
+        "recent_wall_seconds_per_answer": 0.33744558508604205,
+        "complete_marker_exists": false
+      }
+    ]
+  },
+  "batches": [
+    {
+      "id": "batch-00",
+      "manifest_images": 150,
+      "verification_complete": true,
+      "detectors": {
+        "qwen3vl": {
+          "records": 150,
+          "records_with_detections": 150,
+          "error_records": 0
+        },
+        "internvl": {
+          "records": 150,
+          "records_with_detections": 149,
+          "error_records": 1
+        }
+      },
+      "verification_summary": {
+        "n_images": 150,
+        "resolution_counts": {
+          "agreed_verdict": 69,
+          "agreed": 67,
+          "resolved_by_crop": 3,
+          "pending_human": 11
+        },
+        "unknown_image_labels": 11,
+        "quarantined_missing_detector_images": 1,
+        "single_detector_verdicts": 0,
+        "skipped_no_detection": 0
+      }
+    },
+    {
+      "id": "batch-01",
+      "manifest_images": 150,
+      "verification_complete": false,
+      "detectors": {
+        "qwen3vl": {
+          "records": 65,
+          "records_with_detections": 65,
+          "error_records": 0
+        },
+        "internvl": {
+          "records": 0,
+          "records_with_detections": 0,
+          "error_records": 0
+        }
+      }
+    },
+    {
+      "id": "batch-02",
+      "manifest_images": 150,
+      "verification_complete": false,
+      "detectors": {
+        "qwen3vl": {
+          "records": 0,
+          "records_with_detections": 0,
+          "error_records": 0
+        },
+        "internvl": {
+          "records": 0,
+          "records_with_detections": 0,
+          "error_records": 0
+        }
+      }
+    },
+    {
+      "id": "batch-03",
+      "manifest_images": 150,
+      "verification_complete": false,
+      "detectors": {
+        "qwen3vl": {
+          "records": 0,
+          "records_with_detections": 0,
+          "error_records": 0
+        },
+        "internvl": {
+          "records": 0,
+          "records_with_detections": 0,
+          "error_records": 0
+        }
+      }
+    },
+    {
+      "id": "batch-04",
+      "manifest_images": 150,
+      "verification_complete": false,
+      "detectors": {
+        "qwen3vl": {
+          "records": 0,
+          "records_with_detections": 0,
+          "error_records": 0
+        },
+        "internvl": {
+          "records": 0,
+          "records_with_detections": 0,
+          "error_records": 0
+        }
+      }
+    },
+    {
+      "id": "batch-05",
+      "manifest_images": 150,
+      "verification_complete": false,
+      "detectors": {
+        "qwen3vl": {
+          "records": 0,
+          "records_with_detections": 0,
+          "error_records": 0
+        },
+        "internvl": {
+          "records": 0,
+          "records_with_detections": 0,
+          "error_records": 0
+        }
+      }
+    }
+  ],
+  "eta": {
+    "schedule": "GPU1 finishes current batch01 then observes shard1 on cuda:1; GPU0 finishes shard0 on cuda:0 then claims unstarted detection batches; both GPUs claim remaining whole batches once free.",
+    "assumptions": {
+      "qwen_seconds_per_remaining_image": [
+        16,
+        30
+      ],
+      "internvl_seconds_per_remaining_image": [
+        14,
+        23
+      ],
+      "crop_seconds_per_150_image_batch": [
+        300,
+        900
+      ],
+      "loading_seconds_per_full_detection_batch": [
+        180,
+        480
+      ],
+      "cpu_verification_seconds_per_batch": [
+        30,
+        120
+      ],
+      "observer_seconds_per_answer": [
+        0.29,
+        0.38
+      ],
+      "gpu0_remaining_observer_load_overhead_seconds": [
+        240,
+        720
+      ],
+      "gpu1_full_observer_load_overhead_seconds": [
+        480,
+        1200
+      ],
+      "final_cpu_analysis_seconds": [
+        300,
+        1200
+      ],
+      "new_gpu_contention_or_suspension_seconds": 0
+    },
+    "full_150_image_detection_batch_seconds_range": [
+      5010,
+      9450
+    ],
+    "current_batch01_remaining_seconds_range": [
+      3970,
+      7500
+    ],
+    "scenarios": [
+      {
+        "name": "faster_sustained_throughput",
+        "observation_gpu0_finish_utc": "2026-09-08T07:30:30.216772+00:00",
+        "current_batch01_finish_utc": "2026-09-08T04:54:38.896772+00:00",
+        "observation_gpu1_finish_utc": "2026-09-08T07:56:38.896772+00:00",
+        "next_batch_schedule": [
+          {
+            "batch": "batch-02",
+            "device": "cuda:0",
+            "start_utc": "2026-09-08T07:30:30.216772+00:00",
+            "finish_utc": "2026-09-08T08:54:00.216772+00:00"
+          },
+          {
+            "batch": "batch-03",
+            "device": "cuda:1",
+            "start_utc": "2026-09-08T07:56:38.896772+00:00",
+            "finish_utc": "2026-09-08T09:20:08.896772+00:00"
+          },
+          {
+            "batch": "batch-04",
+            "device": "cuda:0",
+            "start_utc": "2026-09-08T08:54:00.216772+00:00",
+            "finish_utc": "2026-09-08T10:17:30.216772+00:00"
+          },
+          {
+            "batch": "batch-05",
+            "device": "cuda:1",
+            "start_utc": "2026-09-08T09:20:08.896772+00:00",
+            "finish_utc": "2026-09-08T10:43:38.896772+00:00"
+          }
+        ],
+        "remaining_seconds_to_computational_result": 25210.0,
+        "computational_finish_utc": "2026-09-08T10:48:38.896772+00:00",
+        "human_adjudication_included": false
+      },
+      {
+        "name": "slower_sustained_throughput",
+        "observation_gpu0_finish_utc": "2026-09-08T08:46:09.936772+00:00",
+        "current_batch01_finish_utc": "2026-09-08T05:53:28.896772+00:00",
+        "observation_gpu1_finish_utc": "2026-09-08T10:01:28.896772+00:00",
+        "next_batch_schedule": [
+          {
+            "batch": "batch-02",
+            "device": "cuda:0",
+            "start_utc": "2026-09-08T08:46:09.936772+00:00",
+            "finish_utc": "2026-09-08T11:23:39.936772+00:00"
+          },
+          {
+            "batch": "batch-03",
+            "device": "cuda:1",
+            "start_utc": "2026-09-08T10:01:28.896772+00:00",
+            "finish_utc": "2026-09-08T12:38:58.896772+00:00"
+          },
+          {
+            "batch": "batch-04",
+            "device": "cuda:0",
+            "start_utc": "2026-09-08T11:23:39.936772+00:00",
+            "finish_utc": "2026-09-08T14:01:09.936772+00:00"
+          },
+          {
+            "batch": "batch-05",
+            "device": "cuda:1",
+            "start_utc": "2026-09-08T12:38:58.896772+00:00",
+            "finish_utc": "2026-09-08T15:16:28.896772+00:00"
+          }
+        ],
+        "remaining_seconds_to_computational_result": 42480.0,
+        "computational_finish_utc": "2026-09-08T15:36:28.896772+00:00",
+        "human_adjudication_included": false
+      }
+    ],
+    "authorized_deadline_utc": "2026-09-08T19:00:00+00:00",
+    "guaranteed": false,
+    "confidence_interval": false,
+    "limitations": [
+      "Qwen recovery sample is still small and scene object counts vary.",
+      "Future GPU queueing, OS suspension, unexpected model latency and process failures can exceed the slower scenario.",
+      "CPU postprocessing range is a planning allowance, not measured for this exact 150-scene run.",
+      "Pending human labels do not finish automatically; computational result includes unknown and worst-completion treatment.",
+      "File snapshots are append-safe but taken sequentially, so per-file totals may differ slightly from raw-call count sampled earlier.",
+      "Frozen observer GPU assignment is preserved; this artifact does not authorize changing models, prompts, decode settings, samples, thresholds or deadline."
+    ]
+  }
+}

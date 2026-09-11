@@ -1,0 +1,36 @@
+{
+  "at_utc": "2026-09-08T10:15:38.241529+00:00",
+  "name": "detect-batch-04",
+  "kind": "detection",
+  "batch": "batch-04",
+  "device": "cuda:1",
+  "pid": 16016,
+  "create_time": 1788862538.1854389,
+  "cmdline": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+    "-B",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+    "detect-batch",
+    "--batch",
+    "batch-04",
+    "--deadline",
+    "1788894000.0",
+    "--device",
+    "cuda:1"
+  ],
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+    "-B",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+    "detect-batch",
+    "--batch",
+    "batch-04",
+    "--deadline",
+    "1788894000.0",
+    "--device",
+    "cuda:1"
+  ],
+  "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detect-batch-04.log"
+}

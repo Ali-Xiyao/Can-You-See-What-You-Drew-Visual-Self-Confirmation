@@ -1,0 +1,14 @@
+{
+  "at_utc": "2026-09-08T03:20:54.879175+00:00",
+  "pid": 4896,
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+    "-B",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\observation_resume.py",
+    "--shard",
+    "0",
+    "--deadline",
+    "1788894000.0"
+  ]
+}

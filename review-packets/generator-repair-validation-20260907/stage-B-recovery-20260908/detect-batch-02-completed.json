@@ -1,0 +1,41 @@
+{
+  "at_utc": "2026-09-08T08:37:51.488769+00:00",
+  "exit_code": 0,
+  "artifact": {
+    "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-02\\verification-complete.json",
+    "sha256": "6c6b4d1ffc52fe820b0d101aa92f3f46a8bc80b0b059983f33789d2bb0fd7054"
+  },
+  "name": "detect-batch-02",
+  "kind": "detection",
+  "batch": "batch-02",
+  "device": "cuda:0",
+  "pid": 21816,
+  "create_time": 1788852271.0654414,
+  "cmdline": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+    "-B",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+    "detect-batch",
+    "--batch",
+    "batch-02",
+    "--deadline",
+    "1788894000.0",
+    "--device",
+    "cuda:0"
+  ],
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+    "-B",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+    "detect-batch",
+    "--batch",
+    "batch-02",
+    "--deadline",
+    "1788894000.0",
+    "--device",
+    "cuda:0"
+  ],
+  "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detect-batch-02.log"
+}

@@ -1,0 +1,20 @@
+{
+  "at_utc": "2026-09-08T05:19:00.121676+00:00",
+  "controller_pid": 11704,
+  "worker_identities_verified": true,
+  "all_original_artifacts_unchanged": true,
+  "reused_42156_answer_prefixes_unchanged": true,
+  "boundary_replay_exact": true,
+  "answer_counts": {
+    "observations\\gpu0\\base\\answers.jsonl": 18000,
+    "observations\\gpu0\\naive-balanced_absence\\answers.jsonl": 6768,
+    "observations\\gpu0\\naive-original\\answers.jsonl": 18000,
+    "observations\\gpu1\\base\\answers.jsonl": 416
+  },
+  "total_answers": 43184,
+  "completed_batches": [
+    "batch-00",
+    "batch-01"
+  ],
+  "deadline": 1788894000.0
+}

@@ -1,0 +1,8 @@
+{
+  "at_utc": "2026-09-08T05:02:55.494605+00:00",
+  "error": "TypeError: event() got multiple values for argument 'kind'",
+  "automatic_retry": false,
+  "ownership_committed": true,
+  "scheduler_revision": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v3",
+  "cleanup_errors": []
+}

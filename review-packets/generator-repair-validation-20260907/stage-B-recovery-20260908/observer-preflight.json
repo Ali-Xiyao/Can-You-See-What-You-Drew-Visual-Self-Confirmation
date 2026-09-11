@@ -1,0 +1,18 @@
+{
+  "at_utc": "2026-09-08T05:10:07.928438+00:00",
+  "passed": true,
+  "shards": [
+    0,
+    1
+  ],
+  "n_images": 900,
+  "prefix_conditions": {
+    "base": 1800,
+    "naive-original": 1800,
+    "naive-balanced_absence": 633
+  },
+  "prefix_answers": 42156,
+  "source_bytes_exact": true,
+  "new_answers_generated": 0,
+  "new_optimizer_steps": 0
+}

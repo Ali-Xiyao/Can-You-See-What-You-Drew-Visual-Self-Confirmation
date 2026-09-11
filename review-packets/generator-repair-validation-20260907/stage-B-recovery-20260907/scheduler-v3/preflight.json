@@ -1,0 +1,70 @@
+{
+  "old_controller": {
+    "pid": 7700,
+    "create_time": 1788837649.617215,
+    "cmdline": [
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\core\\python.exe",
+      "-B",
+      "-u",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\launch_recovery.py"
+    ]
+  },
+  "console_helpers": [
+    {
+      "pid": 14592,
+      "create_time": 1788837649.6305425,
+      "cmdline": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ],
+      "exe": "C:\\Windows\\System32\\conhost.exe",
+      "parent_pid": 7700,
+      "reason": "system_console_helper_created_with_old_controller",
+      "adopted": false,
+      "terminated_by_handoff": false
+    }
+  ],
+  "active_workers": [
+    {
+      "pid": 4896,
+      "create_time": 1788837654.8717682,
+      "cmdline": [
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+        "-B",
+        "-u",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\observation_resume.py",
+        "--shard",
+        "0",
+        "--deadline",
+        "1788894000.0"
+      ],
+      "name": "observe-gpu0",
+      "kind": "observation",
+      "shard": 0,
+      "device": "cuda:0",
+      "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\observe-gpu0.log"
+    },
+    {
+      "pid": 20472,
+      "create_time": 1788838146.0861485,
+      "cmdline": [
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+        "-B",
+        "-u",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\detector_recovery.py",
+        "detect-batch",
+        "--batch",
+        "batch-01",
+        "--deadline",
+        "1788894000.0",
+        "--device",
+        "cuda:1"
+      ],
+      "name": "detect-batch-01",
+      "kind": "detection",
+      "batch": "batch-01",
+      "device": "cuda:1",
+      "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\detect-batch-01.log"
+    }
+  ]
+}

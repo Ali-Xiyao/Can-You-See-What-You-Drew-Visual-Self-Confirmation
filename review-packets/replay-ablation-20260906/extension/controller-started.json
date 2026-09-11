@@ -1,0 +1,21 @@
+{
+  "at_utc": "2026-09-06T17:05:20.957914+00:00",
+  "pid": 17832,
+  "new_deadline": 1788722086.8788164,
+  "phase": "waiting_for_original_processes",
+  "original_processes": [
+    {
+      "pid": 27940,
+      "create_time": 1788693286.4343145,
+      "script": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\launch.py",
+      "exe": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\core\\python.exe"
+    },
+    {
+      "pid": 33140,
+      "create_time": 1788693286.8862956,
+      "script": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\worker.py",
+      "exe": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe"
+    }
+  ],
+  "extension_plan_sha256": "177858ffb19c4b00beafdd1d48bb0949c96b972341b506ab7678101af2a1a41d"
+}

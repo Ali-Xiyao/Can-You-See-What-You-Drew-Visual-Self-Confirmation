@@ -1,0 +1,12 @@
+{
+  "created_utc": "2026-09-07T05:45:17.750008+00:00",
+  "status": "PASS_integrity_and_endpoint_arithmetic",
+  "images": 128,
+  "identical_base_repeats": 8,
+  "paired_loss_instances": 256,
+  "identical_base_loss_repeats": 64,
+  "observation_answers": 15360,
+  "cycle_scores": 512,
+  "results_sha256": "fc7918785c89703ed9f669719689760b10f08c6b23dd7ca435d11d73efae808c",
+  "limitations": "Not an independent population or image-quality validation; no D* or D_g finding."
+}

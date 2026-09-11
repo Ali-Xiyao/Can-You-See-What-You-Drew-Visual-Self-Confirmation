@@ -1,0 +1,34 @@
+{
+  "created_utc": "2026-09-06T17:03:20.753639+00:00",
+  "authorization": "User explicitly asked to extend the hard deadline after the partial results were known.",
+  "target_task": "naive-alternate_ids",
+  "old_deadline": 1788714886.8788164,
+  "new_deadline": 1788722086.8788164,
+  "extension_seconds": 7200,
+  "parent_plan_sha256": "bc9357f520b6f975778aa70338d734596a78eec55f9276e14f3d50059e52624e",
+  "input_sha256": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\extension\\extension_common.py": "b79fbcdb6078864dd87b75dcd4cbf6d0840cf621fb302a7f51641ffd26ff1376",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\extension\\finalize.py": "68314a0ff418a405f097ea3ce4a90c5b2c96e77a04a75659741b73eb090338d3",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\extension\\launch_extension.py": "d0cd87695d080583bab04c117685ad5a209870dc10752d7ce72a160652169e27",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\extension\\prepare_extension.py": "11beb52a3ac0b1e4c228cef5507f83db5d891e44603da3bb40c41b1c27044260",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\extension\\resume_worker.py": "4cb7cc79fe63a09822aee8b78cd49fd78d407b357b0ae70eccbf46aa80385b11",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\extension\\test_extension.py": "91f04b0bec36135429c486d9d22b42bd39232916ceac4206e3480ec4800feadb",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\extension\\BUDGET_EXTENSION.md": "831bcf959bcca4067e96c25332ab25734920bd059e1f9995c23f9a093a9847dd",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\analyze_ablation.py": "25f9a0ba9c6c5efa1e9ffffcb9199a4f987b79425e9538e69b7a680012dbd77f",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\validate_completed.py": "7d15ba4e5c8ce1ac5620ad0085be07571c4aa357c403cd0e2acd2322b401666a",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\analysis-test-freeze.json": "20649beec20879945901ab814a56ff7c610b28811d49a74db81782f81e755d3c"
+  },
+  "allowed_resume_steps": [
+    24,
+    32
+  ],
+  "final_optimizer_step": 32,
+  "same_device": "cuda:1",
+  "required_restored_probe_reproduction": {
+    "matches": 200,
+    "total": 200
+  },
+  "criteria_changed": false,
+  "sample_schedule_changed": false,
+  "research_goal_complete": false
+}

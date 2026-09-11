@@ -1,0 +1,14 @@
+{
+  "at_utc": "2026-09-06T11:15:31.460375+00:00",
+  "pid": 33140,
+  "task": {
+    "id": "rfo_gold-original",
+    "arm": "rfo_gold",
+    "variant": "original",
+    "device": "cuda:1"
+  },
+  "plan_sha256": "bc9357f520b6f975778aa70338d734596a78eec55f9276e14f3d50059e52624e",
+  "base_parameter_digest": "1cd2f01c081a171a375a89989d964af4907040633a87563be0b13e721a0618e2",
+  "warmup_steps": 8,
+  "deadline": 1788714886.8788164
+}

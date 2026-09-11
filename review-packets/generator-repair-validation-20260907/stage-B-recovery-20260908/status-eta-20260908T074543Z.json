@@ -1,0 +1,29 @@
+{
+  "at_utc": "2026-09-08T07:45:43.710390+00:00",
+  "status": "running",
+  "observation_snapshot": {
+    "at_utc": "2026-09-08T07:44:26Z",
+    "answers": 94384,
+    "expected": 108000,
+    "gpu1_remaining_answers": 13616,
+    "gpu1_recent_seconds_per_answer": 0.46105,
+    "observation_errors": 0,
+    "abstentions": 0
+  },
+  "batch02_qwen_model_calls": 87,
+  "batch02_parse_failures": [
+    {
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-02\\base-B-0b2e171119169fc9f2db-69916784-0.png",
+      "call_index": 16,
+      "error": "json_error:Expecting ',' delimiter",
+      "status": "parse_error"
+    }
+  ],
+  "parse_failure_note": "One image produced model_call parse_error plus operation_error audit records; these are one failed image, not two independent model failures. Raw reply retained. Frozen detector recovery annotates JSON quarantine at phase completion and then marks image/question facts unknown; no retry or model/config change. No partial gold interpreted.",
+  "conditional_machine_remaining_hours": [
+    4,
+    7
+  ],
+  "local_completion_approx": "2026-09-08 05:00\u201308:00 America/Los_Angeles",
+  "eta_assumptions": "Current batch Qwen remaining roughly 0.2\u20130.4h, InternVL roughly 0.7\u20131.1h and crop/loading overhead; GPU1 observation 1.4\u20132.0h; remaining three full detection batches 1.4\u20132.6h each allocated to next available card; final CPU 5\u201320min. Rounded scenario range, not guarantee, excludes human review."
+}

@@ -1,0 +1,17 @@
+{
+  "at_utc": "2026-09-07T02:46:45.117001+00:00",
+  "folders": {
+    "naive-original": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-original",
+    "naive-balanced_absence": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-balanced_absence",
+    "naive-zero_weight": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-zero_weight",
+    "rfo_gold-original": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\rfo_gold-original",
+    "rfo_gold-alternate_ids": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\rfo_gold-alternate_ids",
+    "naive-alternate_ids": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\extension\\logical-run"
+  },
+  "only_code_substitution": "folder=SIDE/'runs'/task['id'] -> folder=task_folder(task['id'])",
+  "statistics_and_criteria_unchanged": true,
+  "source_sha256": {
+    "analyze_ablation.py": "25f9a0ba9c6c5efa1e9ffffcb9199a4f987b79425e9538e69b7a680012dbd77f",
+    "validate_completed.py": "7d15ba4e5c8ce1ac5620ad0085be07571c4aa357c403cd0e2acd2322b401666a"
+  }
+}

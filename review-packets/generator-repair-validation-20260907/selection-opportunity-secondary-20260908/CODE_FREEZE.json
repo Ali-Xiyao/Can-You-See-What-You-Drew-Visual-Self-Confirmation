@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-09-08T04:13:21.817333+00:00",
+  "registration_sha256": "056233f14143d37a125d5b67bebbbd868b46d4e8381cc493aa680d4cf60ff161",
+  "source_sha256": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\selection-opportunity-secondary-20260908\\analyze_secondary.py": "821284a95156ee82b889f1a80a3263bec2790ab15210ee70cc13c634739a48dd",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\selection-opportunity-secondary-20260908\\test_secondary.py": "c908b07e585e56ac1fc8e883403cfd3db6b75b3ae85c7a6cbd7536f97636e02d",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\stats.py": "0e48ef1aebf2814bb3be883d4d4d84803ae7e2a7d0775af70f6c5924ff71b287",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\bcommon.py": "5eed5083b671869ab807a4e503bd38c5f984a29c9a17b2bc901a27a70f778b8b"
+  },
+  "validation": {
+    "passed": true,
+    "tests": 20,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "junit_sha256": "dd9c2f766f776519e36fbac960e7a37da08415352deb7e35cbac0166426ed591"
+  }
+}

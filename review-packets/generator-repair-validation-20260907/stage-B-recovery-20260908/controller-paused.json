@@ -1,0 +1,31 @@
+{
+  "at_utc": "2026-09-08T10:29:02.307657+00:00",
+  "status": "paused_by_user",
+  "automatic_resume": false,
+  "request_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\user-pause-request.json",
+  "stopped_pids": [
+    23868,
+    6336,
+    11704,
+    16016,
+    2800,
+    10540
+  ],
+  "completed_batches": [
+    "batch-00",
+    "batch-01",
+    "batch-02",
+    "batch-03"
+  ],
+  "completed_observer_shards": [
+    0,
+    1
+  ],
+  "partial_batches": [
+    "batch-04",
+    "batch-05"
+  ],
+  "prior_state_preserved_in": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\user-pause-request.json",
+  "data_and_logs_preserved": true,
+  "research_goal_complete": false
+}

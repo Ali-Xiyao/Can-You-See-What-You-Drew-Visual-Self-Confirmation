@@ -1,0 +1,14 @@
+{
+  "selected_utc": "2026-09-06T17:14:53.462329+00:00",
+  "checkpoint_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\checkpoints\\step-00032",
+  "checkpoint_manifest_sha256": "a86c43987173fa767b73d1e4bd1706fad05ad8513365c9bc13b53e71d2feb329",
+  "resume_step": 32,
+  "source_directory": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids",
+  "original_failure": {
+    "at_utc": "2026-09-06T17:14:51.106975+00:00",
+    "error": "Registered runtime exhausted",
+    "automatic_retry": false
+  },
+  "original_failure_sha256": "466223ec41a1f97a176ae600c99b8d318d9d98ac6aa1f116795030b844d75aed",
+  "extension_plan_sha256": "177858ffb19c4b00beafdd1d48bb0949c96b972341b506ab7678101af2a1a41d"
+}

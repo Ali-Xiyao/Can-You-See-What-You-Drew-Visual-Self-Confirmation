@@ -1,0 +1,76 @@
+cuda:0: 24326 MiB free; starting
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\transformers\utils\hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\accelerate\utils\modeling.py:1228: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  return torch.load(checkpoint_file, map_location=torch.device("cpu"))
+You shouldn't move a model when it is dispatched on multiple devices.
+You shouldn't move a model when it is dispatched on multiple devices.
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:617: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  torch.load(pretrained_path, map_location=device), assign=True)
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:655: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with amp.autocast(dtype=self.dtype):
+cuda:0 base observed 12/600, 360 answers
+cuda:0 base observed 24/600, 648 answers
+cuda:0 base observed 36/600, 1080 answers
+cuda:0 base observed 48/600, 1440 answers
+cuda:0 base observed 60/600, 1800 answers
+cuda:0 base observed 72/600, 2232 answers
+cuda:0 base observed 84/600, 2664 answers
+cuda:0 base observed 96/600, 3096 answers
+cuda:0 base observed 108/600, 3456 answers
+cuda:0 base observed 120/600, 3816 answers
+cuda:0 base observed 132/600, 4104 answers
+cuda:0 base observed 144/600, 4392 answers
+cuda:0 base observed 156/600, 4752 answers
+cuda:0 base observed 168/600, 5040 answers
+cuda:0 base observed 180/600, 5400 answers
+cuda:0 base observed 192/600, 5688 answers
+cuda:0 base observed 204/600, 5976 answers
+cuda:0 base observed 216/600, 6336 answers
+cuda:0 base observed 228/600, 6696 answers
+cuda:0 base observed 240/600, 7056 answers
+cuda:0 base observed 252/600, 7488 answers
+cuda:0 base observed 264/600, 7848 answers
+cuda:0 base observed 276/600, 8208 answers
+cuda:0 base observed 288/600, 8568 answers
+cuda:0 base observed 300/600, 8928 answers
+cuda:0 base observed 312/600, 9288 answers
+cuda:0 base observed 324/600, 9648 answers
+cuda:0 base observed 336/600, 10008 answers
+cuda:0 base observed 348/600, 10368 answers
+cuda:0 base observed 360/600, 10800 answers
+cuda:0 base observed 372/600, 11232 answers
+cuda:0 base observed 384/600, 11592 answers
+cuda:0 base observed 396/600, 11952 answers
+cuda:0 base observed 408/600, 12312 answers
+cuda:0 base observed 420/600, 12600 answers
+cuda:0 base observed 432/600, 12960 answers
+cuda:0 base observed 444/600, 13392 answers
+cuda:0 base observed 456/600, 13752 answers
+cuda:0 base observed 468/600, 14040 answers
+cuda:0 base observed 480/600, 14472 answers
+cuda:0 base observed 492/600, 14904 answers
+cuda:0 base observed 504/600, 15192 answers
+cuda:0 base observed 516/600, 15552 answers
+cuda:0 base observed 528/600, 15840 answers
+cuda:0 base observed 540/600, 16128 answers
+cuda:0 base observed 552/600, 16488 answers
+cuda:0 base observed 564/600, 16848 answers
+cuda:0 base observed 576/600, 17208 answers
+cuda:0 base observed 588/600, 17568 answers
+cuda:0 base observed 600/600, 18000 answers
+cuda:0 naive-original observed 12/600, 360 answers
+cuda:0 naive-original observed 24/600, 648 answers
+cuda:0 naive-original observed 36/600, 1080 answers
+cuda:0 naive-original observed 48/600, 1440 answers
+cuda:0 naive-original observed 60/600, 1800 answers
+cuda:0 naive-original observed 72/600, 2232 answers
+cuda:0 naive-original observed 84/600, 2664 answers
+cuda:0 naive-original observed 96/600, 3096 answers
+cuda:0 naive-original observed 108/600, 3456 answers
+cuda:0 naive-original observed 120/600, 3816 answers
+cuda:0 naive-original observed 132/600, 4104 answers
+cuda:0 naive-original observed 144/600, 4392 answers
+cuda:0 naive-original observed 156/600, 4752 answers
+cuda:0 naive-original observed 168/600, 5040 answers
+cuda:0 naive-original observed 180/600, 5400 answers

@@ -1,0 +1,8 @@
+{
+  "at_utc": "2026-09-07T03:48:22.759308+00:00",
+  "n_instances": 64,
+  "n_base_repeats": 0,
+  "data_sha256": "9855f893261dddf203772f88090388787fb05987b62911b0cd4885b634f3f359",
+  "parameter_digest": "e4c7293c9446f109a5d84974e96f91b1b81e92574d15458081e2c7b88de3f8aa",
+  "model_eval": true
+}

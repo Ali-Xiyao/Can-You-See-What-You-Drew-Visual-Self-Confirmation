@@ -1,0 +1,16 @@
+{
+  "at_utc": "2026-09-08T03:53:23.128919+00:00",
+  "passed": true,
+  "tests": 37,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "native_windows_handle_smoke": "passed",
+  "live_console_classification": "passed",
+  "source_sha256": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v3\\handoff.py": "7b82771e0a4c07696575aa204ccfd8c5f5968344eb1ffa59bf4c929649a38726",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v3\\scheduler.py": "2f67744bdae646b173b5128de31867c61e9daf2979c3c4e4f17215921704542f",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v3\\test_handoff.py": "97b68f148ad56e839db64197ee3ec3a8bebcc5c787e4f930a1c63d6d2847b9f4",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v3\\test_scheduler.py": "937485665e89824c3349e3b7725c634507a75354ac1a9b3431a5e30442ed0707"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "at_utc": "2026-09-08T05:13:40.231334+00:00",
+  "name": "observe-gpu0",
+  "kind": "observation",
+  "shard": 0,
+  "device": "cuda:0",
+  "pid": 1000,
+  "create_time": 1000.0,
+  "cmdline": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+    "-B",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observation_resume.py",
+    "--shard",
+    "0",
+    "--deadline",
+    "100"
+  ],
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+    "-B",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observation_resume.py",
+    "--shard",
+    "0",
+    "--deadline",
+    "100"
+  ],
+  "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\pytest-final-tmp\\test_start_event_failure_clean0\\observe-gpu0.log"
+}

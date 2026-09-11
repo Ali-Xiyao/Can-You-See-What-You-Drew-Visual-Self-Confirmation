@@ -1,0 +1,98 @@
+[
+  {
+    "prompt_id": "v4a-0099",
+    "candidate_id": "naive-r000-bc8d7915666515996518-1199828768-7",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-bc8d7915666515996518-1199828768-7.png",
+    "prompt": "one red notebook, two yellow candles on marble counter"
+  },
+  {
+    "prompt_id": "v4a-0063",
+    "candidate_id": "naive-r002-66f99227fd38b4e014f1-823797766-3",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-66f99227fd38b4e014f1-823797766-3.png",
+    "prompt": "one red apple, two white bottles"
+  },
+  {
+    "prompt_id": "v4a-0112",
+    "candidate_id": "naive-r003-a74099be9b70482510f2-270610877-4",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\naive\\naive-r003-a74099be9b70482510f2-270610877-4.png",
+    "prompt": "one blue bottle, two brown boxes"
+  },
+  {
+    "prompt_id": "v4b-0042",
+    "candidate_id": "naive-r000-85ca6dddb7d02025208a-1169655198-2",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-85ca6dddb7d02025208a-1169655198-2.png",
+    "prompt": "a red apple, a yellow banana, a brown bottle"
+  },
+  {
+    "prompt_id": "v4b-0050",
+    "candidate_id": "naive-r001-fd9b9de447775fd46168-350612788-5",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-fd9b9de447775fd46168-350612788-5.png",
+    "prompt": "one brown egg, one blue mug, one white bowl"
+  },
+  {
+    "prompt_id": "v4a-0060",
+    "candidate_id": "naive-r002-bb9a46e725c805c8ebb9-261115021-0",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-bb9a46e725c805c8ebb9-261115021-0.png",
+    "prompt": "one green pear, two brown bowls"
+  },
+  {
+    "prompt_id": "v4b-0064",
+    "candidate_id": "naive-r002-6f53331b6df094d1b4b2-27995235-1",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-6f53331b6df094d1b4b2-27995235-1.png",
+    "prompt": "one red bowl, one white plate, one silver spoon"
+  },
+  {
+    "prompt_id": "v4a-0086",
+    "candidate_id": "naive-r001-f78d4be957580624c55b-690092400-5",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-f78d4be957580624c55b-690092400-5.png",
+    "prompt": "two blue mugs, one black book"
+  },
+  {
+    "prompt_id": "v4b-0053",
+    "candidate_id": "naive-r001-3cf0cb726c08fef1a432-40583615-2",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-3cf0cb726c08fef1a432-40583615-2.png",
+    "prompt": "one brown egg, one red tomato, one orange carrot"
+  },
+  {
+    "prompt_id": "v4a-0067",
+    "candidate_id": "naive-r002-fb3e1c082f5dc43b667e-108904085-6",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-fb3e1c082f5dc43b667e-108904085-6.png",
+    "prompt": "one yellow lemon, two red cups"
+  },
+  {
+    "prompt_id": "v4b-0089",
+    "candidate_id": "naive-r002-d45c0b265ef4f3766e5a-16697498-6",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-d45c0b265ef4f3766e5a-16697498-6.png",
+    "prompt": "one yellow lemon, one red apple, one green pear"
+  },
+  {
+    "prompt_id": "v4a-0051",
+    "candidate_id": "naive-r002-853f73c53c80ef837da1-77272086-7",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-853f73c53c80ef837da1-77272086-7.png",
+    "prompt": "one red apple, two black mugs"
+  },
+  {
+    "prompt_id": "v4a-0019",
+    "candidate_id": "naive-r001-3dbd9e9309ecf9338413-1017204109-3",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-3dbd9e9309ecf9338413-1017204109-3.png",
+    "prompt": "one red tomato, two black bowls"
+  },
+  {
+    "prompt_id": "v4b-0027",
+    "candidate_id": "naive-r003-77c6e2ca3264b4574333-19470983-1",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\naive\\naive-r003-77c6e2ca3264b4574333-19470983-1.png",
+    "prompt": "a red book, a black notebook, a yellow candle"
+  },
+  {
+    "prompt_id": "v4a-0111",
+    "candidate_id": "naive-r000-f3bc75dbef96cb5dfb86-646598521-7",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-f3bc75dbef96cb5dfb86-646598521-7.png",
+    "prompt": "one black book, two red candles"
+  },
+  {
+    "prompt_id": "v4b-0084",
+    "candidate_id": "naive-r000-59786c5aed424a9b01eb-433215293-2",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-59786c5aed424a9b01eb-433215293-2.png",
+    "prompt": "one red book, one black notebook, one yellow candle"
+  }
+]

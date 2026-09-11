@@ -1,0 +1,10 @@
+{
+  "at_utc": "2026-09-08T06:07:13.075497+00:00",
+  "prefix_conditions": 0,
+  "prefix_answers": 0,
+  "prefix_bytes": 0,
+  "prefix_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "parameter_digest": "0a4973d9870b19af0225e633c0d8d18a9cc8b6d8e946cc5451bf722bd31481e4",
+  "deadline": 1788894000.0,
+  "original_plan_sha256": "aca28af42ae608438e5488685f99004800396c83fc9340725a69e8a85336d5df"
+}

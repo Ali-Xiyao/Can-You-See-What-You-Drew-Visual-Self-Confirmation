@@ -1,0 +1,74 @@
+[
+  {
+    "spec_id": "grv2-0006",
+    "candidate_index": 0,
+    "seed": 1082234465,
+    "source_image": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\base-efaf2cba67fa3ff7dbb9-1082234465-0.png",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\repeats\\base-repeat-efaf2cba67fa3ff7dbb9-1082234465-0.png",
+    "rgb_sha256": "2859dd0d6dbd6babc933a75da1f477672fd6990a77075c1dd9d06464635da734",
+    "file_sha256": "39cd25ab18068ee72ccd5621d0ab4e9ccb24954fd9775c3c712d65a6f28e1cd4"
+  },
+  {
+    "spec_id": "grv2-0004",
+    "candidate_index": 0,
+    "seed": 407298515,
+    "source_image": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\base-bcd1e19dee07b64c0a41-407298515-0.png",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\repeats\\base-repeat-bcd1e19dee07b64c0a41-407298515-0.png",
+    "rgb_sha256": "67444625e2b2cef5dcfec32445637d1db9333e4865541b46d04c694d7f3db908",
+    "file_sha256": "200d6718b588cbe9e3fc2e76c81cb4de1092d3762388ad868be46a2082976343"
+  },
+  {
+    "spec_id": "grv2-0001",
+    "candidate_index": 0,
+    "seed": 787006647,
+    "source_image": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\base-4561decbaf07cad3375e-787006647-0.png",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\repeats\\base-repeat-4561decbaf07cad3375e-787006647-0.png",
+    "rgb_sha256": "53fdd15a54d2038fb8b19923a21d57b04fc93532d86dbb5e9f5471f8cbf47074",
+    "file_sha256": "fd007b1c5c5c3727d1ee3a1dc977992855105a1e42d45df990f7ddede7bb0754"
+  },
+  {
+    "spec_id": "grv3-0003",
+    "candidate_index": 0,
+    "seed": 285415932,
+    "source_image": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\base-a94d7f3d3c49c28878d7-285415932-0.png",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\repeats\\base-repeat-a94d7f3d3c49c28878d7-285415932-0.png",
+    "rgb_sha256": "3a2bc00aa70a3ab12c6a1e975c904cdbfae3fa086912bbec76c754e6770d88a4",
+    "file_sha256": "d381501a9ef026b919ed0c3fdb3830bef7c2d8b9ded221fec7b66c28aab905b9"
+  },
+  {
+    "spec_id": "grv3-0006",
+    "candidate_index": 0,
+    "seed": 1388098761,
+    "source_image": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\base-b8d108db585fa00c7e75-1388098761-0.png",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\repeats\\base-repeat-b8d108db585fa00c7e75-1388098761-0.png",
+    "rgb_sha256": "e1daeb30ae76d00af650d84b40d9f2873e2b245a8d477402d908be662e506461",
+    "file_sha256": "b18b27c2c656c414d4da845314c82b5f776b431d88f4fed1cc07eee8865fde6f"
+  },
+  {
+    "spec_id": "grv2-0002",
+    "candidate_index": 0,
+    "seed": 1415676012,
+    "source_image": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\base-23fdcf851c878cbaaa54-1415676012-0.png",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\repeats\\base-repeat-23fdcf851c878cbaaa54-1415676012-0.png",
+    "rgb_sha256": "26134393b746124553574da085ab9cefe8b1930b86ee14d19b7137ccf5444ba6",
+    "file_sha256": "be518febc40c3e4a99c6c4a53eca75da19aab27c8c3683a46246a10f92a31cb3"
+  },
+  {
+    "spec_id": "grv2-0000",
+    "candidate_index": 0,
+    "seed": 1185482551,
+    "source_image": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\base-9543862058cb7b60faea-1185482551-0.png",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\repeats\\base-repeat-9543862058cb7b60faea-1185482551-0.png",
+    "rgb_sha256": "41eed13cb4a1523e75e723d0bd7589e84d230e4f9522b6ac960448c514f2776d",
+    "file_sha256": "266c2a097b16d1b0d7cf3a2912d18c6444df9961799025994cfda201ba7b0dd8"
+  },
+  {
+    "spec_id": "grv3-0007",
+    "candidate_index": 0,
+    "seed": 2030405860,
+    "source_image": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\base-51b28cdd42fdb2869833-2030405860-0.png",
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\generation\\base\\repeats\\base-repeat-51b28cdd42fdb2869833-2030405860-0.png",
+    "rgb_sha256": "bc7f787e2385da4e6bed958ba7eb34a45517c252ead63568c0e8f7365e39bf66",
+    "file_sha256": "c34cdb7ed9743202b5c2ab70d8390d3ab14d0af1ccd75e70f60b8bf168a10627"
+  }
+]

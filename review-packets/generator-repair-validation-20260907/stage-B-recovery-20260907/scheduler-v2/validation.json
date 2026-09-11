@@ -1,0 +1,15 @@
+{
+  "at_utc": "2026-09-08T03:49:58.242272+00:00",
+  "passed": true,
+  "tests": 31,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "native_windows_handle_smoke": "passed",
+  "source_sha256": {
+    "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v2\\handoff.py": "df4f99a16d5ccfd8fe281bd27f9675fb1263313d69b7ddd18bd254652baed1a5",
+    "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v2\\scheduler.py": "2f67744bdae646b173b5128de31867c61e9daf2979c3c4e4f17215921704542f",
+    "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v2\\test_handoff.py": "0b1a3a56efea9e4550483b9a1256ec751f38fc246861dc175ab35e25db2357bb",
+    "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v2\\test_scheduler.py": "937485665e89824c3349e3b7725c634507a75354ac1a9b3431a5e30442ed0707"
+  }
+}

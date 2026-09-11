@@ -1,0 +1,241 @@
+{
+  "at_utc": "2026-09-08T05:16:10.868677+00:00",
+  "excluded_from_main_denominator": true,
+  "prefix_condition_index": 632,
+  "previous": {
+    "observer": "naive-balanced_absence",
+    "generator": "base",
+    "spec_id": "grv3-0066",
+    "scene_sha256": "ff2ac6fc84c913b5d8e4f0790362626375ae2725e9baca839897603d4d97d0a5",
+    "candidate_index": 0,
+    "seed": 595783667,
+    "condition": "prompt_off",
+    "n_original": 6,
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-02\\base-B-0b2e171119169fc9f2db-595783667-0.png",
+    "device": "cuda:0",
+    "observation": {
+      "request_id": "bf5ad56769867dda25ed05558a7080709fea106ed0e41d69010b9242e555c4d6",
+      "observer_id": "showlab/show-o2-1.5B",
+      "observer_revision": "07ec16589d4fc5422a74dddbbc4b2cd11e551039",
+      "rgb_sha256": "9c428d0ed57483f94afc172a97f55a66d7725977cafbec889f2e09cadb88f799",
+      "answers": [
+        {
+          "question_id": "grv3-0066:exists:0",
+          "raw_answer": "yes",
+          "normalized_answer": "yes",
+          "abstain": false,
+          "latency_ms": 314.2766000000847,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:count:0",
+          "raw_answer": "1",
+          "normalized_answer": "1",
+          "abstain": false,
+          "latency_ms": 361.2166000002617,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:exists:1",
+          "raw_answer": "yes",
+          "normalized_answer": "yes",
+          "abstain": false,
+          "latency_ms": 224.82289999970817,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:count:1",
+          "raw_answer": "2",
+          "normalized_answer": "2",
+          "abstain": false,
+          "latency_ms": 232.20839999885357,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:exists:2",
+          "raw_answer": "no",
+          "normalized_answer": "no",
+          "abstain": false,
+          "latency_ms": 238.61799999940558,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:count:2",
+          "raw_answer": "0",
+          "normalized_answer": "0",
+          "abstain": false,
+          "latency_ms": 265.9309000009671,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:diagnostic-absence:hat:exists",
+          "raw_answer": "no",
+          "normalized_answer": "no",
+          "abstain": false,
+          "latency_ms": 256.8129000010231,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:diagnostic-absence:hat:count",
+          "raw_answer": "0",
+          "normalized_answer": "0",
+          "abstain": false,
+          "latency_ms": 247.34910000006494,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:diagnostic-absence:egg:exists",
+          "raw_answer": "no",
+          "normalized_answer": "no",
+          "abstain": false,
+          "latency_ms": 224.10470000068017,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:diagnostic-absence:egg:count",
+          "raw_answer": "0",
+          "normalized_answer": "0",
+          "abstain": false,
+          "latency_ms": 223.62690000045404,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:diagnostic-absence:leaf:exists",
+          "raw_answer": "no",
+          "normalized_answer": "no",
+          "abstain": false,
+          "latency_ms": 227.95399999995425,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:diagnostic-absence:leaf:count",
+          "raw_answer": "0",
+          "normalized_answer": "0",
+          "abstain": false,
+          "latency_ms": 227.43020000052638,
+          "error": null
+        }
+      ],
+      "started_at": "2026-09-08T05:02:51.875691+00:00",
+      "finished_at": "2026-09-08T05:02:55.027618+00:00"
+    }
+  },
+  "replay": {
+    "observer": "naive-balanced_absence",
+    "generator": "base",
+    "spec_id": "grv3-0066",
+    "scene_sha256": "ff2ac6fc84c913b5d8e4f0790362626375ae2725e9baca839897603d4d97d0a5",
+    "candidate_index": 0,
+    "seed": 595783667,
+    "condition": "prompt_off",
+    "n_original": 6,
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-02\\base-B-0b2e171119169fc9f2db-595783667-0.png",
+    "device": "cuda:0",
+    "observation": {
+      "request_id": "bf5ad56769867dda25ed05558a7080709fea106ed0e41d69010b9242e555c4d6",
+      "observer_id": "showlab/show-o2-1.5B",
+      "observer_revision": "07ec16589d4fc5422a74dddbbc4b2cd11e551039",
+      "rgb_sha256": "9c428d0ed57483f94afc172a97f55a66d7725977cafbec889f2e09cadb88f799",
+      "answers": [
+        {
+          "question_id": "grv3-0066:exists:0",
+          "raw_answer": "yes",
+          "normalized_answer": "yes",
+          "abstain": false,
+          "latency_ms": 624.7690000000148,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:count:0",
+          "raw_answer": "1",
+          "normalized_answer": "1",
+          "abstain": false,
+          "latency_ms": 254.97829999949317,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:exists:1",
+          "raw_answer": "yes",
+          "normalized_answer": "yes",
+          "abstain": false,
+          "latency_ms": 276.39670000098704,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:count:1",
+          "raw_answer": "2",
+          "normalized_answer": "2",
+          "abstain": false,
+          "latency_ms": 292.5697999999102,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:exists:2",
+          "raw_answer": "no",
+          "normalized_answer": "no",
+          "abstain": false,
+          "latency_ms": 291.3387000007788,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:count:2",
+          "raw_answer": "0",
+          "normalized_answer": "0",
+          "abstain": false,
+          "latency_ms": 249.19620000036957,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:diagnostic-absence:hat:exists",
+          "raw_answer": "no",
+          "normalized_answer": "no",
+          "abstain": false,
+          "latency_ms": 237.6113999998779,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:diagnostic-absence:hat:count",
+          "raw_answer": "0",
+          "normalized_answer": "0",
+          "abstain": false,
+          "latency_ms": 249.0918999992573,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:diagnostic-absence:egg:exists",
+          "raw_answer": "no",
+          "normalized_answer": "no",
+          "abstain": false,
+          "latency_ms": 250.8056000006036,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:diagnostic-absence:egg:count",
+          "raw_answer": "0",
+          "normalized_answer": "0",
+          "abstain": false,
+          "latency_ms": 241.1370000008901,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:diagnostic-absence:leaf:exists",
+          "raw_answer": "no",
+          "normalized_answer": "no",
+          "abstain": false,
+          "latency_ms": 245.4421000002185,
+          "error": null
+        },
+        {
+          "question_id": "grv3-0066:diagnostic-absence:leaf:count",
+          "raw_answer": "0",
+          "normalized_answer": "0",
+          "abstain": false,
+          "latency_ms": 242.88789999991423,
+          "error": null
+        }
+      ],
+      "started_at": "2026-09-08T05:16:06.214103+00:00",
+      "finished_at": "2026-09-08T05:16:10.865677+00:00"
+    }
+  }
+}

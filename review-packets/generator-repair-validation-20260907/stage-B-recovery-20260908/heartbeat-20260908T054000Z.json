@@ -1,0 +1,67 @@
+{
+  "at_utc": "2026-09-08T05:40:53.511858+00:00",
+  "controller_pid": 11704,
+  "controller_and_workers_verified": true,
+  "completed_batches": [
+    "batch-00",
+    "batch-01"
+  ],
+  "observer_files": [
+    {
+      "file": "observations\\gpu0\\base\\answers.jsonl",
+      "conditions": 1800,
+      "answers": 18000,
+      "errors": 0,
+      "abstentions": 0,
+      "partial_tail_records": 0,
+      "complete": true,
+      "last_observation_time_fields": {
+        "started_at": "2026-09-07T11:54:41.377540+00:00",
+        "finished_at": "2026-09-07T11:54:45.848959+00:00"
+      }
+    },
+    {
+      "file": "observations\\gpu0\\naive-balanced_absence\\answers.jsonl",
+      "conditions": 1147,
+      "answers": 11552,
+      "errors": 0,
+      "abstentions": 0,
+      "partial_tail_records": 0,
+      "complete": false,
+      "last_observation_time_fields": {
+        "started_at": "2026-09-08T05:40:48.792467+00:00",
+        "finished_at": "2026-09-08T05:40:51.421497+00:00"
+      }
+    },
+    {
+      "file": "observations\\gpu0\\naive-original\\answers.jsonl",
+      "conditions": 1800,
+      "answers": 18000,
+      "errors": 0,
+      "abstentions": 0,
+      "partial_tail_records": 0,
+      "complete": true,
+      "last_observation_time_fields": {
+        "started_at": "2026-09-08T04:31:32.731905+00:00",
+        "finished_at": "2026-09-08T04:31:35.954310+00:00"
+      }
+    },
+    {
+      "file": "observations\\gpu1\\base\\answers.jsonl",
+      "conditions": 360,
+      "answers": 3672,
+      "errors": 0,
+      "abstentions": 0,
+      "partial_tail_records": 0,
+      "complete": false,
+      "last_observation_time_fields": {
+        "started_at": "2026-09-08T05:40:46.932291+00:00",
+        "finished_at": "2026-09-08T05:40:53.349504+00:00"
+      }
+    }
+  ],
+  "total_answers": 51224,
+  "new_inventory_generated": false,
+  "new_workload_generated": false,
+  "action_required": false
+}

@@ -1,0 +1,157 @@
+{
+  "at_utc": "2026-09-06T17:16:10.558630+00:00",
+  "resume_step": 32,
+  "copied_files": {
+    "probes\\step-00000.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00000.json",
+      "sha256": "9e4ceed86065081c68b3fc4bd9146b7cb5742fb847fd27dc3a5ae6e98e71ed41"
+    },
+    "probes\\step-00001.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00001.json",
+      "sha256": "7e88153fae494a67fc15a687f63796e4b543962e496c5aeddf324cb31dafe438"
+    },
+    "probes\\step-00002.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00002.json",
+      "sha256": "b9d409b2b726adc76cf46c2562b723589e3e8e6ae7bdb08576bc62a49b783260"
+    },
+    "probes\\step-00003.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00003.json",
+      "sha256": "a03c18d7d9eff985187b583eea701dca958036d9bd2a370f34027d280d51e06e"
+    },
+    "probes\\step-00004.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00004.json",
+      "sha256": "c4c40a6489c0a90627acace5ff73f075249be9df9b86e6c816e8434f6ad16774"
+    },
+    "probes\\step-00005.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00005.json",
+      "sha256": "9c8bd72b6676fb9b7fcbb2b48b44034c34e03696d89432286db3a7675333a0ae"
+    },
+    "probes\\step-00006.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00006.json",
+      "sha256": "c32ec1e649e070c3664989eadfb65552b1ba622d24c26291b752b40200b82096"
+    },
+    "probes\\step-00007.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00007.json",
+      "sha256": "77acb0c6bda4255af42fa7b34f51a18ebf2f7f1f44128fd62221fd86faef7678"
+    },
+    "probes\\step-00008.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00008.json",
+      "sha256": "511cd604ba18329c854c07267464e05d275182945627d02656213b341962441c"
+    },
+    "probes\\step-00009.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00009.json",
+      "sha256": "7e6cb914950ec0dccda09f66d6c2a99ed6315deff103f5cd2dde4ab874376e63"
+    },
+    "probes\\step-00010.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00010.json",
+      "sha256": "a070840b4d31ab90aea7c5cb66d20c18dbff8d88e27b4233fbee44536f2e8d1e"
+    },
+    "probes\\step-00011.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00011.json",
+      "sha256": "f89067ac8dfe93f317be9c2aac83974527fa453ad0f13bff1b3c362727ec8e3f"
+    },
+    "probes\\step-00012.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00012.json",
+      "sha256": "fdbfd21831ad4c3df9ace7781f5c3c3897819b1cfdcf27d91acade2376d5d3b0"
+    },
+    "probes\\step-00013.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00013.json",
+      "sha256": "09f5b870c8b3a368cc932f3d3ec5ade56464ef8a1adba6ece601d4fce566aae5"
+    },
+    "probes\\step-00014.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00014.json",
+      "sha256": "a6e2d23523d5af63f13b833a16d8e17b9b0905f1fb2033c17270b36d466c4f5f"
+    },
+    "probes\\step-00015.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00015.json",
+      "sha256": "c60e8e9d2849537c77a46ed0a45bc538d0d3446dbe8a0be207ccfe7da915067a"
+    },
+    "probes\\step-00016.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00016.json",
+      "sha256": "3e54399fcc61284b91750e13a439509b9a4b62864a6d95c9281b7e0d89ee4331"
+    },
+    "probes\\step-00017.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00017.json",
+      "sha256": "1311ea657948fbd72269969cc4c4e4d7a5e4f0602462d67ba57421b01624f5ab"
+    },
+    "probes\\step-00018.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00018.json",
+      "sha256": "7fec49bc567fecf245fc636a169bfcfbb8323f343aac77d0518ac8194d8b1b86"
+    },
+    "probes\\step-00019.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00019.json",
+      "sha256": "ef01f6ac5c445f9debaa4738dc8036408c00a20b3968eb0e735f4b88f06ad582"
+    },
+    "probes\\step-00020.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00020.json",
+      "sha256": "d3a7f9a55ccaf1b446d9639b78e889bec54099018503ab8f2c8cd8229f8b4a77"
+    },
+    "probes\\step-00021.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00021.json",
+      "sha256": "dbe08878df4d5ad089562e1bf4acfbf96e5dd5daab1c44879b141e6fb6d860e7"
+    },
+    "probes\\step-00022.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00022.json",
+      "sha256": "5097f3d5f919c31eeb53a9612de62382c6894c03699105cc31190a3dd4a57380"
+    },
+    "probes\\step-00023.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00023.json",
+      "sha256": "46b97b36c6f8012544fd1772f83b52a776b8caf6abac3aa87258ba45fbf49cf7"
+    },
+    "probes\\step-00024.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00024.json",
+      "sha256": "0e509e41665ee7840e5e068e4bff627b7bb85f1988c9986e160dc2f6722079f1"
+    },
+    "probes\\step-00025.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00025.json",
+      "sha256": "e7d03cd28d6960364ba11ee0a0542d6a95373f5c3db973dcf49b97e050f27aac"
+    },
+    "probes\\step-00026.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00026.json",
+      "sha256": "b50210ed124bc298cdce5b1dca345ce0de838a3888715518668ae06c066ed517"
+    },
+    "probes\\step-00027.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00027.json",
+      "sha256": "9300ae1a00145c405d940d7aac21397bc555a8d905fccbf2d449ee73b1966507"
+    },
+    "probes\\step-00028.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00028.json",
+      "sha256": "701140ad334553a3442354e40c72c361bcbfb22741a5eabb677b38da5bcd922a"
+    },
+    "probes\\step-00029.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00029.json",
+      "sha256": "fc1dd309cd5815f2ca85c26bfcbbcadc39022e1270b0abfed478303c89697bed"
+    },
+    "probes\\step-00030.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00030.json",
+      "sha256": "da530c907d3086199e4cf0def501bef69ebe2840abc4ba4b7c49489e57ad4f1a"
+    },
+    "probes\\step-00031.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00031.json",
+      "sha256": "030c2aa9129b5c0ea127b0f0df63951123a9a9da46e82e90baf5fd293915805a"
+    },
+    "probes\\step-00032.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\probes\\step-00032.json",
+      "sha256": "0afd3f3b496b578b69375f90a93cf2ec835295a94bf16f08a2a5f93f02936a7a"
+    },
+    "measurements\\step-00000-complete.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\measurements\\step-00000-complete.json",
+      "sha256": "6a7315903b95b609bab6380b9c3d6589c3cfe54f02f7c04626f5ecfb210bcecc"
+    },
+    "measurements\\step-00000.jsonl": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\measurements\\step-00000.jsonl",
+      "sha256": "28eee43c84988e77522bf91d5122d7454b5de10ffb453eb24010ac52ac9eba6b"
+    },
+    "measurements\\step-00016-complete.json": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\measurements\\step-00016-complete.json",
+      "sha256": "6756c22d6e0c053b35b8dfc65b0f27b13da0c5c09d4dd26ee20abae5496eddcb"
+    },
+    "measurements\\step-00016.jsonl": {
+      "source": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\measurements\\step-00016.jsonl",
+      "sha256": "7370c0ae3ec5f5ca2db53afc36afc09bb6ecc3bc9c9185aa39977a2c36420641"
+    }
+  },
+  "training_prefix_sha256": "a82c423eeba1a7d901ebb20a7eba4d47a2d2359b2fbe3c258e1b7a4526c598da",
+  "source_training_sha256": "a82c423eeba1a7d901ebb20a7eba4d47a2d2359b2fbe3c258e1b7a4526c598da",
+  "superseded_tail_rule": "Only records above the persisted resume step are replaced by the resumed trajectory, never counted twice."
+}

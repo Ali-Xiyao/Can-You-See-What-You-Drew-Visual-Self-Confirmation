@@ -1,0 +1,8 @@
+{
+  "at_utc": "2026-09-08T03:50:23.813497+00:00",
+  "error": "Unexpected direct child: {'pid': 14592, 'create_time': 1788837649.6305425, 'cmdline': ['\\\\??\\\\C:\\\\Windows\\\\system32\\\\conhost.exe', '0x4']}",
+  "action": "rolled_back",
+  "commit_written": false,
+  "old_controller_resumed": true,
+  "successor_terminated": false
+}

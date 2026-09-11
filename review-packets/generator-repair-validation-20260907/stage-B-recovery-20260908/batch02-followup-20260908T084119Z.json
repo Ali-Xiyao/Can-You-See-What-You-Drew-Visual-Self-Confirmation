@@ -1,0 +1,63 @@
+{
+  "at_utc": "2026-09-08T08:41:19.930632+00:00",
+  "batch": "batch-02",
+  "verification_complete": true,
+  "quarantine_checks": [
+    {
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-02\\base-B-0b2e171119169fc9f2db-69916784-0.png",
+      "missing_detectors": [
+        "qwen3vl"
+      ],
+      "resolution": "pending_human",
+      "image_correct": null,
+      "factual_truth_unavailable": true
+    },
+    {
+      "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-02\\base-B-0b2e171119169fc9f2db-2099222585-0.png",
+      "missing_detectors": [
+        "internvl"
+      ],
+      "resolution": "pending_human",
+      "image_correct": null,
+      "factual_truth_unavailable": true
+    }
+  ],
+  "raw_capture_checks": [
+    {
+      "detector": "qwen3vl",
+      "call_index": 16,
+      "sha_verified": true
+    },
+    {
+      "detector": "internvl",
+      "call_index": 17,
+      "sha_verified": true
+    }
+  ],
+  "active_processes": [
+    {
+      "name": "observe-gpu1",
+      "pid": 10008,
+      "matches": true
+    },
+    {
+      "name": "detect-batch-03",
+      "pid": 7472,
+      "matches": true
+    }
+  ],
+  "completed_batches": [
+    "batch-00",
+    "batch-01",
+    "batch-02"
+  ],
+  "observation_snapshot": {
+    "at_utc": "2026-09-08T08:38:53Z",
+    "answers": 101292,
+    "expected": 108000,
+    "remaining_gpu1_zero": 6708,
+    "recent_seconds_per_answer": 0.57443
+  },
+  "secondary_inventory": "secondary-inventory-20260908T083923-1788856763342036600/results.json",
+  "secondary_workload": "secondary-workload-20260908T083923-1788856763778101900/results.json"
+}

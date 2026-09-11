@@ -1,0 +1,66 @@
+{"shard": 0, "validated": [{"model": "base", "prefix_conditions": 1800, "prefix_answers": 18000, "complete": true}, {"model": "naive-original", "prefix_conditions": 570, "prefix_answers": 5640, "complete": false}, {"model": "naive-balanced_absence", "prefix_conditions": 0, "prefix_answers": 0, "complete": false}, {"model": "naive-zero_weight", "prefix_conditions": 0, "prefix_answers": 0, "complete": false}]}
+cuda:0: 24314 MiB free; starting
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\transformers\utils\hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\accelerate\utils\modeling.py:1228: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  return torch.load(checkpoint_file, map_location=torch.device("cpu"))
+You shouldn't move a model when it is dispatched on multiple devices.
+You shouldn't move a model when it is dispatched on multiple devices.
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:617: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  torch.load(pretrained_path, map_location=device), assign=True)
+cuda:0 base: frozen complete output verified; skipped
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:655: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with amp.autocast(dtype=self.dtype):
+cuda:0 naive-original: boundary replay exact; resuming at condition 570
+cuda:0 naive-original: 192/600 images, 5688 answers
+cuda:0 naive-original: 204/600 images, 5976 answers
+cuda:0 naive-original: 216/600 images, 6336 answers
+cuda:0 naive-original: 228/600 images, 6696 answers
+cuda:0 naive-original: 240/600 images, 7056 answers
+cuda:0 naive-original: 252/600 images, 7488 answers
+cuda:0 naive-original: 264/600 images, 7848 answers
+cuda:0 naive-original: 276/600 images, 8208 answers
+cuda:0 naive-original: 288/600 images, 8568 answers
+cuda:0 naive-original: 300/600 images, 8928 answers
+cuda:0 naive-original: 312/600 images, 9288 answers
+cuda:0 naive-original: 324/600 images, 9648 answers
+cuda:0 naive-original: 336/600 images, 10008 answers
+cuda:0 naive-original: 348/600 images, 10368 answers
+cuda:0 naive-original: 360/600 images, 10800 answers
+cuda:0 naive-original: 372/600 images, 11232 answers
+cuda:0 naive-original: 384/600 images, 11592 answers
+cuda:0 naive-original: 396/600 images, 11952 answers
+cuda:0 naive-original: 408/600 images, 12312 answers
+cuda:0 naive-original: 420/600 images, 12600 answers
+cuda:0 naive-original: 432/600 images, 12960 answers
+cuda:0 naive-original: 444/600 images, 13392 answers
+cuda:0 naive-original: 456/600 images, 13752 answers
+cuda:0 naive-original: 468/600 images, 14040 answers
+cuda:0 naive-original: 480/600 images, 14472 answers
+cuda:0 naive-original: 492/600 images, 14904 answers
+cuda:0 naive-original: 504/600 images, 15192 answers
+cuda:0 naive-original: 516/600 images, 15552 answers
+cuda:0 naive-original: 528/600 images, 15840 answers
+cuda:0 naive-original: 540/600 images, 16128 answers
+cuda:0 naive-original: 552/600 images, 16488 answers
+cuda:0 naive-original: 564/600 images, 16848 answers
+cuda:0 naive-original: 576/600 images, 17208 answers
+cuda:0 naive-original: 588/600 images, 17568 answers
+cuda:0 naive-original: 600/600 images, 18000 answers
+cuda:0 naive-balanced_absence: 12/600 images, 360 answers
+cuda:0 naive-balanced_absence: 24/600 images, 648 answers
+cuda:0 naive-balanced_absence: 36/600 images, 1080 answers
+cuda:0 naive-balanced_absence: 48/600 images, 1440 answers
+cuda:0 naive-balanced_absence: 60/600 images, 1800 answers
+cuda:0 naive-balanced_absence: 72/600 images, 2232 answers
+cuda:0 naive-balanced_absence: 84/600 images, 2664 answers
+cuda:0 naive-balanced_absence: 96/600 images, 3096 answers
+cuda:0 naive-balanced_absence: 108/600 images, 3456 answers
+cuda:0 naive-balanced_absence: 120/600 images, 3816 answers
+cuda:0 naive-balanced_absence: 132/600 images, 4104 answers
+cuda:0 naive-balanced_absence: 144/600 images, 4392 answers
+cuda:0 naive-balanced_absence: 156/600 images, 4752 answers
+cuda:0 naive-balanced_absence: 168/600 images, 5040 answers
+cuda:0 naive-balanced_absence: 180/600 images, 5400 answers
+cuda:0 naive-balanced_absence: 192/600 images, 5688 answers
+cuda:0 naive-balanced_absence: 204/600 images, 5976 answers

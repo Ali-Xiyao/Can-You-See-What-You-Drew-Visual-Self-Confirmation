@@ -1,0 +1,12 @@
+{
+  "at_utc": "2026-09-08T03:09:59.664253+00:00",
+  "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-be17449832ceeb3d01dd-1958525811-0.png",
+  "model": "internvl",
+  "same_prompt_and_decode_parameters": true,
+  "file_sha256": "59053f32d22fbd7e8ca9229722ce306650fff7e7525e502db43d3aeb8581c453",
+  "success": false,
+  "error_type": "ValueError",
+  "error": "internvl3.5-8b: json_error:Expecting ',' delimiter: '```json\\n[\\n    {\"object\": \"bottle\", \"color\": \"black\", \"box\": [380, 140, 620, 880]},\\n    {\"object\": \"flower\", \"color\": \"blue\", \"box\": [430, 220, 570, 340]},\\n    {\"object\": \"rose\", \"color\": \"red\", \"box\":'",
+  "reply": "```json\n[\n    {\"object\": \"bottle\", \"color\": \"black\", \"box\": [380, 140, 620, 880]},\n    {\"object\": \"flower\", \"color\": \"blue\", \"box\": [430, 220, 570, 340]},\n    {\"object\": \"rose\", \"color\": \"red\", \"box\": [100, 710, 240, 910]},\n    {\"object\": \"rose\", \"color\": \"green\", \"box\": [100, 840, 240, 910]},\n    {\"object\": \"rose\", \"color\": \"red\", \"box\": [150, 710, 200, 780]},\n    {\"object\": \"rose\", \"color\": \"red\", \"box\": [200, 710, 250, 780]},\n    {\"object\": \"rose\", \"color\": \"red\", \"box\": [150, 770, 200, 840]},\n    {\"object\": \"rose\", \"color\": \"red\", \"box\": [200, 770, 250, 840]},\n    {\"object\": \"rose\", \"color\": \"red\", \"box\": [100, 870, 150, 910]},\n    {\"object\": \"rose\", \"color\": \"red\", \"box\": [200, 870, 250, 910]},\n    {\"object\": \"rose\", \"color\": \"green\", \"box\": [100, 880, 150, 910]},\n    {\"object\": \"rose\", \"color\": \"green\", \"box\": [200, 880, 250, 910]},\n    {\"object\": \"rose\", \"color\": \"green\", \"box\": [150, 880, 200, 910]},\n    {\"object\": \"rose\", \"color\": \"green\", \"box\": [100, 900, 150, 910]},\n    {\"object",
+  "finished_at_utc": "2026-09-08T03:11:22.475918+00:00"
+}

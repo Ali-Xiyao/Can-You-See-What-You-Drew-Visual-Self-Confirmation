@@ -1,0 +1,14 @@
+{
+  "at_utc": "2026-09-08T05:02:49.464878+00:00",
+  "n_images": 150,
+  "sha256": {
+    "qwen3vl": "e49234bbc8bbd9696d363de025c4a4e46ffca6d63a4da61cd941e0b934e9accf",
+    "internvl": "b4f5d3f0496c6da2e5a4934478586ad8730417b65f7a8e705404dec25b939786",
+    "crops": "e66834795290ac2614d01d14d9bdbabffb8f211ee62c1c1e1ff604b2fd7714be",
+    "verified": "50d8745b64005b01c75eb20b50a98631b9edf65e6885daa7c4a1355dc40c217d"
+  },
+  "detector_snapshot_digest": "692d4bd5045bd8ac00404d5567a6a1ead9faeb0a601e3c772b5600af0f72e1a8",
+  "device": "cuda:1",
+  "recovery": true,
+  "frozen_parameters_unchanged": true
+}

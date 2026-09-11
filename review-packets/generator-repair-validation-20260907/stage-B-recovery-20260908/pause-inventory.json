@@ -1,0 +1,109 @@
+{
+  "at_utc": "2026-09-08T10:30:48.491685+00:00",
+  "owned_processes_remaining": [],
+  "observations": [
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observations\\gpu0\\base\\answers.jsonl",
+      "n_conditions": 1800,
+      "n_answers": 18000,
+      "completion_marker_verified": true,
+      "sha256": "578d67538a60e38ff027112169f64d266845314e3bdba1e51ef3484086d42caf"
+    },
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observations\\gpu0\\naive-balanced_absence\\answers.jsonl",
+      "n_conditions": 1800,
+      "n_answers": 18000,
+      "completion_marker_verified": true,
+      "sha256": "7e19db342d9e7a6e324605727dc06c120914d4c1b065406393c6587949487d15"
+    },
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observations\\gpu0\\naive-original\\answers.jsonl",
+      "n_conditions": 1800,
+      "n_answers": 18000,
+      "completion_marker_verified": true,
+      "sha256": "1a468ed32c94605236943a2b57a4439516f3f1758dd0252bf8fe048141bbdf2c"
+    },
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observations\\gpu0\\naive-zero_weight\\answers.jsonl",
+      "n_conditions": 1800,
+      "n_answers": 18000,
+      "completion_marker_verified": true,
+      "sha256": "47ddf9e146edd64efc641095271ed995da3c23c110b0a97046d8a1d5423337d5"
+    },
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observations\\gpu1\\base\\answers.jsonl",
+      "n_conditions": 900,
+      "n_answers": 9000,
+      "completion_marker_verified": true,
+      "sha256": "b8ae7493248b791e3bce8c4f05f89ce9ea16a2561cc84bae5f336c7f2d9164ea"
+    },
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observations\\gpu1\\naive-balanced_absence\\answers.jsonl",
+      "n_conditions": 900,
+      "n_answers": 9000,
+      "completion_marker_verified": true,
+      "sha256": "46300dddfad3e670abd0338b43ec7e454558484c7beb1cd8c185668f7f13b6f6"
+    },
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observations\\gpu1\\naive-original\\answers.jsonl",
+      "n_conditions": 900,
+      "n_answers": 9000,
+      "completion_marker_verified": true,
+      "sha256": "4bfa2929009c549e63ea4f2c083f87780148ba6d568c9fc1f50540f8cc044f2f"
+    },
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observations\\gpu1\\naive-zero_weight\\answers.jsonl",
+      "n_conditions": 900,
+      "n_answers": 9000,
+      "completion_marker_verified": true,
+      "sha256": "d858083b14d04ab4c0fde191a0abf90b56ba5f0f3e3c5006f5eb133a211b46fe"
+    }
+  ],
+  "n_observation_answers": 108000,
+  "partial_batch_files": [
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-04\\detections.qwen3vl.jsonl",
+      "bytes": 19584,
+      "sha256": "bb36c6aa243366f94d91c1f0a962397bbe826faad3e864d67e253a7651094210",
+      "complete_json_lines": 24,
+      "unparsed_lines": 0
+    },
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-04\\manifest.jsonl",
+      "bytes": 155811,
+      "sha256": "25f7bab265028b1c4dcb28271aeeb28adee8d303b3981c57468c9f60328bdd90",
+      "complete_json_lines": 150,
+      "unparsed_lines": 0
+    },
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-04\\raw-calls.detect.qwen3vl.jsonl",
+      "bytes": 43328,
+      "sha256": "2b2f8832872f1a2792ba4a04044a007de19f44c4a86741d0fba049565f111866",
+      "complete_json_lines": 24,
+      "unparsed_lines": 0
+    },
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-05\\detections.qwen3vl.jsonl",
+      "bytes": 36147,
+      "sha256": "e58e9a382cbda98f2f909a40833e3bfb44ce1805a90c6e4bac655f78fee3bb01",
+      "complete_json_lines": 45,
+      "unparsed_lines": 0
+    },
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-05\\manifest.jsonl",
+      "bytes": 154150,
+      "sha256": "1fae0f20502ef1ec497b1cc298e4b3eb8d3aff47b87ff3f1478cf66e47c62930",
+      "complete_json_lines": 150,
+      "unparsed_lines": 0
+    },
+    {
+      "path": "review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-05\\raw-calls.detect.qwen3vl.jsonl",
+      "bytes": 80945,
+      "sha256": "2093f298e935fef1897697cf5dfda8c65548ed26188f7918a1d50d00d594e095",
+      "complete_json_lines": 45,
+      "unparsed_lines": 0
+    }
+  ],
+  "automatic_resume": false,
+  "main_analysis_started": false
+}

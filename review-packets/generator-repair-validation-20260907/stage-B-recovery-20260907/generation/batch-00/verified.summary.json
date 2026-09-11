@@ -1,0 +1,13 @@
+{
+  "n_images": 150,
+  "resolution_counts": {
+    "agreed_verdict": 69,
+    "agreed": 67,
+    "resolved_by_crop": 3,
+    "pending_human": 11
+  },
+  "unknown_image_labels": 11,
+  "quarantined_missing_detector_images": 1,
+  "single_detector_verdicts": 0,
+  "skipped_no_detection": 0
+}

@@ -1,0 +1,99 @@
+{
+  "at_utc": "2026-09-08T08:07:17.732785+00:00",
+  "state_at": "2026-09-08T08:07:14.978130+00:00",
+  "status": "running",
+  "deadline": 1788894000.0,
+  "completed_batches": [
+    "batch-00",
+    "batch-01"
+  ],
+  "completed_observer_shards": [
+    0
+  ],
+  "processes": [
+    {
+      "name": "controller",
+      "pid": 11704,
+      "creation_matches": true,
+      "command_matches": true,
+      "running": true
+    },
+    {
+      "name": "observe-gpu1",
+      "pid": 10008,
+      "creation_matches": true,
+      "command_matches": true,
+      "running": true
+    },
+    {
+      "name": "detect-batch-02",
+      "pid": 21816,
+      "creation_matches": true,
+      "command_matches": true,
+      "running": true
+    }
+  ],
+  "markers": {},
+  "observation_snapshot": {
+    "at_utc": "2026-09-08T08:06:31Z",
+    "source": "Independent full JSONL audit by throughput_audit",
+    "answers": 97376,
+    "expected": 108000,
+    "increase_since_0744": 2992,
+    "errors": 0,
+    "abstentions": 0,
+    "partial_tail": false,
+    "shard0_complete": true,
+    "shard0_answers": 72000,
+    "shard1": {
+      "base": 9000,
+      "naive-original": 9000,
+      "naive-balanced_absence": 7376,
+      "naive-zero_weight": 0,
+      "completed_models": [
+        "base",
+        "naive-original"
+      ],
+      "last_answer_utc": "2026-09-08T08:06:28Z"
+    }
+  },
+  "batch02": {
+    "raw-calls.detect.internvl.jsonl": {
+      "calls": 37,
+      "errors": [
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-02\\base-B-0b2e171119169fc9f2db-2099222585-0.png",
+          "error": "json_error:Expecting ',' delimiter",
+          "status": "parse_error",
+          "full_reply_retained": true
+        }
+      ],
+      "last_finished": "2026-09-08T08:07:11.542329+00:00",
+      "unparsed_lines": 0
+    },
+    "raw-calls.detect.qwen3vl.jsonl": {
+      "calls": 150,
+      "errors": [
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-02\\base-B-0b2e171119169fc9f2db-69916784-0.png",
+          "error": "json_error:Expecting ',' delimiter",
+          "status": "parse_error",
+          "full_reply_retained": true
+        }
+      ],
+      "last_finished": "2026-09-08T07:55:57.788017+00:00",
+      "unparsed_lines": 0
+    }
+  },
+  "batch02_unique_failed_images": 2,
+  "quarantine_check": {
+    "qwen_phase_complete_150": true,
+    "failed_row_quarantined": true,
+    "failure_class": "json_parse_error",
+    "full_reply_retained": true,
+    "invented_detections": false,
+    "pipeline_original_archive_retained": true,
+    "internvl_phase": "still_running; original frozen post-phase annotation applies"
+  },
+  "action": "Both jobs healthy. Qwen batch02 complete with previously known parse failure correctly quarantined; InternVL proceeding with JSON-only failures retained under existing addendum. No complete new gold batch; no secondary rerun or premature gold analysis."
+}

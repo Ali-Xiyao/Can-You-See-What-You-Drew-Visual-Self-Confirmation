@@ -1,0 +1,19 @@
+{
+  "at_utc": "2026-09-08T05:13:40.262336+00:00",
+  "status": "failed",
+  "pid": 20052,
+  "deadline": 100,
+  "active_jobs": [
+    {
+      "name": "observe-gpu0",
+      "kind": "observation",
+      "shard": 0,
+      "device": "cuda:0"
+    }
+  ],
+  "completed_batches": [
+    "batch-00",
+    "batch-01"
+  ],
+  "completed_observer_shards": []
+}

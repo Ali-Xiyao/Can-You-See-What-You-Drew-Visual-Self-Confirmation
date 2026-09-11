@@ -1,0 +1,177 @@
+{
+  "at_utc": "2026-09-08T03:30:20.898988+00:00",
+  "excluded_from_main_denominator": true,
+  "prefix_condition_index": 569,
+  "previous": {
+    "observer": "naive-original",
+    "generator": "base",
+    "spec_id": "grv2-0019",
+    "scene_sha256": "df258987e09ec4b1bef3a936f95d386077ce7f84983f45f3d90aa2a9a37f251b",
+    "candidate_index": 3,
+    "seed": 1307595276,
+    "condition": "prompt_off",
+    "n_original": 4,
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-239a0498babe6c5ad87a-1307595276-0.png",
+    "device": "cuda:0",
+    "observation": {
+      "request_id": "167839b667220e4ad34841a026f34b70491d4061ae354a22839be8a78e77d270",
+      "observer_id": "showlab/show-o2-1.5B",
+      "observer_revision": "07ec16589d4fc5422a74dddbbc4b2cd11e551039",
+      "rgb_sha256": "7289a64ce1ba75fd7e5a74af5a4557907b012d7cb9f33eea68c3b52a30315330",
+      "answers": [
+        {
+          "question_id": "grv2-0019:exists:0",
+          "raw_answer": "yes",
+          "normalized_answer": "yes",
+          "abstain": false,
+          "latency_ms": 258.94170001265593,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:count:0",
+          "raw_answer": "2",
+          "normalized_answer": "2",
+          "abstain": false,
+          "latency_ms": 216.69869998004287,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:exists:1",
+          "raw_answer": "yes",
+          "normalized_answer": "yes",
+          "abstain": false,
+          "latency_ms": 245.526599988807,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:count:1",
+          "raw_answer": "2",
+          "normalized_answer": "2",
+          "abstain": false,
+          "latency_ms": 285.4851000010967,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:diagnostic-absence:sock:exists",
+          "raw_answer": "yes",
+          "normalized_answer": "yes",
+          "abstain": false,
+          "latency_ms": 287.26219999953173,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:diagnostic-absence:sock:count",
+          "raw_answer": "2",
+          "normalized_answer": "2",
+          "abstain": false,
+          "latency_ms": 249.49639997794293,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:diagnostic-absence:clock:exists",
+          "raw_answer": "yes",
+          "normalized_answer": "yes",
+          "abstain": false,
+          "latency_ms": 282.63840000727214,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:diagnostic-absence:clock:count",
+          "raw_answer": "0",
+          "normalized_answer": "0",
+          "abstain": false,
+          "latency_ms": 239.72869999124669,
+          "error": null
+        }
+      ],
+      "started_at": "2026-09-07T12:19:19.061092+00:00",
+      "finished_at": "2026-09-07T12:19:21.232816+00:00"
+    }
+  },
+  "replay": {
+    "observer": "naive-original",
+    "generator": "base",
+    "spec_id": "grv2-0019",
+    "scene_sha256": "df258987e09ec4b1bef3a936f95d386077ce7f84983f45f3d90aa2a9a37f251b",
+    "candidate_index": 3,
+    "seed": 1307595276,
+    "condition": "prompt_off",
+    "n_original": 4,
+    "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-239a0498babe6c5ad87a-1307595276-0.png",
+    "device": "cuda:0",
+    "observation": {
+      "request_id": "167839b667220e4ad34841a026f34b70491d4061ae354a22839be8a78e77d270",
+      "observer_id": "showlab/show-o2-1.5B",
+      "observer_revision": "07ec16589d4fc5422a74dddbbc4b2cd11e551039",
+      "rgb_sha256": "7289a64ce1ba75fd7e5a74af5a4557907b012d7cb9f33eea68c3b52a30315330",
+      "answers": [
+        {
+          "question_id": "grv2-0019:exists:0",
+          "raw_answer": "yes",
+          "normalized_answer": "yes",
+          "abstain": false,
+          "latency_ms": 4254.553999999644,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:count:0",
+          "raw_answer": "2",
+          "normalized_answer": "2",
+          "abstain": false,
+          "latency_ms": 335.10019999994256,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:exists:1",
+          "raw_answer": "yes",
+          "normalized_answer": "yes",
+          "abstain": false,
+          "latency_ms": 327.5481000000582,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:count:1",
+          "raw_answer": "2",
+          "normalized_answer": "2",
+          "abstain": false,
+          "latency_ms": 320.29469999997673,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:diagnostic-absence:sock:exists",
+          "raw_answer": "yes",
+          "normalized_answer": "yes",
+          "abstain": false,
+          "latency_ms": 326.0721999999987,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:diagnostic-absence:sock:count",
+          "raw_answer": "2",
+          "normalized_answer": "2",
+          "abstain": false,
+          "latency_ms": 365.60000000008586,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:diagnostic-absence:clock:exists",
+          "raw_answer": "yes",
+          "normalized_answer": "yes",
+          "abstain": false,
+          "latency_ms": 326.06940000005125,
+          "error": null
+        },
+        {
+          "question_id": "grv2-0019:diagnostic-absence:clock:count",
+          "raw_answer": "0",
+          "normalized_answer": "0",
+          "abstain": false,
+          "latency_ms": 349.92540000030203,
+          "error": null
+        }
+      ],
+      "started_at": "2026-09-08T03:30:03.494290+00:00",
+      "finished_at": "2026-09-08T03:30:20.898988+00:00"
+    }
+  }
+}

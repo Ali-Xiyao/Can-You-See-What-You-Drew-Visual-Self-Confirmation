@@ -1,0 +1,118 @@
+{
+  "at_utc": "2026-09-08T09:25:27.412943+00:00",
+  "state_snapshot": {
+    "at_utc": "2026-09-08T09:25:22.902736+00:00",
+    "status": "running",
+    "pid": 11704,
+    "deadline": 1788894000.0,
+    "active_jobs": [
+      {
+        "name": "observe-gpu1",
+        "kind": "observation",
+        "shard": 1,
+        "device": "cuda:1",
+        "pid": 10008,
+        "create_time": 1788844489.4401393,
+        "cmdline": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observation_resume.py",
+          "--shard",
+          "1",
+          "--deadline",
+          "1788894000.0"
+        ],
+        "command": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observation_resume.py",
+          "--shard",
+          "1",
+          "--deadline",
+          "1788894000.0"
+        ],
+        "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observe-gpu1.log"
+      },
+      {
+        "name": "detect-batch-03",
+        "kind": "detection",
+        "batch": "batch-03",
+        "device": "cuda:0",
+        "pid": 7472,
+        "create_time": 1788856671.497558,
+        "cmdline": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+          "detect-batch",
+          "--batch",
+          "batch-03",
+          "--deadline",
+          "1788894000.0",
+          "--device",
+          "cuda:0"
+        ],
+        "command": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+          "detect-batch",
+          "--batch",
+          "batch-03",
+          "--deadline",
+          "1788894000.0",
+          "--device",
+          "cuda:0"
+        ],
+        "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detect-batch-03.log"
+      }
+    ],
+    "completed_batches": [
+      "batch-00",
+      "batch-01",
+      "batch-02"
+    ],
+    "completed_observer_shards": [
+      0
+    ]
+  },
+  "identity_check_at_utc": "2026-09-08T09:25:05Z",
+  "controller_and_active_workers_identity_verified": true,
+  "failure_marker": false,
+  "completion_marker": false,
+  "observation_snapshot": {
+    "at_utc": "2026-09-08T09:24:57Z",
+    "source": "Independent full JSONL audit by throughput_audit",
+    "answers": 105072,
+    "expected": 108000,
+    "increase_since_0903": 1920,
+    "gpu1_zero_answers": 6072,
+    "gpu1_zero_expected": 9000,
+    "gpu1_zero_complete": false,
+    "last_finished": "2026-09-08T09:24:55Z",
+    "errors": 0,
+    "abstentions": 0,
+    "partial_tail": false
+  },
+  "batch03_snapshot": {
+    "at_utc": "2026-09-08T09:25:05Z",
+    "qwen_model_calls": 150,
+    "internvl_model_calls": 31,
+    "parse_errors": 0,
+    "other_errors": 0,
+    "last_finished": "2026-09-08T09:24:48.780912Z",
+    "partial_tail": false
+  },
+  "secondary_completed_batch_set": [
+    "batch-00",
+    "batch-01",
+    "batch-02"
+  ],
+  "latest_inventory": "secondary-inventory-20260908T083923-1788856763342036600/results.json",
+  "latest_workload": "secondary-workload-20260908T083923-1788856763778101900/results.json",
+  "action": "Healthy output continues. No new complete gold batch, no repeat secondary diagnostics or premature comparison. Continue existing controller and workers."
+}

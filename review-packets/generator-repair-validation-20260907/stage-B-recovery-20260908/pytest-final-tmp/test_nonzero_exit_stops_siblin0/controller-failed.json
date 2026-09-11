@@ -1,0 +1,6 @@
+{
+  "at_utc": "2026-09-08T05:13:40.287337+00:00",
+  "error": "RuntimeError: observe-gpu0: real process exit 7",
+  "automatic_retry": false,
+  "cleanup_errors": []
+}

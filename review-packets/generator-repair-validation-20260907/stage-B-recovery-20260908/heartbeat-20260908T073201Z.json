@@ -1,0 +1,86 @@
+{
+  "at_utc": "2026-09-08T07:32:01.016690+00:00",
+  "state_at": "2026-09-08T07:31:57.937470+00:00",
+  "status": "running",
+  "deadline": 1788894000.0,
+  "completed_batches": [
+    "batch-00",
+    "batch-01"
+  ],
+  "completed_observer_shards": [
+    0
+  ],
+  "processes": [
+    {
+      "name": "controller",
+      "pid": 11704,
+      "creation_matches": true,
+      "command_matches": true,
+      "running": true
+    },
+    {
+      "name": "observe-gpu1",
+      "pid": 10008,
+      "creation_matches": true,
+      "command_matches": true,
+      "running": true
+    },
+    {
+      "name": "detect-batch-02",
+      "pid": 21816,
+      "creation_matches": true,
+      "command_matches": true,
+      "running": true
+    }
+  ],
+  "markers": {},
+  "observation_snapshot": {
+    "at_utc": "2026-09-08T07:30:56Z",
+    "source": "Independent read-only full JSONL audit by throughput_audit",
+    "answers": 92556,
+    "expected": 108000,
+    "increase_since_0709": 6984,
+    "errors": 0,
+    "abstentions": 0,
+    "partial_tail": false,
+    "shard0": {
+      "base": 18000,
+      "naive-original": 18000,
+      "naive-balanced_absence": 18000,
+      "naive-zero_weight": 18000,
+      "completed_models": [
+        "base",
+        "naive-original",
+        "naive-balanced_absence",
+        "naive-zero_weight"
+      ],
+      "last_answer_utc": "2026-09-08T07:24:09Z",
+      "complete": true
+    },
+    "shard1": {
+      "base": 9000,
+      "naive-original": 9000,
+      "naive-balanced_absence": 2556,
+      "completed_models": [
+        "base",
+        "naive-original"
+      ],
+      "last_answer_utc": "2026-09-08T07:30:49Z"
+    }
+  },
+  "batch02_raw_progress": {
+    "detections.qwen3vl.jsonl": {
+      "complete_rows": 15,
+      "error_rows": 0,
+      "unparsed_lines": 0,
+      "latest_finished_at": null
+    },
+    "raw-calls.detect.qwen3vl.jsonl": {
+      "complete_rows": 15,
+      "error_rows": 0,
+      "unparsed_lines": 0,
+      "latest_finished_at": null
+    }
+  },
+  "action": "GPU0 shard completed successfully and auto-dispatched batch02 at 07:24:31 UTC; verified worker identity and new detector output. GPU1 observer continues. No newly completed gold batch, no repeated secondary diagnostics."
+}

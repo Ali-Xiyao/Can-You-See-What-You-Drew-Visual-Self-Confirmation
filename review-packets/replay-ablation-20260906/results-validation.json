@@ -1,0 +1,12 @@
+{
+  "created_utc": "2026-09-07T02:46:49.793023+00:00",
+  "status": "PASS_integrity_and_arithmetic_only",
+  "checks": {
+    "training_microbatches": 1536,
+    "probe_answers": 39600,
+    "full_answers": 32724,
+    "pool_scores": 1728
+  },
+  "results_sha256": "44b1180af5b59ab3df400bf4b55a917c051e490ae6d8931cca9dba0fed96517c",
+  "limitations": "Does not establish representativeness or causal generalization beyond these interventions."
+}

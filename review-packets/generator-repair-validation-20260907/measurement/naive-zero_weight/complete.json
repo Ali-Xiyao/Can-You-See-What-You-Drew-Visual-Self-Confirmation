@@ -1,0 +1,10 @@
+{
+  "at_utc": "2026-09-07T05:25:30.738550+00:00",
+  "n_answers": 3840,
+  "n_images": 128,
+  "n_conditions": 3,
+  "parameter_digest_before": "0a4973d9870b19af0225e633c0d8d18a9cc8b6d8e946cc5451bf722bd31481e4",
+  "parameter_digest_after": "0a4973d9870b19af0225e633c0d8d18a9cc8b6d8e946cc5451bf722bd31481e4",
+  "observations_sha256": "0d4cbdf701e8e25d4080fb6ce1a16e9f215fdbd35d6ef8b71baba4db341c1dc1",
+  "cycle_sha256": "f2eab88c85d5da5f3f6a608a26983a91c231ec96bdb0e47c360b060a45f2ef36"
+}

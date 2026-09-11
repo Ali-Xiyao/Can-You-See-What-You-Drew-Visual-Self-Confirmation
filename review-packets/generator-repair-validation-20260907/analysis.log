@@ -1,0 +1,66 @@
+{
+  "output_movement": {
+    "naive-original": {
+      "measurable_output_change": true,
+      "scenes_above_threshold": 16,
+      "threshold": 0.00392156862745098,
+      "rmse_by_scene": {
+        "n_scenes": 16,
+        "mean": 0.08628549886634573,
+        "ci95": [
+          0.07137764156941558,
+          0.10135495024587722
+        ],
+        "ci90": [
+          0.07363016673771199,
+          0.09893132973229513
+        ],
+        "lower_one_sided95": 0.07363016673771199
+      }
+    },
+    "naive-balanced_absence": {
+      "measurable_output_change": true,
+      "scenes_above_threshold": 16,
+      "threshold": 0.00392156862745098,
+      "rmse_by_scene": {
+        "n_scenes": 16,
+        "mean": 0.08948315464658663,
+        "ci95": [
+          0.07285132959805196,
+          0.1061921104643261
+        ],
+        "ci90": [
+          0.07548501304991077,
+          0.10344499299535528
+        ],
+        "lower_one_sided95": 0.07548501304991077
+      }
+    },
+    "naive-zero_weight": {
+      "measurable_output_change": true,
+      "scenes_above_threshold": 16,
+      "threshold": 0.00392156862745098,
+      "rmse_by_scene": {
+        "n_scenes": 16,
+        "mean": 0.1103995016310364,
+        "ci95": [
+          0.09277000657457393,
+          0.12842857512878253
+        ],
+        "ci90": [
+          0.09554472982999869,
+          0.12550333762192167
+        ],
+        "lower_one_sided95": 0.09554472982999869
+      }
+    }
+  },
+  "loss_response": {
+    "base": false,
+    "naive-original": true,
+    "naive-balanced_absence": true,
+    "naive-zero_weight": true
+  },
+  "B_recommended": true,
+  "validated_answers": 15360
+}

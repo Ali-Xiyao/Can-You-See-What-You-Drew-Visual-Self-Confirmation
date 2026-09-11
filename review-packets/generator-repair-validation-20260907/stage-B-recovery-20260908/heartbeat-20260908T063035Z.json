@@ -1,0 +1,66 @@
+{
+  "at_utc": "2026-09-08T06:30:35.789144+00:00",
+  "state_at": "2026-09-08T06:30:31.866664+00:00",
+  "status": "running",
+  "deadline": 1788894000.0,
+  "completed_batches": [
+    "batch-00",
+    "batch-01"
+  ],
+  "completed_observer_shards": [],
+  "processes": [
+    {
+      "name": "controller",
+      "pid": 11704,
+      "creation_matches": true,
+      "command_matches": true,
+      "running": true
+    },
+    {
+      "name": "observe-gpu0",
+      "pid": 20232,
+      "creation_matches": true,
+      "command_matches": true,
+      "running": true
+    },
+    {
+      "name": "observe-gpu1",
+      "pid": 10008,
+      "creation_matches": true,
+      "command_matches": true,
+      "running": true
+    }
+  ],
+  "markers": {},
+  "observation_snapshot": {
+    "at_utc": "2026-09-08T06:29:55Z",
+    "source": "Independent read-only full JSONL audit by throughput_audit",
+    "answers": 70440,
+    "expected": 108000,
+    "increase_since_0608": 8480,
+    "errors": 0,
+    "abstentions": 0,
+    "partial_tail": false,
+    "shard0": {
+      "base": 18000,
+      "naive-original": 18000,
+      "naive-balanced_absence": 18000,
+      "naive-zero_weight": 5640,
+      "completed_models": [
+        "base",
+        "naive-original",
+        "naive-balanced_absence"
+      ],
+      "last_answer_utc": "2026-09-08T06:29:54Z"
+    },
+    "shard1": {
+      "base": 9000,
+      "naive-original": 1800,
+      "completed_models": [
+        "base"
+      ],
+      "last_answer_utc": "2026-09-08T06:29:53Z"
+    }
+  },
+  "action": "Healthy continued output; no new completed detector batches. No repeat inventory/workload, model comparison, or runtime changes."
+}

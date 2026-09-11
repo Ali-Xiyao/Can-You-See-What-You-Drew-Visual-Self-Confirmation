@@ -1,0 +1,171 @@
+{
+  "at_utc": "2026-09-08T10:28:59.631686+00:00",
+  "reason": "User explicitly requested pause: 你暂停吧",
+  "automatic_resume": false,
+  "automation_status": "PAUSED",
+  "state_before_stop": {
+    "at_utc": "2026-09-08T10:28:56.054864+00:00",
+    "status": "running",
+    "pid": 11704,
+    "deadline": 1788894000.0,
+    "active_jobs": [
+      {
+        "name": "detect-batch-04",
+        "kind": "detection",
+        "batch": "batch-04",
+        "device": "cuda:1",
+        "pid": 16016,
+        "create_time": 1788862538.1854389,
+        "cmdline": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+          "detect-batch",
+          "--batch",
+          "batch-04",
+          "--deadline",
+          "1788894000.0",
+          "--device",
+          "cuda:1"
+        ],
+        "command": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+          "detect-batch",
+          "--batch",
+          "batch-04",
+          "--deadline",
+          "1788894000.0",
+          "--device",
+          "cuda:1"
+        ],
+        "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detect-batch-04.log"
+      },
+      {
+        "name": "detect-batch-05",
+        "kind": "detection",
+        "batch": "batch-05",
+        "device": "cuda:0",
+        "pid": 10540,
+        "create_time": 1788862909.569035,
+        "cmdline": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+          "detect-batch",
+          "--batch",
+          "batch-05",
+          "--deadline",
+          "1788894000.0",
+          "--device",
+          "cuda:0"
+        ],
+        "command": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+          "detect-batch",
+          "--batch",
+          "batch-05",
+          "--deadline",
+          "1788894000.0",
+          "--device",
+          "cuda:0"
+        ],
+        "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detect-batch-05.log"
+      }
+    ],
+    "completed_batches": [
+      "batch-00",
+      "batch-01",
+      "batch-02",
+      "batch-03"
+    ],
+    "completed_observer_shards": [
+      0,
+      1
+    ]
+  },
+  "verified_owned_processes": [
+    {
+      "pid": 11704,
+      "ppid": 21064,
+      "create_time": 1788844484.5024276,
+      "cmdline": [
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\core\\python.exe",
+        "-B",
+        "-u",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\scheduler.py"
+      ]
+    },
+    {
+      "pid": 6336,
+      "ppid": 11704,
+      "create_time": 1788844484.5096643,
+      "cmdline": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ]
+    },
+    {
+      "pid": 16016,
+      "ppid": 11704,
+      "create_time": 1788862538.1854389,
+      "cmdline": [
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+        "-B",
+        "-u",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+        "detect-batch",
+        "--batch",
+        "batch-04",
+        "--deadline",
+        "1788894000.0",
+        "--device",
+        "cuda:1"
+      ]
+    },
+    {
+      "pid": 10540,
+      "ppid": 11704,
+      "create_time": 1788862909.569035,
+      "cmdline": [
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+        "-B",
+        "-u",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+        "detect-batch",
+        "--batch",
+        "batch-05",
+        "--deadline",
+        "1788894000.0",
+        "--device",
+        "cuda:0"
+      ]
+    },
+    {
+      "pid": 23868,
+      "ppid": 10540,
+      "create_time": 1788862909.8318884,
+      "cmdline": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ]
+    },
+    {
+      "pid": 2800,
+      "ppid": 16016,
+      "create_time": 1788862538.6112962,
+      "cmdline": [
+        "\\??\\C:\\Windows\\system32\\conhost.exe",
+        "0x4"
+      ]
+    }
+  ],
+  "method": "Suspend verified controller to prevent dispatch, then terminate its owned workers and controller; preserve all output bytes."
+}

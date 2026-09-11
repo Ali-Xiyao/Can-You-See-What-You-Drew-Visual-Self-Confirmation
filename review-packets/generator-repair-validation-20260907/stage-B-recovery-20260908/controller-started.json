@@ -1,0 +1,25 @@
+{
+  "at_utc": "2026-09-08T05:14:49.374176+00:00",
+  "pid": 11704,
+  "identity": {
+    "pid": 11704,
+    "create_time": 1788844484.5024276,
+    "cmdline": [
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\core\\python.exe",
+      "-B",
+      "-u",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\scheduler.py"
+    ]
+  },
+  "deadline": 1788894000.0,
+  "recovery_plan_sha256": "f7c8ef2fd7530dddc60815f82243d84c7a5929b160f57713127692b5b55d9e6a",
+  "scheduler_sha256": "54a56e997863be1250279fffdc5570eb9ac5b347fcb79fa573502675d853e19d",
+  "new_optimizer_steps": 0,
+  "completed_batches_at_start": [
+    "batch-00",
+    "batch-01"
+  ],
+  "completed_shards_at_start": [],
+  "observer_devices_unchanged": true,
+  "original_failed_attempts_preserved": true
+}

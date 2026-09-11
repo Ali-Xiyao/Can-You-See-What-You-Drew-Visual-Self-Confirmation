@@ -1,0 +1,583 @@
+{
+  "completed_batches": [
+    "batch-00"
+  ],
+  "batches": {
+    "batch-00": {
+      "n_scenes": 25,
+      "n_images": 150,
+      "known_correct_images": 6,
+      "known_wrong_images": 133,
+      "unknown_images": 11,
+      "image_correct_rate_bounds": [
+        0.04,
+        0.11333333333333333
+      ],
+      "availability": {
+        "atleast1knowntrue": {
+          "n_scenes": 6,
+          "scene_ids": [
+            "grv2-0071",
+            "grv3-0016",
+            "grv3-0018",
+            "grv3-0041",
+            "grv3-0046",
+            "grv3-0074"
+          ]
+        },
+        "certifiedallwrong": {
+          "n_scenes": 12,
+          "scene_ids": [
+            "grv2-0015",
+            "grv2-0025",
+            "grv2-0032",
+            "grv2-0035",
+            "grv2-0049",
+            "grv2-0052",
+            "grv2-0066",
+            "grv2-0082",
+            "grv3-0054",
+            "grv3-0056",
+            "grv3-0079",
+            "grv3-0081"
+          ]
+        },
+        "unresolvednoneknowntrue": {
+          "n_scenes": 7,
+          "scene_ids": [
+            "grv2-0038",
+            "grv2-0073",
+            "grv3-0011",
+            "grv3-0028",
+            "grv3-0036",
+            "grv3-0076",
+            "grv3-0077"
+          ]
+        }
+      },
+      "structure": {
+        "all_wrong": {
+          "n_scenes": 12,
+          "scene_ids": [
+            "grv2-0015",
+            "grv2-0025",
+            "grv2-0032",
+            "grv2-0035",
+            "grv2-0049",
+            "grv2-0052",
+            "grv2-0066",
+            "grv2-0082",
+            "grv3-0054",
+            "grv3-0056",
+            "grv3-0079",
+            "grv3-0081"
+          ]
+        },
+        "all_correct": {
+          "n_scenes": 0,
+          "scene_ids": []
+        },
+        "confirmed_mixed": {
+          "n_scenes": 6,
+          "scene_ids": [
+            "grv2-0071",
+            "grv3-0016",
+            "grv3-0018",
+            "grv3-0041",
+            "grv3-0046",
+            "grv3-0074"
+          ]
+        },
+        "unresolved_membership": {
+          "n_scenes": 7,
+          "scene_ids": [
+            "grv2-0038",
+            "grv2-0073",
+            "grv3-0011",
+            "grv3-0028",
+            "grv3-0036",
+            "grv3-0076",
+            "grv3-0077"
+          ]
+        }
+      },
+      "per_pool": {
+        "grv2-0015": {
+          "c": 0,
+          "f": 6,
+          "u": 0,
+          "availability": "certifiedallwrong",
+          "structure": "all_wrong"
+        },
+        "grv2-0025": {
+          "c": 0,
+          "f": 6,
+          "u": 0,
+          "availability": "certifiedallwrong",
+          "structure": "all_wrong"
+        },
+        "grv2-0032": {
+          "c": 0,
+          "f": 6,
+          "u": 0,
+          "availability": "certifiedallwrong",
+          "structure": "all_wrong"
+        },
+        "grv2-0035": {
+          "c": 0,
+          "f": 6,
+          "u": 0,
+          "availability": "certifiedallwrong",
+          "structure": "all_wrong"
+        },
+        "grv2-0038": {
+          "c": 0,
+          "f": 5,
+          "u": 1,
+          "availability": "unresolvednoneknowntrue",
+          "structure": "unresolved_membership"
+        },
+        "grv2-0049": {
+          "c": 0,
+          "f": 6,
+          "u": 0,
+          "availability": "certifiedallwrong",
+          "structure": "all_wrong"
+        },
+        "grv2-0052": {
+          "c": 0,
+          "f": 6,
+          "u": 0,
+          "availability": "certifiedallwrong",
+          "structure": "all_wrong"
+        },
+        "grv2-0066": {
+          "c": 0,
+          "f": 6,
+          "u": 0,
+          "availability": "certifiedallwrong",
+          "structure": "all_wrong"
+        },
+        "grv2-0071": {
+          "c": 1,
+          "f": 5,
+          "u": 0,
+          "availability": "atleast1knowntrue",
+          "structure": "confirmed_mixed"
+        },
+        "grv2-0073": {
+          "c": 0,
+          "f": 5,
+          "u": 1,
+          "availability": "unresolvednoneknowntrue",
+          "structure": "unresolved_membership"
+        },
+        "grv2-0082": {
+          "c": 0,
+          "f": 6,
+          "u": 0,
+          "availability": "certifiedallwrong",
+          "structure": "all_wrong"
+        },
+        "grv3-0011": {
+          "c": 0,
+          "f": 5,
+          "u": 1,
+          "availability": "unresolvednoneknowntrue",
+          "structure": "unresolved_membership"
+        },
+        "grv3-0016": {
+          "c": 1,
+          "f": 5,
+          "u": 0,
+          "availability": "atleast1knowntrue",
+          "structure": "confirmed_mixed"
+        },
+        "grv3-0018": {
+          "c": 1,
+          "f": 5,
+          "u": 0,
+          "availability": "atleast1knowntrue",
+          "structure": "confirmed_mixed"
+        },
+        "grv3-0028": {
+          "c": 0,
+          "f": 5,
+          "u": 1,
+          "availability": "unresolvednoneknowntrue",
+          "structure": "unresolved_membership"
+        },
+        "grv3-0036": {
+          "c": 0,
+          "f": 5,
+          "u": 1,
+          "availability": "unresolvednoneknowntrue",
+          "structure": "unresolved_membership"
+        },
+        "grv3-0041": {
+          "c": 1,
+          "f": 5,
+          "u": 0,
+          "availability": "atleast1knowntrue",
+          "structure": "confirmed_mixed"
+        },
+        "grv3-0046": {
+          "c": 1,
+          "f": 5,
+          "u": 0,
+          "availability": "atleast1knowntrue",
+          "structure": "confirmed_mixed"
+        },
+        "grv3-0054": {
+          "c": 0,
+          "f": 6,
+          "u": 0,
+          "availability": "certifiedallwrong",
+          "structure": "all_wrong"
+        },
+        "grv3-0056": {
+          "c": 0,
+          "f": 6,
+          "u": 0,
+          "availability": "certifiedallwrong",
+          "structure": "all_wrong"
+        },
+        "grv3-0074": {
+          "c": 1,
+          "f": 3,
+          "u": 2,
+          "availability": "atleast1knowntrue",
+          "structure": "confirmed_mixed"
+        },
+        "grv3-0076": {
+          "c": 0,
+          "f": 5,
+          "u": 1,
+          "availability": "unresolvednoneknowntrue",
+          "structure": "unresolved_membership"
+        },
+        "grv3-0077": {
+          "c": 0,
+          "f": 3,
+          "u": 3,
+          "availability": "unresolvednoneknowntrue",
+          "structure": "unresolved_membership"
+        },
+        "grv3-0079": {
+          "c": 0,
+          "f": 6,
+          "u": 0,
+          "availability": "certifiedallwrong",
+          "structure": "all_wrong"
+        },
+        "grv3-0081": {
+          "c": 0,
+          "f": 6,
+          "u": 0,
+          "availability": "certifiedallwrong",
+          "structure": "all_wrong"
+        }
+      },
+      "sources_sha256": {
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\generation\\batch-00\\manifest.jsonl": "c64d96148be0d529add9111a3ba13daca7d9c6aaf68823da7b02fd204731399b",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\generation\\batch-00\\complete.json": "b6f34440336862f828a8207fdfd2cae116925183bdd9cfb9bc048758d5b22eae",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\generation\\batch-00\\verified.jsonl": "03538f4f8e01554cf83831a085c277af27f9c46782781b5172c7952f1b5afb27",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\generation\\batch-00\\verification-complete.json": "e992da19650180980d0aff28c546549f9f42b7d26218b7cd348575518f6a650e"
+      }
+    }
+  },
+  "combined": {
+    "n_scenes": 25,
+    "n_images": 150,
+    "known_correct_images": 6,
+    "known_wrong_images": 133,
+    "unknown_images": 11,
+    "image_correct_rate_bounds": [
+      0.04,
+      0.11333333333333333
+    ],
+    "availability": {
+      "atleast1knowntrue": {
+        "n_scenes": 6,
+        "scene_ids": [
+          "grv2-0071",
+          "grv3-0016",
+          "grv3-0018",
+          "grv3-0041",
+          "grv3-0046",
+          "grv3-0074"
+        ]
+      },
+      "certifiedallwrong": {
+        "n_scenes": 12,
+        "scene_ids": [
+          "grv2-0015",
+          "grv2-0025",
+          "grv2-0032",
+          "grv2-0035",
+          "grv2-0049",
+          "grv2-0052",
+          "grv2-0066",
+          "grv2-0082",
+          "grv3-0054",
+          "grv3-0056",
+          "grv3-0079",
+          "grv3-0081"
+        ]
+      },
+      "unresolvednoneknowntrue": {
+        "n_scenes": 7,
+        "scene_ids": [
+          "grv2-0038",
+          "grv2-0073",
+          "grv3-0011",
+          "grv3-0028",
+          "grv3-0036",
+          "grv3-0076",
+          "grv3-0077"
+        ]
+      }
+    },
+    "structure": {
+      "all_wrong": {
+        "n_scenes": 12,
+        "scene_ids": [
+          "grv2-0015",
+          "grv2-0025",
+          "grv2-0032",
+          "grv2-0035",
+          "grv2-0049",
+          "grv2-0052",
+          "grv2-0066",
+          "grv2-0082",
+          "grv3-0054",
+          "grv3-0056",
+          "grv3-0079",
+          "grv3-0081"
+        ]
+      },
+      "all_correct": {
+        "n_scenes": 0,
+        "scene_ids": []
+      },
+      "confirmed_mixed": {
+        "n_scenes": 6,
+        "scene_ids": [
+          "grv2-0071",
+          "grv3-0016",
+          "grv3-0018",
+          "grv3-0041",
+          "grv3-0046",
+          "grv3-0074"
+        ]
+      },
+      "unresolved_membership": {
+        "n_scenes": 7,
+        "scene_ids": [
+          "grv2-0038",
+          "grv2-0073",
+          "grv3-0011",
+          "grv3-0028",
+          "grv3-0036",
+          "grv3-0076",
+          "grv3-0077"
+        ]
+      }
+    },
+    "per_pool": {
+      "grv2-0015": {
+        "c": 0,
+        "f": 6,
+        "u": 0,
+        "availability": "certifiedallwrong",
+        "structure": "all_wrong"
+      },
+      "grv2-0025": {
+        "c": 0,
+        "f": 6,
+        "u": 0,
+        "availability": "certifiedallwrong",
+        "structure": "all_wrong"
+      },
+      "grv2-0032": {
+        "c": 0,
+        "f": 6,
+        "u": 0,
+        "availability": "certifiedallwrong",
+        "structure": "all_wrong"
+      },
+      "grv2-0035": {
+        "c": 0,
+        "f": 6,
+        "u": 0,
+        "availability": "certifiedallwrong",
+        "structure": "all_wrong"
+      },
+      "grv2-0038": {
+        "c": 0,
+        "f": 5,
+        "u": 1,
+        "availability": "unresolvednoneknowntrue",
+        "structure": "unresolved_membership"
+      },
+      "grv2-0049": {
+        "c": 0,
+        "f": 6,
+        "u": 0,
+        "availability": "certifiedallwrong",
+        "structure": "all_wrong"
+      },
+      "grv2-0052": {
+        "c": 0,
+        "f": 6,
+        "u": 0,
+        "availability": "certifiedallwrong",
+        "structure": "all_wrong"
+      },
+      "grv2-0066": {
+        "c": 0,
+        "f": 6,
+        "u": 0,
+        "availability": "certifiedallwrong",
+        "structure": "all_wrong"
+      },
+      "grv2-0071": {
+        "c": 1,
+        "f": 5,
+        "u": 0,
+        "availability": "atleast1knowntrue",
+        "structure": "confirmed_mixed"
+      },
+      "grv2-0073": {
+        "c": 0,
+        "f": 5,
+        "u": 1,
+        "availability": "unresolvednoneknowntrue",
+        "structure": "unresolved_membership"
+      },
+      "grv2-0082": {
+        "c": 0,
+        "f": 6,
+        "u": 0,
+        "availability": "certifiedallwrong",
+        "structure": "all_wrong"
+      },
+      "grv3-0011": {
+        "c": 0,
+        "f": 5,
+        "u": 1,
+        "availability": "unresolvednoneknowntrue",
+        "structure": "unresolved_membership"
+      },
+      "grv3-0016": {
+        "c": 1,
+        "f": 5,
+        "u": 0,
+        "availability": "atleast1knowntrue",
+        "structure": "confirmed_mixed"
+      },
+      "grv3-0018": {
+        "c": 1,
+        "f": 5,
+        "u": 0,
+        "availability": "atleast1knowntrue",
+        "structure": "confirmed_mixed"
+      },
+      "grv3-0028": {
+        "c": 0,
+        "f": 5,
+        "u": 1,
+        "availability": "unresolvednoneknowntrue",
+        "structure": "unresolved_membership"
+      },
+      "grv3-0036": {
+        "c": 0,
+        "f": 5,
+        "u": 1,
+        "availability": "unresolvednoneknowntrue",
+        "structure": "unresolved_membership"
+      },
+      "grv3-0041": {
+        "c": 1,
+        "f": 5,
+        "u": 0,
+        "availability": "atleast1knowntrue",
+        "structure": "confirmed_mixed"
+      },
+      "grv3-0046": {
+        "c": 1,
+        "f": 5,
+        "u": 0,
+        "availability": "atleast1knowntrue",
+        "structure": "confirmed_mixed"
+      },
+      "grv3-0054": {
+        "c": 0,
+        "f": 6,
+        "u": 0,
+        "availability": "certifiedallwrong",
+        "structure": "all_wrong"
+      },
+      "grv3-0056": {
+        "c": 0,
+        "f": 6,
+        "u": 0,
+        "availability": "certifiedallwrong",
+        "structure": "all_wrong"
+      },
+      "grv3-0074": {
+        "c": 1,
+        "f": 3,
+        "u": 2,
+        "availability": "atleast1knowntrue",
+        "structure": "confirmed_mixed"
+      },
+      "grv3-0076": {
+        "c": 0,
+        "f": 5,
+        "u": 1,
+        "availability": "unresolvednoneknowntrue",
+        "structure": "unresolved_membership"
+      },
+      "grv3-0077": {
+        "c": 0,
+        "f": 3,
+        "u": 3,
+        "availability": "unresolvednoneknowntrue",
+        "structure": "unresolved_membership"
+      },
+      "grv3-0079": {
+        "c": 0,
+        "f": 6,
+        "u": 0,
+        "availability": "certifiedallwrong",
+        "structure": "all_wrong"
+      },
+      "grv3-0081": {
+        "c": 0,
+        "f": 6,
+        "u": 0,
+        "availability": "certifiedallwrong",
+        "structure": "all_wrong"
+      }
+    }
+  },
+  "partial_batches_not_read": [
+    "batch-01",
+    "batch-02",
+    "batch-03",
+    "batch-04",
+    "batch-05"
+  ],
+  "created_utc": "2026-09-08T04:13:37.010098+00:00",
+  "registration": {
+    "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\selection-opportunity-secondary-20260908\\REGISTRATION.json",
+    "sha256": "056233f14143d37a125d5b67bebbbd868b46d4e8381cc493aa680d4cf60ff161",
+    "timestamp": "2026-09-08T04:09:16.915825+00:00"
+  },
+  "code_sha256": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\selection-opportunity-secondary-20260908\\analyze_secondary.py": "821284a95156ee82b889f1a80a3263bec2790ab15210ee70cc13c634739a48dd",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\stats.py": "0e48ef1aebf2814bb3be883d4d4d84803ae7e2a7d0775af70f6c5924ff71b287",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\bcommon.py": "5eed5083b671869ab807a4e503bd38c5f984a29c9a17b2bc901a27a70f778b8b"
+  }
+}

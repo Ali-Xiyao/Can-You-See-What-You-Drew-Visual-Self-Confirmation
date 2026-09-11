@@ -1,0 +1,7 @@
+cuda:0: 24314 MiB free; starting
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\observer\lib\site-packages\transformers\utils\hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:07<00:23,  7.85s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:17<00:17,  8.78s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:26<00:08,  8.96s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:31<00:00,  7.56s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:31<00:00,  7.96s/it]
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+1/150 9.4s/img
+26/150 6.5s/img

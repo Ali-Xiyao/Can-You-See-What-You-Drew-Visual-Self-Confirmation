@@ -1,0 +1,71 @@
+{
+  "at_utc": "2026-09-08T05:13:40.288333+00:00",
+  "status": "failed",
+  "pid": 20052,
+  "deadline": 100,
+  "active_jobs": [
+    {
+      "name": "observe-gpu0",
+      "kind": "observation",
+      "shard": 0,
+      "device": "cuda:0",
+      "pid": 1000,
+      "create_time": 1000.0,
+      "cmdline": [
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+        "-B",
+        "-u",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observation_resume.py",
+        "--shard",
+        "0",
+        "--deadline",
+        "100"
+      ],
+      "command": [
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+        "-B",
+        "-u",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observation_resume.py",
+        "--shard",
+        "0",
+        "--deadline",
+        "100"
+      ],
+      "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\pytest-final-tmp\\test_nonzero_exit_stops_siblin0\\observe-gpu0.log"
+    },
+    {
+      "name": "observe-gpu1",
+      "kind": "observation",
+      "shard": 1,
+      "device": "cuda:1",
+      "pid": 1001,
+      "create_time": 1001.0,
+      "cmdline": [
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+        "-B",
+        "-u",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observation_resume.py",
+        "--shard",
+        "1",
+        "--deadline",
+        "100"
+      ],
+      "command": [
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+        "-B",
+        "-u",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observation_resume.py",
+        "--shard",
+        "1",
+        "--deadline",
+        "100"
+      ],
+      "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\pytest-final-tmp\\test_nonzero_exit_stops_siblin0\\observe-gpu1.log"
+    }
+  ],
+  "completed_batches": [
+    "batch-00",
+    "batch-01"
+  ],
+  "completed_observer_shards": []
+}

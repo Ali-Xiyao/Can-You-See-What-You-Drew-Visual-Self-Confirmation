@@ -1,0 +1,222 @@
+{
+  "created_utc": "2026-09-07T02:48:53.555052+00:00",
+  "results_sha256": "44b1180af5b59ab3df400bf4b55a917c051e490ae6d8931cca9dba0fed96517c",
+  "scope": "Post-completion descriptive supplement and integrity checks; frozen classifications unchanged.",
+  "tasks": {
+    "naive-original": {
+      "weights_changed": true,
+      "base_parameter_digest": "1cd2f01c081a171a375a89989d964af4907040633a87563be0b13e721a0618e2",
+      "final_parameter_digest": "e4c7293c9446f109a5d84974e96f91b1b81e92574d15458081e2c7b88de3f8aa",
+      "probe_summaries_recomputed": 33,
+      "absence_alarms": {
+        "prompt_on:existence_no": {
+          "start_step": 12,
+          "first_persistent_step": 13
+        },
+        "prompt_on:count_zero": {
+          "start_step": 15,
+          "first_persistent_step": 16
+        },
+        "prompt_off:existence_no": {
+          "start_step": 10,
+          "first_persistent_step": 11
+        },
+        "prompt_off:count_zero": {
+          "start_step": 22,
+          "first_persistent_step": 23
+        }
+      }
+    },
+    "naive-balanced_absence": {
+      "weights_changed": true,
+      "base_parameter_digest": "1cd2f01c081a171a375a89989d964af4907040633a87563be0b13e721a0618e2",
+      "final_parameter_digest": "f1f47185b1b67da91b66934bcb36b6dc3cadb1e6322c5aa0d6a4ee889d86fed2",
+      "probe_summaries_recomputed": 33,
+      "absence_alarms": {}
+    },
+    "naive-zero_weight": {
+      "weights_changed": true,
+      "base_parameter_digest": "1cd2f01c081a171a375a89989d964af4907040633a87563be0b13e721a0618e2",
+      "final_parameter_digest": "0a4973d9870b19af0225e633c0d8d18a9cc8b6d8e946cc5451bf722bd31481e4",
+      "probe_summaries_recomputed": 33,
+      "absence_alarms": {}
+    },
+    "rfo_gold-original": {
+      "weights_changed": true,
+      "base_parameter_digest": "1cd2f01c081a171a375a89989d964af4907040633a87563be0b13e721a0618e2",
+      "final_parameter_digest": "aafb0a71a24cee083b607b436f2f0167cc733f33cc8a60914264620823bfc4ad",
+      "probe_summaries_recomputed": 33,
+      "absence_alarms": {
+        "prompt_on:existence_no": {
+          "start_step": 12,
+          "first_persistent_step": 13
+        },
+        "prompt_on:count_zero": {
+          "start_step": 16,
+          "first_persistent_step": 17
+        },
+        "prompt_off:existence_no": {
+          "start_step": 10,
+          "first_persistent_step": 11
+        },
+        "prompt_off:count_zero": {
+          "start_step": 21,
+          "first_persistent_step": 22
+        }
+      }
+    },
+    "rfo_gold-alternate_ids": {
+      "weights_changed": true,
+      "base_parameter_digest": "1cd2f01c081a171a375a89989d964af4907040633a87563be0b13e721a0618e2",
+      "final_parameter_digest": "8c6e48e125ec5ba28747634e1e935128b39d8c80b3522848201dd03a21b88c12",
+      "probe_summaries_recomputed": 33,
+      "absence_alarms": {
+        "prompt_on:existence_no": {
+          "start_step": 11,
+          "first_persistent_step": 12
+        },
+        "prompt_on:count_zero": {
+          "start_step": 14,
+          "first_persistent_step": 15
+        },
+        "prompt_off:existence_no": {
+          "start_step": 9,
+          "first_persistent_step": 10
+        },
+        "prompt_off:count_zero": {
+          "start_step": 22,
+          "first_persistent_step": 23
+        }
+      }
+    },
+    "naive-alternate_ids": {
+      "weights_changed": true,
+      "base_parameter_digest": "1cd2f01c081a171a375a89989d964af4907040633a87563be0b13e721a0618e2",
+      "final_parameter_digest": "ce339649ba532c6d13bde9ee0d2b54c92e5f20d1a66de2509371fe53b171ab4c",
+      "probe_summaries_recomputed": 33,
+      "absence_alarms": {
+        "prompt_on:existence_no": {
+          "start_step": 13,
+          "first_persistent_step": 14
+        },
+        "prompt_on:count_zero": {
+          "start_step": 18,
+          "first_persistent_step": 19
+        },
+        "prompt_off:existence_no": {
+          "start_step": 11,
+          "first_persistent_step": 12
+        },
+        "prompt_off:count_zero": {
+          "start_step": 22,
+          "first_persistent_step": 23
+        }
+      }
+    }
+  },
+  "cross_arm_agreement": {
+    "original": {
+      "0": {
+        "same": 1818,
+        "total": 1818
+      },
+      "16": {
+        "same": 1805,
+        "total": 1818
+      },
+      "32": {
+        "same": 1811,
+        "total": 1818
+      }
+    },
+    "alternate_ids": {
+      "0": {
+        "same": 1818,
+        "total": 1818
+      },
+      "16": {
+        "same": 1753,
+        "total": 1818
+      },
+      "32": {
+        "same": 1698,
+        "total": 1818
+      }
+    }
+  },
+  "paired_condition_differences_32": {
+    "naive:zero_weight-original": {
+      "prompt_blank": {
+        "point": 0.20833333333333331,
+        "ci95": [
+          0.04523809523809523,
+          0.3904761904761905
+        ]
+      },
+      "prompt_off": {
+        "point": 0.12261904761904761,
+        "ci95": [
+          0.028571428571428574,
+          0.23214285714285715
+        ]
+      }
+    },
+    "naive:balanced_absence-original": {
+      "prompt_blank": {
+        "point": 0.25357142857142856,
+        "ci95": [
+          0.07616071428571428,
+          0.4345238095238095
+        ]
+      },
+      "prompt_off": {
+        "point": 0.15119047619047618,
+        "ci95": [
+          0.03095238095238096,
+          0.2785714285714286
+        ]
+      }
+    },
+    "naive:alternate_ids-original": {
+      "prompt_blank": {
+        "point": 0.0869047619047619,
+        "ci95": [
+          -0.02386904761904761,
+          0.2178571428571428
+        ]
+      },
+      "prompt_off": {
+        "point": 0.04523809523809524,
+        "ci95": [
+          -0.023809523809523805,
+          0.13571428571428573
+        ]
+      }
+    },
+    "rfo_gold:alternate_ids-original": {
+      "prompt_blank": {
+        "point": 0.17380952380952383,
+        "ci95": [
+          0.0011904761904761862,
+          0.3547619047619048
+        ]
+      },
+      "prompt_off": {
+        "point": 0.10238095238095239,
+        "ci95": [
+          -0.015476190476190477,
+          0.2392857142857143
+        ]
+      }
+    }
+  },
+  "continuation": {
+    "resumed_from_step": 32,
+    "extra_optimizer_steps": 0,
+    "training_bytes_identical": true,
+    "all_prefix_files_hash_verified": true,
+    "restored_probe_match": "200/200",
+    "replacement_training_tail": false
+  },
+  "probe_answers_rechecked": 39600
+}

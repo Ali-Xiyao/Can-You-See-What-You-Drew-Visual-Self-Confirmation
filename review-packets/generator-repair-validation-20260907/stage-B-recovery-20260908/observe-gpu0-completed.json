@@ -1,0 +1,41 @@
+{
+  "at_utc": "2026-09-08T07:24:31.057363+00:00",
+  "exit_code": 0,
+  "artifact": {
+    "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observations\\gpu0\\complete.json",
+    "sha256": "b55486188bba67ff0bf101ac7c15fe851aa4180056239bd3fbf36efb0956b897",
+    "model_completion_sha256": {
+      "base": "097aa51364220aca27579c3a084cabd94c5139bcf9e52bdd52bbc75eae4ffdeb",
+      "naive-original": "ebf3753937a242f834c39cfa00e9618af2463ca93e32b9d72a94e8a1a9b13570",
+      "naive-balanced_absence": "fb0b266e27cb29a6228c711fd5b29eb458e97196fe82ee0afa32cbabe60ce464",
+      "naive-zero_weight": "e0c8ca243c425d066eba36822f41585bec7c044e92b26829900e7e83eddb20bf"
+    }
+  },
+  "name": "observe-gpu0",
+  "kind": "observation",
+  "shard": 0,
+  "device": "cuda:0",
+  "pid": 20232,
+  "create_time": 1788844489.404541,
+  "cmdline": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+    "-B",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observation_resume.py",
+    "--shard",
+    "0",
+    "--deadline",
+    "1788894000.0"
+  ],
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+    "-B",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observation_resume.py",
+    "--shard",
+    "0",
+    "--deadline",
+    "1788894000.0"
+  ],
+  "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observe-gpu0.log"
+}

@@ -1,0 +1,2745 @@
+{
+  "0": {
+    "generation": {
+      "naive": [
+        {
+          "prompt_id": "v4b-0057",
+          "candidate_id": "naive-r000-bab6ceadec64bf140034-768194591-4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-bab6ceadec64bf140034-768194591-4.png",
+          "prompt": "a green apple, a yellow banana, a red tomato"
+        },
+        {
+          "prompt_id": "v4b-0101",
+          "candidate_id": "naive-r000-f6e5401940ca04908171-429544144-5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-f6e5401940ca04908171-429544144-5.png",
+          "prompt": "a brown bottle, a white plate, a yellow banana"
+        },
+        {
+          "prompt_id": "v4b-0052",
+          "candidate_id": "naive-r000-944719796902626cc0d0-1456308056-7",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-944719796902626cc0d0-1456308056-7.png",
+          "prompt": "one blue mug, one green apple, one yellow banana"
+        },
+        {
+          "prompt_id": "v4b-0019",
+          "candidate_id": "naive-r000-94a03340a35a3cb341fa-1082176483-3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-94a03340a35a3cb341fa-1082176483-3.png",
+          "prompt": "a red bottle, a green jar, a white box"
+        },
+        {
+          "prompt_id": "v4b-0058",
+          "candidate_id": "naive-r000-45a9e297856966ca6c90-274043800-3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-45a9e297856966ca6c90-274043800-3.png",
+          "prompt": "a yellow banana, a green pear, a brown book"
+        },
+        {
+          "prompt_id": "v4b-0042",
+          "candidate_id": "naive-r000-85ca6dddb7d02025208a-1169655198-2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-85ca6dddb7d02025208a-1169655198-2.png",
+          "prompt": "a red apple, a yellow banana, a brown bottle"
+        },
+        {
+          "prompt_id": "v4a-0111",
+          "candidate_id": "naive-r000-f3bc75dbef96cb5dfb86-646598521-7",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-f3bc75dbef96cb5dfb86-646598521-7.png",
+          "prompt": "one black book, two red candles"
+        },
+        {
+          "prompt_id": "v4b-0084",
+          "candidate_id": "naive-r000-59786c5aed424a9b01eb-433215293-2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-59786c5aed424a9b01eb-433215293-2.png",
+          "prompt": "one red book, one black notebook, one yellow candle"
+        },
+        {
+          "prompt_id": "v4a-0099",
+          "candidate_id": "naive-r000-bc8d7915666515996518-1199828768-7",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\naive\\naive-r000-bc8d7915666515996518-1199828768-7.png",
+          "prompt": "one red notebook, two yellow candles on marble counter"
+        }
+      ],
+      "rfo_gold": [
+        {
+          "prompt_id": "v4b-0057",
+          "candidate_id": "rfo_gold-r000-bab6ceadec64bf140034-768194591-4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\rfo_gold\\rfo_gold-r000-bab6ceadec64bf140034-768194591-4.png",
+          "prompt": "a green apple, a yellow banana, a red tomato"
+        },
+        {
+          "prompt_id": "v4b-0101",
+          "candidate_id": "rfo_gold-r000-f6e5401940ca04908171-429544144-5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\rfo_gold\\rfo_gold-r000-f6e5401940ca04908171-429544144-5.png",
+          "prompt": "a brown bottle, a white plate, a yellow banana"
+        },
+        {
+          "prompt_id": "v4b-0052",
+          "candidate_id": "rfo_gold-r000-944719796902626cc0d0-1757291866-5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\rfo_gold\\rfo_gold-r000-944719796902626cc0d0-1757291866-5.png",
+          "prompt": "one blue mug, one green apple, one yellow banana"
+        },
+        {
+          "prompt_id": "v4b-0019",
+          "candidate_id": "rfo_gold-r000-94a03340a35a3cb341fa-353327523-1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\rfo_gold\\rfo_gold-r000-94a03340a35a3cb341fa-353327523-1.png",
+          "prompt": "a red bottle, a green jar, a white box"
+        },
+        {
+          "prompt_id": "v4b-0058",
+          "candidate_id": "rfo_gold-r000-45a9e297856966ca6c90-1437742083-6",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\rfo_gold\\rfo_gold-r000-45a9e297856966ca6c90-1437742083-6.png",
+          "prompt": "a yellow banana, a green pear, a brown book"
+        },
+        {
+          "prompt_id": "v4b-0042",
+          "candidate_id": "rfo_gold-r000-85ca6dddb7d02025208a-1169655198-2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\rfo_gold\\rfo_gold-r000-85ca6dddb7d02025208a-1169655198-2.png",
+          "prompt": "a red apple, a yellow banana, a brown bottle"
+        },
+        {
+          "prompt_id": "v4a-0111",
+          "candidate_id": "rfo_gold-r000-f3bc75dbef96cb5dfb86-646598521-7",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\rfo_gold\\rfo_gold-r000-f3bc75dbef96cb5dfb86-646598521-7.png",
+          "prompt": "one black book, two red candles"
+        },
+        {
+          "prompt_id": "v4b-0084",
+          "candidate_id": "rfo_gold-r000-59786c5aed424a9b01eb-89629505-0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\rfo_gold\\rfo_gold-r000-59786c5aed424a9b01eb-89629505-0.png",
+          "prompt": "one red book, one black notebook, one yellow candle"
+        },
+        {
+          "prompt_id": "v4a-0099",
+          "candidate_id": "rfo_gold-r000-bc8d7915666515996518-494002497-1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-000\\candidates\\rfo_gold\\rfo_gold-r000-bc8d7915666515996518-494002497-1.png",
+          "prompt": "one red notebook, two yellow candles on marble counter"
+        }
+      ]
+    },
+    "original": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-3cf0cb726c08fef1a432-20261096-3.png",
+        "question": "How many orange carrots are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0053:3:v4b-0053:count:2",
+        "prompt_id": "v4b-0053"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-3cf0cb726c08fef1a432-20261096-3.png",
+        "question": "Is there a brown egg in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0053:3:v4b-0053:exists:0",
+        "prompt_id": "v4b-0053"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-3cf0cb726c08fef1a432-20261096-3.png",
+        "question": "Is there a red tomato in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0053:3:v4b-0053:exists:1",
+        "prompt_id": "v4b-0053"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-3cf0cb726c08fef1a432-20261096-3.png",
+        "question": "Is there a orange carrot in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0053:3:v4b-0053:exists:2",
+        "prompt_id": "v4b-0053"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261105-0.png",
+        "question": "How many red apples are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0056:0:v4b-0056:count:0",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261105-0.png",
+        "question": "How many yellow bananas are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0056:0:v4b-0056:count:1",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261105-0.png",
+        "question": "How many brown books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0056:0:v4b-0056:count:2",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261105-0.png",
+        "question": "Is there a red apple in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0056:0:v4b-0056:exists:0",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261105-0.png",
+        "question": "Is there a yellow banana in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0056:0:v4b-0056:exists:1",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261105-0.png",
+        "question": "Is there a brown book in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0056:0:v4b-0056:exists:2",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261106-1.png",
+        "question": "How many red apples are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0056:1:v4b-0056:count:0",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261106-1.png",
+        "question": "How many yellow bananas are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0056:1:v4b-0056:count:1",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261106-1.png",
+        "question": "How many brown books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0056:1:v4b-0056:count:2",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261106-1.png",
+        "question": "Is there a red apple in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0056:1:v4b-0056:exists:0",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261106-1.png",
+        "question": "Is there a yellow banana in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0056:1:v4b-0056:exists:1",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261106-1.png",
+        "question": "Is there a brown book in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0056:1:v4b-0056:exists:2",
+        "prompt_id": "v4b-0056"
+      }
+    ],
+    "alternate_naive": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-d45c0b265ef4f3766e5a-20261225-0.png",
+        "question": "How many red apples are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0089:0:v4b-0089:count:1",
+        "prompt_id": "v4b-0089"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-bab6ceadec64bf140034-20261112-3.png",
+        "question": "Is there a green apple in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0057:3:v4b-0057:exists:0",
+        "prompt_id": "v4b-0057"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-8838ac1b73bc03a4e8d7-20261070-1.png",
+        "question": "Is there a red tomato in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0042:1:v4a-0042:exists:0",
+        "prompt_id": "v4a-0042"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-ca589c9acd4d924bc154-20261194-1.png",
+        "question": "Is there a yellow candle in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0080:1:v4b-0080:exists:1",
+        "prompt_id": "v4b-0080"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260992-3.png",
+        "question": "How many blue flowers are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0025:3:v4b-0025:count:2",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-f6e5401940ca04908171-20261276-3.png",
+        "question": "How many yellow bananas are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0101:3:v4b-0101:count:2",
+        "prompt_id": "v4b-0101"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-4dbb0a0f91e08682b4c1-20260912-3.png",
+        "question": "How many blue boxs are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0002:3:v4b-0002:count:2",
+        "prompt_id": "v4b-0002"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-05ca7c853017e823313c-20261306-1.png",
+        "question": "Is there a yellow banana in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0110:1:v4b-0110:exists:1",
+        "prompt_id": "v4b-0110"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-c0859d696ace6f49d94d-20261042-1.png",
+        "question": "Is there a orange carrot in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0035:1:v4a-0035:exists:0",
+        "prompt_id": "v4a-0035"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-a74099be9b70482510f2-20261352-3.png",
+        "question": "Is there a brown box in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0112:3:v4a-0112:exists:1",
+        "prompt_id": "v4a-0112"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-85ca6dddb7d02025208a-20261050-1.png",
+        "question": "How many yellow bananas are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0042:1:v4b-0042:count:1",
+        "prompt_id": "v4b-0042"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-d45c0b265ef4f3766e5a-20261228-3.png",
+        "question": "How many red apples are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0089:3:v4b-0089:count:1",
+        "prompt_id": "v4b-0089"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-d6d3ea753dbebe956bd9-20261342-1.png",
+        "question": "How many yellow books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0119:1:v4b-0119:count:2",
+        "prompt_id": "v4b-0119"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-1cf2492923886c97c778-20261098-1.png",
+        "question": "Is there a red apple in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0049:1:v4a-0049:exists:1",
+        "prompt_id": "v4a-0049"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260992-3.png",
+        "question": "Is there a green stone in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0025:3:v4b-0025:exists:1",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-2cd7fe90becf17d48ff4-20261147-2.png",
+        "question": "Is there a white candle in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0067:2:v4b-0067:exists:2",
+        "prompt_id": "v4b-0067"
+      }
+    ],
+    "alternate_rfo_gold": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-f78d4be957580624c55b-20261247-2.png",
+        "question": "How many black books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0086:2:v4a-0086:count:1",
+        "prompt_id": "v4a-0086"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-d6d3ea753dbebe956bd9-20261343-2.png",
+        "question": "Is there a red apple in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0119:2:v4b-0119:exists:0",
+        "prompt_id": "v4b-0119"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-9a8066ac08941eadf4f7-20261328-3.png",
+        "question": "Is there a yellow banana in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0115:3:v4b-0115:exists:1",
+        "prompt_id": "v4b-0115"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c22b09e1d90ce1caf111-20261044-3.png",
+        "question": "Is there a blue mug in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0040:3:v4b-0040:exists:2",
+        "prompt_id": "v4b-0040"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-fb3e1c082f5dc43b667e-20261169-0.png",
+        "question": "How many yellow lemons are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0067:0:v4a-0067:count:0",
+        "prompt_id": "v4a-0067"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-5676b4db4fd08e13bfd2-20261109-0.png",
+        "question": "How many green pears are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0052:0:v4a-0052:count:0",
+        "prompt_id": "v4a-0052"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-09afb1a1e9c37049964f-20260975-2.png",
+        "question": "How many red hats are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0020:2:v4b-0020:count:0",
+        "prompt_id": "v4b-0020"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-b0ed913d51bdbbc8b215-20261138-1.png",
+        "question": "Is there a black book in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0065:1:v4b-0065:exists:0",
+        "prompt_id": "v4b-0065"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-bab6ceadec64bf140034-20261112-3.png",
+        "question": "Is there a red tomato in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0057:3:v4b-0057:exists:2",
+        "prompt_id": "v4b-0057"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-14b24f6fbf53c3227376-20261367-2.png",
+        "question": "Is there a red apple in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0116:2:v4a-0116:exists:0",
+        "prompt_id": "v4a-0116"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-883dacd7dfe22c1a035c-20261198-1.png",
+        "question": "How many yellow socks are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0074:1:v4a-0074:count:0",
+        "prompt_id": "v4a-0074"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-05ca7c853017e823313c-20261306-1.png",
+        "question": "How many green apples are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0110:1:v4b-0110:count:0",
+        "prompt_id": "v4b-0110"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-d6d3ea753dbebe956bd9-20261341-0.png",
+        "question": "How many yellow books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0119:0:v4b-0119:count:2",
+        "prompt_id": "v4b-0119"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-3df2550fc180c1fe8e30-20261294-1.png",
+        "question": "Is there a green pear in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0107:1:v4b-0107:exists:1",
+        "prompt_id": "v4b-0107"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-25be87cf812789cef609-20261081-0.png",
+        "question": "Is there a yellow banana in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0045:0:v4a-0045:exists:0",
+        "prompt_id": "v4a-0045"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-c0859d696ace6f49d94d-20261042-1.png",
+        "question": "Is there a white plate in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0035:1:v4a-0035:exists:1",
+        "prompt_id": "v4a-0035"
+      }
+    ],
+    "balanced_absence": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-3cf0cb726c08fef1a432-20261096-3.png",
+        "question": "How many orange carrots are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0053:3:v4b-0053:count:2",
+        "prompt_id": "v4b-0053"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-3cf0cb726c08fef1a432-20261096-3.png",
+        "question": "Is there a brown egg in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0053:3:v4b-0053:exists:0",
+        "prompt_id": "v4b-0053"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-3cf0cb726c08fef1a432-20261096-3.png",
+        "question": "Is there a stone in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "no",
+        "sample_id": "main-1plus1plus1:v4b-0053:3:v4b-0053:exists:1:balanced-absence-v1",
+        "prompt_id": "v4b-0053",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0053:negative-exists-v1:stone",
+            "atom_id": "v4b-0053:negative-exists-v1:stone",
+            "family": "existence",
+            "text": "Is there a stone in this picture? Answer A or B only.\nA. no\nB. yes",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "no",
+              "yes"
+            ],
+            "choice_order_seed": 65
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-3cf0cb726c08fef1a432-20261096-3.png",
+        "question": "Is there a orange carrot in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0053:3:v4b-0053:exists:2",
+        "prompt_id": "v4b-0053"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261105-0.png",
+        "question": "How many spoons are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-1plus1plus1:v4b-0056:0:v4b-0056:count:0:balanced-absence-v1",
+        "prompt_id": "v4b-0056",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0056:negative-exists-v1:spoon:count-zero",
+            "atom_id": "v4b-0056:negative-exists-v1:spoon:count-zero",
+            "family": "count",
+            "text": "How many spoons are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261105-0.png",
+        "question": "How many yellow bananas are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0056:0:v4b-0056:count:1",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261105-0.png",
+        "question": "How many spoons are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-1plus1plus1:v4b-0056:0:v4b-0056:count:2:balanced-absence-v1",
+        "prompt_id": "v4b-0056",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0056:negative-exists-v1:spoon:count-zero",
+            "atom_id": "v4b-0056:negative-exists-v1:spoon:count-zero",
+            "family": "count",
+            "text": "How many spoons are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261105-0.png",
+        "question": "Is there a spoon in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "no",
+        "sample_id": "main-1plus1plus1:v4b-0056:0:v4b-0056:exists:0:balanced-absence-v1",
+        "prompt_id": "v4b-0056",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0056:negative-exists-v1:spoon",
+            "atom_id": "v4b-0056:negative-exists-v1:spoon",
+            "family": "existence",
+            "text": "Is there a spoon in this picture? Answer A or B only.\nA. no\nB. yes",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "no",
+              "yes"
+            ],
+            "choice_order_seed": 65
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261105-0.png",
+        "question": "Is there a yellow banana in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0056:0:v4b-0056:exists:1",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261105-0.png",
+        "question": "Is there a spoon in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "no",
+        "sample_id": "main-1plus1plus1:v4b-0056:0:v4b-0056:exists:2:balanced-absence-v1",
+        "prompt_id": "v4b-0056",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0056:negative-exists-v1:spoon",
+            "atom_id": "v4b-0056:negative-exists-v1:spoon",
+            "family": "existence",
+            "text": "Is there a spoon in this picture? Answer A or B only.\nA. no\nB. yes",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "no",
+              "yes"
+            ],
+            "choice_order_seed": 65
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261106-1.png",
+        "question": "How many red apples are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0056:1:v4b-0056:count:0",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261106-1.png",
+        "question": "How many spoons are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-1plus1plus1:v4b-0056:1:v4b-0056:count:1:balanced-absence-v1",
+        "prompt_id": "v4b-0056",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0056:negative-exists-v1:spoon:count-zero",
+            "atom_id": "v4b-0056:negative-exists-v1:spoon:count-zero",
+            "family": "count",
+            "text": "How many spoons are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261106-1.png",
+        "question": "How many brown books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0056:1:v4b-0056:count:2",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261106-1.png",
+        "question": "Is there a red apple in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0056:1:v4b-0056:exists:0",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261106-1.png",
+        "question": "Is there a spoon in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "no",
+        "sample_id": "main-1plus1plus1:v4b-0056:1:v4b-0056:exists:1:balanced-absence-v1",
+        "prompt_id": "v4b-0056",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0056:negative-exists-v1:spoon",
+            "atom_id": "v4b-0056:negative-exists-v1:spoon",
+            "family": "existence",
+            "text": "Is there a spoon in this picture? Answer A or B only.\nA. no\nB. yes",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "no",
+              "yes"
+            ],
+            "choice_order_seed": 65
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261106-1.png",
+        "question": "Is there a brown book in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0056:1:v4b-0056:exists:2",
+        "prompt_id": "v4b-0056"
+      }
+    ]
+  },
+  "1": {
+    "generation": {
+      "naive": [
+        {
+          "prompt_id": "v4a-0042",
+          "candidate_id": "naive-r001-8838ac1b73bc03a4e8d7-743840306-1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-8838ac1b73bc03a4e8d7-743840306-1.png",
+          "prompt": "one red tomato, two green cucumbers"
+        },
+        {
+          "prompt_id": "v4a-0029",
+          "candidate_id": "naive-r001-b13c1d3380a8e9f997c4-523462775-5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-b13c1d3380a8e9f997c4-523462775-5.png",
+          "prompt": "one brown egg, two white bowls"
+        },
+        {
+          "prompt_id": "v4b-0050",
+          "candidate_id": "naive-r001-fd9b9de447775fd46168-350612788-5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-fd9b9de447775fd46168-350612788-5.png",
+          "prompt": "one brown egg, one blue mug, one white bowl"
+        },
+        {
+          "prompt_id": "v4a-0086",
+          "candidate_id": "naive-r001-f78d4be957580624c55b-690092400-5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-f78d4be957580624c55b-690092400-5.png",
+          "prompt": "two blue mugs, one black book"
+        },
+        {
+          "prompt_id": "v4a-0010",
+          "candidate_id": "naive-r001-2ded8db7ccb5e20f14ae-422663243-5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-2ded8db7ccb5e20f14ae-422663243-5.png",
+          "prompt": "one green apple, two red mugs"
+        },
+        {
+          "prompt_id": "v4b-0053",
+          "candidate_id": "naive-r001-3cf0cb726c08fef1a432-40583615-2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-3cf0cb726c08fef1a432-40583615-2.png",
+          "prompt": "one brown egg, one red tomato, one orange carrot"
+        },
+        {
+          "prompt_id": "v4b-0020",
+          "candidate_id": "naive-r001-09afb1a1e9c37049964f-108518202-1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-09afb1a1e9c37049964f-108518202-1.png",
+          "prompt": "a red hat, a blue ball, a yellow brush"
+        },
+        {
+          "prompt_id": "v4a-0019",
+          "candidate_id": "naive-r001-3dbd9e9309ecf9338413-1017204109-3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-3dbd9e9309ecf9338413-1017204109-3.png",
+          "prompt": "one red tomato, two black bowls"
+        },
+        {
+          "prompt_id": "v4a-0017",
+          "candidate_id": "naive-r001-970862593ba9b2455bb4-729102026-0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\naive\\naive-r001-970862593ba9b2455bb4-729102026-0.png",
+          "prompt": "one yellow banana, two white bowls"
+        }
+      ],
+      "rfo_gold": [
+        {
+          "prompt_id": "v4a-0042",
+          "candidate_id": "rfo_gold-r001-8838ac1b73bc03a4e8d7-757187558-6",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\rfo_gold\\rfo_gold-r001-8838ac1b73bc03a4e8d7-757187558-6.png",
+          "prompt": "one red tomato, two green cucumbers"
+        },
+        {
+          "prompt_id": "v4a-0029",
+          "candidate_id": "rfo_gold-r001-b13c1d3380a8e9f997c4-584975340-4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\rfo_gold\\rfo_gold-r001-b13c1d3380a8e9f997c4-584975340-4.png",
+          "prompt": "one brown egg, two white bowls"
+        },
+        {
+          "prompt_id": "v4b-0050",
+          "candidate_id": "rfo_gold-r001-fd9b9de447775fd46168-350612788-5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\rfo_gold\\rfo_gold-r001-fd9b9de447775fd46168-350612788-5.png",
+          "prompt": "one brown egg, one blue mug, one white bowl"
+        },
+        {
+          "prompt_id": "v4a-0086",
+          "candidate_id": "rfo_gold-r001-f78d4be957580624c55b-1010789645-2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\rfo_gold\\rfo_gold-r001-f78d4be957580624c55b-1010789645-2.png",
+          "prompt": "two blue mugs, one black book"
+        },
+        {
+          "prompt_id": "v4a-0010",
+          "candidate_id": "rfo_gold-r001-2ded8db7ccb5e20f14ae-1152012413-2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\rfo_gold\\rfo_gold-r001-2ded8db7ccb5e20f14ae-1152012413-2.png",
+          "prompt": "one green apple, two red mugs"
+        },
+        {
+          "prompt_id": "v4b-0053",
+          "candidate_id": "rfo_gold-r001-3cf0cb726c08fef1a432-1247984677-7",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\rfo_gold\\rfo_gold-r001-3cf0cb726c08fef1a432-1247984677-7.png",
+          "prompt": "one brown egg, one red tomato, one orange carrot"
+        },
+        {
+          "prompt_id": "v4b-0020",
+          "candidate_id": "rfo_gold-r001-09afb1a1e9c37049964f-548275360-5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\rfo_gold\\rfo_gold-r001-09afb1a1e9c37049964f-548275360-5.png",
+          "prompt": "a red hat, a blue ball, a yellow brush"
+        },
+        {
+          "prompt_id": "v4a-0019",
+          "candidate_id": "rfo_gold-r001-3dbd9e9309ecf9338413-1546281366-0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\rfo_gold\\rfo_gold-r001-3dbd9e9309ecf9338413-1546281366-0.png",
+          "prompt": "one red tomato, two black bowls"
+        },
+        {
+          "prompt_id": "v4a-0017",
+          "candidate_id": "rfo_gold-r001-970862593ba9b2455bb4-1273062371-7",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-001\\candidates\\rfo_gold\\rfo_gold-r001-970862593ba9b2455bb4-1273062371-7.png",
+          "prompt": "one yellow banana, two white bowls"
+        }
+      ]
+    },
+    "original": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-311c25e476d0e54b597b-20261153-0.png",
+        "question": "How many red spoons are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0070:0:v4b-0070:count:0",
+        "prompt_id": "v4b-0070"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-311c25e476d0e54b597b-20261153-0.png",
+        "question": "How many blue forks are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0070:0:v4b-0070:count:1",
+        "prompt_id": "v4b-0070"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-311c25e476d0e54b597b-20261153-0.png",
+        "question": "How many green plates are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0070:0:v4b-0070:count:2",
+        "prompt_id": "v4b-0070"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-311c25e476d0e54b597b-20261153-0.png",
+        "question": "Is there a red spoon in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0070:0:v4b-0070:exists:0",
+        "prompt_id": "v4b-0070"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-311c25e476d0e54b597b-20261153-0.png",
+        "question": "Is there a blue fork in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0070:0:v4b-0070:exists:1",
+        "prompt_id": "v4b-0070"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-311c25e476d0e54b597b-20261153-0.png",
+        "question": "Is there a green plate in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0070:0:v4b-0070:exists:2",
+        "prompt_id": "v4b-0070"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-98f38cac8b4a950d130a-20261192-3.png",
+        "question": "How many black books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0079:3:v4b-0079:count:0",
+        "prompt_id": "v4b-0079"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-98f38cac8b4a950d130a-20261192-3.png",
+        "question": "How many white books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0079:3:v4b-0079:count:1",
+        "prompt_id": "v4b-0079"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-98f38cac8b4a950d130a-20261192-3.png",
+        "question": "How many brown spoons are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0079:3:v4b-0079:count:2",
+        "prompt_id": "v4b-0079"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-98f38cac8b4a950d130a-20261192-3.png",
+        "question": "Is there a black book in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0079:3:v4b-0079:exists:0",
+        "prompt_id": "v4b-0079"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-98f38cac8b4a950d130a-20261192-3.png",
+        "question": "Is there a white book in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0079:3:v4b-0079:exists:1",
+        "prompt_id": "v4b-0079"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-98f38cac8b4a950d130a-20261192-3.png",
+        "question": "Is there a brown spoon in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0079:3:v4b-0079:exists:2",
+        "prompt_id": "v4b-0079"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-ca589c9acd4d924bc154-20261193-0.png",
+        "question": "How many red books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0080:0:v4b-0080:count:0",
+        "prompt_id": "v4b-0080"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-ca589c9acd4d924bc154-20261193-0.png",
+        "question": "How many yellow candles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0080:0:v4b-0080:count:1",
+        "prompt_id": "v4b-0080"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-ca589c9acd4d924bc154-20261193-0.png",
+        "question": "How many green plates are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0080:0:v4b-0080:count:2",
+        "prompt_id": "v4b-0080"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-ca589c9acd4d924bc154-20261193-0.png",
+        "question": "Is there a red book in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0080:0:v4b-0080:exists:0",
+        "prompt_id": "v4b-0080"
+      }
+    ],
+    "alternate_naive": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261108-3.png",
+        "question": "How many yellow bananas are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0056:3:v4b-0056:count:1",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-1cf2492923886c97c778-20261097-0.png",
+        "question": "How many orange carrots are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0049:0:v4a-0049:count:0",
+        "prompt_id": "v4a-0049"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-944719796902626cc0d0-20261089-0.png",
+        "question": "How many yellow bananas are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0052:0:v4b-0052:count:2",
+        "prompt_id": "v4b-0052"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-a74099be9b70482510f2-20261352-3.png",
+        "question": "Is there a blue bottle in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0112:3:v4a-0112:exists:0",
+        "prompt_id": "v4a-0112"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c704452e2c842aefcf04-20261046-1.png",
+        "question": "Is there a yellow banana in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0041:1:v4b-0041:exists:1",
+        "prompt_id": "v4b-0041"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-14b24f6fbf53c3227376-20261367-2.png",
+        "question": "Is there a yellow banana in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0116:2:v4a-0116:exists:1",
+        "prompt_id": "v4a-0116"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-2cd7fe90becf17d48ff4-20261146-1.png",
+        "question": "How many white candles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0067:1:v4b-0067:count:2",
+        "prompt_id": "v4b-0067"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-92745377e9155c6694eb-20261034-1.png",
+        "question": "How many yellow bananas are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0038:1:v4b-0038:count:1",
+        "prompt_id": "v4b-0038"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-69c4faca093b1a9320cd-20260922-1.png",
+        "question": "How many red apples are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0005:1:v4b-0005:count:0",
+        "prompt_id": "v4b-0005"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-85ca6dddb7d02025208a-20261049-0.png",
+        "question": "Is there a yellow banana in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0042:0:v4b-0042:exists:1",
+        "prompt_id": "v4b-0042"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-9a8066ac08941eadf4f7-20261328-3.png",
+        "question": "Is there a white egg in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0115:3:v4b-0115:exists:2",
+        "prompt_id": "v4b-0115"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-735bb58fa7f8f3c0591c-20260907-2.png",
+        "question": "Is there a blue book in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0001:2:v4b-0001:exists:1",
+        "prompt_id": "v4b-0001"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-e140493783c8a2d3e870-20261261-0.png",
+        "question": "How many white books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0098:0:v4b-0098:count:2",
+        "prompt_id": "v4b-0098"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c1d2345a070abec55b80-20260901-0.png",
+        "question": "How many green pears are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0000:0:v4b-0000:count:2",
+        "prompt_id": "v4b-0000"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-d6d3ea753dbebe956bd9-20261342-1.png",
+        "question": "How many red apples are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0119:1:v4b-0119:count:0",
+        "prompt_id": "v4b-0119"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-d45c0b265ef4f3766e5a-20261227-2.png",
+        "question": "Is there a green pear in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0089:2:v4b-0089:exists:2",
+        "prompt_id": "v4b-0089"
+      }
+    ],
+    "alternate_rfo_gold": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-ca589c9acd4d924bc154-20261194-1.png",
+        "question": "How many green plates are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0080:1:v4b-0080:count:2",
+        "prompt_id": "v4b-0080"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-77c6e2ca3264b4574333-20260999-2.png",
+        "question": "How many black books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0027:2:v4b-0027:count:1",
+        "prompt_id": "v4b-0027"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-f3bc75dbef96cb5dfb86-20261348-3.png",
+        "question": "How many black books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0111:3:v4a-0111:count:0",
+        "prompt_id": "v4a-0111"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-7984cf6d10e24d92de02-20261015-2.png",
+        "question": "Is there a green pear in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0028:2:v4a-0028:exists:0",
+        "prompt_id": "v4a-0028"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-7ccbf6ca83c10be60818-20261108-3.png",
+        "question": "Is there a red apple in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0056:3:v4b-0056:exists:0",
+        "prompt_id": "v4b-0056"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-584f27c68dc4dad8348b-20261235-2.png",
+        "question": "Is there a black book in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0083:2:v4a-0083:exists:1",
+        "prompt_id": "v4a-0083"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-2cd7fe90becf17d48ff4-20261147-2.png",
+        "question": "How many red books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0067:2:v4b-0067:count:0",
+        "prompt_id": "v4b-0067"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-e37e4672613e80317094-20261069-0.png",
+        "question": "How many yellow bananas are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0047:0:v4b-0047:count:0",
+        "prompt_id": "v4b-0047"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-8ea6937459730a819f1c-20261212-3.png",
+        "question": "How many white candles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0077:3:v4a-0077:count:0",
+        "prompt_id": "v4a-0077"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-4419e6a35a1f6f0c3d59-20260943-2.png",
+        "question": "Is there a blue mug in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0011:2:v4b-0011:exists:0",
+        "prompt_id": "v4b-0011"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-94a03340a35a3cb341fa-20260972-3.png",
+        "question": "Is there a white box in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0019:3:v4b-0019:exists:2",
+        "prompt_id": "v4b-0019"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-735bb58fa7f8f3c0591c-20260906-1.png",
+        "question": "Is there a white candle in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0001:1:v4b-0001:exists:2",
+        "prompt_id": "v4b-0001"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-1cf2492923886c97c778-20261097-0.png",
+        "question": "How many orange carrots are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0049:0:v4a-0049:count:0",
+        "prompt_id": "v4a-0049"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-a1452c46fa3e4870c899-20261023-2.png",
+        "question": "How many blue bowls are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0034:2:v4b-0034:count:2",
+        "prompt_id": "v4b-0034"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-05ca7c853017e823313c-20261305-0.png",
+        "question": "How many green apples are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0110:0:v4b-0110:count:0",
+        "prompt_id": "v4b-0110"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-b0ed913d51bdbbc8b215-20261140-3.png",
+        "question": "Is there a yellow candle in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0065:3:v4b-0065:exists:2",
+        "prompt_id": "v4b-0065"
+      }
+    ],
+    "balanced_absence": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-311c25e476d0e54b597b-20261153-0.png",
+        "question": "How many apples are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-1plus1plus1:v4b-0070:0:v4b-0070:count:0:balanced-absence-v1",
+        "prompt_id": "v4b-0070",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0070:negative-exists-v1:apple:count-zero",
+            "atom_id": "v4b-0070:negative-exists-v1:apple:count-zero",
+            "family": "count",
+            "text": "How many apples are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-311c25e476d0e54b597b-20261153-0.png",
+        "question": "How many blue forks are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0070:0:v4b-0070:count:1",
+        "prompt_id": "v4b-0070"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-311c25e476d0e54b597b-20261153-0.png",
+        "question": "How many apples are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-1plus1plus1:v4b-0070:0:v4b-0070:count:2:balanced-absence-v1",
+        "prompt_id": "v4b-0070",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0070:negative-exists-v1:apple:count-zero",
+            "atom_id": "v4b-0070:negative-exists-v1:apple:count-zero",
+            "family": "count",
+            "text": "How many apples are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-311c25e476d0e54b597b-20261153-0.png",
+        "question": "Is there an apple in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "no",
+        "sample_id": "main-1plus1plus1:v4b-0070:0:v4b-0070:exists:0:balanced-absence-v1",
+        "prompt_id": "v4b-0070",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0070:negative-exists-v1:apple",
+            "atom_id": "v4b-0070:negative-exists-v1:apple",
+            "family": "existence",
+            "text": "Is there an apple in this picture? Answer A or B only.\nA. yes\nB. no",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "yes",
+              "no"
+            ],
+            "choice_order_seed": 66
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-311c25e476d0e54b597b-20261153-0.png",
+        "question": "Is there a blue fork in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0070:0:v4b-0070:exists:1",
+        "prompt_id": "v4b-0070"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-311c25e476d0e54b597b-20261153-0.png",
+        "question": "Is there an apple in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "no",
+        "sample_id": "main-1plus1plus1:v4b-0070:0:v4b-0070:exists:2:balanced-absence-v1",
+        "prompt_id": "v4b-0070",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0070:negative-exists-v1:apple",
+            "atom_id": "v4b-0070:negative-exists-v1:apple",
+            "family": "existence",
+            "text": "Is there an apple in this picture? Answer A or B only.\nA. yes\nB. no",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "yes",
+              "no"
+            ],
+            "choice_order_seed": 66
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-98f38cac8b4a950d130a-20261192-3.png",
+        "question": "How many black books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0079:3:v4b-0079:count:0",
+        "prompt_id": "v4b-0079"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-98f38cac8b4a950d130a-20261192-3.png",
+        "question": "How many eggs are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-1plus1plus1:v4b-0079:3:v4b-0079:count:1:balanced-absence-v1",
+        "prompt_id": "v4b-0079",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0079:negative-exists-v1:egg:count-zero",
+            "atom_id": "v4b-0079:negative-exists-v1:egg:count-zero",
+            "family": "count",
+            "text": "How many eggs are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-98f38cac8b4a950d130a-20261192-3.png",
+        "question": "How many brown spoons are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0079:3:v4b-0079:count:2",
+        "prompt_id": "v4b-0079"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-98f38cac8b4a950d130a-20261192-3.png",
+        "question": "Is there a black book in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0079:3:v4b-0079:exists:0",
+        "prompt_id": "v4b-0079"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-98f38cac8b4a950d130a-20261192-3.png",
+        "question": "Is there an egg in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "no",
+        "sample_id": "main-1plus1plus1:v4b-0079:3:v4b-0079:exists:1:balanced-absence-v1",
+        "prompt_id": "v4b-0079",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0079:negative-exists-v1:egg",
+            "atom_id": "v4b-0079:negative-exists-v1:egg",
+            "family": "existence",
+            "text": "Is there an egg in this picture? Answer A or B only.\nA. no\nB. yes",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "no",
+              "yes"
+            ],
+            "choice_order_seed": 65
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-98f38cac8b4a950d130a-20261192-3.png",
+        "question": "Is there a brown spoon in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0079:3:v4b-0079:exists:2",
+        "prompt_id": "v4b-0079"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-ca589c9acd4d924bc154-20261193-0.png",
+        "question": "How many balls are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-1plus1plus1:v4b-0080:0:v4b-0080:count:0:balanced-absence-v1",
+        "prompt_id": "v4b-0080",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0080:negative-exists-v1:ball:count-zero",
+            "atom_id": "v4b-0080:negative-exists-v1:ball:count-zero",
+            "family": "count",
+            "text": "How many balls are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-ca589c9acd4d924bc154-20261193-0.png",
+        "question": "How many yellow candles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0080:0:v4b-0080:count:1",
+        "prompt_id": "v4b-0080"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-ca589c9acd4d924bc154-20261193-0.png",
+        "question": "How many balls are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-1plus1plus1:v4b-0080:0:v4b-0080:count:2:balanced-absence-v1",
+        "prompt_id": "v4b-0080",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0080:negative-exists-v1:ball:count-zero",
+            "atom_id": "v4b-0080:negative-exists-v1:ball:count-zero",
+            "family": "count",
+            "text": "How many balls are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-ca589c9acd4d924bc154-20261193-0.png",
+        "question": "Is there a ball in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "no",
+        "sample_id": "main-1plus1plus1:v4b-0080:0:v4b-0080:exists:0:balanced-absence-v1",
+        "prompt_id": "v4b-0080",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0080:negative-exists-v1:ball",
+            "atom_id": "v4b-0080:negative-exists-v1:ball",
+            "family": "existence",
+            "text": "Is there a ball in this picture? Answer A or B only.\nA. no\nB. yes",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "no",
+              "yes"
+            ],
+            "choice_order_seed": 65
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      }
+    ]
+  },
+  "2": {
+    "generation": {
+      "naive": [
+        {
+          "prompt_id": "v4b-0119",
+          "candidate_id": "naive-r002-d6d3ea753dbebe956bd9-80096081-4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-d6d3ea753dbebe956bd9-80096081-4.png",
+          "prompt": "a red apple, a blue mug, a yellow notebook"
+        },
+        {
+          "prompt_id": "v4a-0063",
+          "candidate_id": "naive-r002-66f99227fd38b4e014f1-823797766-3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-66f99227fd38b4e014f1-823797766-3.png",
+          "prompt": "one red apple, two white bottles"
+        },
+        {
+          "prompt_id": "v4b-0089",
+          "candidate_id": "naive-r002-d45c0b265ef4f3766e5a-16697498-6",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-d45c0b265ef4f3766e5a-16697498-6.png",
+          "prompt": "one yellow lemon, one red apple, one green pear"
+        },
+        {
+          "prompt_id": "v4a-0016",
+          "candidate_id": "naive-r002-871ba6f58080b2078aab-280059429-0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-871ba6f58080b2078aab-280059429-0.png",
+          "prompt": "one orange carrot, two red cups"
+        },
+        {
+          "prompt_id": "v4b-0064",
+          "candidate_id": "naive-r002-6f53331b6df094d1b4b2-27995235-1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-6f53331b6df094d1b4b2-27995235-1.png",
+          "prompt": "one red bowl, one white plate, one silver spoon"
+        },
+        {
+          "prompt_id": "v4a-0096",
+          "candidate_id": "naive-r002-82403a6420086c3b0575-760616338-3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-82403a6420086c3b0575-760616338-3.png",
+          "prompt": "one green bottle, two white boxes on white cloth"
+        },
+        {
+          "prompt_id": "v4a-0060",
+          "candidate_id": "naive-r002-bb9a46e725c805c8ebb9-261115021-0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-bb9a46e725c805c8ebb9-261115021-0.png",
+          "prompt": "one green pear, two brown bowls"
+        },
+        {
+          "prompt_id": "v4a-0051",
+          "candidate_id": "naive-r002-853f73c53c80ef837da1-77272086-7",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-853f73c53c80ef837da1-77272086-7.png",
+          "prompt": "one red apple, two black mugs"
+        },
+        {
+          "prompt_id": "v4a-0067",
+          "candidate_id": "naive-r002-fb3e1c082f5dc43b667e-108904085-6",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\naive\\naive-r002-fb3e1c082f5dc43b667e-108904085-6.png",
+          "prompt": "one yellow lemon, two red cups"
+        }
+      ],
+      "rfo_gold": [
+        {
+          "prompt_id": "v4b-0119",
+          "candidate_id": "rfo_gold-r002-d6d3ea753dbebe956bd9-80096081-4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\rfo_gold\\rfo_gold-r002-d6d3ea753dbebe956bd9-80096081-4.png",
+          "prompt": "a red apple, a blue mug, a yellow notebook"
+        },
+        {
+          "prompt_id": "v4a-0063",
+          "candidate_id": "rfo_gold-r002-66f99227fd38b4e014f1-823797766-3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\rfo_gold\\rfo_gold-r002-66f99227fd38b4e014f1-823797766-3.png",
+          "prompt": "one red apple, two white bottles"
+        },
+        {
+          "prompt_id": "v4b-0089",
+          "candidate_id": "rfo_gold-r002-d45c0b265ef4f3766e5a-1894342628-0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\rfo_gold\\rfo_gold-r002-d45c0b265ef4f3766e5a-1894342628-0.png",
+          "prompt": "one yellow lemon, one red apple, one green pear"
+        },
+        {
+          "prompt_id": "v4a-0016",
+          "candidate_id": "rfo_gold-r002-871ba6f58080b2078aab-280059429-0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\rfo_gold\\rfo_gold-r002-871ba6f58080b2078aab-280059429-0.png",
+          "prompt": "one orange carrot, two red cups"
+        },
+        {
+          "prompt_id": "v4b-0064",
+          "candidate_id": "rfo_gold-r002-6f53331b6df094d1b4b2-83670957-5",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\rfo_gold\\rfo_gold-r002-6f53331b6df094d1b4b2-83670957-5.png",
+          "prompt": "one red bowl, one white plate, one silver spoon"
+        },
+        {
+          "prompt_id": "v4a-0096",
+          "candidate_id": "rfo_gold-r002-82403a6420086c3b0575-27040393-0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\rfo_gold\\rfo_gold-r002-82403a6420086c3b0575-27040393-0.png",
+          "prompt": "one green bottle, two white boxes on white cloth"
+        },
+        {
+          "prompt_id": "v4a-0060",
+          "candidate_id": "rfo_gold-r002-bb9a46e725c805c8ebb9-261115021-0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\rfo_gold\\rfo_gold-r002-bb9a46e725c805c8ebb9-261115021-0.png",
+          "prompt": "one green pear, two brown bowls"
+        },
+        {
+          "prompt_id": "v4a-0051",
+          "candidate_id": "rfo_gold-r002-853f73c53c80ef837da1-77272086-7",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\rfo_gold\\rfo_gold-r002-853f73c53c80ef837da1-77272086-7.png",
+          "prompt": "one red apple, two black mugs"
+        },
+        {
+          "prompt_id": "v4a-0067",
+          "candidate_id": "rfo_gold-r002-fb3e1c082f5dc43b667e-341434815-7",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-002\\candidates\\rfo_gold\\rfo_gold-r002-fb3e1c082f5dc43b667e-341434815-7.png",
+          "prompt": "one yellow lemon, two red cups"
+        }
+      ]
+    },
+    "original": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-26121be272fba4fa1fa2-20260988-3.png",
+        "question": "How many red bottles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0024:3:v4b-0024:count:0",
+        "prompt_id": "v4b-0024"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-26121be272fba4fa1fa2-20260988-3.png",
+        "question": "How many green jars are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0024:3:v4b-0024:count:1",
+        "prompt_id": "v4b-0024"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-26121be272fba4fa1fa2-20260988-3.png",
+        "question": "How many blue boxs are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0024:3:v4b-0024:count:2",
+        "prompt_id": "v4b-0024"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-26121be272fba4fa1fa2-20260988-3.png",
+        "question": "Is there a red bottle in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0024:3:v4b-0024:exists:0",
+        "prompt_id": "v4b-0024"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-26121be272fba4fa1fa2-20260988-3.png",
+        "question": "Is there a green jar in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0024:3:v4b-0024:exists:1",
+        "prompt_id": "v4b-0024"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-26121be272fba4fa1fa2-20260988-3.png",
+        "question": "Is there a blue box in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0024:3:v4b-0024:exists:2",
+        "prompt_id": "v4b-0024"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260989-0.png",
+        "question": "How many red shells are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0025:0:v4b-0025:count:0",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260989-0.png",
+        "question": "How many green stones are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0025:0:v4b-0025:count:1",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260989-0.png",
+        "question": "How many blue flowers are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0025:0:v4b-0025:count:2",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260989-0.png",
+        "question": "Is there a red shell in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0025:0:v4b-0025:exists:0",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260989-0.png",
+        "question": "Is there a green stone in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0025:0:v4b-0025:exists:1",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260989-0.png",
+        "question": "Is there a blue flower in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0025:0:v4b-0025:exists:2",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260991-2.png",
+        "question": "How many red shells are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0025:2:v4b-0025:count:0",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260991-2.png",
+        "question": "How many green stones are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0025:2:v4b-0025:count:1",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260991-2.png",
+        "question": "How many blue flowers are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0025:2:v4b-0025:count:2",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260991-2.png",
+        "question": "Is there a red shell in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0025:2:v4b-0025:exists:0",
+        "prompt_id": "v4b-0025"
+      }
+    ],
+    "alternate_naive": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-5f17cd01ba9e81d1d8ff-20260938-1.png",
+        "question": "How many red apples are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0010:1:v4b-0010:count:2",
+        "prompt_id": "v4b-0010"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-92745377e9155c6694eb-20261034-1.png",
+        "question": "How many red apples are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0038:1:v4b-0038:count:0",
+        "prompt_id": "v4b-0038"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-e140493783c8a2d3e870-20261261-0.png",
+        "question": "How many brown bottles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0098:0:v4b-0098:count:0",
+        "prompt_id": "v4b-0098"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-f78d4be957580624c55b-20261246-1.png",
+        "question": "Is there a blue mug in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0086:1:v4a-0086:exists:0",
+        "prompt_id": "v4a-0086"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-584f27c68dc4dad8348b-20261235-2.png",
+        "question": "Is there a white candle in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0083:2:v4a-0083:exists:0",
+        "prompt_id": "v4a-0083"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-bd1fca9de579604d37a0-20261234-1.png",
+        "question": "Is there a white egg in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0091:1:v4b-0091:exists:0",
+        "prompt_id": "v4b-0091"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-2cd7fe90becf17d48ff4-20261146-1.png",
+        "question": "How many black books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0067:1:v4b-0067:count:1",
+        "prompt_id": "v4b-0067"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-59786c5aed424a9b01eb-20261212-3.png",
+        "question": "How many black books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0084:3:v4b-0084:count:1",
+        "prompt_id": "v4b-0084"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-14b24f6fbf53c3227376-20261367-2.png",
+        "question": "How many yellow bananas are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0116:2:v4a-0116:count:1",
+        "prompt_id": "v4a-0116"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-e37e4672613e80317094-20261069-0.png",
+        "question": "Is there a red tomato in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0047:0:v4b-0047:exists:2",
+        "prompt_id": "v4b-0047"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-59786c5aed424a9b01eb-20261210-1.png",
+        "question": "Is there a yellow candle in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0084:1:v4b-0084:exists:2",
+        "prompt_id": "v4b-0084"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-d6d3ea753dbebe956bd9-20261343-2.png",
+        "question": "Is there a blue mug in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0119:2:v4b-0119:exists:1",
+        "prompt_id": "v4b-0119"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-8fb52811f9f6b66c7f81-20261158-1.png",
+        "question": "How many green pears are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0064:1:v4a-0064:count:0",
+        "prompt_id": "v4a-0064"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-4dbb0a0f91e08682b4c1-20260912-3.png",
+        "question": "How many red jars are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0002:3:v4b-0002:count:1",
+        "prompt_id": "v4b-0002"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-d45c0b265ef4f3766e5a-20261225-0.png",
+        "question": "How many yellow lemons are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0089:0:v4b-0089:count:0",
+        "prompt_id": "v4b-0089"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c1d2345a070abec55b80-20260901-0.png",
+        "question": "Is there a yellow banana in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0000:0:v4b-0000:exists:1",
+        "prompt_id": "v4b-0000"
+      }
+    ],
+    "alternate_rfo_gold": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-8838ac1b73bc03a4e8d7-20261072-3.png",
+        "question": "How many red tomatos are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0042:3:v4a-0042:count:0",
+        "prompt_id": "v4a-0042"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-d6d3ea753dbebe956bd9-20261344-3.png",
+        "question": "How many yellow books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0119:3:v4b-0119:count:2",
+        "prompt_id": "v4b-0119"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-db5ca54389fb648e4851-20261244-3.png",
+        "question": "How many green balls are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0093:3:v4b-0093:count:1",
+        "prompt_id": "v4b-0093"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-d6d3ea753dbebe956bd9-20261342-1.png",
+        "question": "Is there a yellow book in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0119:1:v4b-0119:exists:2",
+        "prompt_id": "v4b-0119"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-05ca7c853017e823313c-20261307-2.png",
+        "question": "Is there a yellow banana in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0110:2:v4b-0110:exists:1",
+        "prompt_id": "v4b-0110"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-bb12875e2b6400536c27-20261074-1.png",
+        "question": "Is there a brown bottle in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0048:1:v4b-0048:exists:2",
+        "prompt_id": "v4b-0048"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-85ca6dddb7d02025208a-20261049-0.png",
+        "question": "How many brown bottles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0042:0:v4b-0042:count:2",
+        "prompt_id": "v4b-0042"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-735bb58fa7f8f3c0591c-20260908-3.png",
+        "question": "How many white candles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0001:3:v4b-0001:count:2",
+        "prompt_id": "v4b-0001"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-66f99227fd38b4e014f1-20261153-0.png",
+        "question": "How many red apples are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0063:0:v4a-0063:count:0",
+        "prompt_id": "v4a-0063"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-db5ca54389fb648e4851-20261244-3.png",
+        "question": "Is there a red brush in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0093:3:v4b-0093:exists:2",
+        "prompt_id": "v4b-0093"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c22b09e1d90ce1caf111-20261042-1.png",
+        "question": "Is there a red apple in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0040:1:v4b-0040:exists:0",
+        "prompt_id": "v4b-0040"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-a74099be9b70482510f2-20261351-2.png",
+        "question": "Is there a blue bottle in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0112:2:v4a-0112:exists:0",
+        "prompt_id": "v4a-0112"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-6f53331b6df094d1b4b2-20261133-0.png",
+        "question": "How many red bowls are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0064:0:v4b-0064:count:0",
+        "prompt_id": "v4b-0064"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-584f27c68dc4dad8348b-20261234-1.png",
+        "question": "How many black books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0083:1:v4a-0083:count:1",
+        "prompt_id": "v4a-0083"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-735bb58fa7f8f3c0591c-20260907-2.png",
+        "question": "How many blue books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0001:2:v4b-0001:count:1",
+        "prompt_id": "v4b-0001"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-05ca7c853017e823313c-20261307-2.png",
+        "question": "Is there a red tomato in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0110:2:v4b-0110:exists:2",
+        "prompt_id": "v4b-0110"
+      }
+    ],
+    "balanced_absence": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-26121be272fba4fa1fa2-20260988-3.png",
+        "question": "How many red bottles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0024:3:v4b-0024:count:0",
+        "prompt_id": "v4b-0024"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-26121be272fba4fa1fa2-20260988-3.png",
+        "question": "How many books are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-1plus1plus1:v4b-0024:3:v4b-0024:count:1:balanced-absence-v1",
+        "prompt_id": "v4b-0024",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0024:negative-exists-v1:book:count-zero",
+            "atom_id": "v4b-0024:negative-exists-v1:book:count-zero",
+            "family": "count",
+            "text": "How many books are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-26121be272fba4fa1fa2-20260988-3.png",
+        "question": "How many blue boxs are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0024:3:v4b-0024:count:2",
+        "prompt_id": "v4b-0024"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-26121be272fba4fa1fa2-20260988-3.png",
+        "question": "Is there a red bottle in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0024:3:v4b-0024:exists:0",
+        "prompt_id": "v4b-0024"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-26121be272fba4fa1fa2-20260988-3.png",
+        "question": "Is there a book in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "no",
+        "sample_id": "main-1plus1plus1:v4b-0024:3:v4b-0024:exists:1:balanced-absence-v1",
+        "prompt_id": "v4b-0024",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0024:negative-exists-v1:book",
+            "atom_id": "v4b-0024:negative-exists-v1:book",
+            "family": "existence",
+            "text": "Is there a book in this picture? Answer A or B only.\nA. no\nB. yes",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "no",
+              "yes"
+            ],
+            "choice_order_seed": 65
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-26121be272fba4fa1fa2-20260988-3.png",
+        "question": "Is there a blue box in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0024:3:v4b-0024:exists:2",
+        "prompt_id": "v4b-0024"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260989-0.png",
+        "question": "How many plates are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-1plus1plus1:v4b-0025:0:v4b-0025:count:0:balanced-absence-v1",
+        "prompt_id": "v4b-0025",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0025:negative-exists-v1:plate:count-zero",
+            "atom_id": "v4b-0025:negative-exists-v1:plate:count-zero",
+            "family": "count",
+            "text": "How many plates are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260989-0.png",
+        "question": "How many green stones are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0025:0:v4b-0025:count:1",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260989-0.png",
+        "question": "How many plates are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-1plus1plus1:v4b-0025:0:v4b-0025:count:2:balanced-absence-v1",
+        "prompt_id": "v4b-0025",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0025:negative-exists-v1:plate:count-zero",
+            "atom_id": "v4b-0025:negative-exists-v1:plate:count-zero",
+            "family": "count",
+            "text": "How many plates are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260989-0.png",
+        "question": "Is there a plate in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "no",
+        "sample_id": "main-1plus1plus1:v4b-0025:0:v4b-0025:exists:0:balanced-absence-v1",
+        "prompt_id": "v4b-0025",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0025:negative-exists-v1:plate",
+            "atom_id": "v4b-0025:negative-exists-v1:plate",
+            "family": "existence",
+            "text": "Is there a plate in this picture? Answer A or B only.\nA. yes\nB. no",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "yes",
+              "no"
+            ],
+            "choice_order_seed": 66
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260989-0.png",
+        "question": "Is there a green stone in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0025:0:v4b-0025:exists:1",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260989-0.png",
+        "question": "Is there a plate in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "no",
+        "sample_id": "main-1plus1plus1:v4b-0025:0:v4b-0025:exists:2:balanced-absence-v1",
+        "prompt_id": "v4b-0025",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0025:negative-exists-v1:plate",
+            "atom_id": "v4b-0025:negative-exists-v1:plate",
+            "family": "existence",
+            "text": "Is there a plate in this picture? Answer A or B only.\nA. yes\nB. no",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "yes",
+              "no"
+            ],
+            "choice_order_seed": 66
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260991-2.png",
+        "question": "How many red shells are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0025:2:v4b-0025:count:0",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260991-2.png",
+        "question": "How many plates are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-1plus1plus1:v4b-0025:2:v4b-0025:count:1:balanced-absence-v1",
+        "prompt_id": "v4b-0025",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4b-0025:negative-exists-v1:plate:count-zero",
+            "atom_id": "v4b-0025:negative-exists-v1:plate:count-zero",
+            "family": "count",
+            "text": "How many plates are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "2992c6aa9feb1e62815f30878234deab3d16b1c408e0cd1063ba9d0995db3298"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260991-2.png",
+        "question": "How many blue flowers are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0025:2:v4b-0025:count:2",
+        "prompt_id": "v4b-0025"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c5173cf678ab697bceca-20260991-2.png",
+        "question": "Is there a red shell in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0025:2:v4b-0025:exists:0",
+        "prompt_id": "v4b-0025"
+      }
+    ]
+  },
+  "3": {
+    "generation": {
+      "naive": [
+        {
+          "prompt_id": "v4a-0112",
+          "candidate_id": "naive-r003-a74099be9b70482510f2-270610877-4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\naive\\naive-r003-a74099be9b70482510f2-270610877-4.png",
+          "prompt": "one blue bottle, two brown boxes"
+        },
+        {
+          "prompt_id": "v4a-0114",
+          "candidate_id": "naive-r003-6ac044cb25ecc82ddbde-18665533-6",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\naive\\naive-r003-6ac044cb25ecc82ddbde-18665533-6.png",
+          "prompt": "one blue mug, two green bottles"
+        },
+        {
+          "prompt_id": "v4a-0015",
+          "candidate_id": "naive-r003-14acf8c0b6e872fe7b87-18812969-0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\naive\\naive-r003-14acf8c0b6e872fe7b87-18812969-0.png",
+          "prompt": "one yellow lemon, two brown bottles"
+        },
+        {
+          "prompt_id": "v4a-0034",
+          "candidate_id": "naive-r003-2063890387e3bed50cf3-1220642786-1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\naive\\naive-r003-2063890387e3bed50cf3-1220642786-1.png",
+          "prompt": "two blue mugs and a white bowl"
+        },
+        {
+          "prompt_id": "v4b-0048",
+          "candidate_id": "naive-r003-bb12875e2b6400536c27-319438859-2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\naive\\naive-r003-bb12875e2b6400536c27-319438859-2.png",
+          "prompt": "one blue mug, one white cup, one brown bottle"
+        },
+        {
+          "prompt_id": "v4b-0027",
+          "candidate_id": "naive-r003-77c6e2ca3264b4574333-19470983-1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\naive\\naive-r003-77c6e2ca3264b4574333-19470983-1.png",
+          "prompt": "a red book, a black notebook, a yellow candle"
+        },
+        {
+          "prompt_id": "v4b-0015",
+          "candidate_id": "naive-r003-b3abd7a4b072e55678fa-1001507511-3",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\naive\\naive-r003-b3abd7a4b072e55678fa-1001507511-3.png",
+          "prompt": "a red cup, a blue plate, a white candle"
+        }
+      ],
+      "rfo_gold": [
+        {
+          "prompt_id": "v4a-0112",
+          "candidate_id": "rfo_gold-r003-a74099be9b70482510f2-270610877-4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\rfo_gold\\rfo_gold-r003-a74099be9b70482510f2-270610877-4.png",
+          "prompt": "one blue bottle, two brown boxes"
+        },
+        {
+          "prompt_id": "v4a-0114",
+          "candidate_id": "rfo_gold-r003-6ac044cb25ecc82ddbde-18665533-6",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\rfo_gold\\rfo_gold-r003-6ac044cb25ecc82ddbde-18665533-6.png",
+          "prompt": "one blue mug, two green bottles"
+        },
+        {
+          "prompt_id": "v4a-0015",
+          "candidate_id": "rfo_gold-r003-14acf8c0b6e872fe7b87-18812969-0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\rfo_gold\\rfo_gold-r003-14acf8c0b6e872fe7b87-18812969-0.png",
+          "prompt": "one yellow lemon, two brown bottles"
+        },
+        {
+          "prompt_id": "v4a-0034",
+          "candidate_id": "rfo_gold-r003-2063890387e3bed50cf3-1309452715-4",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\rfo_gold\\rfo_gold-r003-2063890387e3bed50cf3-1309452715-4.png",
+          "prompt": "two blue mugs and a white bowl"
+        },
+        {
+          "prompt_id": "v4b-0048",
+          "candidate_id": "rfo_gold-r003-bb12875e2b6400536c27-2071753200-0",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\rfo_gold\\rfo_gold-r003-bb12875e2b6400536c27-2071753200-0.png",
+          "prompt": "one blue mug, one white cup, one brown bottle"
+        },
+        {
+          "prompt_id": "v4b-0027",
+          "candidate_id": "rfo_gold-r003-77c6e2ca3264b4574333-19470983-1",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\rfo_gold\\rfo_gold-r003-77c6e2ca3264b4574333-19470983-1.png",
+          "prompt": "a red book, a black notebook, a yellow candle"
+        },
+        {
+          "prompt_id": "v4b-0015",
+          "candidate_id": "rfo_gold-r003-b3abd7a4b072e55678fa-584244392-2",
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\decoupling-pilot-20260906\\rounds\\round-003\\candidates\\rfo_gold\\rfo_gold-r003-b3abd7a4b072e55678fa-584244392-2.png",
+          "prompt": "a red cup, a blue plate, a white candle"
+        }
+      ]
+    },
+    "original": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-a1693daeeda2f2d02e83-20261257-0.png",
+        "question": "How many black books are in this picture? Answer with a single number.",
+        "answer": "2",
+        "sample_id": "main-2plus1:v4a-0089:0:v4a-0089:count:1",
+        "prompt_id": "v4a-0089"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-a1693daeeda2f2d02e83-20261257-0.png",
+        "question": "Is there a red book in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0089:0:v4a-0089:exists:0",
+        "prompt_id": "v4a-0089"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-a1693daeeda2f2d02e83-20261257-0.png",
+        "question": "Is there a black book in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0089:0:v4a-0089:exists:1",
+        "prompt_id": "v4a-0089"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-bad621e1e98fb5c9fa84-20261277-0.png",
+        "question": "How many brown eggs are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0094:0:v4a-0094:count:0",
+        "prompt_id": "v4a-0094"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-bad621e1e98fb5c9fa84-20261277-0.png",
+        "question": "How many blue mugs are in this picture? Answer with a single number.",
+        "answer": "2",
+        "sample_id": "main-2plus1:v4a-0094:0:v4a-0094:count:1",
+        "prompt_id": "v4a-0094"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-bad621e1e98fb5c9fa84-20261277-0.png",
+        "question": "Is there a brown egg in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0094:0:v4a-0094:exists:0",
+        "prompt_id": "v4a-0094"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-bad621e1e98fb5c9fa84-20261277-0.png",
+        "question": "Is there a blue mug in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0094:0:v4a-0094:exists:1",
+        "prompt_id": "v4a-0094"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261285-0.png",
+        "question": "How many green bottles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0096:0:v4a-0096:count:0",
+        "prompt_id": "v4a-0096"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261285-0.png",
+        "question": "How many white boxs are in this picture? Answer with a single number.",
+        "answer": "2",
+        "sample_id": "main-2plus1:v4a-0096:0:v4a-0096:count:1",
+        "prompt_id": "v4a-0096"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261285-0.png",
+        "question": "Is there a green bottle in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0096:0:v4a-0096:exists:0",
+        "prompt_id": "v4a-0096"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261285-0.png",
+        "question": "Is there a white box in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0096:0:v4a-0096:exists:1",
+        "prompt_id": "v4a-0096"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261287-2.png",
+        "question": "How many green bottles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0096:2:v4a-0096:count:0",
+        "prompt_id": "v4a-0096"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261287-2.png",
+        "question": "How many white boxs are in this picture? Answer with a single number.",
+        "answer": "2",
+        "sample_id": "main-2plus1:v4a-0096:2:v4a-0096:count:1",
+        "prompt_id": "v4a-0096"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261287-2.png",
+        "question": "Is there a green bottle in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0096:2:v4a-0096:exists:0",
+        "prompt_id": "v4a-0096"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261287-2.png",
+        "question": "Is there a white box in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0096:2:v4a-0096:exists:1",
+        "prompt_id": "v4a-0096"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-863057ed074bab82d563-20261305-0.png",
+        "question": "How many green leafs are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0101:0:v4a-0101:count:0",
+        "prompt_id": "v4a-0101"
+      }
+    ],
+    "alternate_naive": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-42c31882e9a3127976d0-20260901-0.png",
+        "question": "How many blue mugs are in this picture? Answer with a single number.",
+        "answer": "2",
+        "sample_id": "main-2plus1:v4a-0000:0:v4a-0000:count:0",
+        "prompt_id": "v4a-0000"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c1d2345a070abec55b80-20260901-0.png",
+        "question": "Is there a red apple in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0000:0:v4b-0000:exists:0",
+        "prompt_id": "v4b-0000"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-3cf0cb726c08fef1a432-20261095-2.png",
+        "question": "Is there a red tomato in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0053:2:v4b-0053:exists:1",
+        "prompt_id": "v4b-0053"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-77c6e2ca3264b4574333-20260999-2.png",
+        "question": "How many black books are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0027:2:v4b-0027:count:1",
+        "prompt_id": "v4b-0027"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-f8f34e929c95e761370e-20261361-0.png",
+        "question": "How many brown shoes are in this picture? Answer with a single number.",
+        "answer": "2",
+        "sample_id": "main-2plus1:v4a-0115:0:v4a-0115:count:1",
+        "prompt_id": "v4a-0115"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-c1d2345a070abec55b80-20260901-0.png",
+        "question": "Is there a green pear in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0000:0:v4b-0000:exists:2",
+        "prompt_id": "v4b-0000"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-b0ed913d51bdbbc8b215-20261137-0.png",
+        "question": "Is there a black book in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0065:0:v4b-0065:exists:0",
+        "prompt_id": "v4b-0065"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-05ca7c853017e823313c-20261306-1.png",
+        "question": "How many yellow bananas are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0110:1:v4b-0110:count:1",
+        "prompt_id": "v4b-0110"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-eb540eebea7f5e4c5e42-20261103-2.png",
+        "question": "How many yellow bananas are in this picture? Answer with a single number.",
+        "answer": "2",
+        "sample_id": "main-2plus1:v4a-0050:2:v4a-0050:count:1",
+        "prompt_id": "v4a-0050"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-658306f2b5a202d64413-20260932-3.png",
+        "question": "Is there a brown spoon in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0007:3:v4b-0007:exists:2",
+        "prompt_id": "v4b-0007"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-b0ed913d51bdbbc8b215-20261140-3.png",
+        "question": "Is there a yellow candle in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0065:3:v4b-0065:exists:2",
+        "prompt_id": "v4b-0065"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-85ca6dddb7d02025208a-20261049-0.png",
+        "question": "How many brown bottles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0042:0:v4b-0042:count:2",
+        "prompt_id": "v4b-0042"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-74b0b288e08b802958da-20261063-2.png",
+        "question": "How many yellow bananas are in this picture? Answer with a single number.",
+        "answer": "2",
+        "sample_id": "main-2plus1:v4a-0040:2:v4a-0040:count:1",
+        "prompt_id": "v4a-0040"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-ca589c9acd4d924bc154-20261196-3.png",
+        "question": "Is there a red book in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0080:3:v4b-0080:exists:0",
+        "prompt_id": "v4b-0080"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-14acf8c0b6e872fe7b87-20260964-3.png",
+        "question": "Is there a yellow lemon in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0015:3:v4a-0015:exists:0",
+        "prompt_id": "v4a-0015"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-9d40d3d8d00d900ca118-20261067-2.png",
+        "question": "How many white bowls are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0046:2:v4b-0046:count:2",
+        "prompt_id": "v4b-0046"
+      }
+    ],
+    "alternate_rfo_gold": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-66f99227fd38b4e014f1-20261155-2.png",
+        "question": "How many white bottles are in this picture? Answer with a single number.",
+        "answer": "2",
+        "sample_id": "main-2plus1:v4a-0063:2:v4a-0063:count:1",
+        "prompt_id": "v4a-0063"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-fd9b9de447775fd46168-20261083-2.png",
+        "question": "Is there a blue mug in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0050:2:v4b-0050:exists:1",
+        "prompt_id": "v4b-0050"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-ea71bae492a3f0167ac8-20261026-1.png",
+        "question": "Is there a black candle in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0035:1:v4b-0035:exists:2",
+        "prompt_id": "v4b-0035"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-e528b267fdae4f714adc-20261087-2.png",
+        "question": "How many green pears are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0046:2:v4a-0046:count:0",
+        "prompt_id": "v4a-0046"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-871ba6f58080b2078aab-20260966-1.png",
+        "question": "How many red mugs are in this picture? Answer with a single number.",
+        "answer": "2",
+        "sample_id": "main-2plus1:v4a-0016:1:v4a-0016:count:1",
+        "prompt_id": "v4a-0016"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-d6d3ea753dbebe956bd9-20261343-2.png",
+        "question": "Is there a blue mug in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0119:2:v4b-0119:exists:1",
+        "prompt_id": "v4b-0119"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-8ea6937459730a819f1c-20261212-3.png",
+        "question": "Is there a red spoon in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0077:3:v4a-0077:exists:1",
+        "prompt_id": "v4a-0077"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-85ca6dddb7d02025208a-20261052-3.png",
+        "question": "How many brown bottles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0042:3:v4b-0042:count:2",
+        "prompt_id": "v4b-0042"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-2ded8db7ccb5e20f14ae-20260942-1.png",
+        "question": "How many red mugs are in this picture? Answer with a single number.",
+        "answer": "2",
+        "sample_id": "main-2plus1:v4a-0010:1:v4a-0010:count:1",
+        "prompt_id": "v4a-0010"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-f3bc75dbef96cb5dfb86-20261348-3.png",
+        "question": "Is there a red candle in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0111:3:v4a-0111:exists:1",
+        "prompt_id": "v4a-0111"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-53b65f54f59dfd74f6b2-20261087-2.png",
+        "question": "Is there a red tomato in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-1plus1plus1:v4b-0051:2:v4b-0051:exists:2",
+        "prompt_id": "v4b-0051"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-1plus1plus1\\images\\v4-main-d45c0b265ef4f3766e5a-20261225-0.png",
+        "question": "How many yellow lemons are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-1plus1plus1:v4b-0089:0:v4b-0089:count:0",
+        "prompt_id": "v4b-0089"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-2063890387e3bed50cf3-20261038-1.png",
+        "question": "How many blue mugs are in this picture? Answer with a single number.",
+        "answer": "2",
+        "sample_id": "main-2plus1:v4a-0034:1:v4a-0034:count:0",
+        "prompt_id": "v4a-0034"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-f78d4be957580624c55b-20261246-1.png",
+        "question": "Is there a blue mug in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0086:1:v4a-0086:exists:0",
+        "prompt_id": "v4a-0086"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-42c31882e9a3127976d0-20260901-0.png",
+        "question": "Is there a blue mug in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0000:0:v4a-0000:exists:0",
+        "prompt_id": "v4a-0000"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-3ffcc0478174c88a0590-20260973-0.png",
+        "question": "How many green apples are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0018:0:v4a-0018:count:0",
+        "prompt_id": "v4a-0018"
+      }
+    ],
+    "balanced_absence": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-a1693daeeda2f2d02e83-20261257-0.png",
+        "question": "How many bowls are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-2plus1:v4a-0089:0:v4a-0089:count:1:balanced-absence-v1",
+        "prompt_id": "v4a-0089",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4a-0089:negative-exists-v1:bowl:count-zero",
+            "atom_id": "v4a-0089:negative-exists-v1:bowl:count-zero",
+            "family": "count",
+            "text": "How many bowls are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "694384a049a622115f03013545e5915c37288946ba6c51fbf9a7a7caf9941586"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-a1693daeeda2f2d02e83-20261257-0.png",
+        "question": "Is there a bowl in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "no",
+        "sample_id": "main-2plus1:v4a-0089:0:v4a-0089:exists:0:balanced-absence-v1",
+        "prompt_id": "v4a-0089",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4a-0089:negative-exists-v1:bowl",
+            "atom_id": "v4a-0089:negative-exists-v1:bowl",
+            "family": "existence",
+            "text": "Is there a bowl in this picture? Answer A or B only.\nA. yes\nB. no",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "yes",
+              "no"
+            ],
+            "choice_order_seed": 66
+          },
+          "reason": "verified",
+          "verification_sha256": "694384a049a622115f03013545e5915c37288946ba6c51fbf9a7a7caf9941586"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-a1693daeeda2f2d02e83-20261257-0.png",
+        "question": "Is there a black book in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0089:0:v4a-0089:exists:1",
+        "prompt_id": "v4a-0089"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-bad621e1e98fb5c9fa84-20261277-0.png",
+        "question": "How many brown eggs are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0094:0:v4a-0094:count:0",
+        "prompt_id": "v4a-0094"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-bad621e1e98fb5c9fa84-20261277-0.png",
+        "question": "How many shoes are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-2plus1:v4a-0094:0:v4a-0094:count:1:balanced-absence-v1",
+        "prompt_id": "v4a-0094",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4a-0094:negative-exists-v1:shoe:count-zero",
+            "atom_id": "v4a-0094:negative-exists-v1:shoe:count-zero",
+            "family": "count",
+            "text": "How many shoes are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "694384a049a622115f03013545e5915c37288946ba6c51fbf9a7a7caf9941586"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-bad621e1e98fb5c9fa84-20261277-0.png",
+        "question": "Is there a shoe in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "no",
+        "sample_id": "main-2plus1:v4a-0094:0:v4a-0094:exists:0:balanced-absence-v1",
+        "prompt_id": "v4a-0094",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4a-0094:negative-exists-v1:shoe",
+            "atom_id": "v4a-0094:negative-exists-v1:shoe",
+            "family": "existence",
+            "text": "Is there a shoe in this picture? Answer A or B only.\nA. no\nB. yes",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "no",
+              "yes"
+            ],
+            "choice_order_seed": 65
+          },
+          "reason": "verified",
+          "verification_sha256": "694384a049a622115f03013545e5915c37288946ba6c51fbf9a7a7caf9941586"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-bad621e1e98fb5c9fa84-20261277-0.png",
+        "question": "Is there a blue mug in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0094:0:v4a-0094:exists:1",
+        "prompt_id": "v4a-0094"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261285-0.png",
+        "question": "How many green bottles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0096:0:v4a-0096:count:0",
+        "prompt_id": "v4a-0096"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261285-0.png",
+        "question": "How many forks are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-2plus1:v4a-0096:0:v4a-0096:count:1:balanced-absence-v1",
+        "prompt_id": "v4a-0096",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4a-0096:negative-exists-v1:fork:count-zero",
+            "atom_id": "v4a-0096:negative-exists-v1:fork:count-zero",
+            "family": "count",
+            "text": "How many forks are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "694384a049a622115f03013545e5915c37288946ba6c51fbf9a7a7caf9941586"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261285-0.png",
+        "question": "Is there a fork in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "no",
+        "sample_id": "main-2plus1:v4a-0096:0:v4a-0096:exists:0:balanced-absence-v1",
+        "prompt_id": "v4a-0096",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4a-0096:negative-exists-v1:fork",
+            "atom_id": "v4a-0096:negative-exists-v1:fork",
+            "family": "existence",
+            "text": "Is there a fork in this picture? Answer A or B only.\nA. yes\nB. no",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "yes",
+              "no"
+            ],
+            "choice_order_seed": 66
+          },
+          "reason": "verified",
+          "verification_sha256": "694384a049a622115f03013545e5915c37288946ba6c51fbf9a7a7caf9941586"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261285-0.png",
+        "question": "Is there a white box in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0096:0:v4a-0096:exists:1",
+        "prompt_id": "v4a-0096"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261287-2.png",
+        "question": "How many green bottles are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0096:2:v4a-0096:count:0",
+        "prompt_id": "v4a-0096"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261287-2.png",
+        "question": "How many forks are in this picture? Answer with a single number.",
+        "answer": "0",
+        "sample_id": "main-2plus1:v4a-0096:2:v4a-0096:count:1:balanced-absence-v1",
+        "prompt_id": "v4a-0096",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4a-0096:negative-exists-v1:fork:count-zero",
+            "atom_id": "v4a-0096:negative-exists-v1:fork:count-zero",
+            "family": "count",
+            "text": "How many forks are in this picture? Answer with a single number.",
+            "expected_answer": "0",
+            "question_format": "open",
+            "choices": [],
+            "choice_order_seed": 0
+          },
+          "reason": "verified",
+          "verification_sha256": "694384a049a622115f03013545e5915c37288946ba6c51fbf9a7a7caf9941586"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261287-2.png",
+        "question": "Is there a fork in this picture? Answer A or B only.\nA. yes\nB. no",
+        "answer": "no",
+        "sample_id": "main-2plus1:v4a-0096:2:v4a-0096:exists:0:balanced-absence-v1",
+        "prompt_id": "v4a-0096",
+        "fact_provenance": {
+          "question": {
+            "question_id": "v4a-0096:negative-exists-v1:fork",
+            "atom_id": "v4a-0096:negative-exists-v1:fork",
+            "family": "existence",
+            "text": "Is there a fork in this picture? Answer A or B only.\nA. yes\nB. no",
+            "expected_answer": "no",
+            "question_format": "forced_choice",
+            "choices": [
+              "yes",
+              "no"
+            ],
+            "choice_order_seed": 66
+          },
+          "reason": "verified",
+          "verification_sha256": "694384a049a622115f03013545e5915c37288946ba6c51fbf9a7a7caf9941586"
+        }
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-82403a6420086c3b0575-20261287-2.png",
+        "question": "Is there a white box in this picture? Answer A or B only.\nA. no\nB. yes",
+        "answer": "yes",
+        "sample_id": "main-2plus1:v4a-0096:2:v4a-0096:exists:1",
+        "prompt_id": "v4a-0096"
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\runs\\v4\\main-2plus1\\images\\v4-main-863057ed074bab82d563-20261305-0.png",
+        "question": "How many green leafs are in this picture? Answer with a single number.",
+        "answer": "1",
+        "sample_id": "main-2plus1:v4a-0101:0:v4a-0101:count:0",
+        "prompt_id": "v4a-0101"
+      }
+    ]
+  }
+}

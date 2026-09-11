@@ -1,0 +1,25 @@
+{
+  "at_utc": "2026-09-08T05:14:21.147857+00:00",
+  "passed": true,
+  "tests": 22,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "test_scope": "16 actual controller-path tests and 6 secondary-route tests; original scientific workers unchanged",
+  "observer_preflight_sha256": "e6343e4dff54e66b43870c501252cc074415555d1d6136db68b1cabab870b9d0",
+  "junit_sha256": "ebe5f89949b52c793a1072f81d4b29665a2f4e20c2b45d1ad57d2bfaa56adb31",
+  "tested_source_sha256": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\analyze_recovery.py": "0915c01854ad96e76515475b88739273f5f001059f58b1cddc7835794784b219",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py": "ac564e90ee51eb00a1c57e2a8ee7125fe9f663c9d8bf1ff6c9e0fa712237e048",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\freeze_continuation.py": "50bec18f4192bd77882aa3b682cd8a6edca27664085c9854fad283574a1aefcd",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observation_resume.py": "008f65c905a0a4d01e10afc2e9d0e025f4afb4442183a5096011da0879bc135d",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\rcommon.py": "12dab0622450440f163e31d5bf9b788fef3d915453e2930f0c1d3b5f2d5d2820",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\runtime_common.py": "554e9f0b7dfaf650e5cb46a80e0aec8d0bb1c6ef0466f3868cc3522c7d96b31d",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\scheduler.py": "54a56e997863be1250279fffdc5570eb9ac5b347fcb79fa573502675d853e19d",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\secondary_route.py": "d5697f104263a0efd170b3a6976c152aff99dd676ce4f94df296ebf116751181",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\start_continuation.py": "f65289e102e564334917eecc46c4f8e961ba49636aa54eb372e09b1408968ffd",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\test_scheduler.py": "f459a5d45dedce87dbe079c67bd029fb4de003239afc1f9fa5e182102e6863c4",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\test_secondary_route.py": "025b98f47ec67fb40638d5d16fb58665646910a1c0aac78184e924c545559173"
+  },
+  "independent_review": "passed for continuation ledger, prefix validation, Controller.start/event, worker interfaces and final analysis"
+}

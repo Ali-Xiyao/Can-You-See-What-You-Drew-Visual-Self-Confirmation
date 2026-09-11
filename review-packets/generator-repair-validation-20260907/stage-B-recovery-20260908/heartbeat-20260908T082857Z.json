@@ -1,0 +1,78 @@
+{
+  "at_utc": "2026-09-08T08:28:57.602983+00:00",
+  "state_at": "2026-09-08T08:28:54.651112+00:00",
+  "status": "running",
+  "deadline": 1788894000.0,
+  "completed_batches": [
+    "batch-00",
+    "batch-01"
+  ],
+  "completed_observer_shards": [
+    0
+  ],
+  "processes": [
+    {
+      "name": "controller",
+      "pid": 11704,
+      "creation_matches": true,
+      "command_matches": true,
+      "running": true
+    },
+    {
+      "name": "observe-gpu1",
+      "pid": 10008,
+      "creation_matches": true,
+      "command_matches": true,
+      "running": true
+    },
+    {
+      "name": "detect-batch-02",
+      "pid": 21816,
+      "creation_matches": true,
+      "command_matches": true,
+      "running": true
+    }
+  ],
+  "markers": {},
+  "observation_snapshot": {
+    "at_utc": "2026-09-08T08:28:07Z",
+    "source": "Independent full JSONL audit by throughput_audit",
+    "answers": 100140,
+    "expected": 108000,
+    "increase_since_0806": 2764,
+    "errors": 0,
+    "abstentions": 0,
+    "partial_tail": false,
+    "shard0_complete": true,
+    "shard0_answers": 72000,
+    "shard1": {
+      "base": 9000,
+      "naive-original": 9000,
+      "naive-balanced_absence": 9000,
+      "naive-zero_weight": 1140,
+      "completed_models": [
+        "base",
+        "naive-original",
+        "naive-balanced_absence"
+      ],
+      "last_answer_utc": "2026-09-08T08:28:05Z"
+    }
+  },
+  "batch02": {
+    "raw-calls.detect.internvl.jsonl": {
+      "model_calls": 129,
+      "parse_errors": 1,
+      "other_errors": 0,
+      "last_finished": "2026-09-08T08:28:56.922270+00:00",
+      "unparsed_lines": 0
+    },
+    "raw-calls.detect.qwen3vl.jsonl": {
+      "model_calls": 150,
+      "parse_errors": 1,
+      "other_errors": 0,
+      "last_finished": "2026-09-08T07:55:57.788017+00:00",
+      "unparsed_lines": 0
+    }
+  },
+  "action": "Healthy output continues. GPU1 started last observer model; batch02 InternVL advances with same one known JSON parse failure. No new complete gold batch or other failure; no secondary rerun, premature analysis, or runtime changes."
+}

@@ -1,0 +1,80 @@
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\transformers\utils\hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\showo2\lib\site-packages\accelerate\utils\modeling.py:1228: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  return torch.load(checkpoint_file, map_location=torch.device("cpu"))
+You shouldn't move a model when it is dispatched on multiple devices.
+You shouldn't move a model when it is dispatched on multiple devices.
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:617: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  torch.load(pretrained_path, map_location=device), assign=True)
+H:\selfsight-models\repositories\Show-o\show-o2\models\wan21_vae.py:655: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with amp.autocast(dtype=self.dtype):
+WARNING:models.modules:The attention layers in this model are transitioning from computing the RoPE embeddings internally through `position_ids` (2D tensor with the indexes of the tokens), to using externally computed `position_embeddings` (Tuple of tensors, containing cos and sin). In v4.46 `position_ids` will be removed and `position_embeddings` will be mandatory.
+base fixed-noise losses complete
+naive-original fixed-noise losses complete
+naive-balanced_absence fixed-noise losses complete
+naive-zero_weight fixed-noise losses complete
+base cross-observation 8/128
+base cross-observation 16/128
+base cross-observation 24/128
+base cross-observation 32/128
+base cross-observation 40/128
+base cross-observation 48/128
+base cross-observation 56/128
+base cross-observation 64/128
+base cross-observation 72/128
+base cross-observation 80/128
+base cross-observation 88/128
+base cross-observation 96/128
+base cross-observation 104/128
+base cross-observation 112/128
+base cross-observation 120/128
+base cross-observation 128/128
+naive-original cross-observation 8/128
+naive-original cross-observation 16/128
+naive-original cross-observation 24/128
+naive-original cross-observation 32/128
+naive-original cross-observation 40/128
+naive-original cross-observation 48/128
+naive-original cross-observation 56/128
+naive-original cross-observation 64/128
+naive-original cross-observation 72/128
+naive-original cross-observation 80/128
+naive-original cross-observation 88/128
+naive-original cross-observation 96/128
+naive-original cross-observation 104/128
+naive-original cross-observation 112/128
+naive-original cross-observation 120/128
+naive-original cross-observation 128/128
+naive-balanced_absence cross-observation 8/128
+naive-balanced_absence cross-observation 16/128
+naive-balanced_absence cross-observation 24/128
+naive-balanced_absence cross-observation 32/128
+naive-balanced_absence cross-observation 40/128
+naive-balanced_absence cross-observation 48/128
+naive-balanced_absence cross-observation 56/128
+naive-balanced_absence cross-observation 64/128
+naive-balanced_absence cross-observation 72/128
+naive-balanced_absence cross-observation 80/128
+naive-balanced_absence cross-observation 88/128
+naive-balanced_absence cross-observation 96/128
+naive-balanced_absence cross-observation 104/128
+naive-balanced_absence cross-observation 112/128
+naive-balanced_absence cross-observation 120/128
+naive-balanced_absence cross-observation 128/128
+naive-zero_weight cross-observation 8/128
+naive-zero_weight cross-observation 16/128
+naive-zero_weight cross-observation 24/128
+naive-zero_weight cross-observation 32/128
+naive-zero_weight cross-observation 40/128
+naive-zero_weight cross-observation 48/128
+naive-zero_weight cross-observation 56/128
+naive-zero_weight cross-observation 64/128
+naive-zero_weight cross-observation 72/128
+naive-zero_weight cross-observation 80/128
+naive-zero_weight cross-observation 88/128
+naive-zero_weight cross-observation 96/128
+naive-zero_weight cross-observation 104/128
+naive-zero_weight cross-observation 112/128
+naive-zero_weight cross-observation 120/128
+naive-zero_weight cross-observation 128/128
+Phase A paired losses and crossed observations complete

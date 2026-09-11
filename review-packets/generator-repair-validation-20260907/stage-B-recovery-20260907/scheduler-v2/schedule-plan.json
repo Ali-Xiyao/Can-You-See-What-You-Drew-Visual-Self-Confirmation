@@ -1,0 +1,14 @@
+{
+  "at_utc": "2026-09-08T03:50:23.788495+00:00",
+  "deadline": 1788894000.0,
+  "recovery_plan_sha256": "e94cf2d7ba3622889df07e0b5cf369914ded2307690b4dadab0c83031bf295d8",
+  "source_sha256": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v2\\handoff.py": "df4f99a16d5ccfd8fe281bd27f9675fb1263313d69b7ddd18bd254652baed1a5",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v2\\scheduler.py": "2f67744bdae646b173b5128de31867c61e9daf2979c3c4e4f17215921704542f",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v2\\test_handoff.py": "0b1a3a56efea9e4550483b9a1256ec751f38fc246861dc175ab35e25db2357bb",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\scheduler-v2\\test_scheduler.py": "937485665e89824c3349e3b7725c634507a75354ac1a9b3431a5e30442ed0707"
+  },
+  "addendum_sha256": "46a8462b26aea92d16b6efc897fea6c4e7c385e9f59f2686bdee9e45305992b7",
+  "observation_devices_unchanged": true,
+  "reallocate_only_unstarted_detection_batches": true
+}

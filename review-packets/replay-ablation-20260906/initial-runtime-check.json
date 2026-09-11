@@ -1,0 +1,12 @@
+{
+  "at_utc": "2026-09-06T11:28:48.413359+00:00",
+  "base_answer_reproduction": {
+    "matches": 1818,
+    "total": 1818
+  },
+  "first_optimizer_step": 1,
+  "first_gradient_norm": 3.796875,
+  "historical_first_gradient_norm": 3.796875,
+  "plan_sha256": "bc9357f520b6f975778aa70338d734596a78eec55f9276e14f3d50059e52624e",
+  "scope": "Initial runtime check only; full training and interventions still running"
+}

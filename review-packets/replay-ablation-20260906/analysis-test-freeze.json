@@ -1,0 +1,8 @@
+{
+  "created_utc": "2026-09-06T11:14:07.042268+00:00",
+  "files": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\test_design.py": "ee9b73d21b7ae1d49cded34c1fb461a82c02582d7572b7d7d2d0d2b0b302366c",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\analyze_ablation.py": "25f9a0ba9c6c5efa1e9ffffcb9199a4f987b79425e9538e69b7a680012dbd77f"
+  },
+  "tests": "5 CPU design tests passed before GPU run"
+}

@@ -1,0 +1,6 @@
+{
+  "at_utc": "2026-09-08T05:13:40.355334+00:00",
+  "error": "AssertionError: budget exhausted",
+  "automatic_retry": false,
+  "cleanup_errors": []
+}

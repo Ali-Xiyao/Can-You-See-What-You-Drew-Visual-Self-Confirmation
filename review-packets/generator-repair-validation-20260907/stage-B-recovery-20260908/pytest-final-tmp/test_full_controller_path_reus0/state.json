@@ -1,0 +1,19 @@
+{
+  "at_utc": "2026-09-08T05:13:40.173334+00:00",
+  "status": "complete",
+  "pid": 20052,
+  "deadline": 100,
+  "active_jobs": [],
+  "completed_batches": [
+    "batch-00",
+    "batch-01",
+    "batch-02",
+    "batch-03",
+    "batch-04",
+    "batch-05"
+  ],
+  "completed_observer_shards": [
+    0,
+    1
+  ]
+}

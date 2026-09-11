@@ -1,0 +1,17 @@
+{
+  "created_utc": "2026-09-08T03:53:42.883069+00:00",
+  "scheduler_pid": 20608,
+  "handoff_sha256": "d75ccbea10718977909c5dd95715f33e6f5c3762307a25d28f80749af5add8ee",
+  "old_controller_terminated": true,
+  "old_controller": {
+    "pid": 7700,
+    "create_time": 1788837649.617215,
+    "cmdline": [
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\core\\python.exe",
+      "-B",
+      "-u",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\launch_recovery.py"
+    ]
+  },
+  "active_workers_not_interrupted": true
+}

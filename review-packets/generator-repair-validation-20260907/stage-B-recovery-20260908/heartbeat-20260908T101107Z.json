@@ -1,0 +1,137 @@
+{
+  "at_utc": "2026-09-08T10:11:07.398492+00:00",
+  "state_snapshot": {
+    "at_utc": "2026-09-08T10:11:06.896061+00:00",
+    "status": "running",
+    "pid": 11704,
+    "deadline": 1788894000.0,
+    "active_jobs": [
+      {
+        "name": "observe-gpu1",
+        "kind": "observation",
+        "shard": 1,
+        "device": "cuda:1",
+        "pid": 10008,
+        "create_time": 1788844489.4401393,
+        "cmdline": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observation_resume.py",
+          "--shard",
+          "1",
+          "--deadline",
+          "1788894000.0"
+        ],
+        "command": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observation_resume.py",
+          "--shard",
+          "1",
+          "--deadline",
+          "1788894000.0"
+        ],
+        "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\observe-gpu1.log"
+      },
+      {
+        "name": "detect-batch-03",
+        "kind": "detection",
+        "batch": "batch-03",
+        "device": "cuda:0",
+        "pid": 7472,
+        "create_time": 1788856671.497558,
+        "cmdline": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+          "detect-batch",
+          "--batch",
+          "batch-03",
+          "--deadline",
+          "1788894000.0",
+          "--device",
+          "cuda:0"
+        ],
+        "command": [
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\observer\\python.exe",
+          "-B",
+          "-u",
+          "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detector_recovery.py",
+          "detect-batch",
+          "--batch",
+          "batch-03",
+          "--deadline",
+          "1788894000.0",
+          "--device",
+          "cuda:0"
+        ],
+        "log_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\detect-batch-03.log"
+      }
+    ],
+    "completed_batches": [
+      "batch-00",
+      "batch-01",
+      "batch-02"
+    ],
+    "completed_observer_shards": [
+      0
+    ]
+  },
+  "identity_check_at_utc": "2026-09-08T10:10:15Z",
+  "controller_and_active_workers_identity_verified": true,
+  "failure_marker": false,
+  "completion_marker": false,
+  "observation_snapshot": {
+    "at_utc": "2026-09-08T10:10:12Z",
+    "source": "Independent full JSONL audit by throughput_audit",
+    "answers": 107508,
+    "expected": 108000,
+    "complete_conditions": 10741,
+    "gpu1_zero_answers": 8508,
+    "gpu1_zero_expected": 9000,
+    "gpu1_zero_complete": false,
+    "completed_model_shard_combinations": 7,
+    "last_finished": "2026-09-08T10:10:11Z",
+    "errors": 0,
+    "abstentions": 0,
+    "partial_tail": false
+  },
+  "batch03": {
+    "raw-calls.detect.internvl.jsonl": {
+      "model_calls": 122,
+      "failures": [
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-03\\base-B-aefe1349c83d02ae3a2e-796477128-0.png",
+          "error": "json_error:Expecting ',' delimiter",
+          "status": "parse_error",
+          "full_reply_retained": true
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-03\\base-B-aefe1349c83d02ae3a2e-1848590045-0.png",
+          "error": "json_error:Expecting ',' delimiter",
+          "status": "parse_error",
+          "full_reply_retained": true
+        }
+      ],
+      "last_finished": "2026-09-08T10:11:04.594239+00:00",
+      "unparsed_lines": 0
+    },
+    "raw-calls.detect.qwen3vl.jsonl": {
+      "model_calls": 150,
+      "failures": [],
+      "last_finished": "2026-09-08T09:15:34.453284+00:00",
+      "unparsed_lines": 0
+    }
+  },
+  "secondary_completed_batch_set": [
+    "batch-00",
+    "batch-01",
+    "batch-02"
+  ],
+  "latest_inventory": "secondary-inventory-20260908T083923-1788856763342036600/results.json",
+  "latest_workload": "secondary-workload-20260908T083923-1788856763778101900/results.json",
+  "action": "Continued effective output on both cards; observation not yet complete. Batch03 two InternVL JSON-only errors retain full raw and follow existing quarantine after phase completion. No new completed gold batch, no repeated secondary analysis, no runtime changes."
+}

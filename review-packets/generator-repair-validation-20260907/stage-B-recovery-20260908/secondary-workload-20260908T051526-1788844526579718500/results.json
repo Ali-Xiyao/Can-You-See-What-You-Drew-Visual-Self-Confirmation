@@ -1,0 +1,2116 @@
+{
+  "created_utc": "2026-09-08T05:15:26.572770+00:00",
+  "completed_batches": [
+    "batch-00",
+    "batch-01"
+  ],
+  "partial_batches_not_read": [
+    "batch-02",
+    "batch-03",
+    "batch-04",
+    "batch-05"
+  ],
+  "batches": {
+    "batch-00": {
+      "n_images": 150,
+      "n_scenes": 25,
+      "review_images": 56,
+      "review_scenes": 23,
+      "whole_image_unknown": 11,
+      "known_image_but_question_unknown": 45,
+      "known_question_facts": 1300,
+      "unknown_question_facts": 236,
+      "n_question_facts": 1536,
+      "unknown_fact_reason_counts": {
+        "disputed_scope": 112,
+        "unresolved_verification": 124
+      },
+      "review_image_reason_counts": {
+        "disputed_scope": 45,
+        "unresolved_verification": 11,
+        "whole_image_unknown": 11
+      },
+      "review": [
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-df298f4356f7cac5fba3-1863053374-0.png",
+          "spec_id": "grv2-0032",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-df298f4356f7cac5fba3-1785523825-0.png",
+          "spec_id": "grv2-0032",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-df298f4356f7cac5fba3-755923971-0.png",
+          "spec_id": "grv2-0032",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-dede5c3b23479f128475-1482933591-0.png",
+          "spec_id": "grv3-0028",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-dede5c3b23479f128475-1896287631-0.png",
+          "spec_id": "grv3-0028",
+          "candidate_index": 4,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-dede5c3b23479f128475-1131011269-0.png",
+          "spec_id": "grv3-0028",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-60139bc1e5c14489d20c-1532392304-0.png",
+          "spec_id": "grv3-0011",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-60139bc1e5c14489d20c-1964836552-0.png",
+          "spec_id": "grv3-0011",
+          "candidate_index": 2,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-60139bc1e5c14489d20c-105436138-0.png",
+          "spec_id": "grv3-0011",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-033199f04ce0463f93ed-1517342523-0.png",
+          "spec_id": "grv2-0073",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-033199f04ce0463f93ed-143434077-0.png",
+          "spec_id": "grv2-0073",
+          "candidate_index": 4,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-033199f04ce0463f93ed-1055371326-0.png",
+          "spec_id": "grv2-0073",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-9d1663c9f210254b0460-1571824966-0.png",
+          "spec_id": "grv2-0052",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-6c37e8324698638b6d63-822958574-0.png",
+          "spec_id": "grv2-0025",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-6c37e8324698638b6d63-1324723100-0.png",
+          "spec_id": "grv2-0025",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-6c37e8324698638b6d63-235928357-0.png",
+          "spec_id": "grv2-0025",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-6c37e8324698638b6d63-1777014897-0.png",
+          "spec_id": "grv2-0025",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-fae3101d9844fb90d4b1-1232237945-0.png",
+          "spec_id": "grv2-0082",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-fae3101d9844fb90d4b1-317067534-0.png",
+          "spec_id": "grv2-0082",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-8307c96be3090a5f7b17-1868727624-0.png",
+          "spec_id": "grv3-0081",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-8307c96be3090a5f7b17-882166355-0.png",
+          "spec_id": "grv3-0081",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-b227fc5cf05c5d837f9d-974278122-0.png",
+          "spec_id": "grv2-0066",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-95ee90679f8aef9b5304-441302865-0.png",
+          "spec_id": "grv3-0074",
+          "candidate_index": 1,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-95ee90679f8aef9b5304-12474917-0.png",
+          "spec_id": "grv3-0074",
+          "candidate_index": 2,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-95ee90679f8aef9b5304-1613400768-0.png",
+          "spec_id": "grv3-0074",
+          "candidate_index": 3,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-95ee90679f8aef9b5304-2061134061-0.png",
+          "spec_id": "grv3-0074",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-95ee90679f8aef9b5304-858858591-0.png",
+          "spec_id": "grv3-0074",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f2130a243d3847e416ca-1402542719-0.png",
+          "spec_id": "grv3-0077",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f2130a243d3847e416ca-402116972-0.png",
+          "spec_id": "grv3-0077",
+          "candidate_index": 1,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f2130a243d3847e416ca-693358928-0.png",
+          "spec_id": "grv3-0077",
+          "candidate_index": 3,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f2130a243d3847e416ca-1130306133-0.png",
+          "spec_id": "grv3-0077",
+          "candidate_index": 4,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f2130a243d3847e416ca-419021998-0.png",
+          "spec_id": "grv3-0077",
+          "candidate_index": 5,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-9d4a6b6863b11346b420-954071738-0.png",
+          "spec_id": "grv2-0038",
+          "candidate_index": 2,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-b1c7b32ff940927b036f-1371134936-0.png",
+          "spec_id": "grv2-0035",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-b1c7b32ff940927b036f-129121462-0.png",
+          "spec_id": "grv2-0035",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-c8f8f810ef5a02ec2287-1394276692-0.png",
+          "spec_id": "grv3-0016",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-4971c58f484845efb367-78528637-0.png",
+          "spec_id": "grv3-0041",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-c5baf4c837bdd3983da2-1997741593-0.png",
+          "spec_id": "grv2-0049",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-c5baf4c837bdd3983da2-1808227090-0.png",
+          "spec_id": "grv2-0049",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-c5baf4c837bdd3983da2-1012876097-0.png",
+          "spec_id": "grv2-0049",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-deab5ada5a1a9d584eb4-1570828218-0.png",
+          "spec_id": "grv3-0018",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-be17449832ceeb3d01dd-1958525811-0.png",
+          "spec_id": "grv3-0076",
+          "candidate_index": 1,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-be17449832ceeb3d01dd-945124480-0.png",
+          "spec_id": "grv3-0076",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-be17449832ceeb3d01dd-636382206-0.png",
+          "spec_id": "grv3-0076",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-be17449832ceeb3d01dd-58648380-0.png",
+          "spec_id": "grv3-0076",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-5496a23478cf8104f91a-2035269013-0.png",
+          "spec_id": "grv3-0036",
+          "candidate_index": 1,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-5496a23478cf8104f91a-1775320249-0.png",
+          "spec_id": "grv3-0036",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-00d894125cfdb28e7eb1-857491209-0.png",
+          "spec_id": "grv3-0046",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-00d894125cfdb28e7eb1-1468677602-0.png",
+          "spec_id": "grv3-0046",
+          "candidate_index": 1,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-6afa70d86e4e58b5ec77-1525501476-0.png",
+          "spec_id": "grv3-0079",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-6afa70d86e4e58b5ec77-1695920036-0.png",
+          "spec_id": "grv3-0079",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f8f8d3120288d8b7601c-1613055999-0.png",
+          "spec_id": "grv3-0056",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f8f8d3120288d8b7601c-630219692-0.png",
+          "spec_id": "grv3-0056",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f8f8d3120288d8b7601c-300336360-0.png",
+          "spec_id": "grv3-0056",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f8f8d3120288d8b7601c-1088561753-0.png",
+          "spec_id": "grv3-0056",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-8f29a7f7b320d3840694-570870083-0.png",
+          "spec_id": "grv2-0071",
+          "candidate_index": 1,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        }
+      ],
+      "sources_sha256": {
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-00\\manifest.jsonl": "c64d96148be0d529add9111a3ba13daca7d9c6aaf68823da7b02fd204731399b",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-00\\complete.json": "b6f34440336862f828a8207fdfd2cae116925183bdd9cfb9bc048758d5b22eae",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-00\\verified.jsonl": "03538f4f8e01554cf83831a085c277af27f9c46782781b5172c7952f1b5afb27",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-00\\verification-complete.json": "e992da19650180980d0aff28c546549f9f42b7d26218b7cd348575518f6a650e"
+      }
+    },
+    "batch-01": {
+      "n_images": 150,
+      "n_scenes": 25,
+      "review_images": 52,
+      "review_scenes": 22,
+      "whole_image_unknown": 4,
+      "known_image_but_question_unknown": 48,
+      "known_question_facts": 1272,
+      "unknown_question_facts": 144,
+      "n_question_facts": 1416,
+      "unknown_fact_reason_counts": {
+        "disputed_scope": 104,
+        "unresolved_verification": 40
+      },
+      "review_image_reason_counts": {
+        "disputed_scope": 48,
+        "unresolved_verification": 4,
+        "whole_image_unknown": 4
+      },
+      "review": [
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-eac1092059b84586575f-981722037-0.png",
+          "spec_id": "grv2-0033",
+          "candidate_index": 1,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-eac1092059b84586575f-140749473-0.png",
+          "spec_id": "grv2-0033",
+          "candidate_index": 2,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-eac1092059b84586575f-738457365-0.png",
+          "spec_id": "grv2-0033",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-e0102c7d89bf411992be-228746439-0.png",
+          "spec_id": "grv3-0013",
+          "candidate_index": 1,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-e0102c7d89bf411992be-167177439-0.png",
+          "spec_id": "grv3-0013",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-e0102c7d89bf411992be-1481945603-0.png",
+          "spec_id": "grv3-0013",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-301802fc3ece50855af4-1462120430-0.png",
+          "spec_id": "grv2-0014",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c1beb66763d1e7d2de23-1268792916-0.png",
+          "spec_id": "grv2-0036",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c1beb66763d1e7d2de23-1132483183-0.png",
+          "spec_id": "grv2-0036",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c8e894bfb76944692dc4-1811276669-0.png",
+          "spec_id": "grv2-0051",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-ed357d62b6aa3f4e9356-1559429971-0.png",
+          "spec_id": "grv2-0046",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-670795b52f3342dea65f-419708708-0.png",
+          "spec_id": "grv2-0008",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-670795b52f3342dea65f-1166759142-0.png",
+          "spec_id": "grv2-0008",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-989d9f273c75487a77bc-654423519-0.png",
+          "spec_id": "grv3-0075",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-989d9f273c75487a77bc-941572696-0.png",
+          "spec_id": "grv3-0075",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-f92096d2340cbf1e188e-1524483620-0.png",
+          "spec_id": "grv2-0074",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-f92096d2340cbf1e188e-898628195-0.png",
+          "spec_id": "grv2-0074",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-21ebd9e8ccee67252c2f-741592781-0.png",
+          "spec_id": "grv3-0078",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-21ebd9e8ccee67252c2f-2103165716-0.png",
+          "spec_id": "grv3-0078",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-21ebd9e8ccee67252c2f-1931958930-0.png",
+          "spec_id": "grv3-0078",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-892e167b9fff282efc4b-1215782541-0.png",
+          "spec_id": "grv2-0010",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-cfc0f9f8e6af46d9e709-392759309-0.png",
+          "spec_id": "grv2-0009",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-cfc0f9f8e6af46d9e709-36048232-0.png",
+          "spec_id": "grv2-0009",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-d724a3ae0c7f54592c66-1931016384-0.png",
+          "spec_id": "grv2-0062",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-d724a3ae0c7f54592c66-399470927-0.png",
+          "spec_id": "grv2-0062",
+          "candidate_index": 1,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-d724a3ae0c7f54592c66-1555205725-0.png",
+          "spec_id": "grv2-0062",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-d724a3ae0c7f54592c66-502249178-0.png",
+          "spec_id": "grv2-0062",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-d724a3ae0c7f54592c66-193312865-0.png",
+          "spec_id": "grv2-0062",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-9149a73c5e5010363ff8-1764359227-0.png",
+          "spec_id": "grv3-0047",
+          "candidate_index": 0,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-9149a73c5e5010363ff8-270853132-0.png",
+          "spec_id": "grv3-0047",
+          "candidate_index": 1,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-9149a73c5e5010363ff8-932290644-0.png",
+          "spec_id": "grv3-0047",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-9149a73c5e5010363ff8-227009881-0.png",
+          "spec_id": "grv3-0047",
+          "candidate_index": 5,
+          "whole_image_gold": null,
+          "reasons": [
+            "unresolved_verification",
+            "whole_image_unknown"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-68a4a4442c720a012faf-868994920-0.png",
+          "spec_id": "grv2-0018",
+          "candidate_index": 1,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-68a4a4442c720a012faf-1502238038-0.png",
+          "spec_id": "grv2-0018",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-68a4a4442c720a012faf-1202307642-0.png",
+          "spec_id": "grv2-0018",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-68a4a4442c720a012faf-996542744-0.png",
+          "spec_id": "grv2-0018",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-68a4a4442c720a012faf-1572900355-0.png",
+          "spec_id": "grv2-0018",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-5e0a33d40f78893dc51f-992043327-0.png",
+          "spec_id": "grv3-0020",
+          "candidate_index": 1,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-5e0a33d40f78893dc51f-140523502-0.png",
+          "spec_id": "grv3-0020",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-85a4c40d9bdb1a01ce26-1555695262-0.png",
+          "spec_id": "grv2-0067",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c13e85fa54f02956d328-774302177-0.png",
+          "spec_id": "grv3-0031",
+          "candidate_index": 0,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c13e85fa54f02956d328-895126966-0.png",
+          "spec_id": "grv3-0031",
+          "candidate_index": 1,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c13e85fa54f02956d328-1272739909-0.png",
+          "spec_id": "grv3-0031",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c13e85fa54f02956d328-884956623-0.png",
+          "spec_id": "grv3-0031",
+          "candidate_index": 4,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c13e85fa54f02956d328-1806850108-0.png",
+          "spec_id": "grv3-0031",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-f4c5626f61a468fa6942-1837442042-0.png",
+          "spec_id": "grv2-0048",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-239a0498babe6c5ad87a-1307595276-0.png",
+          "spec_id": "grv2-0019",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-90d177f904738d7d06e9-121168045-0.png",
+          "spec_id": "grv3-0021",
+          "candidate_index": 1,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-90d177f904738d7d06e9-1075958310-0.png",
+          "spec_id": "grv3-0021",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-b8c560a81666c7d368a3-1549634934-0.png",
+          "spec_id": "grv3-0042",
+          "candidate_index": 2,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-b8c560a81666c7d368a3-1007562275-0.png",
+          "spec_id": "grv3-0042",
+          "candidate_index": 3,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        },
+        {
+          "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-b8c560a81666c7d368a3-1853396240-0.png",
+          "spec_id": "grv3-0042",
+          "candidate_index": 5,
+          "whole_image_gold": 0,
+          "reasons": [
+            "disputed_scope"
+          ]
+        }
+      ],
+      "sources_sha256": {
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-01\\manifest.jsonl": "b5c092a93cc05e03e15a9c4fb8019b5f91c8eb543c2fdddbcd8cf9d810d06a08",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-01\\complete.json": "395638e012f1a686d3d55dfe80cc81623665b63ff60d21308758d5c2c5bc8506",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-01\\verified.jsonl": "50d8745b64005b01c75eb20b50a98631b9edf65e6885daa7c4a1355dc40c217d",
+        "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\generation\\batch-01\\verification-complete.json": "18c6fbd56ca936a961daa9a84722d4db355f982ed2056a0b34643138a5219d7c"
+      }
+    }
+  },
+  "combined": {
+    "n_images": 300,
+    "n_scenes": 50,
+    "review_images": 108,
+    "review_scenes": 45,
+    "whole_image_unknown": 15,
+    "known_image_but_question_unknown": 93,
+    "known_question_facts": 2572,
+    "unknown_question_facts": 380,
+    "n_question_facts": 2952,
+    "unknown_fact_reason_counts": {
+      "disputed_scope": 216,
+      "unresolved_verification": 164
+    },
+    "review_image_reason_counts": {
+      "disputed_scope": 93,
+      "unresolved_verification": 15,
+      "whole_image_unknown": 15
+    },
+    "review": [
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-df298f4356f7cac5fba3-1863053374-0.png",
+        "spec_id": "grv2-0032",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-df298f4356f7cac5fba3-1785523825-0.png",
+        "spec_id": "grv2-0032",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-df298f4356f7cac5fba3-755923971-0.png",
+        "spec_id": "grv2-0032",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-dede5c3b23479f128475-1482933591-0.png",
+        "spec_id": "grv3-0028",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-dede5c3b23479f128475-1896287631-0.png",
+        "spec_id": "grv3-0028",
+        "candidate_index": 4,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-dede5c3b23479f128475-1131011269-0.png",
+        "spec_id": "grv3-0028",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-60139bc1e5c14489d20c-1532392304-0.png",
+        "spec_id": "grv3-0011",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-60139bc1e5c14489d20c-1964836552-0.png",
+        "spec_id": "grv3-0011",
+        "candidate_index": 2,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-60139bc1e5c14489d20c-105436138-0.png",
+        "spec_id": "grv3-0011",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-033199f04ce0463f93ed-1517342523-0.png",
+        "spec_id": "grv2-0073",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-033199f04ce0463f93ed-143434077-0.png",
+        "spec_id": "grv2-0073",
+        "candidate_index": 4,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-033199f04ce0463f93ed-1055371326-0.png",
+        "spec_id": "grv2-0073",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-9d1663c9f210254b0460-1571824966-0.png",
+        "spec_id": "grv2-0052",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-6c37e8324698638b6d63-822958574-0.png",
+        "spec_id": "grv2-0025",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-6c37e8324698638b6d63-1324723100-0.png",
+        "spec_id": "grv2-0025",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-6c37e8324698638b6d63-235928357-0.png",
+        "spec_id": "grv2-0025",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-6c37e8324698638b6d63-1777014897-0.png",
+        "spec_id": "grv2-0025",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-fae3101d9844fb90d4b1-1232237945-0.png",
+        "spec_id": "grv2-0082",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-fae3101d9844fb90d4b1-317067534-0.png",
+        "spec_id": "grv2-0082",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-8307c96be3090a5f7b17-1868727624-0.png",
+        "spec_id": "grv3-0081",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-8307c96be3090a5f7b17-882166355-0.png",
+        "spec_id": "grv3-0081",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-b227fc5cf05c5d837f9d-974278122-0.png",
+        "spec_id": "grv2-0066",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-95ee90679f8aef9b5304-441302865-0.png",
+        "spec_id": "grv3-0074",
+        "candidate_index": 1,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-95ee90679f8aef9b5304-12474917-0.png",
+        "spec_id": "grv3-0074",
+        "candidate_index": 2,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-95ee90679f8aef9b5304-1613400768-0.png",
+        "spec_id": "grv3-0074",
+        "candidate_index": 3,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-95ee90679f8aef9b5304-2061134061-0.png",
+        "spec_id": "grv3-0074",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-95ee90679f8aef9b5304-858858591-0.png",
+        "spec_id": "grv3-0074",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f2130a243d3847e416ca-1402542719-0.png",
+        "spec_id": "grv3-0077",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f2130a243d3847e416ca-402116972-0.png",
+        "spec_id": "grv3-0077",
+        "candidate_index": 1,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f2130a243d3847e416ca-693358928-0.png",
+        "spec_id": "grv3-0077",
+        "candidate_index": 3,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f2130a243d3847e416ca-1130306133-0.png",
+        "spec_id": "grv3-0077",
+        "candidate_index": 4,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f2130a243d3847e416ca-419021998-0.png",
+        "spec_id": "grv3-0077",
+        "candidate_index": 5,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-9d4a6b6863b11346b420-954071738-0.png",
+        "spec_id": "grv2-0038",
+        "candidate_index": 2,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-b1c7b32ff940927b036f-1371134936-0.png",
+        "spec_id": "grv2-0035",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-b1c7b32ff940927b036f-129121462-0.png",
+        "spec_id": "grv2-0035",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-c8f8f810ef5a02ec2287-1394276692-0.png",
+        "spec_id": "grv3-0016",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-4971c58f484845efb367-78528637-0.png",
+        "spec_id": "grv3-0041",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-c5baf4c837bdd3983da2-1997741593-0.png",
+        "spec_id": "grv2-0049",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-c5baf4c837bdd3983da2-1808227090-0.png",
+        "spec_id": "grv2-0049",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-c5baf4c837bdd3983da2-1012876097-0.png",
+        "spec_id": "grv2-0049",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-deab5ada5a1a9d584eb4-1570828218-0.png",
+        "spec_id": "grv3-0018",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-be17449832ceeb3d01dd-1958525811-0.png",
+        "spec_id": "grv3-0076",
+        "candidate_index": 1,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-be17449832ceeb3d01dd-945124480-0.png",
+        "spec_id": "grv3-0076",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-be17449832ceeb3d01dd-636382206-0.png",
+        "spec_id": "grv3-0076",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-be17449832ceeb3d01dd-58648380-0.png",
+        "spec_id": "grv3-0076",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-5496a23478cf8104f91a-2035269013-0.png",
+        "spec_id": "grv3-0036",
+        "candidate_index": 1,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-5496a23478cf8104f91a-1775320249-0.png",
+        "spec_id": "grv3-0036",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-00d894125cfdb28e7eb1-857491209-0.png",
+        "spec_id": "grv3-0046",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-00d894125cfdb28e7eb1-1468677602-0.png",
+        "spec_id": "grv3-0046",
+        "candidate_index": 1,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-6afa70d86e4e58b5ec77-1525501476-0.png",
+        "spec_id": "grv3-0079",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-6afa70d86e4e58b5ec77-1695920036-0.png",
+        "spec_id": "grv3-0079",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f8f8d3120288d8b7601c-1613055999-0.png",
+        "spec_id": "grv3-0056",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f8f8d3120288d8b7601c-630219692-0.png",
+        "spec_id": "grv3-0056",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f8f8d3120288d8b7601c-300336360-0.png",
+        "spec_id": "grv3-0056",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-f8f8d3120288d8b7601c-1088561753-0.png",
+        "spec_id": "grv3-0056",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-00\\base-B-8f29a7f7b320d3840694-570870083-0.png",
+        "spec_id": "grv2-0071",
+        "candidate_index": 1,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-eac1092059b84586575f-981722037-0.png",
+        "spec_id": "grv2-0033",
+        "candidate_index": 1,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-eac1092059b84586575f-140749473-0.png",
+        "spec_id": "grv2-0033",
+        "candidate_index": 2,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-eac1092059b84586575f-738457365-0.png",
+        "spec_id": "grv2-0033",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-e0102c7d89bf411992be-228746439-0.png",
+        "spec_id": "grv3-0013",
+        "candidate_index": 1,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-e0102c7d89bf411992be-167177439-0.png",
+        "spec_id": "grv3-0013",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-e0102c7d89bf411992be-1481945603-0.png",
+        "spec_id": "grv3-0013",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-301802fc3ece50855af4-1462120430-0.png",
+        "spec_id": "grv2-0014",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c1beb66763d1e7d2de23-1268792916-0.png",
+        "spec_id": "grv2-0036",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c1beb66763d1e7d2de23-1132483183-0.png",
+        "spec_id": "grv2-0036",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c8e894bfb76944692dc4-1811276669-0.png",
+        "spec_id": "grv2-0051",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-ed357d62b6aa3f4e9356-1559429971-0.png",
+        "spec_id": "grv2-0046",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-670795b52f3342dea65f-419708708-0.png",
+        "spec_id": "grv2-0008",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-670795b52f3342dea65f-1166759142-0.png",
+        "spec_id": "grv2-0008",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-989d9f273c75487a77bc-654423519-0.png",
+        "spec_id": "grv3-0075",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-989d9f273c75487a77bc-941572696-0.png",
+        "spec_id": "grv3-0075",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-f92096d2340cbf1e188e-1524483620-0.png",
+        "spec_id": "grv2-0074",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-f92096d2340cbf1e188e-898628195-0.png",
+        "spec_id": "grv2-0074",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-21ebd9e8ccee67252c2f-741592781-0.png",
+        "spec_id": "grv3-0078",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-21ebd9e8ccee67252c2f-2103165716-0.png",
+        "spec_id": "grv3-0078",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-21ebd9e8ccee67252c2f-1931958930-0.png",
+        "spec_id": "grv3-0078",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-892e167b9fff282efc4b-1215782541-0.png",
+        "spec_id": "grv2-0010",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-cfc0f9f8e6af46d9e709-392759309-0.png",
+        "spec_id": "grv2-0009",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-cfc0f9f8e6af46d9e709-36048232-0.png",
+        "spec_id": "grv2-0009",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-d724a3ae0c7f54592c66-1931016384-0.png",
+        "spec_id": "grv2-0062",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-d724a3ae0c7f54592c66-399470927-0.png",
+        "spec_id": "grv2-0062",
+        "candidate_index": 1,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-d724a3ae0c7f54592c66-1555205725-0.png",
+        "spec_id": "grv2-0062",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-d724a3ae0c7f54592c66-502249178-0.png",
+        "spec_id": "grv2-0062",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-d724a3ae0c7f54592c66-193312865-0.png",
+        "spec_id": "grv2-0062",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-9149a73c5e5010363ff8-1764359227-0.png",
+        "spec_id": "grv3-0047",
+        "candidate_index": 0,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-9149a73c5e5010363ff8-270853132-0.png",
+        "spec_id": "grv3-0047",
+        "candidate_index": 1,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-9149a73c5e5010363ff8-932290644-0.png",
+        "spec_id": "grv3-0047",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-9149a73c5e5010363ff8-227009881-0.png",
+        "spec_id": "grv3-0047",
+        "candidate_index": 5,
+        "whole_image_gold": null,
+        "reasons": [
+          "unresolved_verification",
+          "whole_image_unknown"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-68a4a4442c720a012faf-868994920-0.png",
+        "spec_id": "grv2-0018",
+        "candidate_index": 1,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-68a4a4442c720a012faf-1502238038-0.png",
+        "spec_id": "grv2-0018",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-68a4a4442c720a012faf-1202307642-0.png",
+        "spec_id": "grv2-0018",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-68a4a4442c720a012faf-996542744-0.png",
+        "spec_id": "grv2-0018",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-68a4a4442c720a012faf-1572900355-0.png",
+        "spec_id": "grv2-0018",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-5e0a33d40f78893dc51f-992043327-0.png",
+        "spec_id": "grv3-0020",
+        "candidate_index": 1,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-5e0a33d40f78893dc51f-140523502-0.png",
+        "spec_id": "grv3-0020",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-85a4c40d9bdb1a01ce26-1555695262-0.png",
+        "spec_id": "grv2-0067",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c13e85fa54f02956d328-774302177-0.png",
+        "spec_id": "grv3-0031",
+        "candidate_index": 0,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c13e85fa54f02956d328-895126966-0.png",
+        "spec_id": "grv3-0031",
+        "candidate_index": 1,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c13e85fa54f02956d328-1272739909-0.png",
+        "spec_id": "grv3-0031",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c13e85fa54f02956d328-884956623-0.png",
+        "spec_id": "grv3-0031",
+        "candidate_index": 4,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-c13e85fa54f02956d328-1806850108-0.png",
+        "spec_id": "grv3-0031",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-f4c5626f61a468fa6942-1837442042-0.png",
+        "spec_id": "grv2-0048",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-239a0498babe6c5ad87a-1307595276-0.png",
+        "spec_id": "grv2-0019",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-90d177f904738d7d06e9-121168045-0.png",
+        "spec_id": "grv3-0021",
+        "candidate_index": 1,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-90d177f904738d7d06e9-1075958310-0.png",
+        "spec_id": "grv3-0021",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-b8c560a81666c7d368a3-1549634934-0.png",
+        "spec_id": "grv3-0042",
+        "candidate_index": 2,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-b8c560a81666c7d368a3-1007562275-0.png",
+        "spec_id": "grv3-0042",
+        "candidate_index": 3,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      },
+      {
+        "image_path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\generation\\batch-01\\base-B-b8c560a81666c7d368a3-1853396240-0.png",
+        "spec_id": "grv3-0042",
+        "candidate_index": 5,
+        "whole_image_gold": 0,
+        "reasons": [
+          "disputed_scope"
+        ]
+      }
+    ]
+  },
+  "registration": {
+    "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\selection-opportunity-secondary-20260908\\REGISTRATION.json",
+    "sha256": "056233f14143d37a125d5b67bebbbd868b46d4e8381cc493aa680d4cf60ff161",
+    "timestamp": "2026-09-08T04:09:16.915825+00:00",
+    "code_freeze": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\selection-opportunity-secondary-20260908\\CODE_FREEZE.json",
+      "sha256": "50e3eb8e575c3521f9f8d951fcfb65501fd68201737ff8db21ee0073d1e19ea1",
+      "timestamp": "2026-09-08T04:13:21.817333+00:00"
+    }
+  },
+  "source_sha256": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\selection-opportunity-secondary-20260908\\audit_review_workload.py": "aacb3fd9c08dc17bf72cc9caa7c3cc60ecfe84b3ac880650be33b471bf642235",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\selection-opportunity-secondary-20260908\\analyze_secondary.py": "821284a95156ee82b889f1a80a3263bec2790ab15210ee70cc13c634739a48dd",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\analyze.py": "3c993528da18031d271bf0c33a65f192f9e00fe439de977d7ae1fed75a4d0e91",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\bcommon.py": "5eed5083b671869ab807a4e503bd38c5f984a29c9a17b2bc901a27a70f778b8b",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\plan.json": "aca28af42ae608438e5488685f99004800396c83fc9340725a69e8a85336d5df",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\corpus.json": "38aa2243742e8d23c099e0523fab6d0cf3300ab8fe5aa960eca288a6f639b772"
+  },
+  "build_facts_source_sha256": "dd841430b49bf8e8d87168226e71c3efbcd34e06da846fe4b305494660449ea2",
+  "automatic_human_labels_added": 0,
+  "images_copied": 0,
+  "limitations": [
+    "Workload inventory, not a promise of total review time or completion within budget.",
+    "Whole-image known verdicts can still have unresolved question facts requiring review.",
+    "Only completed batches enter this snapshot; no model answers or partial gold were read.",
+    "No new scientific thresholds, human labels, or changes to the primary analysis."
+  ],
+  "routing": {
+    "recovery_dir": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908",
+    "mode": "workload",
+    "route_source_sha256": {
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\secondary_route.py": "d5697f104263a0efd170b3a6976c152aff99dd676ce4f94df296ebf116751181"
+    },
+    "original_sources_sha256": {
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\selection-opportunity-secondary-20260908\\analyze_secondary.py": "821284a95156ee82b889f1a80a3263bec2790ab15210ee70cc13c634739a48dd",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\selection-opportunity-secondary-20260908\\audit_review_workload.py": "aacb3fd9c08dc17bf72cc9caa7c3cc60ecfe84b3ac880650be33b471bf642235",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\analyze.py": "3c993528da18031d271bf0c33a65f192f9e00fe439de977d7ae1fed75a4d0e91",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\stats.py": "0e48ef1aebf2814bb3be883d4d4d84803ae7e2a7d0775af70f6c5924ff71b287",
+      "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\bcommon.py": "5eed5083b671869ab807a4e503bd38c5f984a29c9a17b2bc901a27a70f778b8b"
+    },
+    "registration_sha256": "056233f14143d37a125d5b67bebbbd868b46d4e8381cc493aa680d4cf60ff161",
+    "code_freeze_sha256": "50e3eb8e575c3521f9f8d951fcfb65501fd68201737ff8db21ee0073d1e19ea1",
+    "recovery_plan": {
+      "path": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260908\\recovery-plan.json",
+      "sha256": "f7c8ef2fd7530dddc60815f82243d84c7a5929b160f57713127692b5b55d9e6a",
+      "original_plan_sha256": "aca28af42ae608438e5488685f99004800396c83fc9340725a69e8a85336d5df"
+    },
+    "scientific_functions_unchanged": true
+  }
+}

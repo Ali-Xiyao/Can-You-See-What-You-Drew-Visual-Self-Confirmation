@@ -1,0 +1,28 @@
+{
+  "created_utc": "2026-09-07T03:28:38.541435+00:00",
+  "n_frozen": 150,
+  "candidate_images_per_scene": 6,
+  "old_half_width": 0.16964285714285712,
+  "rough_scaled_n": 162,
+  "scenario_sd": {
+    "0.25": {
+      "half_width_at150": 0.040008332465458575,
+      "n_for_half_width5pp": 97
+    },
+    "0.35": {
+      "half_width_at150": 0.056011665451642004,
+      "n_for_half_width5pp": 189
+    },
+    "0.5": {
+      "half_width_at150": 0.08001666493091715,
+      "n_for_half_width5pp": 385
+    }
+  },
+  "human_workload_scenarios": {
+    "5_percent": 45,
+    "10_percent": 90,
+    "20_percent": 180
+  },
+  "precision_guaranteed": false,
+  "automatic_sample_size_increase": false
+}

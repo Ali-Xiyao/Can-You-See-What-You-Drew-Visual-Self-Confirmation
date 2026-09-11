@@ -1,0 +1,9 @@
+{
+  "at_utc": "2026-09-06T17:08:36.872436+00:00",
+  "unchanged_test_functions_passed": 3,
+  "equivalent_in_memory_truncated_tail_check_passed": true,
+  "initial_disk_fixture_failure": "Sandbox denied default Temp-directory access; no algorithm failure",
+  "protected_checkpoint_and_process_identity_preflight": "passed",
+  "extension_plan_sha256": "177858ffb19c4b00beafdd1d48bb0949c96b972341b506ab7678101af2a1a41d",
+  "controller_pid": 17832
+}

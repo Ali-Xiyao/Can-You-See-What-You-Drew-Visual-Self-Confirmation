@@ -1,0 +1,31 @@
+{
+  "checked_at_utc": "2026-09-08T04:42:01.893093+00:00",
+  "heartbeat_due_utc": "2026-09-08T04:40:00+00:00",
+  "controller_identity_verified": true,
+  "controller_pid": 20608,
+  "active_worker_identities_verified": [
+    4896,
+    20472
+  ],
+  "completed_batches": [
+    "batch-00"
+  ],
+  "batch01_qwen_completed_calls": 150,
+  "batch01_internvl_completed_calls_at_044105": 97,
+  "batch01_recent20_internvl_seconds": 17.43026345,
+  "batch01_call_errors": 0,
+  "observer_gpu0_answers_at_044109": 37812,
+  "observer_gpu0_model_completed": [
+    "base",
+    "naive-original"
+  ],
+  "observer_active_model": "naive-balanced_absence",
+  "observer_recent_seconds_per_answer": 0.3128,
+  "observer_errors": 0,
+  "observer_abstentions": 0,
+  "partial_gold_or_model_selection_comparisons_read": false,
+  "new_inventory_generated": false,
+  "new_workload_generated": false,
+  "action_required": false,
+  "reason": "Current workers match identities and continue producing; batch01 verification is not complete; existing completed-batch set unchanged."
+}

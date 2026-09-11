@@ -1,0 +1,9 @@
+{
+  "at_utc": "2026-09-06T17:32:56.457882+00:00",
+  "exit_code": 0,
+  "extension_gpu_used": true,
+  "resume_step": 32,
+  "logical_final_steps": 32,
+  "research_goal_complete": false,
+  "original_failure_preserved": true
+}

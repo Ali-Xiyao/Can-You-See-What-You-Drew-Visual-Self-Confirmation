@@ -1,0 +1,11 @@
+{
+  "at_utc": "2026-09-08T03:17:38.285991+00:00",
+  "user_authorized": true,
+  "user_reply": "允许延长至明天 12:00",
+  "timezone": "America/Los_Angeles",
+  "local_deadline": "2026-09-08 12:00:00 PDT",
+  "deadline_utc": "2026-09-08T19:00:00+00:00",
+  "deadline": 1788894000.0,
+  "original_deadline": 1788848154.4413614,
+  "scientific_parameters_unchanged": true
+}

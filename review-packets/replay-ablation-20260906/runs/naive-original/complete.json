@@ -1,0 +1,15 @@
+{
+  "at_utc": "2026-09-06T12:43:14.536258+00:00",
+  "task": {
+    "id": "naive-original",
+    "arm": "naive",
+    "variant": "original",
+    "device": "cuda:0"
+  },
+  "steps": 32,
+  "n_probe_answers": 6600,
+  "n_full_answers": 5454,
+  "parameter_digest": "e4c7293c9446f109a5d84974e96f91b1b81e92574d15458081e2c7b88de3f8aa",
+  "training_sha256": "1d0771cfb944c44b6aa20aefdb039e8d386a5c1434d21d4fffae34054be8e950",
+  "research_goal_complete": false
+}

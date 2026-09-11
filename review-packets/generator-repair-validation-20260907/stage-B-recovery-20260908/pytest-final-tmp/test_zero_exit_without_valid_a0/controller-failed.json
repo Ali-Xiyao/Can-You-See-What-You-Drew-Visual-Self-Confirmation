@@ -1,0 +1,6 @@
+{
+  "at_utc": "2026-09-08T05:13:40.305337+00:00",
+  "error": "AssertionError: completion hash mismatch",
+  "automatic_retry": false,
+  "cleanup_errors": []
+}

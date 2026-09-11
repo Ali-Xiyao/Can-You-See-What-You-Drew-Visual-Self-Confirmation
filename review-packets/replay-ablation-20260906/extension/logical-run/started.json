@@ -1,0 +1,18 @@
+{
+  "at_utc": "2026-09-06T17:16:10.552627+00:00",
+  "pid": 23612,
+  "task": {
+    "id": "naive-alternate_ids",
+    "arm": "naive",
+    "variant": "alternate_ids",
+    "device": "cuda:1"
+  },
+  "plan_sha256": "bc9357f520b6f975778aa70338d734596a78eec55f9276e14f3d50059e52624e",
+  "extension_plan_sha256": "177858ffb19c4b00beafdd1d48bb0949c96b972341b506ab7678101af2a1a41d",
+  "base_parameter_digest": "1cd2f01c081a171a375a89989d964af4907040633a87563be0b13e721a0618e2",
+  "resume_parameter_digest": "ce339649ba532c6d13bde9ee0d2b54c92e5f20d1a66de2509371fe53b171ab4c",
+  "resume_step": 32,
+  "resume_checkpoint": "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\runs\\naive-alternate_ids\\checkpoints\\step-00032",
+  "warmup_steps": 8,
+  "deadline": 1788722086.8788164
+}

@@ -1,0 +1,121 @@
+{
+  "adapter_only": true,
+  "config": {
+    "data": {
+      "images_per_prompt": 1,
+      "local_outcome": 64,
+      "local_probe": 32,
+      "local_train_prompts": 132
+    },
+    "evaluation": {
+      "fixed_latents": true,
+      "selector_missing_policy": "zero_over_all_questions"
+    },
+    "gradient_probe": {
+      "criteria": [
+        "naive",
+        "rfo",
+        "gold"
+      ],
+      "fixed_candidate_bank": true,
+      "minimum_size": 4,
+      "reference": "base",
+      "resamples": 2000,
+      "size": 16,
+      "source": "runs/v4/gate-b-openct2"
+    },
+    "hardware": {
+      "attention": "sdpa",
+      "distributed": false,
+      "generator_device": "cuda:1",
+      "observer_device": "cuda:0",
+      "precision": "bf16"
+    },
+    "model": {
+      "backbone_config": "configs/backbones/showo2_1p5b.yaml",
+      "frozen_negative_control_id": "showlab/show-o-w-clip-vit-512x512",
+      "generation_timesteps": 50,
+      "guidance_scale": 5.0,
+      "image_autoencoder_id": "Wan-AI/Wan2.1-T2V-14B",
+      "image_resolution": 432,
+      "language_base_id": "Qwen/Qwen2.5-1.5B-Instruct",
+      "temperature": 1.0,
+      "trainable_id": "showlab/show-o2-1.5B",
+      "vision_tower_id": "google/siglip-so400m-patch14-384"
+    },
+    "paths": {
+      "cache_root": "${SELFSIGHT_CACHE_ROOT}",
+      "data_root": "${SELFSIGHT_DATA_ROOT}",
+      "model_root": "${SELFSIGHT_MODEL_ROOT}",
+      "run_root": "${SELFSIGHT_RUN_ROOT}",
+      "tmp_root": "${SELFSIGHT_TMP_ROOT}"
+    },
+    "pilot": {
+      "effect_window_checkpoints": 3,
+      "external_improvement_margin": 0.02,
+      "gradient_confirmation_checkpoints": 2,
+      "gradient_drop_margin": 0.01,
+      "internal_change_margin": 0.02,
+      "max_wall_hours": 60,
+      "min_free_gib": 8,
+      "min_paired_prompts": 2,
+      "status": "exploratory_not_confirmatory"
+    },
+    "profile": "v4_decoupling_pilot_20260906",
+    "seed": 20260906,
+    "training": {
+      "arms": [
+        "naive",
+        "rfo_gold"
+      ],
+      "candidate_k": 8,
+      "gradient_accumulation_steps": 8,
+      "gradient_checkpointing": true,
+      "learning_rate": 0.0001,
+      "lora": {
+        "alpha": 32,
+        "dropout": 0.05,
+        "forbidden_trainable": [
+          "embed_tokens",
+          "lm_head",
+          "image_embedder_und",
+          "und_trans",
+          "fusion_proj"
+        ],
+        "rank": 16,
+        "target_modules": [],
+        "target_selection_required": true
+      },
+      "max_grad_norm": 1.0,
+      "micro_batch_size": 1,
+      "optimizer_steps_per_round": 8,
+      "prompts_per_round": 12,
+      "rounds": 10,
+      "seeds": [
+        20260906
+      ],
+      "understanding_replay_ratio": 0.25,
+      "warmup_ratio": 0.1,
+      "weight_decay": 0.01
+    }
+  },
+  "config_digest": "57f654f80af571394a3fc89149f16074abbea5f24bcf304304ef2e31c5431ccf",
+  "files": {
+    "adapter.pt": "354bf052bc4ae9f3c31525c5e1df3fe873d175a59621834edcc994d1a1db05dd",
+    "training_state.pt": "8e3399b020200e2864c39f95702bf551db8c065457359ca8b94a7fee38c8e52d"
+  },
+  "metadata": {
+    "offline_frozen_generation": true,
+    "parameter_digest": "aafb0a71a24cee083b607b436f2f0167cc733f33cc8a60914264620823bfc4ad",
+    "plan_sha256": "bc9357f520b6f975778aa70338d734596a78eec55f9276e14f3d50059e52624e",
+    "task": {
+      "arm": "rfo_gold",
+      "device": "cuda:1",
+      "id": "rfo_gold-original",
+      "variant": "original"
+    }
+  },
+  "round_index": 3,
+  "schema_version": 1,
+  "step": 32
+}

@@ -1,0 +1,9 @@
+started generate PID 30740
+started detect-batch-00 PID 23472
+started observe-gpu0 PID 10728
+Traceback (most recent call last):
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\review-packets\generator-repair-validation-20260907\stage-B\launch.py", line 73, in <module>
+    if __name__=='__main__':main()
+  File "H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\review-packets\generator-repair-validation-20260907\stage-B\launch.py", line 31, in main
+    for name,proc in children.items():assert proc.poll() in (None,0),f'{name}: exit {proc.returncode}'
+AssertionError: detect-batch-00: exit 1

@@ -1,0 +1,11 @@
+{
+  "at_utc": "2026-09-06T17:14:53.482330+00:00",
+  "pid": 23612,
+  "command": [
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\envs\\showo2\\python.exe",
+    "-B",
+    "-u",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\replay-ablation-20260906\\extension\\resume_worker.py"
+  ],
+  "resume_step": 32
+}

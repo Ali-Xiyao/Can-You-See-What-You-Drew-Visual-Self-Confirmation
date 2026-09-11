@@ -1,0 +1,6 @@
+{
+  "created_utc": "2026-09-06T11:26:09.835210+00:00",
+  "automation_id": "automation",
+  "interval_minutes": 20,
+  "scope": "Only this isolated replay ablation; original run remains paused"
+}

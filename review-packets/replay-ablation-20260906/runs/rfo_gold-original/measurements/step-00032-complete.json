@@ -1,0 +1,9 @@
+{
+  "step": 32,
+  "at_utc": "2026-09-06T12:55:51.695202+00:00",
+  "n_answers": 1818,
+  "rng_restored": true,
+  "parameter_digest_before": "aafb0a71a24cee083b607b436f2f0167cc733f33cc8a60914264620823bfc4ad",
+  "parameter_digest_after": "aafb0a71a24cee083b607b436f2f0167cc733f33cc8a60914264620823bfc4ad",
+  "answers_sha256": "249c4237759449a88ac3a06d2db25bd4cccd3f74d02946a574088864ec327d6b"
+}

@@ -1,0 +1,19 @@
+{
+  "at_utc": "2026-09-06T17:32:45.086402+00:00",
+  "task": {
+    "id": "naive-alternate_ids",
+    "arm": "naive",
+    "variant": "alternate_ids",
+    "device": "cuda:1"
+  },
+  "steps": 32,
+  "n_probe_answers": 6600,
+  "n_full_answers": 5454,
+  "parameter_digest": "ce339649ba532c6d13bde9ee0d2b54c92e5f20d1a66de2509371fe53b171ab4c",
+  "training_sha256": "a82c423eeba1a7d901ebb20a7eba4d47a2d2359b2fbe3c258e1b7a4526c598da",
+  "extension_plan_sha256": "177858ffb19c4b00beafdd1d48bb0949c96b972341b506ab7678101af2a1a41d",
+  "resumed_from_step": 32,
+  "new_optimizer_steps": 0,
+  "n_resume_verification_answers": 200,
+  "research_goal_complete": false
+}

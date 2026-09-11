@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-09-08T04:09:16.915825+00:00",
+  "status": "interim_registered_secondary_exploratory",
+  "prior_data_seen": {
+    "completed_batches": [
+      "batch-00"
+    ],
+    "model_selection_comparisons_seen": false,
+    "all_900_images_already_generated": true,
+    "observation_answers_already_being_generated": true,
+    "prior_development_results_seen": true,
+    "trigger": "User critique and batch-00 completed gold; pending_human provisional labels corrected before registration"
+  },
+  "primary_analysis_unchanged": true,
+  "frozen_deadline_utc": "2026-09-08T19:00:00+00:00",
+  "primary_n_scenes": 150,
+  "primary_n_images": 900,
+  "source_sha256": {
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\PROTOCOL.md": "cca956903d866138e55170d2fda3e180815138c37ea486483c438468e26f1196",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\analyze.py": "3c993528da18031d271bf0c33a65f192f9e00fe439de977d7ae1fed75a4d0e91",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\stats.py": "0e48ef1aebf2814bb3be883d4d4d84803ae7e2a7d0775af70f6c5924ff71b287",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B\\bcommon.py": "5eed5083b671869ab807a4e503bd38c5f984a29c9a17b2bc901a27a70f778b8b",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\recovery-plan.json": "e94cf2d7ba3622889df07e0b5cf369914ded2307690b4dadab0c83031bf295d8",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\generation\\batch-00\\verification-complete.json": "e992da19650180980d0aff28c546549f9f42b7d26218b7cd348575518f6a650e",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\generation\\batch-00\\verified.jsonl": "03538f4f8e01554cf83831a085c277af27f9c46782781b5172c7952f1b5afb27",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\stage-B-recovery-20260907\\generation\\batch-00\\manifest.jsonl": "c64d96148be0d529add9111a3ba13daca7d9c6aaf68823da7b02fd204731399b",
+    "H:\\Xiyao_Wang\\062_Can You See What You Drew Visual Self-Confirmation\\review-packets\\generator-repair-validation-20260907\\selection-opportunity-secondary-20260908\\REGISTRATION.md": "5e3220921a5775acbfabf7af7ee5f8c4c6a889d78f4c8c4de98517faccc91f88"
+  },
+  "secondary_focus": "confirmed_mixed: c>=1 and f>=1 using frozen image_gold()",
+  "confirmation_claim_allowed": false,
+  "automatic_stopping_or_expansion_from_strata": false
+}

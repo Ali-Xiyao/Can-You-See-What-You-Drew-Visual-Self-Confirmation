@@ -1,0 +1,608 @@
+{
+  "rows": {
+    "naive-original": {
+      "mean_norm": 1.0494365692138672,
+      "median_norm": 0.115234375,
+      "first8_mean": 3.73291015625,
+      "clipped_steps": 8,
+      "mean_gradient_scale": 0.863345160644815,
+      "per_step": [
+        {
+          "step": 1,
+          "total_norm_before_clip": 3.796875,
+          "clip_coefficient": 0.2633744162306064,
+          "generation_component_norm": null
+        },
+        {
+          "step": 2,
+          "total_norm_before_clip": 10.6875,
+          "clip_coefficient": 0.09356724270715859,
+          "generation_component_norm": null
+        },
+        {
+          "step": 3,
+          "total_norm_before_clip": 1.0625,
+          "clip_coefficient": 0.9411755847759203,
+          "generation_component_norm": null
+        },
+        {
+          "step": 4,
+          "total_norm_before_clip": 5.28125,
+          "clip_coefficient": 0.1893490765729559,
+          "generation_component_norm": null
+        },
+        {
+          "step": 5,
+          "total_norm_before_clip": 4.0,
+          "clip_coefficient": 0.24999993750001562,
+          "generation_component_norm": null
+        },
+        {
+          "step": 6,
+          "total_norm_before_clip": 0.75390625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 7,
+          "total_norm_before_clip": 2.15625,
+          "clip_coefficient": 0.46376790086126335,
+          "generation_component_norm": null
+        },
+        {
+          "step": 8,
+          "total_norm_before_clip": 2.125,
+          "clip_coefficient": 0.4705880138409346,
+          "generation_component_norm": null
+        },
+        {
+          "step": 9,
+          "total_norm_before_clip": 0.298828125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 10,
+          "total_norm_before_clip": 0.50390625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 11,
+          "total_norm_before_clip": 0.2255859375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 12,
+          "total_norm_before_clip": 0.1259765625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 13,
+          "total_norm_before_clip": 0.03466796875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 14,
+          "total_norm_before_clip": 0.08251953125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 15,
+          "total_norm_before_clip": 0.0179443359375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 16,
+          "total_norm_before_clip": 0.0267333984375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 17,
+          "total_norm_before_clip": 0.11328125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 18,
+          "total_norm_before_clip": 0.04443359375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 19,
+          "total_norm_before_clip": 0.01214599609375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 20,
+          "total_norm_before_clip": 0.024169921875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 21,
+          "total_norm_before_clip": 0.03515625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 22,
+          "total_norm_before_clip": 0.01220703125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 23,
+          "total_norm_before_clip": 0.0279541015625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 24,
+          "total_norm_before_clip": 0.01611328125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 25,
+          "total_norm_before_clip": 1.046875,
+          "clip_coefficient": 0.9552229681452246,
+          "generation_component_norm": null
+        },
+        {
+          "step": 26,
+          "total_norm_before_clip": 0.0189208984375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 27,
+          "total_norm_before_clip": 0.32421875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 28,
+          "total_norm_before_clip": 0.025390625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 29,
+          "total_norm_before_clip": 0.1171875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 30,
+          "total_norm_before_clip": 0.08984375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 31,
+          "total_norm_before_clip": 0.4375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 32,
+          "total_norm_before_clip": 0.05712890625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        }
+      ]
+    },
+    "naive-balanced_absence": {
+      "mean_norm": 1.0784034729003906,
+      "median_norm": 0.120361328125,
+      "first8_mean": 3.41986083984375,
+      "clipped_steps": 9,
+      "mean_gradient_scale": 0.8312512292861121,
+      "per_step": [
+        {
+          "step": 1,
+          "total_norm_before_clip": 3.796875,
+          "clip_coefficient": 0.2633744162306064,
+          "generation_component_norm": null
+        },
+        {
+          "step": 2,
+          "total_norm_before_clip": 9.9375,
+          "clip_coefficient": 0.10062892069142937,
+          "generation_component_norm": null
+        },
+        {
+          "step": 3,
+          "total_norm_before_clip": 1.0,
+          "clip_coefficient": 0.9999990000010001,
+          "generation_component_norm": null
+        },
+        {
+          "step": 4,
+          "total_norm_before_clip": 3.796875,
+          "clip_coefficient": 0.2633744162306064,
+          "generation_component_norm": null
+        },
+        {
+          "step": 5,
+          "total_norm_before_clip": 2.28125,
+          "clip_coefficient": 0.438355972227519,
+          "generation_component_norm": null
+        },
+        {
+          "step": 6,
+          "total_norm_before_clip": 0.09326171875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 7,
+          "total_norm_before_clip": 2.859375,
+          "clip_coefficient": 0.3497266536475091,
+          "generation_component_norm": null
+        },
+        {
+          "step": 8,
+          "total_norm_before_clip": 3.59375,
+          "clip_coefficient": 0.2782607921361274,
+          "generation_component_norm": null
+        },
+        {
+          "step": 9,
+          "total_norm_before_clip": 0.11328125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 10,
+          "total_norm_before_clip": 0.11474609375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 11,
+          "total_norm_before_clip": 0.2197265625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 12,
+          "total_norm_before_clip": 0.08642578125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 13,
+          "total_norm_before_clip": 0.10009765625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 14,
+          "total_norm_before_clip": 0.10498046875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 15,
+          "total_norm_before_clip": 0.04345703125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 16,
+          "total_norm_before_clip": 0.1044921875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 17,
+          "total_norm_before_clip": 0.1259765625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 18,
+          "total_norm_before_clip": 0.0478515625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 19,
+          "total_norm_before_clip": 0.146484375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 20,
+          "total_norm_before_clip": 1.7890625,
+          "clip_coefficient": 0.5589516526383775,
+          "generation_component_norm": null
+        },
+        {
+          "step": 21,
+          "total_norm_before_clip": 1.484375,
+          "clip_coefficient": 0.6736837566762061,
+          "generation_component_norm": null
+        },
+        {
+          "step": 22,
+          "total_norm_before_clip": 0.15625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 23,
+          "total_norm_before_clip": 0.1318359375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 24,
+          "total_norm_before_clip": 1.484375,
+          "clip_coefficient": 0.6736837566762061,
+          "generation_component_norm": null
+        },
+        {
+          "step": 25,
+          "total_norm_before_clip": 0.0301513671875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 26,
+          "total_norm_before_clip": 0.640625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 27,
+          "total_norm_before_clip": 0.0106201171875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 28,
+          "total_norm_before_clip": 0.054931640625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 29,
+          "total_norm_before_clip": 0.0177001953125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 30,
+          "total_norm_before_clip": 0.08935546875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 31,
+          "total_norm_before_clip": 0.017578125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 32,
+          "total_norm_before_clip": 0.03564453125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        }
+      ]
+    },
+    "naive-zero_weight": {
+      "mean_norm": 0.0269622802734375,
+      "median_norm": 0.020263671875,
+      "first8_mean": 0.01889801025390625,
+      "clipped_steps": 0,
+      "mean_gradient_scale": 1,
+      "per_step": [
+        {
+          "step": 1,
+          "total_norm_before_clip": 0.024658203125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 2,
+          "total_norm_before_clip": 0.0096435546875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 3,
+          "total_norm_before_clip": 0.020751953125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 4,
+          "total_norm_before_clip": 0.034912109375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 5,
+          "total_norm_before_clip": 0.015380859375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 6,
+          "total_norm_before_clip": 0.01409912109375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 7,
+          "total_norm_before_clip": 0.0096435546875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 8,
+          "total_norm_before_clip": 0.0220947265625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 9,
+          "total_norm_before_clip": 0.01904296875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 10,
+          "total_norm_before_clip": 0.027587890625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 11,
+          "total_norm_before_clip": 0.0263671875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 12,
+          "total_norm_before_clip": 0.018798828125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 13,
+          "total_norm_before_clip": 0.019775390625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 14,
+          "total_norm_before_clip": 0.049560546875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 15,
+          "total_norm_before_clip": 0.0137939453125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 16,
+          "total_norm_before_clip": 0.029296875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 17,
+          "total_norm_before_clip": 0.09521484375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 18,
+          "total_norm_before_clip": 0.03076171875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 19,
+          "total_norm_before_clip": 0.0166015625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 20,
+          "total_norm_before_clip": 0.0439453125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 21,
+          "total_norm_before_clip": 0.043701171875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 22,
+          "total_norm_before_clip": 0.01416015625,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 23,
+          "total_norm_before_clip": 0.03466796875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 24,
+          "total_norm_before_clip": 0.0159912109375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 25,
+          "total_norm_before_clip": 0.027099609375,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 26,
+          "total_norm_before_clip": 0.0186767578125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 27,
+          "total_norm_before_clip": 0.0115966796875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 28,
+          "total_norm_before_clip": 0.0164794921875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 29,
+          "total_norm_before_clip": 0.01531982421875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 30,
+          "total_norm_before_clip": 0.076171875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 31,
+          "total_norm_before_clip": 0.0164794921875,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        },
+        {
+          "step": 32,
+          "total_norm_before_clip": 0.030517578125,
+          "clip_coefficient": 1,
+          "generation_component_norm": null
+        }
+      ]
+    }
+  },
+  "interpretation": "Gradient coefficient only; cannot identify parameter update fraction or separate gradient components from the logged total."
+}

@@ -1,0 +1,12 @@
+{
+  "at_utc": "2026-09-08T03:56:46.652354+00:00",
+  "controller_pid": 20608,
+  "worker_identities_unchanged": true,
+  "frozen_recovery_and_scheduler_hashes_unchanged": true,
+  "observation_answers": 28536,
+  "current_qwen_calls": 97,
+  "current_qwen_latest_finished_utc": "2026-09-08T03:56:40.375070+00:00",
+  "both_workers_produced_after_handoff": true,
+  "failure_markers": false,
+  "independent_review": "Passed following async termination and system-console fixes; final 37 CPU tests passed"
+}

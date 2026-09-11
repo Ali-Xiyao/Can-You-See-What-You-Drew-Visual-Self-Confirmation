@@ -1,0 +1,15 @@
+{
+  "at_utc": "2026-09-06T12:55:51.706202+00:00",
+  "task": {
+    "id": "rfo_gold-original",
+    "arm": "rfo_gold",
+    "variant": "original",
+    "device": "cuda:1"
+  },
+  "steps": 32,
+  "n_probe_answers": 6600,
+  "n_full_answers": 5454,
+  "parameter_digest": "aafb0a71a24cee083b607b436f2f0167cc733f33cc8a60914264620823bfc4ad",
+  "training_sha256": "416f5ca44d9e887b1f4222628a7879a58f98a1c86f5c0bee9fe89eb116284154",
+  "research_goal_complete": false
+}

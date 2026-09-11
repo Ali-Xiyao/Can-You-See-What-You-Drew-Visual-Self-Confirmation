@@ -1,0 +1,12 @@
+batch-00 qwen3vl: validated complete cached output
+batch-00 internvl: validated complete cached output
+28 disputed objects, 28 to query, 0 with no box from either detector, 69 images skipped because the verdict agrees anyway
+cuda:1: 24314 MiB free; starting
+H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\envs\observer\lib\site-packages\transformers\utils\hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:40<02:00, 40.12s/it]Loading checkpoint shards:  50%|█████     | 2/4 [01:22<01:22, 41.20s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [02:07<00:43, 43.32s/it]Loading checkpoint shards: 100%|██████████| 4/4 [02:33<00:00, 36.20s/it]Loading checkpoint shards: 100%|██████████| 4/4 [02:33<00:00, 38.30s/it]
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+1/28 17.0s/crop
+26/28 11.2s/crop
+wrote H:\Xiyao_Wang\062_Can You See What You Drew Visual Self-Confirmation\review-packets\generator-repair-validation-20260907\stage-B-recovery-20260907\generation\batch-00\detections.crops.jsonl
+batch-00 detection and verification complete

@@ -1,0 +1,9 @@
+{
+  "at_utc": "2026-09-08T03:16:28.998149+00:00",
+  "action": "quarantine_json_parse_failure_for_human",
+  "reused_successful_rows": 149,
+  "unresolved_images": 1,
+  "successful_retry": false,
+  "original_failed_attempt_preserved": true,
+  "model_prompt_decode_unchanged": true
+}
