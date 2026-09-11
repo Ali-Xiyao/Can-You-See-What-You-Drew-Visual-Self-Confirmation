@@ -77,6 +77,107 @@ def rate(segs, lens):
     return t / n, t / (c / 100.0), n, len(segs)
 
 
+# ---- the 0.36 pre-registration, written 2026-09-11 04:1x, before the gold
+# arm's two step-72 cells existed.  Do not edit these five constants to fit a
+# result; that is the 0.32 failure, where an if/elif order decided the verdict.
+MIN_SEGMENTS = 10        # a cell with fewer is excluded, not down-weighted
+EXPECTED_ROWS = 256      # a cell counts only once it is FULL and sampled to the end;
+                         # a partial cell passes MIN_SEGMENTS easily and would be the
+                         # head-read-as-cell error 0.33 was written about
+MIN_CELLS = 4            # the test refuses to run on a partial step
+SIM_DRAWS = 20000
+ZONE_DIFFERENT = 0.01    # p <  0.01          -> shapes differ
+ZONE_AMBIGUOUS = 0.10    # 0.01 <= p <  0.10  -> ambiguous
+                         # 0.10 <= p          -> indistinguishable
+# The three zones are [0, 0.01), [0.01, 0.10), [0.10, 1].  Mutually exclusive
+# and exhaustive: no value belongs to two of them, which is the defect 0.33
+# registered against 0.32's own boundaries.
+
+
+def compare_shapes(results, seed: int = 20260911):
+    """Do the cells of one step share an internal trajectory shape?
+
+    Statistic: R_i = (first-half s/100chars) / (second-half s/100chars) per
+    cell, rows-balanced split -- the same estimator and the same unit that 0.35
+    registered for step-64 (R = 1.331).  Each cell's standard error is the sd of
+    its own shuffled-ordering null.
+
+    That last step carries an assumption worth naming: the shuffle null is
+    centred on 1.0 because it destroys the trajectory, so using its sd as the
+    error on R assumes the noise scale does not grow with R.  If a future cell
+    shows a much larger R than step-64's, that assumption should be rechecked
+    rather than relied on.
+
+    Null: every cell has the same true R0 (inverse-variance weighted mean of the
+    observed R_i).  Draw R_i* ~ N(R0, sd_i), take the largest pairwise
+    z = |R_i* - R_j*| / sqrt(sd_i^2 + sd_j^2), and ask how often it reaches the
+    observed one.  Taking the max over all six pairs is why the null has to be
+    simulated rather than read off a table.
+    """
+    import math
+
+    cells = {}
+    for key, r in results.items():
+        if not r["null"] or not r["first"] or not r["second"]:
+            continue
+        if r["first"][3] + r["second"][3] < MIN_SEGMENTS:
+            continue
+        if r["total"] < EXPECTED_ROWS or r["hi"] < EXPECTED_ROWS:
+            continue
+        med, sd, _, _, _, obs, _, _ = r["null"]
+        cells[f"{key[1]}.{key[2]}"] = (obs, sd)
+    if len(cells) < MIN_CELLS:
+        print()
+        print(f"0.36 shape test REFUSED: {len(cells)} qualifying cell(s), needs {MIN_CELLS}.")
+        print(f"  (a cell qualifies at {EXPECTED_ROWS} rows sampled to the end, "
+              f"with >= {MIN_SEGMENTS} segments)")
+        print("  The test is pre-registered over a complete step.  Running it on a")
+        print("  partial one is the head-read-as-cell error 0.33 was written about.")
+        return
+
+    names = sorted(cells)
+    R = [cells[n][0] for n in names]
+    SD = [cells[n][1] for n in names]
+    w = [1.0 / s ** 2 for s in SD]
+    R0 = sum(x * y for x, y in zip(R, w)) / sum(w)
+
+    def max_z(vals):
+        return max(abs(vals[i] - vals[j]) / math.sqrt(SD[i] ** 2 + SD[j] ** 2)
+                   for i in range(len(vals)) for j in range(i + 1, len(vals)))
+
+    obs_z = max_z(R)
+    rng = random.Random(seed)
+    hits = 0
+    for _ in range(SIM_DRAWS):
+        if max_z([rng.gauss(R0, s) for s in SD]) >= obs_z:
+            hits += 1
+    pv = hits / SIM_DRAWS
+
+    if pv < ZONE_DIFFERENT:
+        verdict = "SHAPES DIFFER"
+        meaning = ("cell totals in this column are not comparable without a shape "
+                   "correction; 0.27's nine-cell column has to be re-read")
+    elif pv < ZONE_AMBIGUOUS:
+        verdict = "AMBIGUOUS"
+        meaning = "undetermined -- neither side, and it does not become one by waiting"
+    else:
+        verdict = "INDISTINGUISHABLE"
+        meaning = ("no shape difference at this power; cell totals stay comparable "
+                   "on this evidence, which is not the same as shown equal")
+
+    print()
+    print(f"0.36 four-cell shape test ({SIM_DRAWS} draws, seed {seed})")
+    for n, r_, s_ in zip(names, R, SD):
+        print(f"  {n:<22} R = {r_:.3f} +/- {s_:.3f}")
+    print(f"  weighted common R0     {R0:.3f}")
+    print(f"  largest pairwise z     {obs_z:.2f}")
+    print(f"  p(null >= observed)    {pv:.4f}")
+    print(f"  zones  p<{ZONE_DIFFERENT}: differ | "
+          f"{ZONE_DIFFERENT}<=p<{ZONE_AMBIGUOUS}: ambiguous | p>={ZONE_AMBIGUOUS}: indistinguishable")
+    print(f"  VERDICT  {verdict}")
+    print(f"           {meaning}")
+
+
 def null_ratio(segs, lens, draws: int, seed: int = 20260911):
     """The half/half ratio with the time ordering destroyed and nothing else.
 
@@ -135,10 +236,16 @@ def main() -> None:
     ap.add_argument("--step", default=None, help="override; else read from the csv")
     ap.add_argument("--arm", default=None, help="for single-cell csvs with no arm column")
     ap.add_argument("--det", default=None)
+    ap.add_argument("--compare", action="store_true",
+                    help="the 0.36 pre-registered four-cell shape test; refuses to run "
+                         "on fewer than MIN_CELLS qualifying cells, so it cannot be "
+                         "peeked at while the run is still filling them in")
     ap.add_argument("--perm", type=int, default=0,
                     help="shuffled-ordering null for the half/half ratio, N draws "
                          "(0.35 SS4 used 5000); off by default so the plain output is stable")
     args = ap.parse_args()
+    if args.compare and not args.perm:
+        args.perm = 5000  # --compare needs each cell's own bar; do not make me remember
 
     rows = Path(args.profile).read_text(encoding="utf-8").splitlines()
     header = rows[0].split(",")
@@ -206,6 +313,9 @@ def main() -> None:
             med, sd, lo95, hi95, mx, obs, z, pv = r["null"]
             print(f"{key[1] + '.' + key[2]:<22}{obs:10.3f}{med:10.3f}{sd:8.4f}"
                   f"   [{lo95:6.3f}, {hi95:6.3f}]{mx:10.3f}{z:10.1f}{pv:9.4f}")
+
+    if args.compare:
+        compare_shapes(results)
 
     if len(results) >= 2:
         print("\nbetween-cell, in s/img (the between-cell unit)")
