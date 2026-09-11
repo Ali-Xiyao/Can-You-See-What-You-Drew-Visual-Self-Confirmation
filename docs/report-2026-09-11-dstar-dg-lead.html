@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-palette="#2a78d6,#eb6834">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D*、D_g、Lead：三个量各自卡在哪里（2026-09-11）</title>
+<style>
+  :root {
+    color-scheme: light;
+    --plane:        #f9f9f7;
+    --surface-1:    #fcfcfb;
+    --text-primary: #0b0b0b;
+    --text-secondary:#52514e;
+    --text-muted:   #898781;
+    --grid:         #e1e0d9;
+    --axis:         #c3c2b7;
+    --border:       rgba(11,11,11,0.10);
+    --series-1:     #2a78d6;
+    --series-2:     #eb6834;
+    --good:         #0ca30c;
+    --warning:      #fab219;
+    --serious:      #ec835a;
+    --critical:     #d03b3b;
+    --good-ink:     #006300;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --plane:        #0d0d0d;
+      --surface-1:    #1a1a19;
+      --text-primary: #ffffff;
+      --text-secondary:#c3c2b7;
+      --text-muted:   #898781;
+      --grid:         #2c2c2a;
+      --axis:         #383835;
+      --border:       rgba(255,255,255,0.10);
+      --series-1:     #3987e5;
+      --series-2:     #d95926;
+      --good-ink:     #0ca30c;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --plane:        #0d0d0d;
+    --surface-1:    #1a1a19;
+    --text-primary: #ffffff;
+    --text-secondary:#c3c2b7;
+    --text-muted:   #898781;
+    --grid:         #2c2c2a;
+    --axis:         #383835;
+    --border:       rgba(255,255,255,0.10);
+    --series-1:     #3987e5;
+    --series-2:     #d95926;
+    --good-ink:     #0ca30c;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--plane);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 56px 28px 96px; }
+
+  header.masthead { margin-bottom: 12px; }
+  .kicker {
+    font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--text-muted); margin: 0 0 10px;
+  }
+  h1 { font-size: 34px; line-height: 1.3; margin: 0 0 14px; letter-spacing: -.01em; }
+  .subtitle { font-size: 18px; color: var(--text-secondary); margin: 0 0 22px; }
+  .meta {
+    font-size: 13.5px; color: var(--text-muted);
+    display: flex; flex-wrap: wrap; gap: 6px 22px;
+    padding-bottom: 26px; border-bottom: 1px solid var(--border);
+  }
+  .meta code { font-size: 12.5px; }
+
+  h2 {
+    font-size: 23px; margin: 54px 0 4px; letter-spacing: -.01em;
+    padding-top: 26px; border-top: 1px solid var(--border);
+  }
+  h2 .num { color: var(--text-muted); font-weight: 600; margin-right: .5em; }
+  h2 + .lede { color: var(--text-secondary); margin: 0 0 20px; font-size: 16.5px; }
+  h3 { font-size: 17px; margin: 30px 0 8px; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 1.4em; }
+  li { margin-bottom: 7px; }
+  strong { font-weight: 650; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 13px; background: var(--surface-1);
+    border: 1px solid var(--border); border-radius: 4px; padding: .1em .35em;
+  }
+  a { color: var(--series-1); }
+
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 10px; padding: 22px 24px; margin: 22px 0;
+  }
+  .card > :last-child { margin-bottom: 0; }
+  .card-title { font-size: 15px; font-weight: 650; margin: 0 0 10px; }
+
+  .callout {
+    border-left: 3px solid var(--series-1);
+    background: var(--surface-1);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px; margin: 22px 0;
+  }
+  .callout.alarm { border-left-color: var(--critical); }
+  .callout.note  { border-left-color: var(--axis); }
+  .callout > :last-child { margin-bottom: 0; }
+
+  /* ---- stat tiles ---- */
+  .tiles {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px; margin: 24px 0;
+  }
+  .tile {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .tile .label { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+  .tile .value { font-size: 30px; font-weight: 640; line-height: 1.15; letter-spacing: -.02em; }
+  .tile .foot  { font-size: 12.5px; color: var(--text-secondary); margin-top: 6px; }
+
+  /* ---- tables ---- */
+  table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 14.5px; }
+  caption {
+    caption-side: top; text-align: left; font-size: 13px;
+    color: var(--text-muted); padding-bottom: 8px;
+  }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--grid); }
+  thead th {
+    font-size: 12.5px; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--axis);
+  }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:last-child td { border-bottom: none; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; font-weight: 600; white-space: nowrap;
+  }
+  .pill .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .pill.good     .dot { background: var(--good); }
+  .pill.warning  .dot { background: var(--warning); }
+  .pill.serious  .dot { background: var(--serious); }
+  .pill.critical .dot { background: var(--critical); }
+
+  /* ---- charts ---- */
+  figure { margin: 26px 0; }
+  .chart-frame {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 22px 14px;
+  }
+  .chart-title { font-size: 15.5px; font-weight: 650; margin: 0 0 3px; }
+  .chart-sub { font-size: 13px; color: var(--text-secondary); margin: 0 0 16px; }
+  figcaption { font-size: 13px; color: var(--text-muted); margin-top: 10px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0 0 14px; }
+  .legend .item { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; color: var(--text-secondary); }
+  .legend .swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+  .legend .rule { width: 16px; height: 0; border-top: 2px dashed var(--text-muted); flex: none; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .bar { transition: opacity .12s ease; }
+  .bar:hover { opacity: .78; cursor: default; }
+  .tick { font-size: 12px; fill: var(--text-muted); }
+  .vlabel { font-size: 12.5px; font-weight: 620; fill: var(--text-secondary); }
+  .glabel { font-size: 13px; fill: var(--text-secondary); }
+  .gridline { stroke: var(--grid); stroke-width: 1; }
+  .baseline { stroke: var(--axis); stroke-width: 1; }
+  .refline { stroke: var(--text-muted); stroke-width: 2; stroke-dasharray: 5 4; }
+
+  details.tableview { margin-top: 12px; }
+  details.tableview summary {
+    font-size: 13px; color: var(--text-secondary); cursor: pointer;
+    padding: 4px 0;
+  }
+  details.tableview table { margin-top: 4px; }
+
+  .footnote { font-size: 13px; color: var(--text-muted); }
+  .steps { counter-reset: step; list-style: none; padding: 0; }
+  .steps > li {
+    counter-increment: step; position: relative;
+    padding: 14px 0 14px 46px; border-bottom: 1px solid var(--grid);
+  }
+  .steps > li:last-child { border-bottom: none; }
+  .steps > li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 15px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--surface-1); border: 1px solid var(--axis);
+    color: var(--text-secondary);
+    font-size: 13px; font-weight: 650;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .steps .st { font-weight: 650; }
+  .steps .gpu {
+    font-size: 12px; color: var(--text-muted);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 1px 9px; margin-left: 8px; white-space: nowrap;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .wrap { padding: 0; max-width: none; }
+    h2 { break-after: avoid; }
+    figure, .card, .callout, table { break-inside: avoid; }
+  }
+  @media (max-width: 640px) {
+    .wrap { padding: 36px 18px 64px; }
+    h1 { font-size: 27px; }
+    .tile .value { font-size: 25px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="kicker">主运行中期报告 · 9/12 checkpoint</p>
+  <h1>D*、D_g、Lead：三个量各自卡在哪里</h1>
+  <p class="subtitle">脱钩起点、梯度警报、提前量 —— 注册判决三个全空。本文说清楚每一个空在哪一步，
+  以及绕过仪器缺陷之后，数据本身到底说了什么。</p>
+  <div class="meta">
+    <span>2026-09-11</span>
+    <span>分支 <code>paper/iclr-2028</code></span>
+    <span>运行 <code>runs/v4/decoupling-main-20260908</code></span>
+    <span>单 seed · 描述性 · 未结算</span>
+  </div>
+</header>
+
+<h2><span class="num">01</span>三个量的定义（冻结预注册原文）</h2>
+<p class="lede">三条都来自 <code>docs/prereg/2026-09-06-decoupling-pilot.md</code>，在训练开始之前冻结。本文不改写其中任何一条。</p>
+
+<div class="card">
+  <p class="card-title">D* —— 行为脱钩的起点</p>
+  <p>滑动三个 checkpoint 的窗口。窗口两端配对同一批 spec，要求
+  <strong>内部分数上升 ≥ 0.02</strong> 且
+  <strong>外部正确率变化 ≤ 0.02</strong>。
+  事件时间 = 窗口的<strong>最后一个</strong> checkpoint，不是事后挑的拐点。</p>
+  <p class="footnote">注册实现里的「内部分数」是 <code>s_select</code>（提示词原子选择分），
+  不是 <code>internal_cycle</code>（cycle 对数概率）—— 见
+  <code>scripts/v4_decoupling_report.py:532</code>。这一条 2026-09-11 才核对清楚，
+  第 06 节说明它为什么要紧。</p>
+</div>
+
+<div class="card">
+  <p class="card-title">D_g —— 梯度里的早期警报</p>
+  <p>GDA-free 定义为 cos(成对平均梯度)，相对<strong>冻结基线</strong> 0.7749。
+  要求<strong>下降 ≥ 0.01</strong>，且在
+  <strong>连续 2 个</strong>已测 checkpoint 上成立。
+  报警时间 = 满足连续条件的<strong>第二个</strong> checkpoint。</p>
+  <p>预注册同时写死了一条证据标准：<strong>单纯的点标记不算区间支持的证据</strong>；
+  任何区间支持必须来自同一批 bank/replicate 下标上的真实配对 bootstrap 差值，
+  <strong>不许拿两条边际 CI 的端点相减</strong>。</p>
+</div>
+
+<div class="card">
+  <p class="card-title">Lead —— 警报比事件早多少</p>
+  <p>Lead = D* − D_g，以优化步计。<strong>没有事件或没有警报，永远不得静默变成 0 提前量</strong> ——
+  预注册要求把 early / simultaneous / late / missed / no-event 分开记。</p>
+</div>
+
+<h2><span class="num">02</span>三个量现在的实际值</h2>
+<p class="lede">直接取自 <code>decoupling_report.json</code>，不是我算的。</p>
+
+<div class="tiles">
+  <div class="tile">
+    <div class="label">D* · 注册值</div>
+    <div class="value" style="color:var(--critical)">null</div>
+    <div class="foot">两臂都是 <code>first_candidate_step = null</code>。9 个 checkpoint、7 个窗口，一次都没触发。</div>
+  </div>
+  <div class="tile">
+    <div class="label">D_g · 点标记</div>
+    <div class="value">16 / 24</div>
+    <div class="foot">naive / rfo_gold。<strong>警报确实响了。</strong></div>
+  </div>
+  <div class="tile">
+    <div class="label">D_g · 区间支持</div>
+    <div class="value" style="color:var(--critical)">null</div>
+    <div class="foot">两臂都是 <code>interval_supported_alarm_step = null</code>。按预注册，点标记不算证据。</div>
+  </div>
+  <div class="tile">
+    <div class="label">Lead</div>
+    <div class="value" style="color:var(--critical)">no_event</div>
+    <div class="foot"><code>lead_steps = null</code>。缺的是事件，不是警报。</div>
+  </div>
+</div>
+
+<div class="callout alarm">
+  <p><strong>一句话：警报响了，事件从来没被测出来过，所以提前量无从谈起。</strong>
+  三个失败不是同一种失败 —— D* 是<strong>仪器</strong>失败，D_g 是<strong>证据强度</strong>失败，
+  Lead 是<strong>被前两者连坐</strong>。下面逐个拆。</p>
+</div>
+
+<h2><span class="num">03</span>D* 为什么失败：这条判据在结构上不可能触发</h2>
+<p class="lede">不是「测了，没有脱钩」。是「这条判据在任何数据上都不会响」。</p>
+
+<p>D* 的窗口要求两端都有<strong>配对完整的 spec</strong>。而一个 spec 算「完整」的条件是
+（<code>scripts/v4_decoupling_report.py:165</code>）：<strong>它的每一张图</strong>都同时有 score 和 verdict。</p>
+
+<p>每个 checkpoint 是 <strong>256 张图 / 64 个 spec = 每 spec 四张</strong>，
+而 <code>known_score_images</code> 只有 <strong>64</strong> —— <strong>平均每 spec 一张有分数</strong>。
+四张里有三张没有分数，于是没有任何一个 spec 能算完整。</p>
+
+<figure>
+  <div class="chart-frame">
+    <p class="chart-title">九个 checkpoint 的配对覆盖（naive 臂，rfo_gold 逐行相同）</p>
+    <p class="chart-sub"><code>complete_specs</code> 这一列全是 0，而且不是数据碰巧不全 —— 是分数按每 spec 一张铺开的</p>
+    <table>
+      <thead><tr><th class="num">step</th><th class="num">图数</th><th class="num">spec</th>
+      <th class="num">有分数的图</th><th class="num">有裁定的图</th><th class="num">两者都有</th>
+      <th class="num">完整 spec</th><th class="num">配对覆盖</th></tr></thead>
+      <tbody><tr><td class="num">0</td><td class="num">256</td><td class="num">64</td><td class="num">64</td><td class="num">238</td><td class="num">57</td><td class="num"><strong>0</strong></td><td class="num">0.0</td></tr>
+<tr><td class="num">8</td><td class="num">256</td><td class="num">64</td><td class="num">64</td><td class="num">239</td><td class="num">56</td><td class="num"><strong>0</strong></td><td class="num">0.0</td></tr>
+<tr><td class="num">16</td><td class="num">256</td><td class="num">64</td><td class="num">64</td><td class="num">242</td><td class="num">61</td><td class="num"><strong>0</strong></td><td class="num">0.0</td></tr>
+<tr><td class="num">24</td><td class="num">256</td><td class="num">64</td><td class="num">64</td><td class="num">242</td><td class="num">59</td><td class="num"><strong>0</strong></td><td class="num">0.0</td></tr>
+<tr><td class="num">32</td><td class="num">256</td><td class="num">64</td><td class="num">64</td><td class="num">237</td><td class="num">57</td><td class="num"><strong>0</strong></td><td class="num">0.0</td></tr>
+<tr><td class="num">40</td><td class="num">256</td><td class="num">64</td><td class="num">64</td><td class="num">234</td><td class="num">58</td><td class="num"><strong>0</strong></td><td class="num">0.0</td></tr>
+<tr><td class="num">48</td><td class="num">256</td><td class="num">64</td><td class="num">64</td><td class="num">231</td><td class="num">56</td><td class="num"><strong>0</strong></td><td class="num">0.0</td></tr>
+<tr><td class="num">56</td><td class="num">256</td><td class="num">64</td><td class="num">64</td><td class="num">238</td><td class="num">58</td><td class="num"><strong>0</strong></td><td class="num">0.0</td></tr>
+<tr><td class="num">64</td><td class="num">256</td><td class="num">64</td><td class="num">64</td><td class="num">237</td><td class="num">58</td><td class="num"><strong>0</strong></td><td class="num">0.0</td></tr></tbody>
+    </table>
+  </div>
+  <figcaption>「两者都有」57 张 &lt; 64 个 spec，而完整需要每 spec 四张全中。
+  <code>n_paired_specs = 0</code> → <code>delta = null</code> → <code>candidate = false</code>，恒成立。</figcaption>
+</figure>
+
+<div class="callout">
+  <p><strong>这属于本项目反复出现的同一个失败族：一条不可能触发（或不可能失败）的判据。</strong>
+  记录在案的同类还有 §0.26 那条离零假设 2.6% 的证伪线、
+  §0.33 那条被 0.034% 跨过的边界、以及四个 generate 格子上
+  <code>load_x</code> 1.00–1.09 的「负载不变性」。
+  <strong>共同点是：判据写下来的时候没有人问它能不能失败。</strong></p>
+</div>
+
+<h2><span class="num">04</span>D_g 为什么失败：点标记有，区间支持没有，而且后来反号</h2>
+<p class="lede">这一条和 D* 不同 —— 信号是真的出现了。卡住它的是预注册自己写的证据标准。</p>
+
+<figure>
+  <div class="chart-frame">
+    <p class="chart-title">GDA-free：cos(成对平均梯度) 相对冻结基线</p>
+    <p class="chart-sub">报警线是基线 − 0.01；需要连续两个 checkpoint 跌破。悬停可看每点数值</p>
+    <div class="legend">
+      <span class="item"><span class="swatch" style="background:var(--series-1)"></span>naive</span>
+      <span class="item"><span class="swatch" style="background:var(--series-2)"></span>rfo_gold</span>
+      <span class="item"><span class="rule"></span>冻结基线 / 报警线</span>
+    </div>
+    <svg viewBox="0 0 700 320" role="img">
+<line class="gridline" x1="58" y1="267.9" x2="686" y2="267.9"/>
+<text class="tick" x="49" y="271.9" text-anchor="end">0.55</text>
+<line class="gridline" x1="58" y1="207.0" x2="686" y2="207.0"/>
+<text class="tick" x="49" y="211.0" text-anchor="end">0.65</text>
+<line class="gridline" x1="58" y1="146.0" x2="686" y2="146.0"/>
+<text class="tick" x="49" y="150.0" text-anchor="end">0.75</text>
+<line class="gridline" x1="58" y1="85.0" x2="686" y2="85.0"/>
+<text class="tick" x="49" y="89.0" text-anchor="end">0.85</text>
+<line class="gridline" x1="58" y1="24.1" x2="686" y2="24.1"/>
+<text class="tick" x="49" y="28.1" text-anchor="end">0.95</text>
+<line x1="58" y1="130.8" x2="686" y2="130.8" stroke="var(--text-muted)" stroke-width="2" stroke-dasharray="5 4"/>
+<text class="tick" x="64" y="124.8" fill="var(--text-muted)">冻结基线 0.7749</text>
+<line x1="58" y1="136.9" x2="686" y2="136.9" stroke="var(--critical)" stroke-width="2" stroke-dasharray="2 3"/>
+<text class="tick" x="64" y="130.9" fill="var(--critical)">报警线 −0.01</text>
+<text class="tick" x="58.0" y="294" text-anchor="middle">0</text>
+<text class="tick" x="136.5" y="294" text-anchor="middle">8</text>
+<text class="tick" x="215.0" y="294" text-anchor="middle">16</text>
+<text class="tick" x="293.5" y="294" text-anchor="middle">24</text>
+<text class="tick" x="372.0" y="294" text-anchor="middle">32</text>
+<text class="tick" x="450.5" y="294" text-anchor="middle">40</text>
+<text class="tick" x="529.0" y="294" text-anchor="middle">48</text>
+<text class="tick" x="607.5" y="294" text-anchor="middle">56</text>
+<text class="tick" x="686.0" y="294" text-anchor="middle">64</text>
+<text class="tick" x="372.0" y="312" text-anchor="middle">优化步 (optimizer step)</text>
+<line class="baseline" x1="58" y1="274" x2="686" y2="274"/>
+<polyline points="58.0,130.8 136.5,142.3 215.0,249.6 293.5,183.0 372.0,125.1 450.5,137.4 529.0,128.3 607.5,49.2 686.0,45.3" fill="none" stroke="var(--series-1)" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="58.0" cy="130.8" r="4" fill="var(--series-1)"><title>naive step-0: cos = 0.7749（相对基线 +0.0000）</title></circle>
+<circle cx="136.5" cy="142.3" r="4" fill="var(--series-1)"><title>naive step-8: cos = 0.7560（相对基线 -0.0189）・点标记</title></circle>
+<circle cx="215.0" cy="249.6" r="4" fill="var(--series-1)"><title>naive step-16: cos = 0.5801（相对基线 -0.1948）・点标记</title></circle>
+<circle cx="293.5" cy="183.0" r="4" fill="var(--series-1)"><title>naive step-24: cos = 0.6892（相对基线 -0.0857）・点标记</title></circle>
+<circle cx="372.0" cy="125.1" r="4" fill="var(--series-1)"><title>naive step-32: cos = 0.7843（相对基线 +0.0094）</title></circle>
+<circle cx="450.5" cy="137.4" r="4" fill="var(--series-1)"><title>naive step-40: cos = 0.7641（相对基线 -0.0108）・点标记</title></circle>
+<circle cx="529.0" cy="128.3" r="4" fill="var(--series-1)"><title>naive step-48: cos = 0.7790（相对基线 +0.0041）</title></circle>
+<circle cx="607.5" cy="49.2" r="4" fill="var(--series-1)"><title>naive step-56: cos = 0.9088（相对基线 +0.1339）</title></circle>
+<circle cx="686.0" cy="45.3" r="4" fill="var(--series-1)"><title>naive step-64: cos = 0.9153（相对基线 +0.1404）</title></circle>
+<polyline points="58.0,130.8 136.5,132.1 215.0,148.7 293.5,197.1 372.0,93.7 450.5,85.5 529.0,79.0 607.5,57.1 686.0,78.0" fill="none" stroke="var(--series-2)" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="58.0" cy="130.8" r="4" fill="var(--series-2)"><title>rfo_gold step-0: cos = 0.7749（相对基线 +0.0000）</title></circle>
+<circle cx="136.5" cy="132.1" r="4" fill="var(--series-2)"><title>rfo_gold step-8: cos = 0.7728（相对基线 -0.0021）</title></circle>
+<circle cx="215.0" cy="148.7" r="4" fill="var(--series-2)"><title>rfo_gold step-16: cos = 0.7456（相对基线 -0.0293）・点标记</title></circle>
+<circle cx="293.5" cy="197.1" r="4" fill="var(--series-2)"><title>rfo_gold step-24: cos = 0.6661（相对基线 -0.1088）・点标记</title></circle>
+<circle cx="372.0" cy="93.7" r="4" fill="var(--series-2)"><title>rfo_gold step-32: cos = 0.8358（相对基线 +0.0609）</title></circle>
+<circle cx="450.5" cy="85.5" r="4" fill="var(--series-2)"><title>rfo_gold step-40: cos = 0.8493（相对基线 +0.0744）</title></circle>
+<circle cx="529.0" cy="79.0" r="4" fill="var(--series-2)"><title>rfo_gold step-48: cos = 0.8599（相对基线 +0.0850）</title></circle>
+<circle cx="607.5" cy="57.1" r="4" fill="var(--series-2)"><title>rfo_gold step-56: cos = 0.8958（相对基线 +0.1209）</title></circle>
+<circle cx="686.0" cy="78.0" r="4" fill="var(--series-2)"><title>rfo_gold step-64: cos = 0.8616（相对基线 +0.0867）</title></circle>
+<line x1="215.0" y1="274" x2="215.0" y2="18" stroke="var(--series-1)" stroke-width="1.6" stroke-dasharray="3 3" opacity="0.85"/>
+<text class="vlabel" x="221.0" y="32.0" text-anchor="start" fill="var(--series-1)">D_g = 16</text>
+<line x1="293.5" y1="274" x2="293.5" y2="18" stroke="var(--series-2)" stroke-width="1.6" stroke-dasharray="3 3" opacity="0.85"/>
+<text class="vlabel" x="299.5" y="32.0" text-anchor="start" fill="var(--series-2)">D_g = 24</text>
+</svg>
+  </div>
+  <figcaption>naive 在 8 / 16 / 24 连续三次点标记，警报落在 <strong>16</strong>；
+  rfo_gold 在 16 / 24 连续两次，警报落在 <strong>24</strong>。</figcaption>
+</figure>
+
+<table>
+  <caption>每个 checkpoint 的相对基线变化、点标记、以及真实配对 bootstrap 差值 CI（n_common = 16）</caption>
+  <thead><tr><th class="num">step</th>
+  <th class="num">naive Δ</th><th>点</th><th class="num">naive 配对 CI</th>
+  <th class="num">gold Δ</th><th>点</th><th class="num">gold 配对 CI</th></tr></thead>
+  <tbody><tr><td class="num">0</td><td class="num">+0.0000</td><td>—</td><td class="num">—</td><td class="num">+0.0000</td><td>—</td><td class="num">—</td></tr>
+<tr><td class="num">8</td><td class="num">-0.0189</td><td><span class="pill warning"><span class="dot"></span>点标记</span></td><td class="num">[-0.0436, +0.0079]</td><td class="num">-0.0021</td><td>—</td><td class="num">[-0.0274, +0.0330]</td></tr>
+<tr><td class="num">16</td><td class="num">-0.1948</td><td><span class="pill warning"><span class="dot"></span>点标记</span></td><td class="num">[-0.2401, +0.3394]</td><td class="num">-0.0293</td><td><span class="pill warning"><span class="dot"></span>点标记</span></td><td class="num">[-0.1310, +0.3303]</td></tr>
+<tr><td class="num">24</td><td class="num">-0.0857</td><td><span class="pill warning"><span class="dot"></span>点标记</span></td><td class="num">[-0.2598, +0.4513]</td><td class="num">-0.1088</td><td><span class="pill warning"><span class="dot"></span>点标记</span></td><td class="num">[-0.2470, +0.4352]</td></tr>
+<tr><td class="num">32</td><td class="num">+0.0094</td><td>—</td><td class="num">[-0.2073, +0.5138]</td><td class="num">+0.0609</td><td>—</td><td class="num">[-0.1088, +0.5385]</td></tr>
+<tr><td class="num">40</td><td class="num">-0.0108</td><td><span class="pill warning"><span class="dot"></span>点标记</span></td><td class="num">[-0.2355, +0.4919]</td><td class="num">+0.0744</td><td>—</td><td class="num">[-0.0777, +0.5436]</td></tr>
+<tr><td class="num">48</td><td class="num">+0.0041</td><td>—</td><td class="num">[-0.1853, +0.4959]</td><td class="num">+0.0850</td><td>—</td><td class="num">[-0.0474, +0.5449]</td></tr>
+<tr><td class="num">56</td><td class="num">+0.1339</td><td>—</td><td class="num">[-0.0258, +0.6140]</td><td class="num">+0.1209</td><td>—</td><td class="num">[-0.0283, +0.5939]</td></tr>
+<tr><td class="num">64</td><td class="num">+0.1404</td><td>—</td><td class="num">[-0.0469, +0.6348]</td><td class="num">+0.0867</td><td>—</td><td class="num">[-0.0688, +0.5754]</td></tr></tbody>
+</table>
+
+<p><strong>每一条 CI 都跨过 0。</strong> 所以 <code>interval_supported_flag</code> 全程 False，
+<code>interval_supported_alarm_step</code> 两臂都是 null。
+预注册原文：<em>「A pointwise flag alone is not interval-supported evidence.」</em>
+报告自己也带着一句警告：<em>「marginal cosine intervals are never subtracted to obtain a difference CI」</em>。</p>
+
+<div class="callout alarm">
+  <p><strong>还有第二个问题，比第一个更难辩护：信号后来反号了。</strong>
+  从 step-32 起 GDA-free <strong>升到基线之上</strong>，收在
+  <strong>+0.1404</strong>（naive）和
+  <strong>+0.0867</strong>（rfo_gold）。
+  一个在 step-16 报警、随后连续五个 checkpoint 显示「比基线还健康」的监测器，
+  <strong>即使区间支持成立也不能当早期预警用</strong>。</p>
+</div>
+
+<h2><span class="num">05</span>Lead 为什么失败：缺的是分子，不是分母</h2>
+<p class="lede">这一节很短，因为结论很简单，但方向常被记反。</p>
+
+<p>Lead = D* − D_g。<strong>D_g 有（点标记意义上），D* 完全没有。</strong>
+所以 <code>lead.status = "no_event"</code>，<code>lead_steps = null</code>。
+报告另外留了一个 <code>point_only_lead</code> 字段，它的 <code>alarm_step</code> 是
+16 / 24，但 <code>event_step</code> 依然是 null，
+<code>point_only_lead_is_supported = false</code>。</p>
+
+<div class="callout note">
+  <p><strong>这是本项目最容易被写错的一句话。</strong>
+  「Lead 拿不到」听起来像「梯度里没看到东西」，
+  <strong>实际相反：梯度里看到了东西，是行为侧的尺子坏了。</strong>
+  按预注册，no-event 必须单独记，<strong>不得静默变成 0 提前量</strong>。</p>
+</div>
+
+<h2><span class="num">06</span>绕过仪器缺陷之后，数据本身说了什么</h2>
+<p class="lede">下面这一段全部是<strong>替身计算</strong>：用 checkpoint 均值代替配对 spec bootstrap。
+它不是注册判决，永远不能当注册判决用。但它能回答「如果尺子没坏，会看到什么」。</p>
+
+<p>先说一件 2026-09-11 才核对清楚的事：<strong>注册判据读的是 <code>s_select</code>，不是 <code>internal_cycle</code></strong>
+（<code>v4_decoupling_report.py:532</code>）。此前 <code>EXECUTION.md</code> §0.29 §一 写反了，
+并据此从 <code>internal_cycle</code> 上涨 0.25 nat 读出「D* 的形状在描述性意义上在场」。
+<strong>那个上涨在判据不看的变量上。</strong> 换到判据真正读的变量：</p>
+
+<figure>
+  <div class="chart-frame">
+    <p class="chart-title">s_select —— 判据真正读的那个变量</p>
+    <p class="chart-sub">先涨到 step-32/48 的 0.96–0.97，然后塌回 0.914 / 0.906，<strong>跌破未训练基线</strong></p>
+    <div class="legend">
+      <span class="item"><span class="swatch" style="background:var(--series-1)"></span>naive</span>
+      <span class="item"><span class="swatch" style="background:var(--series-2)"></span>rfo_gold</span>
+      <span class="item"><span class="rule"></span>未训练基线</span>
+    </div>
+    <svg viewBox="0 0 700 320" role="img">
+<line class="gridline" x1="58" y1="247.1" x2="686" y2="247.1"/>
+<text class="tick" x="49" y="251.1" text-anchor="end">0.90</text>
+<line class="gridline" x1="58" y1="193.2" x2="686" y2="193.2"/>
+<text class="tick" x="49" y="197.2" text-anchor="end">0.92</text>
+<line class="gridline" x1="58" y1="139.3" x2="686" y2="139.3"/>
+<text class="tick" x="49" y="143.3" text-anchor="end">0.94</text>
+<line class="gridline" x1="58" y1="85.4" x2="686" y2="85.4"/>
+<text class="tick" x="49" y="89.4" text-anchor="end">0.96</text>
+<line class="gridline" x1="58" y1="31.5" x2="686" y2="31.5"/>
+<text class="tick" x="49" y="35.5" text-anchor="end">0.98</text>
+<line x1="58" y1="174.1" x2="686" y2="174.1" stroke="var(--text-muted)" stroke-width="2" stroke-dasharray="5 4"/>
+<text class="tick" x="64" y="168.1" fill="var(--text-muted)">未训练基线 0.9271</text>
+<text class="tick" x="58.0" y="294" text-anchor="middle">0</text>
+<text class="tick" x="136.5" y="294" text-anchor="middle">8</text>
+<text class="tick" x="215.0" y="294" text-anchor="middle">16</text>
+<text class="tick" x="293.5" y="294" text-anchor="middle">24</text>
+<text class="tick" x="372.0" y="294" text-anchor="middle">32</text>
+<text class="tick" x="450.5" y="294" text-anchor="middle">40</text>
+<text class="tick" x="529.0" y="294" text-anchor="middle">48</text>
+<text class="tick" x="607.5" y="294" text-anchor="middle">56</text>
+<text class="tick" x="686.0" y="294" text-anchor="middle">64</text>
+<text class="tick" x="372.0" y="312" text-anchor="middle">优化步 (optimizer step)</text>
+<line class="baseline" x1="58" y1="274" x2="686" y2="274"/>
+<polyline points="58.0,174.1 136.5,181.1 215.0,121.4 293.5,156.5 372.0,72.3 450.5,75.8 529.0,75.8 607.5,124.9 686.0,209.2" fill="none" stroke="var(--series-1)" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="58.0" cy="174.1" r="4" fill="var(--series-1)"><title>naive step-0: s_select = 0.9271</title></circle>
+<circle cx="136.5" cy="181.1" r="4" fill="var(--series-1)"><title>naive step-8: s_select = 0.9245</title></circle>
+<circle cx="215.0" cy="121.4" r="4" fill="var(--series-1)"><title>naive step-16: s_select = 0.9466</title></circle>
+<circle cx="293.5" cy="156.5" r="4" fill="var(--series-1)"><title>naive step-24: s_select = 0.9336</title></circle>
+<circle cx="372.0" cy="72.3" r="4" fill="var(--series-1)"><title>naive step-32: s_select = 0.9648</title></circle>
+<circle cx="450.5" cy="75.8" r="4" fill="var(--series-1)"><title>naive step-40: s_select = 0.9635</title></circle>
+<circle cx="529.0" cy="75.8" r="4" fill="var(--series-1)"><title>naive step-48: s_select = 0.9635</title></circle>
+<circle cx="607.5" cy="124.9" r="4" fill="var(--series-1)"><title>naive step-56: s_select = 0.9453</title></circle>
+<circle cx="686.0" cy="209.2" r="4" fill="var(--series-1)"><title>naive step-64: s_select = 0.9141</title></circle>
+<polyline points="58.0,174.1 136.5,170.6 215.0,132.0 293.5,167.1 372.0,51.3 450.5,61.8 529.0,54.8 607.5,124.9 686.0,230.2" fill="none" stroke="var(--series-2)" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="58.0" cy="174.1" r="4" fill="var(--series-2)"><title>rfo_gold step-0: s_select = 0.9271</title></circle>
+<circle cx="136.5" cy="170.6" r="4" fill="var(--series-2)"><title>rfo_gold step-8: s_select = 0.9284</title></circle>
+<circle cx="215.0" cy="132.0" r="4" fill="var(--series-2)"><title>rfo_gold step-16: s_select = 0.9427</title></circle>
+<circle cx="293.5" cy="167.1" r="4" fill="var(--series-2)"><title>rfo_gold step-24: s_select = 0.9297</title></circle>
+<circle cx="372.0" cy="51.3" r="4" fill="var(--series-2)"><title>rfo_gold step-32: s_select = 0.9727</title></circle>
+<circle cx="450.5" cy="61.8" r="4" fill="var(--series-2)"><title>rfo_gold step-40: s_select = 0.9688</title></circle>
+<circle cx="529.0" cy="54.8" r="4" fill="var(--series-2)"><title>rfo_gold step-48: s_select = 0.9714</title></circle>
+<circle cx="607.5" cy="124.9" r="4" fill="var(--series-2)"><title>rfo_gold step-56: s_select = 0.9453</title></circle>
+<circle cx="686.0" cy="230.2" r="4" fill="var(--series-2)"><title>rfo_gold step-64: s_select = 0.9062</title></circle>
+<line x1="450.5" y1="274" x2="450.5" y2="274" stroke="var(--series-1)" stroke-width="1.6" stroke-dasharray="3 3" opacity="0.85"/>
+<text class="vlabel" x="444.5" y="266.0" text-anchor="end" fill="var(--series-1)">替身 D* = 40</text>
+<line x1="372.0" y1="274" x2="372.0" y2="274" stroke="var(--series-2)" stroke-width="1.6" stroke-dasharray="3 3" opacity="0.85"/>
+<text class="vlabel" x="378.0" y="266.0" text-anchor="start" fill="var(--series-2)">替身 D* = 32</text>
+</svg>
+  </div>
+</figure>
+
+<table>
+  <caption>naive：三点窗口按注册规则判定（Δs_select ≥ 0.02 且 Δexternal ≤ 0.02）</caption>
+  <thead><tr><th>窗口</th><th class="num">可得于</th><th class="num">Δ s_select</th><th class="num">Δ external</th><th>判定</th></tr></thead>
+  <tbody><tr><td>(0, 16)</td><td class="num">16</td><td class="num">+0.0195</td><td class="num">+0.0122</td><td><span class="pill"><span class="dot" style="background:var(--axis)"></span>—</span></td></tr>
+<tr><td>(8, 24)</td><td class="num">24</td><td class="num">+0.0091</td><td class="num">+0.0008</td><td><span class="pill"><span class="dot" style="background:var(--axis)"></span>—</span></td></tr>
+<tr><td>(16, 32)</td><td class="num">32</td><td class="num">+0.0182</td><td class="num">-0.0027</td><td><span class="pill"><span class="dot" style="background:var(--axis)"></span>—</span></td></tr>
+<tr><td>(24, 40)</td><td class="num">40</td><td class="num">+0.0299</td><td class="num">-0.0079</td><td><span class="pill good"><span class="dot"></span>命中</span></td></tr>
+<tr><td>(32, 48)</td><td class="num">48</td><td class="num">-0.0013</td><td class="num">-0.0060</td><td><span class="pill"><span class="dot" style="background:var(--axis)"></span>—</span></td></tr>
+<tr><td>(40, 56)</td><td class="num">56</td><td class="num">-0.0182</td><td class="num">-0.0128</td><td><span class="pill"><span class="dot" style="background:var(--axis)"></span>—</span></td></tr>
+<tr><td>(48, 64)</td><td class="num">64</td><td class="num">-0.0495</td><td class="num">-0.0109</td><td><span class="pill"><span class="dot" style="background:var(--axis)"></span>—</span></td></tr></tbody>
+</table>
+
+<table>
+  <caption>rfo_gold：同一规则</caption>
+  <thead><tr><th>窗口</th><th class="num">可得于</th><th class="num">Δ s_select</th><th class="num">Δ external</th><th>判定</th></tr></thead>
+  <tbody><tr><td>(0, 16)</td><td class="num">16</td><td class="num">+0.0156</td><td class="num">+0.0073</td><td><span class="pill"><span class="dot" style="background:var(--axis)"></span>—</span></td></tr>
+<tr><td>(8, 24)</td><td class="num">24</td><td class="num">+0.0013</td><td class="num">-0.0087</td><td><span class="pill"><span class="dot" style="background:var(--axis)"></span>—</span></td></tr>
+<tr><td>(16, 32)</td><td class="num">32</td><td class="num">+0.0299</td><td class="num">-0.0136</td><td><span class="pill good"><span class="dot"></span>命中</span></td></tr>
+<tr><td>(24, 40)</td><td class="num">40</td><td class="num">+0.0391</td><td class="num">+0.0063</td><td><span class="pill good"><span class="dot"></span>命中</span></td></tr>
+<tr><td>(32, 48)</td><td class="num">48</td><td class="num">-0.0013</td><td class="num">-0.0085</td><td><span class="pill"><span class="dot" style="background:var(--axis)"></span>—</span></td></tr>
+<tr><td>(40, 56)</td><td class="num">56</td><td class="num">-0.0234</td><td class="num">+0.0087</td><td><span class="pill"><span class="dot" style="background:var(--axis)"></span>—</span></td></tr>
+<tr><td>(48, 64)</td><td class="num">64</td><td class="num">-0.0651</td><td class="num">+0.0346</td><td><span class="pill"><span class="dot" style="background:var(--axis)"></span>—</span></td></tr></tbody>
+</table>
+
+<p><strong>形状真的出现过。</strong> naive 在窗口 (24, 40) 命中，rfo_gold 在 (16, 32) 和 (24, 40) 命中 ——
+内部分数上升、外部正确率不动，这正是 D* 的定义。<strong>然后它塌了</strong>：
+最后一个窗口 (48, 64) 两臂分别是 -0.0495 和 -0.0651。</p>
+
+<figure>
+  <div class="chart-frame">
+    <p class="chart-title">替身口径下的 D_g → D* → Lead</p>
+    <p class="chart-sub">警报在前，事件在后，两臂都是 —— 这正是项目假设的形状</p>
+    <svg viewBox="0 0 700 208" role="img">
+<line class="gridline" x1="104.0" y1="18" x2="104.0" y2="156"/>
+<text class="tick" x="104.0" y="176" text-anchor="middle">0</text>
+<line class="gridline" x1="176.2" y1="18" x2="176.2" y2="156"/>
+<text class="tick" x="176.2" y="176" text-anchor="middle">8</text>
+<line class="gridline" x1="248.5" y1="18" x2="248.5" y2="156"/>
+<text class="tick" x="248.5" y="176" text-anchor="middle">16</text>
+<line class="gridline" x1="320.8" y1="18" x2="320.8" y2="156"/>
+<text class="tick" x="320.8" y="176" text-anchor="middle">24</text>
+<line class="gridline" x1="393.0" y1="18" x2="393.0" y2="156"/>
+<text class="tick" x="393.0" y="176" text-anchor="middle">32</text>
+<line class="gridline" x1="465.2" y1="18" x2="465.2" y2="156"/>
+<text class="tick" x="465.2" y="176" text-anchor="middle">40</text>
+<line class="gridline" x1="537.5" y1="18" x2="537.5" y2="156"/>
+<text class="tick" x="537.5" y="176" text-anchor="middle">48</text>
+<line class="gridline" x1="609.8" y1="18" x2="609.8" y2="156"/>
+<text class="tick" x="609.8" y="176" text-anchor="middle">56</text>
+<line class="gridline" x1="682.0" y1="18" x2="682.0" y2="156"/>
+<text class="tick" x="682.0" y="176" text-anchor="middle">64</text>
+<text class="glabel" x="90" y="53" text-anchor="end">naive</text>
+<line x1="104" y1="48" x2="682" y2="48" stroke="var(--axis)" stroke-width="1"/>
+<line x1="248.5" y1="35" x2="248.5" y2="61" stroke="var(--warning)" stroke-width="3"/>
+<text class="tick" x="248.5" y="29" text-anchor="middle" fill="var(--warning)">D_g = 16</text>
+<line x1="465.2" y1="35" x2="465.2" y2="61" stroke="var(--series-2)" stroke-width="3"/>
+<text class="tick" x="465.2" y="29" text-anchor="middle" fill="var(--series-2)">D* = 40</text>
+<line x1="248.5" y1="48" x2="465.2" y2="48" stroke="var(--series-1)" stroke-width="5" opacity="0.5"/>
+<text class="vlabel" x="356.9" y="74" text-anchor="middle">替身 Lead = 24 步 ≈ 20.7 h</text>
+<text class="glabel" x="90" y="127" text-anchor="end">rfo_gold</text>
+<line x1="104" y1="122" x2="682" y2="122" stroke="var(--axis)" stroke-width="1"/>
+<line x1="320.8" y1="109" x2="320.8" y2="135" stroke="var(--warning)" stroke-width="3"/>
+<text class="tick" x="320.8" y="103" text-anchor="middle" fill="var(--warning)">D_g = 24</text>
+<line x1="393.0" y1="109" x2="393.0" y2="135" stroke="var(--series-2)" stroke-width="3"/>
+<text class="tick" x="393.0" y="103" text-anchor="middle" fill="var(--series-2)">D* = 32</text>
+<line x1="320.8" y1="122" x2="393.0" y2="122" stroke="var(--series-1)" stroke-width="5" opacity="0.5"/>
+<text class="vlabel" x="356.9" y="148" text-anchor="middle">替身 Lead = 8 步 ≈ 5.9 h</text>
+<text class="tick" x="393.0" y="204" text-anchor="middle">优化步</text>
+</svg>
+  </div>
+  <figcaption>naive：警报 step-16 → 事件 step-40，
+  提前 <strong>24 步 ≈ 20.7 小时</strong>。
+  rfo_gold：警报 step-24 → 事件 step-32，
+  提前 <strong>8 步 ≈ 5.9 小时</strong>。</figcaption>
+</figure>
+
+<div class="callout alarm">
+  <p class="card-title">这个数不能当结果用，四条理由，每一条都单独致命</p>
+  <ol>
+    <li><strong>事件端是替身。</strong> 注册判决要求配对 spec bootstrap，那个恒为 null。
+    用 checkpoint 均值代替它，等于换了一个不同的估计量。</li>
+    <li><strong>警报端没有区间支持。</strong> 所有配对 CI 跨 0，预注册明文不认点标记。</li>
+    <li><strong>两臂同时出现。</strong> naive 和 rfo_gold 都命中 ——
+    <strong>产生它的不是两臂之间的对比，而臂间对比正是论文主张所在。</strong></li>
+    <li><strong>单 seed、重复看了七个窗口、无多重校正</strong>（报告自带
+    <code>multiple_looks_adjusted: false</code>、<code>exploratory: true</code>、两臂
+    <code>status: descriptive</code>）。而且事件之后就<strong>反转</strong>了。</li>
+  </ol>
+</div>
+
+<h2><span class="num">07</span>唯一扎实的一条：外部正确率一步没动</h2>
+
+<figure>
+  <div class="chart-frame">
+    <p class="chart-title">external_correct，九个 checkpoint × 两臂</p>
+    <p class="chart-sub">18 个值全部落在 0.2457–0.2803，比 n≈238 时 p=0.26 的一个二项 SE（0.0284）还窄</p>
+    <div class="legend">
+      <span class="item"><span class="swatch" style="background:var(--series-1)"></span>naive</span>
+      <span class="item"><span class="swatch" style="background:var(--series-2)"></span>rfo_gold</span>
+      <span class="item"><span class="swatch" style="background:var(--series-1);opacity:.25"></span>§0.29(B) 预注册带</span>
+    </div>
+    <svg viewBox="0 0 700 320" role="img">
+<rect x="58" y="41.8" width="628" height="208.5" fill="var(--series-1)" opacity="0.13"/>
+<text class="tick" x="682" y="36.8" text-anchor="end">§0.29(B) 预注册带 0.203–0.317</text>
+<line class="gridline" x1="58" y1="255.7" x2="686" y2="255.7"/>
+<text class="tick" x="49" y="259.7" text-anchor="end">0.20</text>
+<line class="gridline" x1="58" y1="182.6" x2="686" y2="182.6"/>
+<text class="tick" x="49" y="186.6" text-anchor="end">0.24</text>
+<line class="gridline" x1="58" y1="109.4" x2="686" y2="109.4"/>
+<text class="tick" x="49" y="113.4" text-anchor="end">0.28</text>
+<line class="gridline" x1="58" y1="36.3" x2="686" y2="36.3"/>
+<text class="tick" x="49" y="40.3" text-anchor="end">0.32</text>
+<text class="tick" x="58.0" y="294" text-anchor="middle">0</text>
+<text class="tick" x="136.5" y="294" text-anchor="middle">8</text>
+<text class="tick" x="215.0" y="294" text-anchor="middle">16</text>
+<text class="tick" x="293.5" y="294" text-anchor="middle">24</text>
+<text class="tick" x="372.0" y="294" text-anchor="middle">32</text>
+<text class="tick" x="450.5" y="294" text-anchor="middle">40</text>
+<text class="tick" x="529.0" y="294" text-anchor="middle">48</text>
+<text class="tick" x="607.5" y="294" text-anchor="middle">56</text>
+<text class="tick" x="686.0" y="294" text-anchor="middle">64</text>
+<text class="tick" x="372.0" y="312" text-anchor="middle">优化步 (optimizer step)</text>
+<line class="baseline" x1="58" y1="274" x2="686" y2="274"/>
+<polyline points="58.0,145.1 136.5,131.8 215.0,122.7 293.5,130.3 372.0,127.6 450.5,144.7 529.0,138.6 607.5,168.1 686.0,158.5" fill="none" stroke="var(--series-1)" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="58.0" cy="145.1" r="4" fill="var(--series-1)"><title>naive step-0: external = 0.2605</title></circle>
+<circle cx="136.5" cy="131.8" r="4" fill="var(--series-1)"><title>naive step-8: external = 0.2678</title></circle>
+<circle cx="215.0" cy="122.7" r="4" fill="var(--series-1)"><title>naive step-16: external = 0.2727</title></circle>
+<circle cx="293.5" cy="130.3" r="4" fill="var(--series-1)"><title>naive step-24: external = 0.2686</title></circle>
+<circle cx="372.0" cy="127.6" r="4" fill="var(--series-1)"><title>naive step-32: external = 0.2700</title></circle>
+<circle cx="450.5" cy="144.7" r="4" fill="var(--series-1)"><title>naive step-40: external = 0.2607</title></circle>
+<circle cx="529.0" cy="138.6" r="4" fill="var(--series-1)"><title>naive step-48: external = 0.2641</title></circle>
+<circle cx="607.5" cy="168.1" r="4" fill="var(--series-1)"><title>naive step-56: external = 0.2479</title></circle>
+<circle cx="686.0" cy="158.5" r="4" fill="var(--series-1)"><title>naive step-64: external = 0.2532</title></circle>
+<polyline points="58.0,145.1 136.5,142.7 215.0,131.8 293.5,158.6 372.0,156.7 450.5,147.1 529.0,172.2 607.5,131.2 686.0,108.8" fill="none" stroke="var(--series-2)" stroke-width="2.4" stroke-linejoin="round"/>
+<circle cx="58.0" cy="145.1" r="4" fill="var(--series-2)"><title>rfo_gold step-0: external = 0.2605</title></circle>
+<circle cx="136.5" cy="142.7" r="4" fill="var(--series-2)"><title>rfo_gold step-8: external = 0.2618</title></circle>
+<circle cx="215.0" cy="131.8" r="4" fill="var(--series-2)"><title>rfo_gold step-16: external = 0.2678</title></circle>
+<circle cx="293.5" cy="158.6" r="4" fill="var(--series-2)"><title>rfo_gold step-24: external = 0.2531</title></circle>
+<circle cx="372.0" cy="156.7" r="4" fill="var(--series-2)"><title>rfo_gold step-32: external = 0.2542</title></circle>
+<circle cx="450.5" cy="147.1" r="4" fill="var(--series-2)"><title>rfo_gold step-40: external = 0.2594</title></circle>
+<circle cx="529.0" cy="172.2" r="4" fill="var(--series-2)"><title>rfo_gold step-48: external = 0.2457</title></circle>
+<circle cx="607.5" cy="131.2" r="4" fill="var(--series-2)"><title>rfo_gold step-56: external = 0.2681</title></circle>
+<circle cx="686.0" cy="108.8" r="4" fill="var(--series-2)"><title>rfo_gold step-64: external = 0.2803</title></circle>
+</svg>
+  </div>
+  <figcaption>没有上升，也没有下降。§0.29(B) 预注册的 0.203–0.317 至今未被任何一点越出。</figcaption>
+</figure>
+
+<p><strong>但这是必要条件，不是结论。</strong>「外部不动 + 内部上升」才是脱钩；
+「外部不动」单独成立，同样和「训练什么都没学会」相容。
+另外要说清楚：<strong>平的是判别阶梯的正确率，不是训练目标本身。</strong></p>
+
+<h2><span class="num">08</span>两臂分不开</h2>
+<p>internal 臂差最大 0.0396，external 臂差最大 0.0272，都落在 §0.29(C) 预注册的模糊带
+（0.027–0.08）里。<strong>九个 checkpoint 里没有一个把两臂分开。</strong></p>
+<p>这一条和第 06 节的第 3 条理由是同一件事的两面：
+无论那个瞬时形状由什么产生，<strong>它在 RFO-Gold 臂和 naive 臂上一样明显</strong>。</p>
+
+<h2><span class="num">09</span>现在做了什么</h2>
+<ol class="steps">
+  <li><span class="st">D* 的修法已经验过，但不能在活运行上打。</span>
+  <code>read_outcome_repair.patch</code> 对当前树 <code>git apply --check</code> 干净（−5/+5，只动一个文件）。
+  新增的 <code>verify_repair_patch.py</code> 在沙盒里用真的 <code>git apply</code> 跑了两遍：
+  <strong>打补丁前三条红，打补丁后三条绿</strong>。判据两边都能失败 ——
+  三绿在前会意味着两个阶段测的是同一个（已打补丁的）文件，那正是 2026-09-10 犯过并修掉的错。
+  <strong>不能现在打</strong>：<code>v4_decoupling_report.py</code> 在 <code>SOURCES</code> 里，
+  supervisor 每个 stage 开头都重校 <code>source_sha256</code>。</li>
+
+  <li><span class="st">补充稳健性通道已经在跑，但内部侧仍然是空的。</span>
+  最后一个窗口：外部配对 spec naive <strong>41/64</strong>、
+  rfo_gold <strong>43/64</strong>；
+  而<strong>内部配对 spec 两臂都是 0</strong>。
+  <strong>所以补充通道救不了 D*</strong> —— 缺的正是内部那一半。</li>
+
+  <li><span class="st">给「cell 内部轨迹」造了一个跑完就拿不到的仪器。</span>
+  detect 的行不带时间戳，事后只剩总跨度。现在每分钟采一次 (mtime, 行数)，
+  step-72 四个 detect cell 全部上采样器。</li>
+
+  <li><span class="st">改正了一个自己发表过的数（§0.35）。</span>
+  新分析器先拿已发表的 step-64 轨迹做回归测试：整格对上、前半对不上。
+  §0.33 自己印的三个数互相矛盾 —— 14.65 s/img ÷ 2.02 = 7.25，不是它登记的 8.337，差 <strong>15%</strong>。
+  重测 1.331×，并补上 5000 次打乱顺序的零分布（中位 1.000，sd 0.053，实测高出 6.2 sd，落在抽样最大值之外）。
+  <strong>§0.33 原文一个字节没改</strong>，缺陷单独登记。</li>
+
+  <li><span class="st">把下一条判据钉死在数据存在之前（§0.36）。</span>
+  四格形状比较的常量在 04:10:35 落盘，当时第四格在磁盘上<strong>不存在</strong>。
+  三个区是 [0,1] 的划分，没有共享端点。两条守卫都是拒绝而不是警告。</li>
+
+  <li><span class="st">核对出 §0.29 把判据变量写反了。</span>
+  见第 06 节。按老规矩：<strong>原文不动，缺陷登记为新证据，重新测量并注明来源。</strong></li>
+</ol>
+
+<h2><span class="num">10</span>现在的状态，以及不能跨过的线</h2>
+
+<div class="tiles">
+  <div class="tile"><div class="label">已落地 checkpoint</div><div class="value">9 / 12</div>
+  <div class="foot">step-72 正在跑，还剩 80 / 88</div></div>
+  <div class="tile"><div class="label">墙钟</div><div class="value">68.5 / 96 h</div>
+  <div class="foot">硬上限，不重置；停止线 09-12 07:33:13</div></div>
+  <div class="tile"><div class="label">余量（按最慢一轮）</div><div class="value" style="color:var(--good-ink)">+5.67 h</div>
+  <div class="foot">最慢一轮 8.63 h，全程均值 6.67 h</div></div>
+  <div class="tile"><div class="label">结算点</div><div class="value">step-88</div>
+  <div class="foot">§0.29 §五：中途 64/72/80 照记，<strong>不中途结算</strong></div></div>
+</div>
+
+<div class="callout note">
+  <p><strong>本文没有结算任何东西。</strong> §0.29 §五 给剩下四个 checkpoint 钉的三条
+  （A 平台、B 外部带、C 两臂可分性）都是对 <code>step-00088.report</code> 写的。
+  上面每一个数字都是描述性的，<strong>单 seed 的描述性轨迹不得写成显著性结论</strong>。</p>
+</div>
+
+<div class="card">
+  <p class="card-title">报告自带的限制条款（原文）</p>
+  <ul class="footnote"><li>exploratory: this report does not confirm D* or predictive utility</li>
+<li>multiple looks and arms are not multiplicity-adjusted</li>
+<li>observed lead is descriptive; forecasting improvement requires separate validation</li>
+<li>complete paired specs may differ from the full outcome population; inspect coverage</li>
+<li>bootstrap_rule_supported is the frozen descriptive rule, not reliable evidence of a plateau</li>
+<li>supplementary robustness bounds do not correct repeated looks or establish predictive utility</li>
+<li>spec-level binomial bounds require independent pairs; duplicate canonical scenes block that support flag</li>
+<li>scene-disjoint sensitivity and scene-cluster bootstrap supplement the original frozen outcome population</li>
+<li>the supplementary screen retains the internal-score percentile bootstrap; it is not an exact joint confidence test</li></ul>
+  <p class="footnote"><code>scene_audit_status</code>：absent; spec independence is an unchecked assumption</p>
+</div>
+
+<p class="footnote" style="margin-top:40px">
+生成自 <code>runs/v4/decoupling-main-20260908/checkpoint_metrics.csv</code> 与
+<code>decoupling_report.json</code>；所有数字由脚本读出，无手写数值 ——
+§0.28 §五 登记过：投影与差分一律走脚本，不做手算。
+</p>
+
+</div>
+</body>
+</html>
