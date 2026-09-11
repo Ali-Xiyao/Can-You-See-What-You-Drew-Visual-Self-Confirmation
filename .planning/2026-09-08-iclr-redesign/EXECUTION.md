@@ -2159,6 +2159,102 @@ first_candidate_step = None                      (两臂)
 中途的 64 / 72 / 80 照常记,但**不在中途结算**——这三条是对 step-88 写的。
 
 
+## 0.30 `pilot_complete` 那条清单的干跑:补丁真的把三条红变绿,合并无冲突(2026-09-10 19:4x)
+
+§0.29 §四 说 D* 判决拿不到、`read_outcome_repair.patch` 是登记的修法。
+**「登记的修法」和「验过的修法」不是一回事。** 主运行还在跑,卡空不出来,
+但清单上有几项是纯 CPU、只读、现在就能干跑的。干跑了,结果在这里。
+
+### 一、补丁对当前树仍然适用
+
+```
+review-packets/dstar-join-granularity-20260910/read_outcome_repair.patch
+  git apply --numstat  ->  5  5  scripts/v4_decoupling_report.py
+  git apply --check    ->  APPLIES CLEANLY
+```
+
+只动一个文件,−5/+5。`--check` 不写盘,主运行的 `source_sha256` 不受影响。
+
+**CRLF 那条路已经堵上了**,而且不是今天才堵:`.gitattributes` 里
+`*.py text eol=lf` 与 `*.patch text eol=lf` 都在,后者的注释还记着
+「Verified 2026-09-10: the CRLF copy of read_outcome_repair.patch dies with
+"patch does not apply" at the first hunk」。**这一条不用再验。**
+
+### 二、新证据:补丁确实把它要修的三条红变绿
+
+以前只验过「补丁能打上」,没验过「打上之后那三条过」。
+新文件 **`review-packets/dstar-join-granularity-20260910/verify_repair_patch.py`**
+(只增不改,packet 里既有文件一个字节没动)在临时目录里建两份沙盒,
+用真的 `git apply`,把 `@NEEDS_REPAIR` 三个标记摘掉后两边各跑一次:
+
+```
+before (未打补丁)   FAILED / FAILED / FAILED
+after  (打了补丁)   PASSED / PASSED / PASSED
+```
+
+**判据两边都能失败**:如果 before 也是三绿,说明两个阶段测的是同一个(已打补丁的)文件——
+那正是 §0.18 那个 split-check 沙盒 2026-09-10 犯过、并且被修掉的错。
+这次 before 真的是红的,所以这个判据是有效的。
+
+### 三、沙盒里另有两条红,**不是补丁的问题**,而且我去核实了才敢这么说
+
+沙盒 before/after 都是「2 failed」。差一点就写成「补丁之后还剩两条红」。
+去仓库里实跑同一个文件:
+
+```
+tests/test_read_outcome_join_granularity.py   7 passed, 3 xfail
+```
+
+两条沙盒红都是 `FileNotFoundError`,缺的是我没拷进沙盒的
+`scripts/v4_train.py` 和补丁文件本身。**沙盒的盲区,不是被测对象的缺陷。**
+已经在 `verify_repair_patch.py` 里写成 `SANDBOX_BLIND` 常量并打印时标注,
+免得下一个人把它读成补丁损伤。
+
+### 四、arm B 的合并:当前无冲突
+
+```
+git merge-tree --write-tree --name-only paper/iclr-2028 staging/arm-b-merged
+  exit 0   tree bcac4260114d0514ae1be940b0fbc48bbb08e320   (无冲突文件名输出)
+```
+
+只读,不建 commit,不动 HEAD。**这只说明「此刻无冲突」**;两个分支之后还会动,
+落地时仍要按 §1 的顺序重新走一遍。
+
+### 五、我自己犯了一次已经写在 memory 里的错
+
+为了找补丁,我从仓库根跑了 `find . -name read_outcome_repair.patch`。
+**它走进 `runs/`,120 秒超时**——memory 里那条「Never grep -r from the repo root」
+说的就是这件事,只是我用的是 `find`。正确写法是 `git ls-files` 或直接给目录。
+
+**它有没有拖累正在跑的生成链?** 去量了(step-64 的 PNG mtime 差分):
+
+```
+arm        全程中位     我那 4 分钟窗口内中位
+naive      15.18 s      15.18 s     (n=9)
+rfo_gold   19.73 s      19.76 s     (n=7)
+```
+
+**没有可测的代价。** 记这一条不是因为它有后果,是因为
+**「我查过了,没事」和「应该没事」不是一回事**——后者是 §0.9 之后就不该再写的话。
+
+顺带一个观察,不作结论:step-64 两臂的生成链目前是全程最快的一组
+(step-56 是 15.81 / 20.40,step-40 是 15.33 / 20.44),但 n 只有 14 / 11,
+**等跑满 256 再说**。
+
+### 六、`pilot_complete` 清单的当前状态
+
+| 步骤 | 状态 |
+|---|---|
+| 打 `read_outcome_repair.patch` | **已干跑**:applies cleanly,三条红→绿 |
+| 摘三个 `NEEDS_REPAIR` | 位置已定:`tests/test_read_outcome_join_granularity.py:96 / 103 / 116` |
+| 跑 `v4_e3_launch_preflight.py` | 可跑,当前 `BLOCKED by 6 gate(s)`;5 条等主运行/等卡,第 6 条是 `SELFSIGHT_MODEL_ROOT` 未设——**启动时要设,不是等出来的** |
+| 合并 `staging/arm-b-merged` | **已干跑**:当前无冲突 |
+| 打 `split_check.patch` | 只能在合并之后干跑(靶文件此刻不存在);已在临时仓库里验过 |
+| card benchmark / 五个 replicate | 要卡,等 `pilot_complete` |
+
+**没有一项需要在主运行结束前动它。** 本节只是把能提前失败的部分提前失败掉。
+
+
 ## 1. arm B 的启动:代码已就位,只等主运行让出卡
 
 预注册钉死了跑法:**同一份 config,`--arms naive blind_self`,新输出目录**。
